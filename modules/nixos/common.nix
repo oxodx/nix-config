@@ -9,7 +9,6 @@
     time.timeZone = "Europe/Amsterdam";
     services.xserver.xkb.layout = "us";
 
-    services.xserver.enable = true;
     services.displayManager.sddm.enable = false;
     services.displayManager.gdm.enable = true;
     services.displayManager.gdm.wayland = true;
