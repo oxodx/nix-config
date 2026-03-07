@@ -1,4 +1,5 @@
-{ pkgs, config, ... }: let
+{ pkgs, config, ... }:
+let
   browser = [
     "firefox.desktop"
   ];
@@ -18,7 +19,8 @@
     "application/x-extension-xhtml" = browser;
     "application/x-extension-xht" = browser;
   };
-in {
+in
+{
   xdg.mime.enable = true;
   xdg.mimeApps.enable = true;
   xdg.mimeApps.associations.added = associations;
