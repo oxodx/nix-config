@@ -2,6 +2,8 @@
   imports = [
     "${nixos-hardware}/asus/fa506ncr"
     ./hardware-configuration.nix
+
+    ../../modules/base/
   ];
 
   networking.hostName = "kumquat";
