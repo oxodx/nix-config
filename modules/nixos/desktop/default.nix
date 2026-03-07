@@ -1,5 +1,6 @@
 { ... }: {
   imports = [
+    ./networking
     ./fhs.nix
     ./fonts.nix
     ./gaming.nix
