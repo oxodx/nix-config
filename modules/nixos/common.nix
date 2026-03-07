@@ -2,11 +2,6 @@
   config = {
     my.home-manager.enabled-users = [ "oxod" ];
 
-    i18n = {
-      defaultLocale = "en_US.UTF-8";
-      supportedLocales = [ "en_US.UTF-8/UTF-8" ];
-    };
-    time.timeZone = "Europe/Amsterdam";
     services.xserver.xkb.layout = "us";
 
     services.displayManager.sddm.enable = false;
