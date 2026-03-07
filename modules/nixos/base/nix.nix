@@ -1,6 +1,4 @@
 { lib, ... }: {
-  nixpkgs.config.allowUnfree = lib.mkForce true;
-
   nix.gc = {
     automatic = lib.mkDefault true;
     dates = lib.mkDefault "weekly";
