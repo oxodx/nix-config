@@ -33,6 +33,4 @@ in
   nixosConfigurations = {
     kumquat = makeHost ../hosts/kumquat;
   };
-
-  formatter = forAllSystems (system: pkgs.legacyPackages.${system}.nixfmt);
 }
