@@ -1,9 +1,8 @@
-{ lib, ... }:
-{
+{ lib, ... }: {
   disko.devices = {
     disk = {
       main = {
-        device = "/dev/disk/by-id/nvme-Samsung_SN850X_4TB_XXX";
+        device = "/dev/disk/by-id/nvme-WD_PC_SN740_SDDPNQD-512G-1102_24083N801537";
         type = "disk";
         partitions = {
           esp = {
