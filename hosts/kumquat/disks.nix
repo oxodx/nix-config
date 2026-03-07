@@ -3,59 +3,59 @@
   disko.devices = {
     disk = {
       main = {
-        device = "/dev/disk/by-id/nvme-WD_PC_SN740_SDDPNQD-512G-1102_24083N801537";
         type = "disk";
-        partitions = {
-          esp = {
-            type = "ESP";
-            start = "1MiB";
-            end = "600MiB";
-            format = {
-              vfat = {
-                uuid = "FF61-5A8D";
-              };
-            };
-          };
-          luks = {
-            type = "linux_luks";
-            start = "600MiB";
-            format = {
-              luks = {
-                name = "crypted-nixos";
-              };
-            };
-          };
-        };
-      };
-    };
-    luks = {
-      crypted-nixos = {
-        device = "/dev/disk/by-id/nvme-WD_PC_SN740_SDDPNQD-512G-1102_24083N801537-part2";
+        device = "/dev/disk/by-id/nvme-WD_PC_SN740_SDDPNQD-512G-1102_24083N801537";
         content = {
-          type = "btrfs";
-          extraArgs = ["-f"];
-          subvolumes = {
-            "/swap" = {
-              mountpoint = "/swap";
-              mountOptions = ["compress=zstd" "noatime"];
+          type = "gpt";
+          partitions = {
+            ESP = {
+              size = "600M";
+              type = "EF00";
+              content = {
+                type = "filesystem";
+                format = "vfat";
+                uuid = "FF61-5A8D";
+                mountpoint = "/boot";
+                mountOptions = [ "umask=0077" ];
+              };
             };
-            "/snapshots" = {
-              mountpoint = "/snapshots";
-              mountOptions = ["compress=zstd" "noatime"];
-            };
-            "/home" = {
-              mountpoint = "/home";
-              mountOptions = ["compress=zstd" "noatime"];
-              subvolumes = {
-                "/home/oxod" = {
-                  mountpoint = "/home/oxod";
-                  mountOptions = ["compress=zstd" "noatime"];
+            luks = {
+              size = "100%";
+              content = {
+                type = "luks";
+                name = "crypted-nixos";
+                settings = {
+                  allowDiscards = true;
+                };
+                content = {
+                  type = "btrfs";
+                  extraArgs = [ "-f" ];
+                  subvolumes = {
+                    "/swap" = {
+                      mountpoint = "/swap";
+                      mountOptions = [ "compress=zstd" "noatime" ];
+                    };
+                    "/snapshots" = {
+                      mountpoint = "/snapshots";
+                      mountOptions = [ "compress=zstd" "noatime" ];
+                    };
+                    "/home" = {
+                      mountpoint = "/home";
+                      mountOptions = [ "compress=zstd" "noatime" ];
+                      subvolumes = {
+                        "/home/oxod" = {
+                          mountpoint = "/home/oxod";
+                          mountOptions = [ "compress=zstd" "noatime" ];
+                        };
+                      };
+                    };
+                    "/" = {
+                      mountpoint = "/";
+                      mountOptions = [ "compress=zstd" "noatime" ];
+                    };
+                  };
                 };
               };
-            };
-            "/" = {
-              mountpoint = "/";
-              mountOptions = ["compress=zstd" "noatime"];
             };
           };
         };
