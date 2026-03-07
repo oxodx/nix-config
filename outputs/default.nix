@@ -19,7 +19,7 @@
           home-manager.nixosModules.home-manager
           nix-gaming.nixosModules.pipewireLowLatency
           path
-          ./users
+          ../users
           {
             config = {
               home-manager.useGlobalPkgs = true;
