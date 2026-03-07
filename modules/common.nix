@@ -53,7 +53,7 @@
       startWhenNeeded = true;
       settings.PermitRootLogin = "no";
       settings.PasswordAuthentication = false;
-      challengeResponseAuthentication = false;
+      kbdInteractiveAuthentication = false;
       banner = "This computer system may not be used for any perpose.\nBe gay, do crime.\n";
     };
 
