@@ -2,6 +2,7 @@
   imports = [
     "${nixos-hardware}/asus/fa506ncr"
     ./hardware-configuration.nix
+    ./disks.nix
     ./nvidia.nix
 
     ../../modules/nixos/desktop.nix
