@@ -31,6 +31,7 @@ let
 in
 {
   nixosConfigurations = {
+    iso = makeHost ../hosts/iso;
     kumquat = makeHost ../hosts/kumquat;
   };
 }
