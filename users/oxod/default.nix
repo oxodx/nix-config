@@ -1,6 +1,5 @@
 { config, lib, pkgs, inputs, self, ... }: {
   imports = [
-    ./xdg-mime-apps.nix
     ./shells/default.nix
   ];
 
