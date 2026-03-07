@@ -27,7 +27,7 @@
     nix = {
       daemonCPUSchedPolicy = "idle";
       extraOptions = "experimental-features = nix-command flakes";
-      autoOptimiseStore = true;
+      settings.auto-optimise-store = true;
     };
 
     networking = {

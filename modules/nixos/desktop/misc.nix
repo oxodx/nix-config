@@ -25,7 +25,7 @@
     thunar = {
       enable = true;
       plugins = with pkgs; [
-        thunar-archive-plugin
+        xfce.thunar-archive-plugin
         thunar-volman
       ];
     };
