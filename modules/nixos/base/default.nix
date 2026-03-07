@@ -7,5 +7,6 @@
     ./packages.nix
     ./ssh.nix
     ./user-group.nix
+    ./zram.nix
   ];
 }
