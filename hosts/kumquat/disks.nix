@@ -3,7 +3,7 @@
   disko.devices = {
     disk = {
       main = {
-        device = "/dev/disk/by-uuid/02d8bae7-0af2-4f6b-9c0d-65800fc321e9";
+        device = "/dev/disk/by-id/nvme-Samsung_SN850X_4TB_XXX";
         type = "disk";
         partitions = {
           esp = {
@@ -17,13 +17,16 @@
               };
             };
           };
+          root = {
+            type = "linux";
+            start = "512MiB";
+            format = {
+              ext4 = {
+                uuid = "02d8bae7-0af2-4f6b-9c0d-65800fc321e9";
+              };
+            };
+          };
         };
-      };
-    };
-    mount = {
-      "/boot" = {
-        device = "/dev/disk/by-uuid/FF61-5A8D";
-        format = "vfat";
       };
     };
   };
