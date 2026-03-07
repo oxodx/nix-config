@@ -2,13 +2,25 @@
   imports = [
     "${nixos-hardware}/asus/fa506ncr"
     ./hardware-configuration.nix
+    ./nvidia.nix
 
     ../../modules/nixos/desktop.nix
   ];
 
-  networking.hostName = "kumquat";
-  networking.hostId = "f889ae0f";
-  system.stateVersion = "25.11";
+  zramSwap.enable = lib.mkForce false;
 
-  services.xserver.videoDrivers = lib.mkDefault [ "nvidia" ];
+  services.sunshine.enable = lib.mkForce true;
+  services.tuned.ppdSettings.main.default = lib.mkForce "performance";
+
+  networking = {
+    hostName = "kumquat";
+
+    networkmanager.enable = false;
+    useDHCP = false;
+  };
+
+  networking.useNetworkd = true;
+  systemd.network.enable = true;
+
+  system.stateVersion = "25.11";
 }
