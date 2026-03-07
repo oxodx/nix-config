@@ -6,5 +6,7 @@
     ./misc.nix
     ./peripherals.nix
     ./power.nix
+    ./security.nix
+    ./virtualisation.nix
   ];
 }
