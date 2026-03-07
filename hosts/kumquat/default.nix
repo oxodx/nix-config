@@ -3,7 +3,7 @@
     "${nixos-hardware}/asus/fa506ncr"
     ./hardware-configuration.nix
 
-    ../../modules/base/
+    ../../modules/base
   ];
 
   networking.hostName = "kumquat";
