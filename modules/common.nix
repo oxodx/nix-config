@@ -48,6 +48,8 @@
       publish.addresses = true;
     };
 
+    services.blueman.enable = true;
+
     services.openssh = {
       enable = true;
       startWhenNeeded = true;
