@@ -86,13 +86,6 @@ in {
   services.sunshine.enable = lib.mkForce true;
   services.tuned.ppdSettings.main.default = lib.mkForce "performance";
 
-  networking = {
-    hostName = "kumquat";
-
-    networkmanager.enable = false;
-    useDHCP = false;
-  };
-
   config.environment.systemPackages = [ install-system ];
 
   networking.useNetworkd = true;
