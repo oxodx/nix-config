@@ -26,11 +26,11 @@
               home-manager.useUserPackages = true;
             };
           }
-        ] ++ (readModules ./modules);
+        ] ++ (readModules ../modules);
       };
     in
     {
       nixosConfigurations = {
-        kumquat = makeHost ./hosts/kumquat;
+        kumquat = makeHost ../hosts/kumquat;
       };
     }
