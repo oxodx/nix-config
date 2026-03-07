@@ -30,6 +30,6 @@
 
     root = {
       initialPassword = "placeholder";
-    }
+    };
   };
 }

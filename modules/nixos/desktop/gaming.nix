@@ -1,9 +1,4 @@
-{ pkgs, nix-gaming, lib, ... }: {
-  imports = [
-    nix-gaming.nixosModules.pipewireLowLatency
-    nix-gaming.nixosModules.platformOptimizations
-  ];
-
+{ pkgs, lib, ... }: {
   programs.steam = {
     enable = true;
     gamescopeSession.enable = true;
