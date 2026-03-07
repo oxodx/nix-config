@@ -17,17 +17,5 @@ in
     home-manager.users = {
       oxod = ./oxod;
     };
-
-    users.users.oxod = {
-      isNormalUser = true;
-      shell = pkgs.fish;
-      initialPassword = "placeholder";
-      extraGroups = [
-        "wheel"
-        "docker"
-        "video"
-        "audio"
-      ];
-    };
   };
 }

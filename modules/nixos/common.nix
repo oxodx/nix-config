@@ -44,15 +44,6 @@
 
     services.blueman.enable = true;
 
-    services.openssh = {
-      enable = true;
-      startWhenNeeded = true;
-      settings.PermitRootLogin = "no";
-      settings.PasswordAuthentication = false;
-      kbdInteractiveAuthentication = false;
-      banner = "This computer system may not be used for any perpose.\nBe gay, do crime.\n";
-    };
-
     services.fstrim.enable = true;
 
     nix.settings.allowed-users = [ "@users" ];
