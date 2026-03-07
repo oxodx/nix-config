@@ -34,5 +34,5 @@ in
     kumquat = makeHost ../hosts/kumquat;
   };
 
-  formatter = forAllSystems (system: pkgs.legacyPackages.${system}.nixfmt)
+  formatter = forAllSystems (system: pkgs.legacyPackages.${system}.nixfmt);
 }
