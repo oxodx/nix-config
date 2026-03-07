@@ -2,6 +2,8 @@
   imports = [
     ./base
     ../base
+
+    ./desktop
   ];
 
   config = {
