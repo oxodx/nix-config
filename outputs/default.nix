@@ -1,4 +1,4 @@
-{ self, nixpkgs, home-manager, nix-gaming, ... }@inputs:
+{ self, nixpkgs, home-manager, nix-gaming ... }@inputs:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs {
@@ -11,7 +11,7 @@
         inherit system;
 
         specialArgs = {
-          nixos-hardware = "${args.nixos-hardware}";
+          nixos-hardware = "${inputs.nixos-hardware}";
         };
 
         modules = [
@@ -34,4 +34,3 @@
         kumquat = makeHost ./hosts/kumquat;
       };
     }
-    
