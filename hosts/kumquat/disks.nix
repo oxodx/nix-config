@@ -47,8 +47,8 @@
               mountpoint = "/home";
               mountOptions = ["compress=zstd" "noatime"];
               subvolumes = {
-                "/home/ryan" = {
-                  mountpoint = "/home/ryan";
+                "/home/oxod" = {
+                  mountpoint = "/home/oxod";
                   mountOptions = ["compress=zstd" "noatime"];
                 };
               };
