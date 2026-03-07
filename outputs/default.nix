@@ -26,7 +26,7 @@ let
           home-manager.useUserPackages = true;
         };
       }
-    ] ++ (readModules ../modules/nixos);
+    ];
   };
 in
 {
