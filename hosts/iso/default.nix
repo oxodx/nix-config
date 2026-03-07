@@ -86,7 +86,7 @@ in {
   services.sunshine.enable = lib.mkForce true;
   services.tuned.ppdSettings.main.default = lib.mkForce "performance";
 
-  config.environment.systemPackages = [ install-system ];
+  environment.systemPackages = [ install-system ];
 
   networking.useNetworkd = true;
   systemd.network.enable = true;
