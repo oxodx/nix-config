@@ -10,8 +10,7 @@
     remmina
     freerdp # required by remmina
 
-    # my custom hardened packages
-    nixpaks.telegram-desktop
+    telegram-desktop
     # discord # update too frequently, use the web version instead
   ];
 

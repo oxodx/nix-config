@@ -20,7 +20,7 @@
   networking = {
     hostName = "kumquat";
 
-    networkmanager.enable = false;
+    networkmanager.enable = true;
     useDHCP = false;
   };
 
