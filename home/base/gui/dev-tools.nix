@@ -1,4 +1,5 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
   home.packages =
     with pkgs;
     [
@@ -6,7 +7,7 @@
       wireshark
 
       # IDEs
-      jetbrains.idea-community
+      jetbrains.idea-oss
 
       # AI cli tools
       k8sgpt
