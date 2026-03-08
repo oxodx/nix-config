@@ -1,0 +1,15 @@
+[files]
+ignore-dot = true
+ignore-files = true
+extend-exclude = [
+  "data/",
+  "rime-data/",
+]
+
+[default]
+binary = false
+check-filename = true
+extend-ignore-re = [
+  "iterm2",
+  "noice",
+]
