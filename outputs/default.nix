@@ -5,7 +5,8 @@ let
 
   genSpecialArgs =
     system:
-    inputs // {
+    inputs
+    // {
       inherit mylib;
 
       pkgs-stable = import inputs.nixpkgs-stable {
@@ -16,7 +17,7 @@ let
         inherit system;
         config.allowUnfree = true;
       };
-      pkgs-x64 = import inputs.nixpkgs-x64 {
+      pkgs-x64 = import inputs.nixpkgs {
         system = "x86_64-linux";
         config.allowUnfree = true;
       };
@@ -61,7 +62,7 @@ in
   );
 
   # darwinConfigurations = lib.attrsets.mergeAttrsList (
-   #  map (it: it.darwinConfigurations or { }) darwinSystemValues
+  #  map (it: it.darwinConfigurations or { }) darwinSystemValues
   # );
 
   checks = forAllSystems (system: {
