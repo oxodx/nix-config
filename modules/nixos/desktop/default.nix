@@ -1,4 +1,5 @@
-{ ... }: {
+{ ... }:
+{
   imports = [
     ./networking
     ./fhs.nix
@@ -9,5 +10,6 @@
     ./power.nix
     ./security.nix
     ./virtualisation.nix
+    ./xdg.nix
   ];
 }
