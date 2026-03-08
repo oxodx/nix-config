@@ -3,6 +3,7 @@
   pkgs-x64,
   osConfig,
   config,
+  prismlauncher,
   lib,
   ...
 }:
@@ -39,6 +40,10 @@ in
         # https://github.com/Open-Wine-Components/umu-launcher
         # a unified launcher for Windows games on Linux
         umu-launcher
+
+        # https://github.com/PrismLauncher/PrismLauncher
+        # An Minecraft launcher
+        prismlauncher.packages.${pkgs.system}.prismlauncher
 
         # Sed-like editor for binary files
         # required by some games to fix problems
