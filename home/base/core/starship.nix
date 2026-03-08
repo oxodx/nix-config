@@ -21,5 +21,5 @@
       };
       os.disabled = false;
     };
-  }; 
+  };
 }

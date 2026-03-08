@@ -1,10 +1,17 @@
-{ config, lib, pkgs, ... }: let
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+let
   shellAliases = {
     v = "nvim";
     vdiff = "nvim -d";
   };
   configPath = "${config.home.homeDirectory}/nix-config/home/base/tui/editors/neovim/nvim";
-in {
+in
+{
   xdg.configFile."nvim".source = config.lib.file.mkOutOfStoreSymlink configPath;
   catppuccin.nvim.enable = false;
 
