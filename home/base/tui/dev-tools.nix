@@ -1,11 +1,12 @@
-{ pkgs, ... }: {
+{ pkgs, pkgs-stable, ... }:
+{
   home.packages = with pkgs; [
     colmena
 
     tokei
 
     # db related
-    mycli
+    pkgs-stable.mycli
     pgcli
     mongosh
     sqlite
