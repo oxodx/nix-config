@@ -52,7 +52,7 @@ binds {
   // XF86AudioNext        allow-when-locked=true { spawn-sh "playerctl next"; }
   XF86AudioPlay        allow-when-locked=true { spawn-sh "noctalia-shell ipc call media playPause"; }
   XF86AudioStop        allow-when-locked=true { spawn-sh "noctalia-shell ipc call media pause"; }
-  XF86AudioPrev        allow-when-locked=true { spawn-sh "octalia-shell ipc call media previous"; }
+  XF86AudioPrev        allow-when-locked=true { spawn-sh "noctalia-shell ipc call media previous"; }
   XF86AudioNext        allow-when-locked=true { spawn-sh "noctalia-shell ipc call media next"; }
 
   // Example brightness key mappings for brightnessctl.
@@ -164,9 +164,9 @@ binds {
   Mod+Ctrl+4 { move-column-to-workspace "4music"; }
   Mod+Ctrl+5 { move-column-to-workspace "5mail"; }
   Mod+Ctrl+6 { move-column-to-workspace "6file"; }
-  Mod+Ctrl+7 { move-column-to-workspace 7; }
-  Mod+Ctrl+8 { move-column-to-workspace 8; }
-  Mod+Ctrl+9 { move-column-to-workspace 9; }
+  Mod+Ctrl+7 { move-column-to-workspace "7"; }
+  Mod+Ctrl+8 { move-column-to-workspace "8"; }
+  Mod+Ctrl+9 { move-column-to-workspace "9"; }
   Mod+Ctrl+0 { move-column-to-workspace "0other"; }
 
   // Alternatively, there are commands to move just a single window:
