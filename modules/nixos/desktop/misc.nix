@@ -16,7 +16,7 @@
 
   services = {
     gvfs.enable = true;
-    tumbler.enable = true; 
+    tumbler.enable = true;
   };
 
   programs = {
