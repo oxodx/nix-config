@@ -9,6 +9,7 @@
     nixpkgs-master.url = "github:nixos/nixpkgs/master";
 
     nixos-hardware.url = "github:0x0Dx/nixos-hardware";
+    aagl.url = "github:ezKEa/aagl-gtk-on-nix/release-25.11";
 
     home-manager = {
       url = "github:nix-community/home-manager/release-25.11";
@@ -32,6 +33,11 @@
 
     nix-gaming = {
       url = "github:fufexan/nix-gaming";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nixos-generators = {
+      url = "github:nix-community/nixos-generators";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
