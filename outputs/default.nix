@@ -32,11 +32,11 @@ let
   };
 
   nixosSystems = {
-    x86_64-linux  = import ./x86_64-linux (args // { system = "x86_64-linux"; });
+    x86_64-linux = import ./x86_64-linux (args // { system = "x86_64-linux"; });
     # aarch64-linux  = import ./aarch64-linux (args // { system = "aarch64-linux"; });
   };
   # darwinSystems = {
-    # aarch64-darwin = import ./aarch64-darwin (args // { system = "aarch64-darwin"; });
+  # aarch64-darwin = import ./aarch64-darwin (args // { system = "aarch64-darwin"; });
   # };
   allSystems = nixosSystems; # // darwinSystems;
   allSystemNames = builtins.attrNames allSystems;
@@ -45,37 +45,6 @@ let
   allSystemValues = nixosSystemValues; # ++ darwinSystemValues;
 
   forAllSystems = func: (nixpkgs.lib.genAttrs allSystemNames func);
-
-  system = "x86_64-linux";
-  pkgs = import nixpkgs {
-    inherit system;
-    config.allowUnfree = true;
-  };
-  readModules = path: builtins.map (x: path + "/${x}") (builtins.attrNames (builtins.readDir path));
-  makeHost = path: lib.nixosSystem {
-    inherit system;
-
-    specialArgs = {
-      nixos-hardware = "${inputs.nixos-hardware}";
-    };
-
-    modules = [
-      { nixpkgs.pkgs = pkgs; }
-      home-manager.nixosModules.home-manager
-      nix-gaming.nixosModules.pipewireLowLatency
-      path
-      ../users
-
-      "../modules/nixos/desktop.nix"
-
-      {
-        config = {
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-        };
-      }
-    ];
-  };
 in
 {
   debugAttrs = {
@@ -126,7 +95,8 @@ in
     system:
     let
       pkgs = nixpkgs.legacyPackages.${system};
-    in {
+    in
+    {
       default = pkgs.mkShell {
         packages = with pkgs; [
           bashInteractive
