@@ -1,0 +1,113 @@
+{ pkgs, pkgs-master, ... }: {
+  home.packages =
+    with pkgs;
+    (
+      [
+        nil
+        nixd
+        statix
+        deadnix
+        nixfmt
+
+        nickel
+
+        terraform-ls
+        jsonnet
+        jsonnet-language-server
+        taplo
+        nodePackages.yaml-language-server
+        actionlint
+
+        hadolint
+        dockerfile-language-server
+
+        marksman
+        glow
+        pando
+        pkgs-master.hugo
+
+        sqlfluff
+
+        buf
+      ]
+      ++
+        [
+          cmake
+          cmake-language-server
+          gnumake
+          checkmake
+          gcc
+          gdb
+          clang-tools
+          lldb
+          vscode-extensions.vadimcn.vscode-lldb.adapter
+
+          (python313.withPackages (
+            ps: with ps; [
+              pyright
+              ruff
+
+              pipx 
+              black 
+              uv 
+
+              jupyter
+              ipython
+              pandas
+              requests
+              pyquery
+              pyyaml
+              boto3
+
+              protobuf
+              numpy
+            ]
+          ))
+
+          pkgs-master.rustc
+          pkgs-master.rust-analyzer
+          pkgs-master.cargo
+          pkgs-master.rustfmt
+          pkgs-master.clippy 
+
+          go
+          gomodifytags
+          iferr
+          impl
+          gotools
+          gopls
+          delve
+
+          jdk17
+          gradle
+          maven
+          spring-boot-cli
+          jdt-language-server
+
+          zls
+
+          stylua
+          lua-language-server
+
+          nodePackages.bash-language-server
+          shellcheck
+          shfmt
+        ]
+      ++ [
+        nodePackages.nodejs
+        nodePackages.typescript
+        nodePackages.typescript-language-server
+        nodePackages.vscode-langservers-extracted
+        nodePackages."@tailwindcss/language-server"
+        emmet-ls
+      ]
+      ++ [
+        proselint
+        verible
+        nodePackages.prettier
+        fzf
+        gdu
+        (ripgrep.override { withPCRE2 = true; })
+      ]
+    );
+}
