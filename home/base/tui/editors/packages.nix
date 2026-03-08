@@ -24,7 +24,6 @@
 
         marksman
         glow
-        pando
         pkgs-master.hugo
 
         sqlfluff
