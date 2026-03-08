@@ -1,6 +1,13 @@
-{ config, pkgs, helix, ... }: let
+{
+  config,
+  pkgs,
+  helix,
+  ...
+}:
+let
   helixPackages = helix.packages.${pkgs.stdenv.hostPlatform.system};
-in {
+in
+{
   # to make steel work, we need to git clone this repo to your home directory.
   home.sessionVariables.HELIX_STEEL_CONFIG = "${config.home.homeDirectory}/nix-config/home/base/tui/editors/helix/steel";
 

@@ -1,4 +1,5 @@
-{ pkgs, pkgs-master, ... }: {
+{ pkgs, pkgs-master, ... }:
+{
   home.packages =
     with pkgs;
     (
@@ -30,69 +31,68 @@
 
         buf
       ]
-      ++
-        [
-          cmake
-          cmake-language-server
-          gnumake
-          checkmake
-          gcc
-          gdb
-          clang-tools
-          lldb
-          vscode-extensions.vadimcn.vscode-lldb.adapter
+      ++ [
+        cmake
+        cmake-language-server
+        gnumake
+        checkmake
+        gcc
+        gdb
+        clang-tools
+        lldb
+        vscode-extensions.vadimcn.vscode-lldb.adapter
 
-          (python313.withPackages (
-            ps: with ps; [
-              pyright
-              ruff
+        (python313.withPackages (
+          ps: with ps; [
+            pyright
+            ruff
 
-              pipx 
-              black 
-              uv 
+            pipx
+            black
+            uv
 
-              jupyter
-              ipython
-              pandas
-              requests
-              pyquery
-              pyyaml
-              boto3
+            jupyter
+            ipython
+            pandas
+            requests
+            pyquery
+            pyyaml
+            boto3
 
-              protobuf
-              numpy
-            ]
-          ))
+            protobuf
+            numpy
+          ]
+        ))
 
-          pkgs-master.rustc
-          pkgs-master.rust-analyzer
-          pkgs-master.cargo
-          pkgs-master.rustfmt
-          pkgs-master.clippy 
+        pkgs-master.rustc
+        pkgs-master.rust-analyzer
+        pkgs-master.cargo
+        pkgs-master.rustfmt
+        pkgs-master.clippy
 
-          go
-          gomodifytags
-          iferr
-          impl
-          gotools
-          gopls
-          delve
+        go
+        gomodifytags
+        iferr
+        impl
+        gotools
+        gopls
+        delve
 
-          jdk17
-          gradle
-          maven
-          spring-boot-cli
-          jdt-language-server
+        jdk17
+        gradle
+        maven
+        spring-boot-cli
+        jdt-language-server
 
-          zls
+        zls
 
-          stylua
-          lua-language-server
+        stylua
+        lua-language-server
 
-          nodePackages.bash-language-server
-          shellcheck
-          shfmt
-        ]
+        nodePackages.bash-language-server
+        shellcheck
+        shfmt
+      ]
       ++ [
         nodePackages.nodejs
         nodePackages.typescript

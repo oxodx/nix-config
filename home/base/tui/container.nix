@@ -1,23 +1,24 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
   home.packages = with pkgs; [
     podman-compose
     dive
     lazydocker
-    skopeo 
-    go-containerregistry 
+    skopeo
+    go-containerregistry
 
     kubectl
-    kubectx 
-    kubie 
-    kubectl-view-secret 
-    kubectl-tree 
-    kubectl-node-shell 
-    kubepug 
-    kubectl-cnpg 
+    kubectx
+    kubie
+    kubectl-view-secret
+    kubectl-tree
+    kubectl-node-shell
+    kubepug
+    kubectl-cnpg
 
     kubebuilder
     istioctl
-    clusterctl 
+    clusterctl
     kubevirt
     kubernetes-helm
     fluxcd
