@@ -1,4 +1,5 @@
-{ config, ... }: {
+{ config, ... }:
+{
   programs.ssh = {
     enable = true;
 
@@ -21,6 +22,7 @@
         hostname = "ssh.github.com";
         port = 443;
         user = "git";
+        identityFile = "~/.ssh/romantic";
         identitiesOnly = true;
       };
     };
