@@ -214,10 +214,6 @@
       },
       {
         "enabled": true,
-        "id": "timer-card"
-      },
-      {
-        "enabled": true,
         "id": "weather-card"
       }
     ]
@@ -413,7 +409,7 @@
     "firstDayOfWeek": 1,
     "hideWeatherCityName": false,
     "hideWeatherTimezone": false,
-    "name": "Changsha",
+    "name": "Amsterdam",
     "showCalendarEvents": true,
     "showCalendarWeather": true,
     "showWeekNumberInCalendar": false,
