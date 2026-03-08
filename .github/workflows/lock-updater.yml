@@ -1,0 +1,19 @@
+name: Flake lock updater
+
+on:
+  schedule:
+    - cron: "3 14 * * 1,5"
+  workflow_dispatch:
+
+jobs:
+  lock-updater:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: DeterminateSystems/nix-installer-action@v21
+      - uses: DeterminateSystems/update-flake-lock@v28
+        with:
+          pr-title: "chore: update flake.lock"
+          pr_labels: |
+            dependencies
+            automated
