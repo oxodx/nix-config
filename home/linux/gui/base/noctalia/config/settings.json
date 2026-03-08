@@ -421,7 +421,7 @@
   "network": {
     "airplaneModeEnabled": false,
     "bluetoothDetailsViewMode": "grid",
-    "bluetoothHideUnnamedDevices": false,
+    "bluetoothHideUnnamedDevices": true,
     "bluetoothRssiPollIntervalMs": 10000,
     "bluetoothRssiPollingEnabled": false,
     "disableDiscoverability": false,
