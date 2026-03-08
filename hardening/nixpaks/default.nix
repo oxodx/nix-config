@@ -21,7 +21,6 @@ in
   nixpkgs.overlays = [
     (_: super: {
       nixpaks = {
-        telegram-desktop = wrapper super ./telegram-desktop.nix;
         firefox = wrapper super ./firefox.nix;
       };
     })
