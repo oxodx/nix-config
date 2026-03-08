@@ -60,12 +60,12 @@ in
     map (it: it.nixosConfigurations or { }) nixosSystemValues
   );
 
-  darwinConfigurations = lib.attrsets.mergeAttrsList (
-    map (it: it.darwinConfigurations or { }) darwinSystemValues
-  );
+  # darwinConfigurations = lib.attrsets.mergeAttrsList (
+   #  map (it: it.darwinConfigurations or { }) darwinSystemValues
+  # );
 
   checks = forAllSystems (system: {
-    pre-commit-check = pre-commit-hooks.lib.${system}.run {
+    pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
       src = mylib.relativeToRoot ".";
       hooks = {
         nixfmt-rfc-style = {
