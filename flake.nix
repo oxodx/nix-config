@@ -11,7 +11,7 @@
     nixos-hardware.url = "github:0x0Dx/nixos-hardware";
 
     home-manager = {
-      url = "github:nix-community/home-manager/release-25.11";
+      url = "github:nix-community/home-manager/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
