@@ -1,8 +1,14 @@
-{ config, lib, pkgs, nixos-hardware, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  nixos-hardware,
+  ...
+}:
+{
   imports = [
     "${nixos-hardware}/asus/fa506ncr"
     ./hardware-configuration.nix
-    ./disks.nix
     ./nvidia.nix
   ];
 
