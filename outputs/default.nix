@@ -20,7 +20,10 @@ let
       nix-gaming.nixosModules.pipewireLowLatency
       path
       ../users
-      {
+     
+     "../modules/nixos/desktop.nix"
+
+     {
         config = {
           home-manager.useGlobalPkgs = true;
           home-manager.useUserPackages = true;
@@ -31,7 +34,6 @@ let
 in
 {
   nixosConfigurations = {
-    iso = makeHost ../hosts/iso;
     kumquat = makeHost ../hosts/kumquat;
   };
 }

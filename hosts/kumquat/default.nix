@@ -4,8 +4,6 @@
     ./hardware-configuration.nix
     ./disks.nix
     ./nvidia.nix
-
-    ../../modules/nixos/desktop.nix
   ];
 
   zramSwap.enable = lib.mkForce false;
