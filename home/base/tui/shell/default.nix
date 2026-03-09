@@ -11,10 +11,12 @@
 
       # using claude-code with glm llm
       # https://docs.bigmodel.cn/cn/coding-plan/tool/claude
-      $env.ANTHROPIC_BASE_URL = "https://open.bigmodel.cn/api/anthropic"
-      $env.ANTHROPIC_AUTH_TOKEN = $env.ZAI_API_KEY
-      $env.ANTHROPIC_MODEL = "glm-4.7"
-      $env.ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.5-air"
+      if $env.ZAI_API_KEY {
+        $env.ANTHROPIC_BASE_URL = "https://open.bigmodel.cn/api/anthropic"
+        $env.ANTHROPIC_AUTH_TOKEN = $env.ZAI_API_KEY
+        $env.ANTHROPIC_MODEL = "glm-4.7"
+        $env.ANTHROPIC_DEFAULT_HAIKU_MODEL = "glm-4.5-air"
+      }
 
       # using claude-code with qwen llm
       # https://bailian.console.aliyun.com/?tab=doc#/doc/?type=model&url=2949529
