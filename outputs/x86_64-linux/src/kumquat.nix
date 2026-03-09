@@ -14,7 +14,6 @@ let
       (map mylib.relativeToRoot [
         "modules/nixos/desktop.nix"
         "hosts/${name}"
-        "hardening/nixpaks"
       ])
       ++ [
         {
