@@ -5,10 +5,8 @@
     "${pkgs.foot}/share/applications/foot.desktop"
     "${pkgs.alacritty}/share/applications/Alacritty.desktop"
     "${pkgs.ghostty}/share/applications/com.mitchellh.ghostty.desktop"
-
-    # nixpaks
-    "${pkgs.nixpaks.firefox}/share/applications/org.mozilla.firefox.desktop"
     "${pkgs.telegram-desktop}/share/applications/org.telegram.desktop.desktop"
+    "${pkgs.firefox}/share/applications/org.mozilla.firefox.desktop"
   ]
   ++ (
     if pkgs.stdenv.isx86_64 then
