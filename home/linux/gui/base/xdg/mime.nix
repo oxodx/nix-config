@@ -14,14 +14,14 @@
     defaultApplications =
       let
         browser = [
-          "google-chrome.desktop"
           "firefox.desktop"
+          "google-chrome.desktop"
         ];
         editor = [
-          "nvim.desktop"
-          "Helix.desktop"
           "code.desktop"
           "code-insiders.desktop"
+          "nvim.desktop"
+          "Helix.desktop"
         ];
       in
       {
