@@ -16,6 +16,7 @@
 
     # ai related
     python313Packages.huggingface-hub
+    python313Packages.modelscope
 
     # misc
     devbox
