@@ -6,6 +6,8 @@
     wireguard-tools
 
     virt-viewer
+
+    devenv
   ];
 
   # auto mount usb drives
