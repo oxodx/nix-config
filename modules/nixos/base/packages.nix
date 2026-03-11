@@ -29,4 +29,5 @@
   ];
 
   programs.bcc.enable = true;
+  programs.direnv.enable = true;
 }
