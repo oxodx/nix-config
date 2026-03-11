@@ -41,14 +41,14 @@
         lldb
         vscode-extensions.vadimcn.vscode-lldb.adapter
 
+        uv
+        pipx
         (python313.withPackages (
           ps: with ps; [
             pyright
             ruff
 
-            pipx
             black
-            uv
 
             jupyter
             ipython
