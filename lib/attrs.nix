@@ -2,7 +2,8 @@
 # https://github.com/ryan4yin/nix-config/blob/13bb77108c9bee6e61ec4023385d8129907653dd/lib/attrs.nix
 
 # https://github.com/NixOS/nixpkgs/blob/master/lib/attrsets.nix
-{ lib, ... }: {
+{ lib, ... }:
+{
   # Generate an attribute set from a list.
   #
   #   lib.genAttrs [ "foo" "bar" ] (name: "x_" + name)

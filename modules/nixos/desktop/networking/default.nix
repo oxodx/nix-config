@@ -1,4 +1,5 @@
-{ ... }: {
+{ ... }:
+{
   imports = [
     ./remote-desktop.nix
     ./tailscale.nix

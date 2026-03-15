@@ -1,4 +1,5 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+{
   boot.kernelModules = [ "vfio-pci" ];
 
   services.flatpak.enable = true;

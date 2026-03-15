@@ -1,4 +1,5 @@
-{ catppuccin, ... }: {
+{ catppuccin, ... }:
+{
   imports = [
     catppuccin.homeModules.catppuccin
   ];

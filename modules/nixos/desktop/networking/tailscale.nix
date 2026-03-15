@@ -1,4 +1,5 @@
-{ lib, pkgs, ... }: {
+{ lib, pkgs, ... }:
+{
   environment.systemPackages = [ pkgs.tailscale ];
 
   services.tailscale = {

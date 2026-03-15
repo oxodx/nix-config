@@ -1,4 +1,5 @@
-{ lib, pkgs, ... }: {
+{ lib, pkgs, ... }:
+{
   xdg.terminal-exec = {
     enable = true;
     package = pkgs.xdg-terminal-exec;
