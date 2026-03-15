@@ -1,4 +1,10 @@
-{ config, lib, pkgs, ... }: {
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
   boot.kernelParams = [
     "nvidia-drm.fbdev=1"
   ];

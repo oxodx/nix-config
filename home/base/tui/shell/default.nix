@@ -1,4 +1,5 @@
-{ nu_scripts, ... }: {
+{ nu_scripts, ... }:
+{
   programs.nushell = {
     extraConfig = ''
       # Directories in this constant are searched by the
