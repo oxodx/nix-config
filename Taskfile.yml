@@ -21,3 +21,9 @@ tasks:
     desc: Open a nix shell with the flake
     cmds:
       - nix repl -f flake:nixpkgs
+
+  clean:
+    desc: Remove all generations older than 7 days
+    cmds:
+      - sudo nix profile wipe-history --profile /nix/var/nix/profiles/system --older-than 7d
+      - nix profile wipe-history --profile $"($env.XDG_STATE_HOME)/nix/profiles/home-manager" --older-than 7d
