@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: '3'
+
+tasks:
+  up:
+    desc: Update all the flake inputs
+    cmds:
+      - nix flake update --commit-lock-file
+
+  upp:
+    desc: Update specific input
+    cmds:
+      - nix flake update {{.CLI_ARGS}} --commit-lock-file
+
+  history:
+    desc: List all generations of the system profile
+    cmds:
+      - nix profile history --profile /nix/var/nix/profiles/system
+
+  repl:
+    desc: Open a nix shell with the flake
+    cmds:
+      - nix repl -f flake:nixpkgs
