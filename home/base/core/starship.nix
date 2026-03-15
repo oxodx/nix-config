@@ -7,7 +7,7 @@
     enableNushellIntegration = true;
 
     settings = {
-      "$scheme" = "https://starship.rs/config-schema.json";
+      "$schema" = "https://starship.rs/config-schema.json";
       character = {
         success_symbol = "[➜](bold green)";
         error_symbol = "[➜](bold red)";
