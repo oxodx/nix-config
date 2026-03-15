@@ -7,6 +7,7 @@
     fastfetch
     neovim
     gnumake
+    go-task
     git
     git-lfs
 
