@@ -48,3 +48,8 @@ tasks:
     desc: Verify all the store entries
     cmds:
       - nix store verify --all
+
+  repair-store:
+    desc: Repair Nix Store Objects
+    cmds:
+      nix store repair {{.CLI_ARGS}}
