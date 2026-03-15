@@ -33,3 +33,8 @@ tasks:
     cmds:
       - sudo nix-collect-garbage --delete-older-than 7d
       - nix-collect-garbage --delete-older-than 7d
+
+  shell: Enter a shell session which has all the necessary tools for this flake
+    desc:
+    cmds:
+      - nix shell nixpkgs#git nixpkgs#neovim nixpkgs#colmena
