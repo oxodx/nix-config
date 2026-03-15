@@ -7,6 +7,11 @@ tasks:
     cmds:
       - nix flake update --commit-lock-file
 
+  up-nix:
+    desc: Update all Nixpkgs inputs
+    cmds:
+      - nix flake update --commit-lock-file nixpkgs-stable nixpkgs-master
+
   upp:
     desc: Update specific input
     cmds:
