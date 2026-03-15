@@ -14,6 +14,7 @@ let
     );
   };
 in
-outputs // {
+outputs
+// {
   inherit data;
 }

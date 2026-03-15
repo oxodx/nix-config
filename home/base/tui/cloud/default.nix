@@ -1,4 +1,5 @@
-{ lib, pkgs, ... }: {
+{ lib, pkgs, ... }:
+{
   home.file.".terraformrc".source = ./terraformrc;
 
   home.packages = with pkgs; [
