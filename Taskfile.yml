@@ -39,3 +39,12 @@ tasks:
     cmds:
       - nix shell nixpkgs#git nixpkgs#neovim nixpkgs#colmena
 
+  gcroot:
+    desc: Show all the auto gc roots in the nix store
+    cmds:
+      - ls -al /nix/var/nix/gcroots/auto/
+
+  verify-store:
+    desc: Verify all the store entries
+    cmds:
+      - nix store verify --all
