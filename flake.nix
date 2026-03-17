@@ -25,6 +25,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    preservation = {
+      url = "github:nix-community/preservation";
+    };
+
+    disko = {
+      url = "github:nix-community/disko/v1.13.0";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     nixpak = {
       url = "github:nixpak/nixpak";
       inputs.nixpkgs.follows = "nixpkgs";
