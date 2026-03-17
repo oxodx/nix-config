@@ -4,9 +4,6 @@
   pkgs,
   ...
 }:
-let
-  inherit (myvars) username;
-in
 {
   imports = [
     preservation.nixosModules.default
@@ -76,11 +73,11 @@ in
       };
     in
     {
-      "/home/${username}/.config".d = permission;
-      "/home/${username}/.local".d = permission;
-      "/home/${username}/.local/share".d = permission;
-      "/home/${username}/.local/state".d = permission;
-      "/home/${username}/.terraform.d".d = permission;
+      "/home/oxod/.config".d = permission;
+      "/home/oxod/.local".d = permission;
+      "/home/oxod/.local/share".d = permission;
+      "/home/oxod/.local/state".d = permission;
+      "/home/oxod/.terraform.d".d = permission;
     };
 
   # systemd-machine-id-commit.service would fail but it is not relevant
