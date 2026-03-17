@@ -27,6 +27,7 @@
     hdparm
     dmidecode
     parted
+    nvme-cli
   ];
 
   programs.bcc.enable = true;
