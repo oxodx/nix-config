@@ -42,7 +42,7 @@
     ];
 
     # the following directories will be passed to /persistent/home/$USER
-    users.${username} = {
+    users.oxod = {
       directories = [
         "codes"
         "nix-config"
