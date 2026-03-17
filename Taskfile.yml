@@ -57,4 +57,14 @@ tasks:
   repair-store:
     desc: Repair Nix Store Objects
     cmds:
-      nix store repair {{.CLI_ARGS}}
+      - nix store repair {{.CLI_ARGS}}
+
+  nixos-switch:local:
+    desc: Deploy the nixosConfiguration by hostname match
+    cmds:
+      - nixos-rebuild switch --sudo --flake .#$(hostname)
+
+  nixos-switch:local:niri:
+    desc: Deploy the niri nixosConfiguration by hostname match
+    cmds:
+      - nixos-rebuild switch --sudo --flake .#$(hostname)-niri
