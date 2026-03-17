@@ -13,7 +13,7 @@ let
   };
   k3sModule = mylib.genK3sServerModule {
     inherit pkgs;
-    kubeconfigFile = "/home/${myvars.username}/.kube/config";
+    kubeconfigFile = "/home/oxod/.kube/config";
     tokenFile = "/run/media/nixos_k3s/kubevirt-k3s-token";
     # the first node in the cluster should be the one to initialize the cluster
     clusterInit = true;
