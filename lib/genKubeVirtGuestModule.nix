@@ -3,11 +3,7 @@
   hostName,
   networking,
   ...
-}: let
-  inherit (networking) proxyGateway proxyGateway6 nameservers;
-  inherit (networking.hostsAddr.${hostName}) iface ipv4;
-  ipv4WithMask = "${ipv4}/24";
-in {
+}: {
   # supported file systems, so we can mount any removable disks with these filesystems
   boot.supportedFilesystems = [
     "ext4"
