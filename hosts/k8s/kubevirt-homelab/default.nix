@@ -54,6 +54,10 @@ in
     k3sModule
   ];
 
+  modules.base.users.users = [
+    "oxod"
+  ];
+
   boot.kernelParams = [
     # disable transparent hugepage(allocate hugepages dynamically)
     "transparent_hugepage=never"
