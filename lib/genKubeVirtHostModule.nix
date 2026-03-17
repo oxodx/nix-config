@@ -87,49 +87,8 @@
     # reset the Open vSwitch configuration database to a default configuration on every start of the systemd ovsdb.service
     resetOnStart = false;
   };
-  networking.vswitches = {
-    # https://github.com/k8snetworkplumbingwg/ovs-cni/blob/main/docs/demo.md
-    ovsbr1 = {
-      # Attach the interfaces to OVS bridge
-      # This interface should not used by the host itself!
-      interfaces.${iface} = {};
-    };
-  };
 
   # systemd.services."systemd-networkd".environment.SYSTEMD_LOG_LEVEL = "debug";
-
-  # Set the host's address on the OVS bridge interface instead of the physical interface!
-  systemd.network.networks = {
-    "10-ovsbr1" = {
-      matchConfig.Name = ["ovsbr1"];
-      networkConfig = {
-        Address = [ipv4WithMask];
-        DNS = nameservers;
-        DHCP = "ipv6"; # enable DHCPv6 only, so we can get a GUA.
-        IPv6AcceptRA = true; # for Stateless IPv6 Autoconfiguraton (SLAAC)
-        LinkLocalAddressing = "ipv6";
-      };
-      routes = [
-        {
-          Destination = "0.0.0.0/0";
-          Gateway = proxyGateway;
-        }
-        {
-          Destination = "::/0";
-          Gateway = proxyGateway6;
-          GatewayOnLink = true; # it's a gateway on local link.
-        }
-      ];
-      linkConfig.RequiredForOnline = "routable";
-    };
-    "20-${iface}" = {
-      matchConfig.Name = [iface];
-      networkConfig.LinkLocalAddressing = "no";
-      # tell networkd ignore this interface.
-      # it's managed by openvswitch
-      linkConfig.RequiredForOnline = "no";
-    };
-  };
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
