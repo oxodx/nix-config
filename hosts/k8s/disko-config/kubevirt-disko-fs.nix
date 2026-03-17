@@ -21,6 +21,11 @@
       content = {
         type = "gpt";
         partitions = {
+          # BIOS boot partition (required for BIOS boot on GPT)
+          biosBoot = {
+            size = "1M";
+            type = "EF02";
+          };
           # The EFI & Boot partition
           ESP = {
             size = "630M";
