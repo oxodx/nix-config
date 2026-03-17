@@ -1,8 +1,10 @@
 {
+  lib,
   pkgs,
   hostName,
   ...
-}: {
+}:
+{
   # supported file systems, so we can mount any removable disks with these filesystems
   boot.supportedFilesystems = [
     "ext4"
@@ -44,7 +46,7 @@
     "net.ipv6.conf.all.forwarding" = 1; # Enable forwarding
 
     # --- memory --- #
-    "vm.swappiness" = 0; # don't swap unless absolutely necessary
+    "vm.swappiness" = lib.mkForce 0; # don't swap unless absolutely necessary
   };
 
   environment.systemPackages = with pkgs; [
