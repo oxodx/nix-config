@@ -58,6 +58,10 @@ in
     "oxod"
   ];
 
+  boot.loader.grub.devices = [
+    "/dev/sda"
+  ];
+
   boot.kernelParams = [
     # disable transparent hugepage(allocate hugepages dynamically)
     "transparent_hugepage=never"
