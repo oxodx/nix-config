@@ -6,7 +6,6 @@
     tokei
 
     # db related
-    pkgs-stable.mycli
     pgcli
     mongosh
     sqlite
