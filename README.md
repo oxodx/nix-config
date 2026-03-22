@@ -27,3 +27,23 @@ now).
 
 As for Flakes, refer to
 [Introduction to Flakes - NixOS & Nix Flakes Book](https://nixos-and-flakes.thiscute.world/nixos-with-flakes/introduction-to-flakes)
+
+## Components
+
+|                                                                | NixOS(Wayland)                                                                           |
+| -------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| **Window Manager**                                             | [Niri][Niri]                                                                             |
+| **Terminal Emulator**                                          | [Zellij][Zellij] + [foot][foot]/[Kitty][Kitty]/[Alacritty][Alacritty]/[Ghostty][Ghostty] |
+| **Status Bar** / **Notifier** / **Launcher** / **lockscreens** | [noctalia-shell][noctalia-shell]                                                         |
+| **Display Manager**                                            | [tuigreet][tuigreet]                                                                     |
+| **Color Scheme**                                               | [catppuccin-nix][catppuccin-nix]                                                         |
+| **network management tool**                                    | [NetworkManager][NetworkManager]                                                         |
+| **System resource monitor**                                    | [Btop][Btop]                                                                             |
+| **File Manager**                                               | [Yazi][Yazi] + [thunar][thunar]                                                          |
+| **Shell**                                                      | [Nushell][Nushell] + [Starship][Starship]                                                |
+| **Media Player**                                               | [mpv][mpv]                                                                               |
+| **Text Editor**                                                | [Neovim][Neovim]                                                                         |
+| **Fonts**                                                      | [Nerd fonts][Nerd fonts]                                                                 |
+| **Image Viewer**                                               | [imv][imv]                                                                               |
+| **Screenshot Software**                                        | Niri's builtin function                                                                  |
+| **Screen Recording**                                           | [OBS][OBS]                                                                               |
