@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # codex
 npm i -g @openai/codex
 
