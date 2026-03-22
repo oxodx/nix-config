@@ -14,7 +14,7 @@
 
   zramSwap.enable = lib.mkForce false;
 
-  services.sunshine.enable = lib.mkForce true;
+  services.sunshine.enable = false;
   services.tuned.ppdSettings.main.default = lib.mkForce "performance";
 
   networking = {
