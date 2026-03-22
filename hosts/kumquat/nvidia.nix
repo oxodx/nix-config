@@ -8,20 +8,21 @@
   boot.kernelParams = [
     "nvidia-drm.fbdev=1"
   ];
+
   services.xserver.videoDrivers = [ "nvidia" ];
+
   hardware.nvidia = {
-    open = true;
+    open = false;
     nvidiaSettings = true;
-
-    package = config.boot.kernelPackages.nvidiaPackages.latest;
-
+    package = config.boot.kernelPackages.nvidiaPackages.beta;
     modesetting.enable = true;
-    powerManagement.enable = true;
-
-    dynamicBoost.enable = lib.mkForce true;
+    powerManagement.enable = false;
+    powerManagement.finegrained = false;
+    dynamicBoost.enable = false;
   };
 
   hardware.nvidia-container-toolkit.enable = true;
+
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
