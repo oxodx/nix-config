@@ -17,3 +17,10 @@ This repository is home to the nix code that builds my systems:
 1. NixOS Desktops: NixOS with home-manager, niri, agenix, etc.
 
 See [./hosts](./hosts) for details of each host.
+
+## Why NixOS & Flakes?
+
+Nix allows for easy-to-manage, collaborative, reproducible deployments. This means that once
+something is setup and configured once, it works (almost) forever. If someone else shares their
+configuration, anyone else can just use it (if you really understand what you're copying/referring
+now).
