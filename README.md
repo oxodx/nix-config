@@ -51,3 +51,13 @@ As for Flakes, refer to
 ## Agents
 
 See [./agents](./agents) for my reusable cross-project agent files and installer script.
+
+## How to Deploy this Flake?
+
+<!-- prettier-ignore -->
+> :red_circle: **IMPORTANT**: **You should NOT deploy this flake directly on your machine :exclamation:
+> It will not succeed.** This flake contains my hardware configuration(such as
+> [hardware-configuration.nix](hosts/kumquat/hardware-configuration.nix),
+> etc.) which is not suitable for your hardware, and requires my private secrets repository
+> [0x0Dx/nix-secrets](https://github.com/0x0Dx/nix-config/tree/main/secrets) to deploy. You
+> may use this repo as a reference to build your own configuration.
