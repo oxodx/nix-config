@@ -74,3 +74,10 @@ task nixos-switch:local:niri
 # or we can deploy with details
 task nixos-switch:local:niri:debug
 ```
+
+## References
+
+Other dotfiles that inspired me:
+
+- Nix Flakes
+  - [ryan4yin/nix-config](https://github.com/ryan4yin/nix-config)
