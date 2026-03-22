@@ -61,3 +61,16 @@ See [./agents](./agents) for my reusable cross-project agent files and installer
 > etc.) which is not suitable for your hardware, and requires my private secrets repository
 > [0x0Dx/nix-secrets](https://github.com/0x0Dx/nix-config/tree/main/secrets) to deploy. You
 > may use this repo as a reference to build your own configuration.
+
+For NixOS:
+
+```bash
+# deploy one of the configuration based on the hostname
+sudo nixos-rebuild switch --flake .#kumquat-niri
+
+# Deploy the niri nixosConfiguration by hostname match
+task nixos-switch:local:niri
+
+# or we can deploy with details
+task nixos-switch:local:niri:debug
+```
