@@ -24,3 +24,6 @@ Nix allows for easy-to-manage, collaborative, reproducible deployments. This mea
 something is setup and configured once, it works (almost) forever. If someone else shares their
 configuration, anyone else can just use it (if you really understand what you're copying/referring
 now).
+
+As for Flakes, refer to
+[Introduction to Flakes - NixOS & Nix Flakes Book](https://nixos-and-flakes.thiscute.world/nixos-with-flakes/introduction-to-flakes)
