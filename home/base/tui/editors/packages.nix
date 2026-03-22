@@ -97,6 +97,7 @@
         pnpm
         typescript
         typescript-language-server
+        bun
         vscode-langservers-extracted
         tailwindcss-language-server
         emmet-ls
