@@ -16,7 +16,7 @@
         jsonnet
         jsonnet-language-server
         taplo
-        nodePackages.yaml-language-server
+        yaml-language-server
         actionlint
 
         hadolint
@@ -88,22 +88,23 @@
         stylua
         lua-language-server
 
-        nodePackages.bash-language-server
+        bash-language-server
         shellcheck
         shfmt
       ]
       ++ [
-        nodePackages.nodejs
-        nodePackages.typescript
-        nodePackages.typescript-language-server
-        nodePackages.vscode-langservers-extracted
-        nodePackages."@tailwindcss/language-server"
+        nodejs_24
+        pnpm
+        typescript
+        typescript-language-server
+        vscode-langservers-extracted
+        tailwindcss-language-server
         emmet-ls
       ]
       ++ [
         proselint
         verible
-        nodePackages.prettier
+        prettier
         fzf
         gdu
         (ripgrep.override { withPCRE2 = true; })
