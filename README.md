@@ -47,3 +47,7 @@ As for Flakes, refer to
 | **Image Viewer**                                               | [imv](https://sr.ht/~exec64/imv/)                                                                                                                                                                                                          |
 | **Screenshot Software**                                        | Niri's builtin function                                                                                                                                                                                                                    |
 | **Screen Recording**                                           | [OBS](https://obsproject.com/)                                                                                                                                                                                                             |
+
+## Agents
+
+See [./agents](./agents) for my reusable cross-project agent files and installer script.
