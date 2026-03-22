@@ -1,7 +1,7 @@
 # This file is copied from ryan4yin's nix-config, with some modifications. The original file can be found at:
 # https://github.com/ryan4yin/nix-config/blob/3bf1b986cfbfcd333f0a835861728ec405a0a759/modules/nixos/desktop/networking/remote-desktop.nix
 
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
     moonlight-qt # moonlight client, for streaming games/desktop from a PC
@@ -29,7 +29,7 @@
   #
   # ===============================================================================
   services.sunshine = {
-    enable = false; # default to false, for security reasons.
+    enable = lib.mkDefault false; # default to false, for security reasons.
     autoStart = true;
     capSysAdmin = true; # only needed for Wayland -- omit this when using with Xorg
     openFirewall = true;
