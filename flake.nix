@@ -25,16 +25,13 @@
     };
 
     # Libraries & Utils
+    preservation.url = "github:nix-community/preservation";
     haumea = {
       url = "github:nix-community/haumea/v0.2.2";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     catppuccin = {
       url = "github:catppuccin/nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    preservation = {
-      url = "github:nix-community/preservation";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
