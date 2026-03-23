@@ -2,7 +2,8 @@
   pkgs,
   hostName,
   ...
-}: {
+}:
+{
   # supported file systems, so we can mount any removable disks with these filesystems
   boot.supportedFilesystems = [
     "ext4"
@@ -17,7 +18,7 @@
     inherit hostName;
 
     # we use networkd instead
-    networkmanager.enable = false;
+    networkmanager.enable = true;
     useDHCP = false;
   };
   networking.useNetworkd = true;

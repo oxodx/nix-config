@@ -75,7 +75,7 @@
     inherit hostName;
 
     # we use networkd instead
-    networkmanager.enable = false;
+    networkmanager.enable = true;
     useDHCP = false;
   };
   networking.useNetworkd = true;
