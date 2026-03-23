@@ -44,7 +44,8 @@ in
     k3sModule
   ];
 
-  boot.loader.grub.device = lib.mkDefault "/dev/sda";
+  boot.loader.grub.efiSupport = true;
+  boot.loader.grub.efiInstallAsRemovable = true;
 
   modules.base.users.users = [ "oxod" ];
 
