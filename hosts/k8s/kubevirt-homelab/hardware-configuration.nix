@@ -16,6 +16,10 @@
     "sd_mod"
     "sr_mod"
     "btrfs"
+    "ip6_tables"
+    "ip6table_filter"
+    "ip6table_mangle"
+    "ip6table_raw"
   ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [
