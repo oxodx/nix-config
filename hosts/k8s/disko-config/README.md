@@ -31,4 +31,7 @@ mkdir -p /persistent/home/oxod
 chown -R oxod:oxod /persistent/home/oxod
 
 # add your k3s token at /persistent/kubevirt-k3s-token
+# If you dont have it generated yet you can run
+k3s token generate > /persistent/kubevirt-k3s-token
+chmod 600 /persistent/kubevirt-k3s-token
 ```
