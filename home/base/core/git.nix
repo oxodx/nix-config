@@ -9,26 +9,6 @@
     rm -f ${config.home.homeDirectory}/.gitconfig
   '';
 
-  programs.gh = {
-    enable = true;
-    settings = {
-      git_protocol = "ssh";
-      prompt = "enabled";
-      aliases = {
-        co = "pr checkout";
-        pv = "pr view";
-      };
-    };
-    hosts = {
-      "github.com" = {
-        "users" = {
-          "0x0Dx" = null;
-        };
-        "user" = "0x0Dx";
-      };
-    };
-  };
-
   programs.git = {
     enable = true;
     lfs.enable = true;
