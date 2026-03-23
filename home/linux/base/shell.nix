@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, myvars, ... }:
 let
   d = config.xdg.dataHome;
   c = config.xdg.configHome;
