@@ -34,11 +34,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixpak = {
-      url = "github:nixpak/nixpak";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     aagl = {
       url = "github:ezKEa/aagl-gtk-on-nix/release-25.11";
       inputs.nixpkgs.follows = "nixpkgs";
