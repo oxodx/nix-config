@@ -21,8 +21,8 @@
     networkmanager.enable = true;
     useDHCP = false;
   };
-  networking.useNetworkd = true;
-  systemd.network.enable = true;
+  networking.useNetworkd = false;
+  systemd.network.enable = false;
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
