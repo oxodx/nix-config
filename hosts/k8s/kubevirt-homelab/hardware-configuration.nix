@@ -15,6 +15,7 @@
     "usb_storage"
     "sd_mod"
     "sr_mod"
+    "btrfs"
   ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
