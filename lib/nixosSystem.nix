@@ -27,7 +27,9 @@ nixpkgs.lib.nixosSystem {
         home-manager.useUserPackages = true;
         home-manager.backupFileExtension = "home-manager.backup";
 
-        home-manager.extraSpecialArgs = specialArgs;
+        home-manager.extraSpecialArgs = specialArgs // {
+          inherit myvars;
+        };
         home-manager.users."${myvars.username}".imports = home-modules;
       }
     ]);

@@ -29,6 +29,7 @@ let
       inputs
       lib
       mylib
+      myvars
       genSpecialArgs
       ;
   };
