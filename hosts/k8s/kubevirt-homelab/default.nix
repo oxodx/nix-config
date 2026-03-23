@@ -49,8 +49,6 @@ in
   boot.loader.efi.efiSysMountPoint = "/boot";
   boot.loader.efi.canTouchEfiVariables = true;
 
-  modules.base.users.users = [ myvars.username ];
-
   boot.kernelParams = [
     # disable transparent hugepage(allocate hugepages dynamically)
     "transparent_hugepage=never"
