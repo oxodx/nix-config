@@ -8,7 +8,7 @@
   # and other servers must connect to it using `serverAddr`.
   #
   # this can be a domain name or an IP address(such as kube-vip's virtual IP)
-  masterHost,
+  masterHost ? null,
   clusterInit ? false,
   kubeletExtraArgs ? [ ],
   k3sExtraArgs ? [ ],

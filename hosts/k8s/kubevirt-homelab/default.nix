@@ -9,7 +9,7 @@ let
   hostName = "kubevirt-homelab";
 
   coreModule = mylib.genKubeVirtHostModule {
-    inherit pkgs hostName;
+    inherit lib pkgs hostName;
   };
   k3sModule = mylib.genK3sServerModule {
     inherit pkgs;
