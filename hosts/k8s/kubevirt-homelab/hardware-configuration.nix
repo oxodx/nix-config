@@ -18,7 +18,13 @@
     "btrfs"
   ];
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-intel" ];
+  boot.kernelModules = [
+    "kvm-intel"
+    "ip6_tables"
+    "ip6table_filter"
+    "ip6table_mangle"
+    "ip6table_raw"
+  ];
   boot.extraModulePackages = [ ];
 
   swapDevices = [ ];
