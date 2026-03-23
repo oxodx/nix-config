@@ -8,7 +8,7 @@ This directory contains all Home Manager configurations organized by platform an
 home/
 ├── base/              # Cross-platform home manager configurations
 │   ├── core/          # Essential applications and settings
-│   │   ├── editors/   # Editor configurations (Neovim, Helix)
+│   │   ├── editors/   # Editor configurations (Neovim)
 │   │   ├── shells/    # Shell configurations (Nushell, Zellij)
 │   │   └── ...
 │   ├── gui/           # GUI applications and desktop settings

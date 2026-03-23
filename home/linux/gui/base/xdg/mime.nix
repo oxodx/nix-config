@@ -21,7 +21,6 @@
           "code.desktop"
           "code-insiders.desktop"
           "nvim.desktop"
-          "Helix.desktop"
         ];
       in
       {
