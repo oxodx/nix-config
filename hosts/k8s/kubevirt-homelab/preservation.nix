@@ -12,6 +12,9 @@
   preservation.enable = true;
   boot.initrd.systemd.enable = true;
 
+  systemd.services.iscsid.restartIfChanged = false;
+  systemd.sockets.iscsid.restartIfChanged = false;
+
   environment.systemPackages = [
     # `sudo ncdu -x /`
     pkgs.ncdu
