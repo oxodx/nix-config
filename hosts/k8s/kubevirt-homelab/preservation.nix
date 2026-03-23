@@ -10,6 +10,7 @@
   ];
 
   preservation.enable = true;
+  boot.initrd.systemd.enable = true;
 
   environment.systemPackages = [
     # `sudo ncdu -x /`
@@ -33,7 +34,11 @@
       "/etc/rancher"
     ];
     files = [
-      "/etc/machine-id"
+      # auto-generated machine ID
+      {
+        file = "/etc/machine-id";
+        inInitrd = true;
+      }
     ];
 
     # the following directories will be passed to /persistent/home/$USER
