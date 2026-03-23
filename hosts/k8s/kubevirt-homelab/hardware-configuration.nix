@@ -12,7 +12,6 @@
     "xhci_pci"
     "ehci_pci"
     "ahci"
-    "usbdhid"
     "usb_storage"
     "sd_mod"
     "sr_mod"
