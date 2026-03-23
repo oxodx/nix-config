@@ -32,6 +32,6 @@ chown -R oxod:oxod /persistent/home/oxod
 
 # add your k3s token at /persistent/kubevirt-k3s-token
 # If you dont have it generated yet you can run
-echo "$(openssl rand -hex 32)" > /persistent/kubevirt-k3s-token
+sudo sh -c 'echo "$(openssl rand -hex 32)" > /persistent/kubevirt-k3s-token'
 chmod 600 /persistent/kubevirt-k3s-token
 ```
