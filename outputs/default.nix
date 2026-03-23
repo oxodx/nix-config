@@ -2,12 +2,13 @@
 let
   inherit (inputs.nixpkgs) lib;
   mylib = import ../lib { inherit lib; };
+  myvars = import ../vars { inherit lib; };
 
   genSpecialArgs =
     system:
     inputs
     // {
-      inherit mylib;
+      inherit mylib myvars;
 
       pkgs-stable = import inputs.nixpkgs-stable {
         inherit system;
