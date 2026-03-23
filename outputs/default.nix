@@ -95,7 +95,7 @@ in
     pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
       src = mylib.relativeToRoot ".";
       hooks = {
-        pkgs.nixfmt = {
+        nixfmt-rfc-style = {
           enable = true;
           settings.width = 100;
         };
