@@ -25,7 +25,7 @@ let
     home-modules =
       (map mylib.relativeToRoot [
         "home/linux/gui.nix"
-        "hosts/${name}/home.nix"
+        "home/linux/hosts/${name}.nix"
       ])
       ++ [
         {
