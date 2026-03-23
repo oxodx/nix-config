@@ -1,5 +1,7 @@
 { myvars, ... }:
 {
+  programs.ssh = myvars.networking.ssh;
+
   users.users.${myvars.username} = {
     description = myvars.userfullname;
     # Public Keys that can be used to login to all my PCs, Macbooks, and servers.
