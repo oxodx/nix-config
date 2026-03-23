@@ -25,7 +25,7 @@
   };
 
   users.users."${myvars.username}" = {
-    initialPassword = "placeholder";
+    inherit (myvars) initialHashedPassword;
     home = "/home/${myvars.username}";
     isNormalUser = true;
     extraGroups = [
@@ -43,6 +43,6 @@
   };
 
   users.users.root = {
-    initialPassword = "placeholder";
+    inherit (myvars) initialHashedPassword;
   };
 }
