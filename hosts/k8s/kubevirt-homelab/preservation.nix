@@ -31,7 +31,6 @@
 
       # k3s related
       "/etc/iscsi"
-      "/etc/rancher"
     ];
     files = [
       # auto-generated machine ID
