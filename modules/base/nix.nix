@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, myvars, ... }:
 {
   nix.settings = {
     experimental-features = [
@@ -6,7 +6,7 @@
       "flakes"
     ];
 
-    trusted-users = [ "oxod" ];
+    trusted-users = [ myvars.username ];
 
     substituters = [
       "https://cache.nixos.org"
