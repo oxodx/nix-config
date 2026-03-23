@@ -1,49 +1,48 @@
-{ lib, config, ... }:
-with lib;
-let
-  cfg = config.modules.base.users;
-in
 {
-  options.modules.base.users = {
-    users = mkOption {
-      type = with types; listOf str;
-      default = [ ];
-      description = "Normal users to create on this host.";
-    };
+  myvars,
+  config,
+  ...
+}:
+{
+  # Don't allow mutation of users outside the config.
+  users.mutableUsers = false;
+
+  users.groups = {
+    "${myvars.username}" = { };
+    podman = { };
+    docker = { };
+    wireshark = { };
+    # for android platform tools's udev rules
+    adbusers = { };
+    dialout = { };
+    # for openocd (embedded system development)
+    plugdev = { };
+    # misc
+    uinput = { };
+    # shared group for services that read/write the same data directory
+    # (e.g. sftpgo + transmission on aquamarine)
+    fileshare = { };
   };
 
-  config = {
-    users.mutableUsers = false;
+  users.users."${myvars.username}" = {
+    initialPassword = "placeholder";
+    home = "/home/${myvars.username}";
+    isNormalUser = true;
+    extraGroups = [
+      myvars.username
+      "users"
+      "wheel"
+      "networkmanager" # for nmtui / nm-connection-editor
+      "podman"
+      "docker"
+      "wireshark"
+      "adbusers" # android debugging
+      "libvirtd" # virt-viewer / qemu
+      "fileshare"
+    ];
+  };
 
-    users.groups = {
-      podman = { };
-      wireshark = { };
-      adbusers = { };
-      dialout = { };
-      plugdev = { };
-      uinput = { };
-    }
-    // (genAttrs cfg.users (name: { }));
-
-    users.users = {
-      root = {
-        initialPassword = "placeholder";
-      };
-    }
-    // (genAttrs cfg.users (name: {
-      initialPassword = "placeholder";
-      home = "/home/${name}";
-      isNormalUser = true;
-      extraGroups = [
-        name
-        "users"
-        "wheel"
-        "networkmanager"
-        "podman"
-        "wireshark"
-        "adbusers"
-        "libvirtd"
-      ];
-    }));
+  users.users.root = {
+    initialPassword = "placeholder";
   };
 }

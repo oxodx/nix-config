@@ -2,6 +2,7 @@
   lib,
   pkgs,
   mylib,
+  myvars,
   disko,
   ...
 }:
@@ -13,7 +14,7 @@ let
   };
   k3sModule = mylib.genK3sServerModule {
     inherit pkgs;
-    kubeconfigFile = "/home/oxod/.kube/config";
+    kubeconfigFile = "/home/${myvars.username}/.kube/config";
     tokenFile = "/persistent/kubevirt-k3s-token";
     # the first node in the cluster should be the one to initialize the cluster
     clusterInit = true;
@@ -48,7 +49,7 @@ in
   boot.loader.efi.efiSysMountPoint = "/boot";
   boot.loader.efi.canTouchEfiVariables = true;
 
-  modules.base.users.users = [ "oxod" ];
+  modules.base.users.users = [ myvars.username ];
 
   boot.kernelParams = [
     # disable transparent hugepage(allocate hugepages dynamically)

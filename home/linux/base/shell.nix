@@ -5,7 +5,7 @@ let
   cache = config.xdg.cacheHome;
 in
 rec {
-  home.homeDirectory = "/home/oxod";
+  home.homeDirectory = "/home/${myvars.username}";
 
   # environment variables that always set at login
   home.sessionVariables = {

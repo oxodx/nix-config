@@ -1,7 +1,7 @@
-{ ... }:
+{ myvars, ... }:
 {
   home = {
-    username = "oxod";
+    inherit (myvars) username;
     stateVersion = "25.11";
   };
 }
