@@ -2,6 +2,7 @@
   inputs,
   lib,
   mylib,
+  myvars,
   system,
   genSpecialArgs,
   niri,

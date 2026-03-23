@@ -133,6 +133,7 @@ in
           statix
           typos
           prettier
+          wpa_supplicant
         ];
         name = "dots";
         inherit (self.checks.${system}.pre-commit-check) shellHook;

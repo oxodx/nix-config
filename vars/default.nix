@@ -3,7 +3,6 @@
   username = "oxod";
   userfullname = "0x0D";
   useremail = "0xOD@proton.me";
-  networking = import ./networking.nix { inherit lib; };
   # Generated using: mkpasswd -m yescrypt --rounds=11
   # Password: long, strong random string (full charset)
   # Rotation policy: changed annually
@@ -31,4 +30,12 @@
     # the backup ssh keys for disaster recovery
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFq1eYW8+3zOgM1/8JofUiAlimyEBjSVLerE46pYQBTK oxod@romantic"
   ];
+
+  ssh = {
+    extraConfig = "";
+    knownHosts = {
+      "github.com".publicKey =
+        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFq1eYW8+3zOgM1/8JofUiAlimyEBjSVLerE46pYQBTK oxod@romantic";
+    };
+  };
 }

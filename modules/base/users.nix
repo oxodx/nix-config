@@ -1,6 +1,9 @@
 { myvars, ... }:
 {
-  programs.ssh = myvars.networking.ssh;
+  programs.ssh = {
+    extraConfig = myvars.ssh.extraConfig;
+    knownHosts = myvars.ssh.knownHosts;
+  };
 
   users.users.${myvars.username} = {
     description = myvars.userfullname;
