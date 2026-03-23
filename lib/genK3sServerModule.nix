@@ -71,7 +71,7 @@ in
           "--disable=traefik" # deploy our own ingress controller instead
           "--disable=servicelb" # we use kube-vip instead
           "--disable-network-policy"
-          "--tls-san=${masterHost}"
+          "--tls-san=${if masterHost != null then masterHost else "127.0.0.1"}"
         ]
         ++ (map (label: "--node-label=${label}") nodeLabels)
         ++ (map (taint: "--node-taint=${taint}") nodeTaints)
