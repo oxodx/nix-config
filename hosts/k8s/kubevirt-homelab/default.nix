@@ -44,8 +44,9 @@ in
     k3sModule
   ];
 
-  boot.loader.grub.efiSupport = true;
-  boot.loader.grub.efiInstallAsRemovable = true;
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.efiSysMountPoint = "/boot";
+  boot.loader.efi.canTouchEfiVariables = true;
 
   modules.base.users.users = [ "oxod" ];
 
