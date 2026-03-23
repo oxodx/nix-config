@@ -78,8 +78,8 @@
     networkmanager.enable = true;
     useDHCP = false;
   };
-  networking.useNetworkd = true;
-  systemd.network.enable = true;
+  networking.useNetworkd = false;
+  systemd.network.enable = false;
 
   # Enable the Open vSwitch as a systemd service
   # It's required by kubernetes' ovs-cni plugin.
