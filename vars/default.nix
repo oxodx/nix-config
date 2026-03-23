@@ -24,6 +24,7 @@
   mainSshAuthorizedKeys = [
     # The main ssh keys for daily usage
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKEJlh+mABI11oMlheEduOiPnTc8wgSs2/cHqhb9QW+Q oxod@kumquat"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILUGA8ozQcDCxa3TvTLHmpinCmh6ZKZkM7MUSxBHPRM0 oxod@homelab"
   ];
   secondaryAuthorizedKeys = [
     # the backup ssh keys for disaster recovery
