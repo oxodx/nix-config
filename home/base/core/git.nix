@@ -9,6 +9,8 @@
     rm -f ${config.home.homeDirectory}/.gitconfig
   '';
 
+  programs.gh.enable = true;
+
   programs.git = {
     enable = true;
     lfs.enable = true;
