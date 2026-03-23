@@ -83,3 +83,4 @@ Other dotfiles that inspired me:
 
 - Nix Flakes
   - [ryan4yin/nix-config](https://github.com/ryan4yin/nix-config)
+  - [wimpysworld/nix-config](https://github.com/wimpysworld/nix-config)
