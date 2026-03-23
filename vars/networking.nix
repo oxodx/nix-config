@@ -52,7 +52,7 @@ rec {
             HostName ${val.ipv4}
             Port 22
         ''
-      ) "" hostsAddr
+      ) "" hostAddr
     );
 
     # this config will be written to /etc/ssh/ssh_known_hosts
@@ -65,7 +65,7 @@ rec {
       #     => { x = "bar-a"; y = "bar-b"; }
       lib.attrsets.mapAttrs
         (host: value: {
-          hostNames = [ host ] ++ (lib.optional (hostsAddr ? host) hostsAddr.${host}.ipv4);
+          hostNames = [ host ] ++ (lib.optional (hostAddr ? host) hostAddr.${host}.ipv4);
           publicKey = value.publicKey;
         })
         {
