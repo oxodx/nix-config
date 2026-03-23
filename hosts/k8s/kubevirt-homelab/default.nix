@@ -11,6 +11,7 @@ let
 
   coreModule = mylib.genKubeVirtHostModule {
     inherit lib pkgs hostName;
+    networking = myvars.networking;
   };
   k3sModule = mylib.genK3sServerModule {
     inherit pkgs;
