@@ -1,6 +1,7 @@
 { lib }:
 rec {
   mainGateway = "192.168.1.1";
+  proxyGateway = mainGateway;
   # Router currently does not support ip6
   #mainGateway6 = "fe80::8";
 
@@ -20,6 +21,7 @@ rec {
       ipv4 = "192.168.5.181";
     };
   };
+  hostsAddr = hostAddr;
 
   hostInterface = lib.attrsets.mapAttrs (key: val: {
     interfaces."${val.iface}" = {
