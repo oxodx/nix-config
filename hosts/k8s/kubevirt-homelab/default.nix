@@ -44,6 +44,13 @@ in
     k3sModule
   ];
 
+  networking = {
+    hostName = "kubevirt-homelab";
+
+    networkmanager.enable = true;
+    useDHCP = false;
+  };
+
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.efiSysMountPoint = "/boot";
   boot.loader.efi.canTouchEfiVariables = true;
