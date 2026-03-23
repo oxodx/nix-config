@@ -44,6 +44,10 @@ in
     k3sModule
   ];
 
+  boot.loader.grub.device = lib.mkDefault "/dev/sda";
+
+  modules.base.users.users = [ "oxod" ];
+
   boot.kernelParams = [
     # disable transparent hugepage(allocate hugepages dynamically)
     "transparent_hugepage=never"
@@ -54,6 +58,6 @@ in
     # NOTE: the hugepages allocated here can not be used for other purposes!
     # so we should left some memory for the host OS and other vms that don't use hugepages
     "hugepagesz=1G"
-    "hugepages=48" # use 75% of the total memory for hugepages
+    "hugepages=6"
   ];
 }
