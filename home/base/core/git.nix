@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  myvars,
   ...
 }:
 {
@@ -16,8 +17,8 @@
     lfs.enable = true;
 
     settings = {
-      user.email = "0xOD@proton.me";
-      user.name = "0x0D";
+      user.email = myvars.username;
+      user.name = myvars.userfullname;
 
       init.defaultBranch = "main";
       trim.bases = "develop,master,main";
