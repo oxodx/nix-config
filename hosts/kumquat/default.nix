@@ -24,13 +24,5 @@
     useDHCP = false;
   };
 
-  modules.base.users.users = [
-    "oxod"
-    "nixos"
-  ];
-
-  networking.useNetworkd = true;
-  systemd.network.enable = true;
-
   system.stateVersion = "25.11";
 }
