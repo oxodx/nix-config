@@ -14,5 +14,12 @@
       file = "forgejo-dump";
       type = "tar.zst";
     };
+
+    settings = {
+      server = {
+        HTTP_PORT = 3008;
+        SSH_PORT = lib.head config.services.openssh.ports;
+      };
+    };
   };
 }
