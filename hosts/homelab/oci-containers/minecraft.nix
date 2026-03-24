@@ -81,4 +81,28 @@ in
     ];
     log-driver = "journald";
   };
+
+  systemd.services.init-minecraft-network = {
+    description = "Create minecraft_default docker network";
+    after = [
+      "network.target"
+      "docker.service"
+    ];
+    requires = [ "docker.service" ];
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = pkgs.writeShellScript "init-minecraft-network" ''
+        ${pkgs.docker}/bin/docker network inspect minecraft_default >/dev/null 2>&1 || \
+        ${pkgs.docker}/bin/docker network create minecraft_default
+      '';
+    };
+  };
+
+  # Make both containers wait for the network
+  systemd.services.docker-minecraft-mc.after = [ "init-minecraft-network.service" ];
+  systemd.services.docker-minecraft-lazymc.after = [ "init-minecraft-network.service" ];
+  systemd.services.docker-minecraft-mc.requires = [ "init-minecraft-network.service" ];
+  systemd.services.docker-minecraft-lazymc.requires = [ "init-minecraft-network.service" ];
 }
