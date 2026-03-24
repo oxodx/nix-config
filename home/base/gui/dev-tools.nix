@@ -10,6 +10,7 @@
     ]
     # AI Agent Tools
     ++ (with pkgs-master; [
+      codex
       cursor-cli
       claude-code
       gemini-cli
