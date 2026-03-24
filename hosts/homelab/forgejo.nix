@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 {
   # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/misc/forgejo.nix
   services.forgejo = {
