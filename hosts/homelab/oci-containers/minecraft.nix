@@ -9,7 +9,9 @@ let
   uid = 990;
   dataDir = "/data/apps/minecraft/mc-1";
 
-  composeFile = pkgs.writeText "docker-compose.yml" ''
+  composeFile = "${dataDir}/docker-compose.yml";
+
+  composeContent = ''
     networks:
       minecraft-network:
         driver: bridge    
@@ -75,6 +77,7 @@ in
     "d ${dataDir}                  0755 ${user} ${user} -"
     "Z /data/apps/minecraft        0755 ${user} ${user} -"
     "Z ${dataDir}                  0755 ${user} ${user} -"
+    "L+ ${composeFile} - - - - ${pkgs.writeText "docker-compose.yml" composeContent}"
   ];
 
   systemd.services.minecraft = {
