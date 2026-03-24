@@ -14,21 +14,5 @@
       file = "forgejo-dump";
       type = "tar.zst";
     };
-    database = {
-      type = "sqlite3";
-      name = "forgejo";
-      createDatabase = true;
-    };
-  };
-
-  users = {
-    users.forgejo = {
-      home = "/var/lib/forgejo";
-      useDefaultShell = true;
-      group = "forgejo";
-      isSystemUser = true;
-    };
-
-    groups.forgejo = { };
   };
 }
