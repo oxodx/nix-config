@@ -9,7 +9,7 @@
     eula = true;
     declarative = true;
 
-    package = pkgs.minecraft-server_1_21_10;
+    package = pkgs.minecraft-server_1_21;
     dataDir = "/data/apps/minecraft/mc-1";
 
     serverProperties = {
