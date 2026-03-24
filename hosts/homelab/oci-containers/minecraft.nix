@@ -5,7 +5,8 @@
 }:
 let
   user = "minecraft";
-  dataDir = "/data/apps/minecraft/mc-1";
+  pDataDir = "/data/apps/minecraft/mc-1";
+  dataDir = "${pDataDir}/mc-1";
   containerUid = 1000;
 in
 {
@@ -20,7 +21,8 @@ in
   # Create Directories
   # https://www.freedesktop.org/software/systemd/man/latest/tmpfiles.d.html#Type
   systemd.tmpfiles.rules = [
-    "Z ${dataDir} 0755 ${user} ${user}"
+    "d ${pDataDir}    0755 ${user} ${user}"
+    "d ${dataDir}     0755 ${user} ${user}"
   ];
 
   virtualisation.oci-containers.containers."minecraft-mc" = {
