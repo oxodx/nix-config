@@ -29,6 +29,7 @@
   # Containers
   virtualisation.oci-containers.containers."minecraft-mc" = {
     image = "itzg/minecraft-server:latest";
+    user = "oxod";
     environment = {
       "DIFFICULTY" = "3";
       "ENABLE_WHITELIST" = "true";
@@ -56,7 +57,6 @@
       "--network-alias=mc"
       "--network=minecraft_default"
       "--no-healthcheck"
-      "--userns=host"
     ];
   };
   systemd.services."podman-minecraft-mc" = {
