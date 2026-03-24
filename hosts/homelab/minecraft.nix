@@ -10,7 +10,7 @@
     openFirewall = true;
     declarative = true;
 
-    package = pkgs.minecraft-server_1_21;
+    package = pkgs.papermc;
     dataDir = "/data/apps/minecraft/mc-1";
 
     serverProperties = {
