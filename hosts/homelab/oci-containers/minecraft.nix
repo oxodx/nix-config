@@ -1,5 +1,6 @@
 {
   lib,
+  config,
   pkgs,
   ...
 }:
@@ -7,32 +8,6 @@ let
   user = "minecraft";
   uid = 990;
   dataDir = "/data/apps/minecraft/mc-1";
-
-  # TODO: replace with proper secret management
-  rconPassword = "changeme";
-
-  lazymcToml = pkgs.writeText "lazymc.toml" ''
-    [server]
-    address = "0.0.0.0:25565"
-    directory = "/data"
-    start_on_join = true
-    wake_on_start = true
-    freeze_process = false
-
-    [public]
-    address = "0.0.0.0:25565"
-    version = "1.21.1"
-    protocol = 767
-
-    [rcon]
-    enabled = true
-    host = "mc"
-    port = 25575
-    password = "${rconPassword}"
-
-    [time]
-    sleep_after = 300
-  '';
 in
 {
   users.groups.${user} = { };
@@ -51,9 +26,10 @@ in
   ];
 
   virtualisation.oci-containers.containers."minecraft-lazymc" = {
-    image = "ghcr.io/timvisee/lazymc:latest";
+    image = "ghcr.io/joesturge/lazymc-docker-proxy:latest";
     volumes = [
-      "${lazymcToml}:/lazymc.toml:ro"
+      "${dataDir}:/server:ro"
+      "/run/podman/podman.sock:/var/run/docker.sock:ro"
     ];
     ports = [
       "25565:25565/tcp"
@@ -68,6 +44,22 @@ in
   virtualisation.oci-containers.containers."minecraft-mc" = {
     image = "itzg/minecraft-server:latest";
     user = "${toString uid}:${toString uid}";
+    # lazymc manages start/stop, so don't auto-restart
+    extraOptions = [
+      "--network-alias=mc"
+      "--network=minecraft_default"
+      "--no-healthcheck"
+      "--restart=no"
+      # lazymc-docker-proxy discovers this container via these labels
+      "--label=lazymc.enabled=true"
+      "--label=lazymc.group=mc"
+      "--label=lazymc.server.address=mc:25565"
+      "--label=lazymc.server.directory=/server"
+      "--label=lazymc.public.version=1.21.1"
+      "--label=lazymc.public.protocol=767"
+      "--label=lazymc.time.sleep_after=300"
+      "--label=lazymc.server.wake_whitelist=true"
+    ];
     environment = {
       "DIFFICULTY" = "3";
       "ENABLE_WHITELIST" = "true";
@@ -76,8 +68,6 @@ in
       "MEMORY" = "2048M";
       "OPS" = "0x0D_
   jaydon30";
-      "RCON_ENABLED" = "true";
-      "RCON_PASSWORD" = rconPassword;
       "SIMULATION_DISTANCE" = "6";
       "TYPE" = "PAPER";
       "USE_MEOWICE_FLAGS" = "true";
@@ -90,10 +80,5 @@ in
       "${dataDir}:/data:rw"
     ];
     log-driver = "journald";
-    extraOptions = [
-      "--network-alias=mc"
-      "--network=minecraft_default"
-      "--no-healthcheck"
-    ];
   };
 }
