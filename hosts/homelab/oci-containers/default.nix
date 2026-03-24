@@ -26,4 +26,6 @@
       backend = "podman";
     };
   };
+
+  systemd.sockets.podman.enable = true;
 }
