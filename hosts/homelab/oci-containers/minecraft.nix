@@ -56,6 +56,7 @@
       "--network-alias=mc"
       "--network=minecraft_default"
       "--no-healthcheck"
+      "--userns=host"
     ];
   };
   systemd.services."podman-minecraft-mc" = {
