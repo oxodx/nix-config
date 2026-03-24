@@ -6,6 +6,8 @@
 let
   user = "minecraft";
   dataDir = "/data/apps/minecraft/mc-1";
+  containerUid = 1000; # UID that the container runs as
+  containerGid = 1000; # GID that the container runs as
 in
 {
   users.groups.${user} = { };
@@ -13,6 +15,8 @@ in
     group = user;
     home = dataDir;
     isSystemUser = true;
+    uid = containerUid; # Match the container's UID
+    gid = containerGid; # Match the container's GID
   };
 
   # Create Directories
@@ -45,6 +49,7 @@ in
     ports = [
       "25565:25565/tcp"
     ];
+    user = "${toString containerUid}:${toString containerGid}";
     log-driver = "journald";
     extraOptions = [
       "--network-alias=mc"
