@@ -8,9 +8,9 @@ let
     address = "0.0.0.0:${toString publicPort}"
 
     [server]
+    command = "systemctl start minecraft-server"
     address = "127.0.0.1:${toString serverPort}"
     directory = "/data/apps/minecraft/mc-1"
-    start_command = "systemctl start minecraft-server"
     stop_method = "rcon"
     wake_on_start = false
     wake_on_crash = true
