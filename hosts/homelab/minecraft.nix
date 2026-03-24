@@ -21,7 +21,7 @@ let
     password = "changeme"
 
     [time]
-    sleep_after = 600
+    sleep_after = 60
   '';
 in
 {
