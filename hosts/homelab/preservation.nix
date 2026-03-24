@@ -30,9 +30,6 @@
 
       "/var/log"
       "/var/lib"
-
-      # k3s related
-      "/etc/iscsi"
     ];
     files = [
       # auto-generated machine ID
@@ -78,7 +75,6 @@
       "/home/oxod/.local".d = permission;
       "/home/oxod/.local/share".d = permission;
       "/home/oxod/.local/state".d = permission;
-      "/home/oxod/.terraform.d".d = permission;
     };
 
   # systemd-machine-id-commit.service would fail but it is not relevant
