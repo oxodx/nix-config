@@ -29,7 +29,7 @@ in
     image = "ghcr.io/joesturge/lazymc-docker-proxy:latest";
     volumes = [
       "${dataDir}:/server:ro"
-      "/run/podman/podman.sock:/var/run/docker.sock:ro"
+      "/var/run/docker.sock:/var/run/docker.sock:ro"
     ];
     ports = [
       "25565:25565/tcp"
@@ -50,7 +50,6 @@ in
       "--network=minecraft_default"
       "--no-healthcheck"
       "--restart=no"
-      "--no-rm"
       # lazymc-docker-proxy discovers this container via these labels
       "--label=lazymc.enabled=true"
       "--label=lazymc.group=mc"
