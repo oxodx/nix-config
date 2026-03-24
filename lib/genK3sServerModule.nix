@@ -30,7 +30,6 @@ in
     kubernetes-helm
     cilium-cli
     clusterctl # for kubernetes cluster-api
-    fluxcd
 
     skopeo # copy/sync images between registries and local storage
     go-containerregistry # provides `crane` & `gcrane`, it's similar to skopeo
@@ -67,7 +66,6 @@ in
           "--etcd-expose-metrics=true"
           "--etcd-snapshot-schedule-cron='0 */12 * * *'"
           # disable some features we don't need
-          "--disable-helm-controller" # we use fluxcd instead
           "--disable=traefik" # deploy our own ingress controller instead
           "--disable=servicelb" # we use kube-vip instead
           "--disable-network-policy"
