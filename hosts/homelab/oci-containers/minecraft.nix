@@ -52,13 +52,4 @@ in
       "--no-healthcheck"
     ];
   };
-
-  systemd.services.create-minecraft-network = {
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-    };
-    script = "podman network inspect minecraft_default || podman network create minecraft_default";
-    wantedBy = [ "multi-user.target" ];
-  };
 }
