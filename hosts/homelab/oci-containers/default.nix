@@ -7,9 +7,16 @@
 {
   imports = mylib.scanPaths ./.;
 
+  systemd.tmpfiles.rules = [
+    "d /data/apps/docker          0755 root root -"
+  ];
+
   virtualisation = {
     docker = {
       enable = true;
+      daemon.settings = {
+        data-root = "/data/apps/docker";
+      };
       autoPrune = {
         enable = true;
         dates = "weekly";
