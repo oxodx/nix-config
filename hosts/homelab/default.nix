@@ -20,7 +20,7 @@ in
   zramSwap.memoryPercent = lib.mkForce 100;
 
   networking = {
-    hostName = "kumquat";
+    hostName = "homelab";
 
     networkmanager.enable = true;
     useDHCP = false;
