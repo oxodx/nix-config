@@ -13,11 +13,9 @@ in
           "/run/user/1000/podman/podman.sock:/var/run/docker.sock:ro"
           "${dataDir}:/server:ro"
         ];
-        extraOptions = [
-          "--restart=unless-stopped"
-          "--health-cmd=echo ok"
-          "--no-healthcheck"
-        ];
+        # Disable healthcheck completely
+        healthcheck = null;
+        extraOptions = [ "--restart=unless-stopped" ];
       };
 
       # Minecraft server (managed by lazymc)
@@ -26,18 +24,15 @@ in
         volumes = [ "${dataDir}:/data" ];
         environment = {
           EULA = "TRUE";
-          DISABLE_HEALTHCHECK = "true";
         };
         labels = {
           "lazymc.enabled" = "true";
           "lazymc.group" = "mc";
           "lazymc.server.address" = "minecraft:25565";
         };
-        extraOptions = [
-          "--restart=no"
-          "--health-cmd=echo ok"
-          "--no-healthcheck"
-        ];
+        # Disable healthcheck completely
+        healthcheck = null;
+        extraOptions = [ "--restart=no" ];
       };
     };
   };
