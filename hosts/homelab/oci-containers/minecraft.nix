@@ -12,7 +12,7 @@ let
   composeFile = pkgs.writeText "docker-compose.yml" ''
     networks:
       minecraft-network:
-        driver: bridge
+        driver: bridge    
         ipam:
           config:
             - subnet: 172.18.0.0/16
@@ -31,7 +31,8 @@ let
           - "25565:25565"
 
       mc:
-        image: itzg/minecraft-server:latest
+        image: itzg/minecraft-server:java21
+        pull_policy: daily
         networks:
           minecraft-network:
             ipv4_address: 172.18.0.3
@@ -39,15 +40,9 @@ let
           - lazymc.enabled=true
           - lazymc.group=mc
           - lazymc.server.address=mc:25565
-          - lazymc.server.directory=/server
-          - lazymc.public.version=1.21.1
-          - lazymc.public.protocol=767
-          - lazymc.time.sleep_after=300
-          - lazymc.server.wake_whitelist=true
         tty: true
         stdin_open: true
         restart: no
-        user: "${toString uid}:${toString uid}"
         environment:
           DIFFICULTY: "3"
           ENABLE_WHITELIST: "true"
@@ -61,8 +56,9 @@ let
           VERSION: "1.21.11"
           VIEW_DISTANCE: "8"
           WHITELIST: "0x0D_\njaydon30"
+        user: "${toString uid}:${toString uid}"
         volumes:
-          - ${dataDir}:/data:rw
+          - ${dataDir}:/data
   '';
 in
 {
