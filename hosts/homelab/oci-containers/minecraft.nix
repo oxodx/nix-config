@@ -29,7 +29,7 @@ in
     image = "ghcr.io/joesturge/lazymc-docker-proxy:latest";
     volumes = [
       "${dataDir}:/server:ro"
-      "/var/run/docker.sock:/var/run/docker.sock:ro"
+      "/run/podman/podman.sock:/var/run/docker.sock:ro"
     ];
     ports = [
       "25565:25565/tcp"
