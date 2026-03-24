@@ -28,7 +28,7 @@ in
     homepage = {
       hostname = "homepage";
       image = "ghcr.io/gethomepage/homepage:latest";
-      ports = [ "127.0.0.1:54401:3000" ];
+      ports = [ "54401:3000" ];
       # https://github.com/louislam/uptime-kuma/wiki/Environment-Variables
       environment = {
         # "PUID" = config.users.users.${user}.uid;
