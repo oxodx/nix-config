@@ -23,7 +23,7 @@ in
     uptime-kuma = {
       hostname = "uptime-kuma";
       image = "louislam/uptime-kuma:1";
-      ports = [ "127.0.0.1:53350:3001" ];
+      ports = [ "53350:3001" ];
       # https://github.com/louislam/uptime-kuma/wiki/Environment-Variables
       environment = {
         # "PUID" = config.users.users.${user}.uid;
