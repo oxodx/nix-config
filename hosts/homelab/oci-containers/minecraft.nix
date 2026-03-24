@@ -1,41 +1,31 @@
-{ config, pkgs, ... }:
-let
-  dataDir = "/data/apps/minecraft/mc-1";
-in
 {
-  virtualisation.oci-containers = {
-    containers = {
-      # Lazymc proxy
-      lazymc = {
-        image = "ghcr.io/joesturge/lazymc-docker-proxy:latest";
-        ports = [ "25565:25565" ];
-        volumes = [
-          "/run/user/1000/podman/podman.sock:/var/run/docker.sock:ro"
-          "${dataDir}:/server:ro"
-        ];
-        # Disable healthcheck completely
-        healthcheck = null;
-        extraOptions = [ "--restart=unless-stopped" ];
-      };
+  pkgs,
+  ...
+}:
+{
+  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/services/games/minecraft-server.nix
+  services.minecraft-server = {
+    enable = true;
+    eula = true;
+    openFirewall = true;
+    declarative = true;
 
-      # Minecraft server (managed by lazymc)
-      minecraft = {
-        image = "itzg/minecraft-server:java21";
-        volumes = [ "${dataDir}:/data" ];
-        environment = {
-          EULA = "TRUE";
-        };
-        labels = {
-          "lazymc.enabled" = "true";
-          "lazymc.group" = "mc";
-          "lazymc.server.address" = "minecraft:25565";
-        };
-        # Disable healthcheck completely
-        healthcheck = null;
-        extraOptions = [ "--restart=no" ];
-      };
+    package = pkgs.papermc;
+    dataDir = "/data/apps/minecraft/mc-1";
+
+    serverProperties = {
+      gamemode = "survival";
+      difficulty = "hard";
+      simulation-distance = 10;
+      white-list = true;
+      allow-cheats = true;
     };
-  };
 
-  networking.firewall.allowedTCPPorts = [ 25565 ];
+    whitelist = {
+      "0x0D_" = "ef9ebb67-034c-4520-a700-6c67a3d63bb1";
+      "jaydon30" = "52566ea2-67eb-4266-8a9a-ad10ca6ec0df";
+    };
+
+    jvmOpts = "-Xms4092M -Xmx4092M -XX:+UseG1GC";
+  };
 }
