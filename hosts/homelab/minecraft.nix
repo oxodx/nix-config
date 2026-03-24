@@ -16,7 +16,6 @@
       gamemode = "survival";
       difficulty = "hard";
       simulation-distance = 10;
-      level-seed = "4";
       white-list = true;
     };
 
