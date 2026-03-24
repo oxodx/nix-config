@@ -1,6 +1,4 @@
 {
-  # required by preservation
-  fileSystems."/persistent".neededForBoot = true;
   disko.devices = {
     nodev."/" = {
       fsType = "tmpfs";
