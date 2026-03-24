@@ -1,33 +1,29 @@
 {
   lib,
-  pkgs,
   mylib,
   ...
 }:
 {
   imports = mylib.scanPaths ./.;
 
-  systemd.tmpfiles.rules = [
-    "d /data/apps/docker          0755 root root -"
-  ];
-
   virtualisation = {
-    docker = {
+    docker.enable = lib.mkForce false;
+    podman = {
       enable = true;
-      daemon.settings = {
-        data-root = "/data/apps/docker";
-      };
+      # Create a `docker` alias for podman, to use it as a drop-in replacement
+      dockerCompat = true;
+      # Required for containers under podman-compose to be able to talk to each other.
+      defaultNetwork.settings.dns_enabled = true;
+      # Periodically prune Podman resources
       autoPrune = {
         enable = true;
         dates = "weekly";
         flags = [ "--all" ];
       };
     };
-    podman.enable = lib.mkForce false;
+
     oci-containers = {
-      backend = "docker";
+      backend = "podman";
     };
   };
-
-  environment.systemPackages = [ pkgs.docker-compose ];
 }
