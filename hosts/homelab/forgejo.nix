@@ -31,6 +31,12 @@ in
         SSH_PORT = lib.head config.services.openssh.ports;
         ROOT_URL = "http://${srv.DOMAIN}:3008";
       };
+
+      # Add support for actions, based on act: https://github.com/nektos/act
+      actions = {
+        ENABLED = true;
+        DEFAULT_ACTIONS_URL = "github";
+      };
     };
   };
 }
