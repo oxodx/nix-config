@@ -30,6 +30,7 @@ in
     kubernetes-helm
     cilium-cli
     clusterctl # for kubernetes cluster-api
+    argocd
 
     skopeo # copy/sync images between registries and local storage
     go-containerregistry # provides `crane` & `gcrane`, it's similar to skopeo
