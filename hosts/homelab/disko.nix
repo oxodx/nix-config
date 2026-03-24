@@ -40,15 +40,16 @@
                   mountpoint = "/btr_pool";
                   mountOptions = [ "subvolid=5" ];
                 };
-                "@nix" = {
-                  mountpoint = "/nix";
+                "@apps" = {
+                  mountpoint = "/data/apps";
                   mountOptions = [
                     "compress-force=zstd:1"
-                    "noatime"
+                    # https://www.freedesktop.org/software/systemd/man/latest/systemd.mount.html
+                    "nofail"
                   ];
                 };
-                "@persistent" = {
-                  mountpoint = "/persistent";
+                "@nix" = {
+                  mountpoint = "/nix";
                   mountOptions = [
                     "compress-force=zstd:1"
                     "noatime"
