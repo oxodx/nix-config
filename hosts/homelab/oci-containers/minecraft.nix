@@ -50,6 +50,7 @@ in
       "--network=minecraft_default"
       "--no-healthcheck"
       "--restart=no"
+      "--no-rm"
       # lazymc-docker-proxy discovers this container via these labels
       "--label=lazymc.enabled=true"
       "--label=lazymc.group=mc"
