@@ -1,41 +1,100 @@
-{ lib }:
 {
-  username = "oxod";
-  userfullname = "0x0D";
-  useremail = "0xOD@proton.me";
-  # Generated using: mkpasswd -m yescrypt --rounds=11
-  # Password: long, strong random string (full charset)
-  # Rotation policy: changed annually
-  # Purpose: system login password only
-  # https://man.archlinux.org/man/crypt.5.en
-  initialHashedPassword = "$y$jFT$O6/xS4HtgDk15dQB483T11$HU1zvzxucp/C.YiLM8brR68w39Qm.HwdVc5BXpOfO1B";
-  # Public Keys that can be used to login to all my PCs, and servers.
-  #
-  # Since its authority is so large, we must strengthen its security:
-  # 1. The corresponding private key must be:
-  #    1. Generated locally on every trusted client via:
-  #      ```bash
-  #      # KDF: bcrypt with 256 rounds, takes 2s on Apple M2):
-  #      # Passphrase: digits + letters + symbols, 12+ chars
-  #      ssh-keygen -t ed25519 -a 256 -C "oxod@xxx" -f ~/.ssh/xxx
-  #      ```
-  #    2. Never leave the device and never sent over the network.
-  # 2. Or just use hardware security keys like Yubikey/CanoKey.
-  mainSshAuthorizedKeys = [
-    # The main ssh keys for daily usage
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKEJlh+mABI11oMlheEduOiPnTc8wgSs2/cHqhb9QW+Q oxod@kumquat"
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILUGA8ozQcDCxa3TvTLHmpinCmh6ZKZkM7MUSxBHPRM0 oxod@homelab"
-  ];
-  secondaryAuthorizedKeys = [
-    # the backup ssh keys for disaster recovery
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFq1eYW8+3zOgM1/8JofUiAlimyEBjSVLerE46pYQBTK oxod@romantic"
+  lib,
+  config,
+  pkgs,
+  ...
+}:
+let
+  user = "minecraft";
+  uid = 990;
+  dataDir = "/data/apps/minecraft/mc-1";
+
+  # TODO: replace with proper secret management
+  rconPassword = "changeme";
+
+  lazymcToml = pkgs.writeText "lazymc.toml" ''
+    [server]
+    address = "0.0.0.0:25565"
+    directory = "/data"
+    start_on_join = true
+    wake_on_start = true
+    freeze_process = false
+
+    [public]
+    address = "0.0.0.0:25565"
+    version = "1.21.1"
+    protocol = 767
+
+    [rcon]
+    enabled = true
+    host = "mc"
+    port = 25575
+    password = "${rconPassword}"
+
+    [time]
+    sleep_after = 300
+  '';
+in
+{
+  users.groups.${user} = { };
+  users.users.${user} = {
+    group = user;
+    home = dataDir;
+    isSystemUser = true;
+    uid = uid;
+  };
+
+  systemd.tmpfiles.rules = [
+    "d /data/apps/minecraft        0755 ${user} ${user} -"
+    "d ${dataDir}                  0755 ${user} ${user} -"
+    "Z /data/apps/minecraft        0755 ${user} ${user} -"
+    "Z ${dataDir}                  0755 ${user} ${user} -"
   ];
 
-  ssh = {
-    extraConfig = "";
-    knownHosts = {
-      "github.com".publicKey =
-        "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFq1eYW8+3zOgM1/8JofUiAlimyEBjSVLerE46pYQBTK oxod@romantic";
+  virtualisation.oci-containers.containers."minecraft-lazymc" = {
+    image = "ghcr.io/timvisee/lazymc:latest";
+    volumes = [
+      "${lazymcToml}:/lazymc.toml:ro"
+    ];
+    ports = [
+      "25565:25565/tcp"
+    ];
+    log-driver = "journald";
+    extraOptions = [
+      "--network=minecraft_default"
+      "--no-healthcheck"
+    ];
+  };
+
+  virtualisation.oci-containers.containers."minecraft-mc" = {
+    image = "itzg/minecraft-server:latest";
+    user = "${toString uid}:${toString uid}";
+    environment = {
+      "DIFFICULTY" = "3";
+      "ENABLE_WHITELIST" = "true";
+      "EULA" = "TRUE";
+      "MANAGEMENT_SERVER_ENABLED" = "false";
+      "MEMORY" = "2048M";
+      "OPS" = "0x0D_
+  jaydon30";
+      "RCON_ENABLED" = "true";
+      "RCON_PASSWORD" = rconPassword;
+      "SIMULATION_DISTANCE" = "6";
+      "TYPE" = "PAPER";
+      "USE_MEOWICE_FLAGS" = "true";
+      "VERSION" = "1.21.11";
+      "VIEW_DISTANCE" = "8";
+      "WHITELIST" = "0x0D_
+  jaydon30";
     };
+    volumes = [
+      "${dataDir}:/data:rw"
+    ];
+    log-driver = "journald";
+    extraOptions = [
+      "--network-alias=mc"
+      "--network=minecraft_default"
+      "--no-healthcheck"
+    ];
   };
 }
