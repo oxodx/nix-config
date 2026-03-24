@@ -7,7 +7,6 @@ let
   user = "minecraft";
   pDataDir = "/data/apps/minecraft/mc-1";
   dataDir = "${pDataDir}/mc-1";
-  containerUid = 1000;
 in
 {
   users.groups.${user} = { };
@@ -49,7 +48,6 @@ in
     ports = [
       "25565:25565/tcp"
     ];
-    user = "${toString containerUid}:${toString containerUid}";
     log-driver = "journald";
     extraOptions = [
       "--network-alias=mc"
