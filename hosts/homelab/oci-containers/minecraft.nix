@@ -9,9 +9,8 @@ let
   uid = 990;
   dataDir = "/data/apps/minecraft/mc-1";
 
-  composeFile = "${dataDir}/docker-compose.yml";
-
-  composeContent = ''
+  # Write the compose file content
+  composeContent = pkgs.writeText "docker-compose.yml" ''
     networks:
       minecraft-network:
         driver: bridge    
@@ -27,10 +26,13 @@ let
             ipv4_address: 172.18.0.2
         restart: unless-stopped
         volumes:
-          - ${dataDir}:/server:ro
           - /var/run/docker.sock:/var/run/docker.sock:ro
+          - ${dataDir}:/server:ro
         ports:
           - "25565:25565"
+        environment:
+          - LAZYMC_DEBUG=true
+          - LAZYMC_GROUP=mc
 
       mc:
         image: itzg/minecraft-server:java21
@@ -39,12 +41,11 @@ let
           minecraft-network:
             ipv4_address: 172.18.0.3
         labels:
-          - lazymc.enabled=true
-          - lazymc.group=mc
-          - lazymc.server.address=mc:25565
+          - "lazymc.enabled=true"
+          - "lazymc.group=mc"
+        restart: "no"
         tty: true
         stdin_open: true
-        restart: no
         environment:
           DIFFICULTY: "3"
           ENABLE_WHITELIST: "true"
@@ -72,29 +73,42 @@ in
     uid = uid;
   };
 
+  # Create the directory and file using systemd tmpfiles
   systemd.tmpfiles.rules = [
-    "d /data/apps/minecraft        0755 ${user} ${user} -"
-    "d ${dataDir}                  0755 ${user} ${user} -"
-    "Z /data/apps/minecraft        0755 ${user} ${user} -"
-    "Z ${dataDir}                  0755 ${user} ${user} -"
-    "L+ ${composeFile} - - - - ${pkgs.writeText "docker-compose.yml" composeContent}"
+    "d /data/apps/minecraft        0755 ${user} ${user} - -"
+    "d ${dataDir}                  0755 ${user} ${user} - -"
+    "Z /data/apps/minecraft        0755 ${user} ${user} - -"
+    "Z ${dataDir}                  0755 ${user} ${user} - -"
+    # Create the compose file directly, not as a symlink
+    "f ${dataDir}/docker-compose.yml 0644 ${user} ${user} - ${composeContent}"
   ];
+
+  # Disable any existing lazymc systemd service
+  systemd.services.lazymc = lib.mkForce { };
 
   systemd.services.minecraft = {
     description = "Minecraft Docker Compose";
     after = [
       "network-online.target"
       "docker.service"
+      "systemd-tmpfiles-setup.service"
     ];
     requires = [ "docker.service" ];
     wantedBy = [ "multi-user.target" ];
+
     serviceConfig = {
-      Type = "forking";
+      Type = "oneshot";
       RemainAfterExit = true;
+      User = user;
+      Group = user;
       WorkingDirectory = dataDir;
-      ExecStart = "${pkgs.docker-compose}/bin/docker-compose -f ${composeFile} up -d --no-start && ${pkgs.docker-compose}/bin/docker-compose -f ${composeFile} start lazymc";
-      ExecStop = "${pkgs.docker-compose}/bin/docker-compose -f ${composeFile} down";
+      ExecStart = "${pkgs.docker-compose}/bin/docker-compose -f ${dataDir}/docker-compose.yml up -d --no-start && ${pkgs.docker-compose}/bin/docker-compose -f ${dataDir}/docker-compose.yml start lazymc";
+      ExecStop = "${pkgs.docker-compose}/bin/docker-compose -f ${dataDir}/docker-compose.yml down";
+      ExecReload = "${pkgs.docker-compose}/bin/docker-compose -f ${dataDir}/docker-compose.yml restart lazymc";
       Restart = "on-failure";
+      RestartSec = "10s";
+      StartLimitIntervalSec = "60s";
+      StartLimitBurst = "3";
     };
   };
 
