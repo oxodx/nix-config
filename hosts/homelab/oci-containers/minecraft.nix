@@ -5,8 +5,8 @@
 }:
 let
   user = "minecraft";
-  pDataDir = "/data/apps/minecraft/mc-1";
-  dataDir = "${pDataDir}/mc-1";
+  uid = 1000;
+  dataDir = "/data/apps/minecraft/mc-1";
 in
 {
   users.groups.${user} = { };
@@ -14,17 +14,19 @@ in
     group = user;
     home = dataDir;
     isSystemUser = true;
+    uid = uid;
   };
 
-  # Create Directories
-  # https://www.freedesktop.org/software/systemd/man/latest/tmpfiles.d.html#Type
   systemd.tmpfiles.rules = [
-    "Z ${pDataDir}    0755 ${user} ${user}"
-    "Z ${dataDir}     0755 ${user} ${user}"
+    "d /data/apps/minecraft        0755 ${user} ${user} -"
+    "d ${dataDir}                  0755 ${user} ${user} -"
+    "Z /data/apps/minecraft        0755 ${user} ${user} -"
+    "Z ${dataDir}                  0755 ${user} ${user} -"
   ];
 
   virtualisation.oci-containers.containers."minecraft-mc" = {
     image = "itzg/minecraft-server:latest";
+    user = "${toString uid}:${toString uid}";
     environment = {
       "DIFFICULTY" = "3";
       "ENABLE_WHITELIST" = "true";
@@ -42,7 +44,7 @@ in
   jaydon30";
     };
     volumes = [
-      "/data/apps/minecraft/mc-1:/data:rw"
+      "${dataDir}:/data:rw"
     ];
     ports = [
       "25565:25565/tcp"
