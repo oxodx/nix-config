@@ -17,7 +17,6 @@
     database = {
       type = "sqlite3";
       name = "forgejo";
-      group = "forgejo";
       createDatabase = true;
     };
   };
