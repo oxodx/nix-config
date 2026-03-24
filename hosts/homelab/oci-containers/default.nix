@@ -6,10 +6,17 @@
 {
   imports = mylib.scanPaths ./.;
 
+  systemd.tmpfiles.rules = [
+    "d /data/apps/podman          0755 root root -"
+  ];
+
   virtualisation = {
     docker.enable = lib.mkForce false;
     podman = {
       enable = true;
+      daemon.settings = {
+        data-root = "/data/apps/podman";
+      };
       # Create a `docker` alias for podman, to use it as a drop-in replacement
       dockerCompat = true;
       # Required for containers under podman-compose to be able to talk to each other.
