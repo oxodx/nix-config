@@ -14,8 +14,12 @@
     docker.enable = lib.mkForce false;
     podman = {
       enable = true;
-      daemon.settings = {
-        data-root = "/data/apps/podman";
+      extraSettings = {
+        containers = {
+          storage = {
+            graphroot = "/data/apps/podman";
+          };
+        };
       };
       # Create a `docker` alias for podman, to use it as a drop-in replacement
       dockerCompat = true;
