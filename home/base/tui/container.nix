@@ -21,7 +21,6 @@
     clusterctl
     kubevirt
     kubernetes-helm
-    fluxcd
 
     ko
   ];
