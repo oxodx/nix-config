@@ -10,7 +10,7 @@
     declarative = true;
 
     package = pkgs.minecraft-server-1-21-11;
-    stateDir = "/data/apps/minecraft/mc-1";
+    dataDir = "/data/apps/minecraft/mc-1";
 
     serverProperties = {
       gamemode = "survival";
