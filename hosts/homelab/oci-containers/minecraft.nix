@@ -5,7 +5,7 @@
 }:
 let
   user = "minecraft";
-  uid = 1000;
+  uid = 990;
   dataDir = "/data/apps/minecraft/mc-1";
 in
 {
