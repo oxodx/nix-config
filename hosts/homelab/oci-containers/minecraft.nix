@@ -4,6 +4,7 @@
   ...
 }:
 let
+  user = "minecraft";
   dataDir = "/data/apps/minecraft/mc-1";
 in
 {
