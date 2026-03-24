@@ -19,8 +19,8 @@ in
   # Create Directories
   # https://www.freedesktop.org/software/systemd/man/latest/tmpfiles.d.html#Type
   systemd.tmpfiles.rules = [
-    "d ${pDataDir}    0755 ${user} ${user}"
-    "d ${dataDir}     0755 ${user} ${user}"
+    "Z ${pDataDir}    0755 ${user} ${user}"
+    "Z ${dataDir}     0755 ${user} ${user}"
   ];
 
   virtualisation.oci-containers.containers."minecraft-mc" = {
