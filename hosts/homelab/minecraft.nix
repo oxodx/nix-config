@@ -7,6 +7,7 @@
   services.minecraft-server = {
     enable = true;
     eula = true;
+    openFirewall = true;
     declarative = true;
 
     package = pkgs.minecraft-server_1_21;
@@ -17,6 +18,7 @@
       difficulty = "hard";
       simulation-distance = 10;
       white-list = true;
+      allow-cheats = true;
     };
 
     whitelist = {
