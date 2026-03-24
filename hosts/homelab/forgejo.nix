@@ -22,6 +22,8 @@
 
     settings = {
       server = {
+        DOMAIN = "192.168.1.184";
+        ROOT_URL = "http://${srv.DOMAIN}";
         HTTP_PORT = 3008;
         SSH_PORT = lib.head config.services.openssh.ports;
       };
