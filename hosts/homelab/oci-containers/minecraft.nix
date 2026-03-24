@@ -89,7 +89,7 @@ in
       Type = "forking";
       RemainAfterExit = true;
       WorkingDirectory = dataDir;
-      ExecStart = "${pkgs.docker-compose}/bin/docker-compose -f ${composeFile} up -d";
+      ExecStart = "${pkgs.docker-compose}/bin/docker-compose -f ${composeFile} up -d --no-start && ${pkgs.docker-compose}/bin/docker-compose -f ${composeFile} start lazymc";
       ExecStop = "${pkgs.docker-compose}/bin/docker-compose -f ${composeFile} down";
       Restart = "on-failure";
     };
