@@ -469,7 +469,7 @@
   },
   "network": {
     "airplaneModeEnabled": false,
-    "bluetoothAutoConnect": true,
+    "bluetoothAutoConnect": false,
     "bluetoothDetailsViewMode": "grid",
     "bluetoothHideUnnamedDevices": true,
     "bluetoothRssiPollIntervalMs": 10000,
