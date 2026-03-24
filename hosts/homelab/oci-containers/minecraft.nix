@@ -9,7 +9,6 @@ let
   uid = 990;
   dataDir = "/data/apps/minecraft/mc-1";
 
-  # Write the compose file content
   composeContent = pkgs.writeText "docker-compose.yml" ''
     networks:
       minecraft-network:
@@ -71,15 +70,15 @@ in
     home = dataDir;
     isSystemUser = true;
     uid = uid;
+    extraGroups = [ "docker" ]; # Add to docker group
   };
 
-  # Create the directory and file using systemd tmpfiles
+  # Create the compose file
   systemd.tmpfiles.rules = [
     "d /data/apps/minecraft        0755 ${user} ${user} - -"
     "d ${dataDir}                  0755 ${user} ${user} - -"
     "Z /data/apps/minecraft        0755 ${user} ${user} - -"
     "Z ${dataDir}                  0755 ${user} ${user} - -"
-    # Create the compose file directly, not as a symlink
     "f ${dataDir}/docker-compose.yml 0644 ${user} ${user} - ${composeContent}"
   ];
 
@@ -97,12 +96,19 @@ in
     wantedBy = [ "multi-user.target" ];
 
     serviceConfig = {
-      Type = "oneshot";
+      Type = "forking";
       RemainAfterExit = true;
       User = user;
       Group = user;
       WorkingDirectory = dataDir;
-      ExecStart = "${pkgs.docker-compose}/bin/docker-compose -f ${dataDir}/docker-compose.yml up -d --no-start && ${pkgs.docker-compose}/bin/docker-compose -f ${dataDir}/docker-compose.yml start lazymc";
+      ExecStart = "${pkgs.writeShellScript "minecraft-start" ''
+        set -e
+        cd ${dataDir}
+        ${pkgs.docker-compose}/bin/docker-compose -f ${dataDir}/docker-compose.yml up -d --no-start
+        ${pkgs.docker-compose}/bin/docker-compose -f ${dataDir}/docker-compose.yml start lazymc
+        # Wait for lazymc to be ready
+        sleep 5
+      ''}";
       ExecStop = "${pkgs.docker-compose}/bin/docker-compose -f ${dataDir}/docker-compose.yml down";
       ExecReload = "${pkgs.docker-compose}/bin/docker-compose -f ${dataDir}/docker-compose.yml restart lazymc";
       Restart = "on-failure";
