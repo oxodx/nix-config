@@ -11,18 +11,17 @@
   ...
 }@args:
 let
-  name = "kubevirt-homelab";
+  name = "homelab";
   tags = [
     name
-    "virt-homelab"
   ];
   ssh-user = "root";
 
   modules = {
     nixos-modules = (
       map mylib.relativeToRoot [
-        "modules/nixos/server/server.nix"
-        "hosts/k8s/${name}"
+        "modules/nixos/server.nix"
+        "hosts/${name}"
       ]
     );
   };
