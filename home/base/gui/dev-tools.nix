@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, pkgs-master, ... }:
 {
   home.packages =
     with pkgs;
@@ -7,12 +7,12 @@
 
       # IDEs
       jetbrains.idea-oss
-
-      # AI cli tools
-      k8sgpt
-      kubectl-ai
     ]
-    ++ (lib.optionals pkgs.stdenv.isx86_64 [
-      insomnia
+    # AI Agent Tools
+    ++ (with pkgs-master; [
+      cursor-cli
+      claude-code
+      gemini-cli
+      opencode
     ]);
 }
