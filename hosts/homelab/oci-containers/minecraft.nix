@@ -42,6 +42,7 @@ let
         labels:
           - "lazymc.enabled=true"
           - "lazymc.group=mc"
+          - lazymc.server.address=mc:25565
         restart: "no"
         tty: true
         stdin_open: true
