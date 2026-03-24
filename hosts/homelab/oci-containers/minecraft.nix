@@ -14,7 +14,6 @@ in
     group = user;
     home = dataDir;
     isSystemUser = true;
-    uid = containerUid;
   };
 
   # Create Directories
