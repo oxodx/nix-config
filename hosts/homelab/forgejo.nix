@@ -31,6 +31,8 @@ in
         SSH_PORT = lib.head config.services.openssh.ports;
         ROOT_URL = "http://${srv.DOMAIN}:3008";
       };
+      # You can temporarily allow registration to create an admin user.
+      service.DISABLE_REGISTRATION = true;
 
       # Add support for actions, based on act: https://github.com/nektos/act
       actions = {
