@@ -20,4 +20,6 @@
       backend = "docker";
     };
   };
+
+  environment.systemPackages = [ pkgs.docker-compose ];
 }
