@@ -55,6 +55,7 @@
     extraOptions = [
       "--network-alias=mc"
       "--network=minecraft_default"
+      "--no-healthcheck"
     ];
   };
   systemd.services."podman-minecraft-mc" = {
