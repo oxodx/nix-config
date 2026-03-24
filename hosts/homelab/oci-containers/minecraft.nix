@@ -8,8 +8,15 @@ let
   dataDir = "/data/apps/minecraft/mc-1";
 in
 {
-  imports = [ ./default.nix ];
+  users.groups.${user} = { };
+  users.users.${user} = {
+    group = user;
+    home = dataDir;
+    isSystemUser = true;
+  };
 
+  # Create Directories
+  # https://www.freedesktop.org/software/systemd/man/latest/tmpfiles.d.html#Type
   systemd.tmpfiles.rules = [
     "d ${dataDir} 0755 ${user} ${user}"
   ];
