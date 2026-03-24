@@ -18,7 +18,7 @@
   services.tuned.ppdSettings.main.default = lib.mkForce "performance";
 
   networking = {
-    hostName = "kumquat";
+    hostName = "homelab";
 
     networkmanager.enable = true;
     useDHCP = false;
