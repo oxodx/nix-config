@@ -21,7 +21,7 @@
     clusterctl
     kubevirt
     kubernetes-helm
-    argocd
+    fluxcd
 
     ko
   ];
