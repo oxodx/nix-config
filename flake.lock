@@ -253,6 +253,24 @@
         "type": "github"
       }
     },
+    "mysecrets": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1774457376,
+        "narHash": "sha256-Ld+fS8yE84nKG87RbBJU6mz3QYhdjJwpQ0QPd5wM4pE=",
+        "ref": "main",
+        "rev": "ee04a4dd9acc933ea62a9159df35daccb09981c6",
+        "shallow": true,
+        "type": "git",
+        "url": "ssh://git@github.com/0x0Dx/nix-secrets.git"
+      },
+      "original": {
+        "ref": "main",
+        "shallow": true,
+        "type": "git",
+        "url": "ssh://git@github.com/0x0Dx/nix-secrets.git"
+      }
+    },
     "nix-gaming": {
       "inputs": {
         "flake-parts": "flake-parts",
@@ -486,6 +504,7 @@
         "disko": "disko",
         "haumea": "haumea",
         "home-manager": "home-manager",
+        "mysecrets": "mysecrets",
         "nix-gaming": "nix-gaming",
         "nixos-generators": "nixos-generators",
         "nixos-hardware": "nixos-hardware",

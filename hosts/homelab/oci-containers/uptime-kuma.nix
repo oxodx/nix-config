@@ -22,8 +22,8 @@ in
     # check its logs via `journalctl -u podman-homepage`
     uptime-kuma = {
       hostname = "uptime-kuma";
-      image = "louislam/uptime-kuma:1";
-      ports = [ "53350:3001" ];
+      image = "louislam/uptime-kuma:2";
+      ports = [ "127.0.0.1:53350:3001" ];
       # https://github.com/louislam/uptime-kuma/wiki/Environment-Variables
       environment = {
         # "PUID" = config.users.users.${user}.uid;
