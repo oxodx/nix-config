@@ -20,6 +20,7 @@ let
   modules = {
     nixos-modules = (
       map mylib.relativeToRoot [
+        "secrets/nixos.nix"
         "modules/nixos/server.nix"
         "hosts/${name}"
       ]
