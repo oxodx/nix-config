@@ -128,7 +128,7 @@ in
       age.secrets."cloudflare-credentials" = {
         file = "${mysecrets}/cloudflare-credentials.json.age";
         mode = "0400";
-        owner = "cloudflared";
+        owner = "root";
       };
     })
   ]);
