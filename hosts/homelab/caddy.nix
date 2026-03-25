@@ -18,13 +18,13 @@ in
     logDir = "/var/log/caddy";
 
     # Dashboard
-    virtualHosts."home.oxod.nl".extraConfig = ''
+    virtualHosts."http://home.oxod.nl".extraConfig = ''
       ${hostCommonConfig}
       reverse_proxy http://localhost:54401
     '';
 
     # https://caddyserver.com/docs/caddyfile/directives/file_server
-    virtualHosts."file.oxod.nl".extraConfig = ''
+    virtualHosts."http://file.oxod.nl".extraConfig = ''
       root * /data/apps/caddy/fileserver/
       ${hostCommonConfig}
       file_server browse {
