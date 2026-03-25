@@ -17,21 +17,11 @@ in
     dataDir = "/data/apps/caddy";
     logDir = "/var/log/caddy";
 
-    # Dashboard
-    # virtualHosts."http://home.oxod.nl".extraConfig = ''
-    #   ${hostCommonConfig}
-    #   reverse_proxy http://localhost:54401
-    # '';
-
-    # https://caddyserver.com/docs/caddyfile/directives/file_server
-    # virtualHosts."http://file.oxod.nl".extraConfig = ''
-    #   root * /data/apps/caddy/fileserver/
-    #   ${hostCommonConfig}
-    #   file_server browse {
-    #     hide .git
-    #     precompressed zstd br gzip
-    #   }
-    # '';
+    # Minecraft
+    virtualHosts."http://minecraft-mc.oxod.nl".extraConfig = ''
+      ${hostCommonConfig}
+      reverse_proxy http://localhost:25571
+    '';
   };
 
   networking.firewall.allowedTCPPorts = [
