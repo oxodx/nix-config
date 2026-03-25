@@ -1,9 +1,9 @@
-{ pkgs, ... }:
+{ pkgs, nix-minecraft, ... }:
 {
   services.minecraft-servers.servers.survival = {
     enable = true;
     enableReload = true;
-    package = pkgs.inputs.nix-minecraft.paperServers.paper-1_21_11;
+    package = nix-minecraft.paperServers.paper-1_21_11;
     jvmOpts = ((import ../../aikar-flags.nix) "2G") + "-Dpaper.disableChannelLimit=true";
     whitelist = import ./whitelist.nix;
     serverProperties = {
