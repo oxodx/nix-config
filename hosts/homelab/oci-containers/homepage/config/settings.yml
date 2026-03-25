@@ -1,10 +1,10 @@
 ---
 title: 0x0D's Homelab
-base: http://127.0.0.1/
+base: https://home.oxod.nl
 
 # https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url
 # Used by some browsers to determine the start page of the web application
-startUrl: http://127.0.0.1/
+startUrl: https://home.oxod.nl
 
 language: en
 
