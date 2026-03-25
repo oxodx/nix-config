@@ -16,23 +16,23 @@ in
     user = "caddy"; # User account under which caddy runs.
     dataDir = "/data/apps/caddy";
     logDir = "/var/log/caddy";
+
+    # Dashboard
+    virtualHosts."home.oxod.nl".extraConfig = ''
+      ${hostCommonConfig}
+      reverse_proxy http://localhost:54401
+    '';
+
+    # https://caddyserver.com/docs/caddyfile/directives/file_server
+    virtualHosts."file.oxod.nl".extraConfig = ''
+      root * /data/apps/caddy/fileserver/
+      ${hostCommonConfig}
+      file_server browse {
+        hide .git
+        precompressed zstd br gzip
+      }
+    '';
   };
-
-  # Dashboard
-  virtualHosts."home.oxod.nl".extraConfig = ''
-    ${hostCommonConfig}
-    reverse_proxy http://localhost:54401
-  '';
-
-  # https://caddyserver.com/docs/caddyfile/directives/file_server
-  virtualHosts."file.oxod.nl".extraConfig = ''
-    root * /data/apps/caddy/fileserver/
-    ${hostCommonConfig}
-    file_server browse {
-      hide .git
-      precompressed zstd br gzip
-    }
-  '';
 
   networking.firewall.allowedTCPPorts = [
     80
