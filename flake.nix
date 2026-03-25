@@ -35,8 +35,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     agenix = {
-      # secrets management, lock with git commit at v0.15.0
-      url = "github:ryantm/agenix/564595d0ad4be7277e07fa63b5a991b3c645655d";
+      url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
