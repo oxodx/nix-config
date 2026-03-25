@@ -5,7 +5,7 @@
     tunnels = {
       "homelab" = {
         credentialsFile = config.age.secrets."cloudflare-credentials".path;
-        default = "https://localhost:443";
+        default = "http://localhost:443";
       };
     };
   };
