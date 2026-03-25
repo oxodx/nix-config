@@ -6,7 +6,7 @@
       "homelab" = {
         credentialsFile = config.age.secrets."cloudflare-credentials".path;
         ingress = {
-          "*.oxod.nl" = "https://localhost:443";
+          "default" = "https://localhost:443";
         };
       };
     };
