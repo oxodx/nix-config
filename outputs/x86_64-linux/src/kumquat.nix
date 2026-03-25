@@ -23,6 +23,7 @@ let
           modules.desktop.wayland.enable = true;
           modules.desktop.gaming.enable = true;
         }
+        inputs.agenix.nixosModules.default
       ];
     home-modules = map mylib.relativeToRoot [
       "home/hosts/linux/${name}.nix"

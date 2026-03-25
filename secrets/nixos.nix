@@ -27,10 +27,6 @@ let
   };
 in
 {
-  imports = [
-    agenix.nixosModules.default
-  ];
-
   options.modules.secrets = {
     desktop.enable = mkEnableOption "NixOS Secrets for Desktops";
 
