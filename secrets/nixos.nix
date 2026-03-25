@@ -74,6 +74,10 @@ in
         # user can read this file.
         # ---------------------------------------------
 
+        "ssh-key-romantic" = {
+          file = "${mysecrets}/ssh-key-romantic.age";
+        }
+        // user_readable;
         "ssh-key-kumquat" = {
           file = "${mysecrets}/ssh-key-kumquat.age";
         }
@@ -86,6 +90,11 @@ in
 
       # place secrets in /etc/
       environment.etc = {
+        "agenix/ssh-key-romantic" = {
+          source = config.age.secrets."ssh-key-romantic".path;
+          mode = "0600";
+          user = myvars.username;
+        };
         "agenix/ssh-key-kumquat" = {
           source = config.age.secrets."ssh-key-kumquat".path;
           mode = "0600";
