@@ -37,7 +37,9 @@
     "exfat"
   ];
 
-  swapDevices = [ ];
+  swapDevices = [
+    { device = "/swap/swapfile"; }
+  ];
 
   # --- filesystem --- #
   boot.kernel.sysctl = {
