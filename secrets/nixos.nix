@@ -46,7 +46,7 @@ in
 
       # if you changed this key, you need to regenerate all encrypt files from the decrypt contents!
       age.identityPaths = [
-        "/home/${myvars.username}/.ssh/romantic"
+        "/etc/ssh/ssh_host_ed25519_key"
       ];
 
       assertions = [
