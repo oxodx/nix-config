@@ -42,6 +42,7 @@ in
   # Create Directories
   # https://www.freedesktop.org/software/systemd/man/latest/tmpfiles.d.html#Type
   systemd.tmpfiles.rules = [
+    "d /data/apps/caddy 0755 caddy caddy"
     "d /data/apps/caddy/fileserver/ 0755 caddy caddy"
   ];
 }
