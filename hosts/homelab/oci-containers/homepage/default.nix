@@ -31,6 +31,7 @@ in
       ports = [ "127.0.0.1:54401:3000" ];
       # https://github.com/louislam/uptime-kuma/wiki/Environment-Variables
       environment = {
+        HOMEPAGE_ALLOWED_HOSTS = "home.oxod.nl";
         # "PUID" = config.users.users.${user}.uid;
         # "PGID" = config.users.groups.${user}.gid;
       };
