@@ -33,10 +33,7 @@
       "8.8.8.8"
     ];
 
-    networkmanager = {
-      enable = true;
-      wifi.powersave = lib.mkDefault 2;
-    };
+    networkmanager.enable = true;
   };
 
   system.stateVersion = "25.11";
