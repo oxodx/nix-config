@@ -134,8 +134,8 @@ in
     })
 
     (mkIf cfg.server.operation.enable {
-      age.secrets."cloudflare-credentials" = {
-        file = "${mysecrets}/cloudflare-credentials.json.age";
+      age.secrets."cloudflare-creds" = {
+        file = "${mysecrets}/cloudflare-creds.json.age";
         mode = "0400";
         owner = "root";
       };

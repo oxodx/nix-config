@@ -5,7 +5,7 @@
 }:
 {
   imports = [
-    ./servers/survival-01
+    ./servers/survival01
   ];
 
   services.minecraft-servers = {
