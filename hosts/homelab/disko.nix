@@ -27,8 +27,11 @@
               extraArgs = [ "-f" ];
               subvolumes = {
                 "/" = {
-                  mountpoint = "/btr_pool";
-                  mountOptions = [ "subvolid=5" ];
+                  mountpoint = "/";
+                  mountOptions = [
+                    "compress-force=zstd:1"
+                    "noatime"
+                  ];
                 };
                 "@nix" = {
                   mountpoint = "/nix";
