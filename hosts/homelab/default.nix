@@ -6,6 +6,13 @@
   disko,
   ...
 }:
+let
+  hostName = "homelab";
+
+  inherit (myvars.networking) mainGateway nameservers;
+  inherit (myvars.networking.hostsAddr.${hostName}) iface ipv4;
+  ipv4WithMask = "${ipv4}/24";
+in
 {
   imports = (mylib.scanPaths ./.) ++ [
     disko.nixosModules.default
@@ -14,26 +21,27 @@
   zramSwap.memoryPercent = lib.mkForce 100;
 
   networking = {
-    hostName = "homelab";
+    inherit hostName;
+
+    networkmanager.enable = false;
     useDHCP = false;
+  };
 
-    interfaces.wlan0 = {
-      useDHCP = false;
-      ipv4.addresses = [
-        {
-          address = "192.168.1.184";
-          prefixLength = 24;
-        }
-      ];
+  systemd.network.networks."10-${iface}" = {
+    matchConfig.Name = [ iface ];
+    networkConfig = {
+      Address = [ ipv4WithMask ];
+      DNS = nameservers;
+      DHCP = "ipv4";
+      LinkLocalAddressing = "ipv4";
     };
-
-    defaultGateway = "192.168.1.1";
-    nameservers = [
-      "1.1.1.1"
-      "8.8.8.8"
+    routes = [
+      {
+        Destination = "0.0.0.0/0";
+        Gateway = mainGateway;
+      }
     ];
-
-    networkmanager.enable = true;
+    linkConfig.RequiredForOnline = "routable";
   };
 
   system.stateVersion = "25.11";

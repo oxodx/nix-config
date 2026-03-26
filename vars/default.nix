@@ -3,6 +3,7 @@
   username = "oxod";
   userfullname = "0x0D";
   useremail = "0xOD@proton.me";
+  networking = import ./networking.nix { inherit lib; };
   # Generated using: mkpasswd -m yescrypt --rounds=11
   # Password: long, strong random string (full charset)
   # Rotation policy: changed annually
