@@ -22,8 +22,27 @@ in
   networking = {
     hostName = "homelab";
 
-    networkmanager.enable = true;
-    useDHCP = false;
+    networkmanager = {
+      enable = true;
+      dhcp = false;
+      wifi.powersave = lib.mkDefault 2;
+
+      connections = {
+        # USB WiFi Dongle - Static IP
+        "wlan0" = {
+          ipv4.addresses = [
+            {
+              address = "192.168.1.184/24";
+              gateway = "192.168.1.1";
+            }
+          ];
+          ipv4.dns = [
+            "1.1.1.1"
+            "8.8.8.8"
+          ];
+        };
+      };
+    };
   };
 
   system.stateVersion = "25.11";

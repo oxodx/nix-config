@@ -18,10 +18,10 @@ in
     logDir = "/var/log/caddy";
 
     # Minecraft
-    virtualHosts."http://minecraft-mc.oxod.nl".extraConfig = ''
-      ${hostCommonConfig}
-      reverse_proxy http://localhost:25571
-    '';
+    # virtualHosts."http://minecraft-mc.oxod.nl".extraConfig = ''
+    #   ${hostCommonConfig}
+    #   reverse_proxy http://localhost:25571
+    # '';
   };
 
   networking.firewall.allowedTCPPorts = [
