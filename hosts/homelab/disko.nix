@@ -1,13 +1,5 @@
 {
   disko.devices = {
-    nodev."/" = {
-      fsType = "tmpfs";
-      mountOptions = [
-        "size=4G"
-        "defaults"
-        "mode=755"
-      ];
-    };
     disk.system = {
       type = "disk";
       device = "/dev/disk/by-id/ata-Samsung_SSD_850_PRO_256GB_S1SUNSAG132588E";
