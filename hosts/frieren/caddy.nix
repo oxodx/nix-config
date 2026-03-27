@@ -47,7 +47,7 @@ in
 
       "git.oxod.nl".extraConfig = ''
         ${hostCommonConfig}
-        reverse_proxy https://localhost:3008
+        reverse_proxy http://localhost:3008
       '';
 
       "adguard.oxod.nl:80".extraConfig = ''
