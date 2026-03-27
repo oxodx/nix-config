@@ -3,7 +3,7 @@ let
   serverVersion = "1_21_11";
 in
 {
-  services.minecraft-servers.servers.survival = {
+  services.minecraft-servers.servers.survival01 = {
     enable = true;
     enableReload = true;
 
