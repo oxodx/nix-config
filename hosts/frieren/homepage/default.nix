@@ -5,7 +5,7 @@
 
     settings = import ./settings.nix; # https://gethomepage.dev/configs/settings/
     bookmarks = import ./bookmarks.nix; # https://gethomepage.dev/configs/bookmarks/
-    services = [ ]; # https://gethomepage.dev/configs/services/
+    services = import ./services.nix; # https://gethomepage.dev/configs/services/
     widgets = [
       {
         search = {
