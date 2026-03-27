@@ -28,6 +28,7 @@ in
         GLANCES_OPT = "-w";
       };
       volumes = [
+        "/var/run/podman/podman.sock:/var/run/docker.sock"
         "${dataDir}:/app/data"
       ];
       autoStart = true;
