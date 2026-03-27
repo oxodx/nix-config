@@ -34,7 +34,7 @@
           args = [
             "--login"
             "-c"
-            "nu --login --interactive"
+            "zsh --login --interactive"
           ];
         };
         osc52 = "CopyPaste";

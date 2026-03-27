@@ -20,7 +20,7 @@
       macos_option_as_alt = true;
       enable_audio_bell = false;
       tab_bar_edge = "top";
-      shell = "${pkgs.bash}/bin/bash --login -c 'nu --login --interactive'";
+      shell = "${pkgs.bash}/bin/bash --login -c 'zsh --login --interactive'";
     };
 
     darwinLaunchOptions = [ "--start-as=maximized" ];
