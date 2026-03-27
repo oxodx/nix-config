@@ -28,6 +28,11 @@ in
       ${hostCommonConfig}
       reverse_proxy http://localhost:61208
     '';
+
+    virtualHosts."adguard.oxod.nl:80".extraConfig = ''
+      ${hostCommonConfig}
+      reverse_proxy http://localhost:3003
+    '';
   };
 
   networking.firewall.allowedTCPPorts = [
