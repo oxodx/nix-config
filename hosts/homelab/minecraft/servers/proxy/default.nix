@@ -6,7 +6,7 @@ in
   services.minecraft-servers.servers.proxy = {
     enable = true;
     jvmOpts = "-Xmx1G -Xms1G";
-    package = pkgs.minecraftServers.velocity-server;
+    package = pkgs.velocity-server;
     whitelist = import ../whitelist.nix;
     stopCommand = "end";
     files = {
