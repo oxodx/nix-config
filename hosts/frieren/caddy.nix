@@ -18,7 +18,7 @@ in
 
   services.uptime-kuma = {
     enable = true;
-    settings.port = "53350";
+    settings.PORT = "53350";
   };
 
   services.caddy = {
