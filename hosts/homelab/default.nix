@@ -27,6 +27,9 @@ in
     useDHCP = false;
   };
 
+  networking.useNetworkd = true;
+  systemd.network.enable = true;
+
   systemd.network.networks."10-${iface}" = {
     matchConfig.Name = [ iface ];
     networkConfig = {
