@@ -22,22 +22,30 @@ in
     chown -R ${user}:${user} ${configDir}
   '';
 
+  # Create a custom network with DNS disabled
+  systemd.tmpfiles.rules = [
+    "d /etc/containers/networks 0755 root root -"
+  ];
+
+  environment.etc."containers/networks/homepage-net.json" = {
+    text = builtins.toJSON {
+      name = "homepage-net";
+      dns_enabled = false;
+      subnet = "10.89.0.0/24";
+      gateway = "10.89.0.1";
+    };
+  };
+
   virtualisation.oci-containers.containers = {
     homepage = {
       hostname = "homepage";
       image = "ghcr.io/gethomepage/homepage:latest";
-      ports = [
-        "127.0.0.1:54401:3000"
-        "127.0.0.1:54:53"
-      ];
+      ports = [ "127.0.0.1:54401:3000" ];
       volumes = [
         "${configDir}:/app/config"
       ];
       autoStart = true;
-      extraOptions = [ "--net=host" ];
-      environment = {
-        PORT = "54401";
-      };
+      extraOptions = [ "--network=homepage-net" ];
     };
   };
 }
