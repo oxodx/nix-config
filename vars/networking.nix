@@ -8,7 +8,7 @@ rec {
   ];
   prefixLength = 24;
 
-  hostAddr = {
+  hostsAddr = {
     homelab = {
       iface = "enp2s0";
       ipv4 = "192.168.1.191";
