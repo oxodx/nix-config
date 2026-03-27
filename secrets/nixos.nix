@@ -82,8 +82,8 @@ in
           file = "${mysecrets}/ssh-key-kumquat.age";
         }
         // user_readable;
-        "ssh-key-homelab" = {
-          file = "${mysecrets}/ssh-key-homelab.age";
+        "ssh-key-frieren" = {
+          file = "${mysecrets}/ssh-key-frieren.age";
         }
         // user_readable;
       };

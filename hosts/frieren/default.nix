@@ -7,7 +7,7 @@
   ...
 }:
 let
-  hostName = "homelab";
+  hostName = "frieren";
 
   inherit (myvars.networking) mainGateway nameservers;
   inherit (myvars.networking.hostsAddr.${hostName}) iface ipv4;
