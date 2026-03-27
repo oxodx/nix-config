@@ -9,7 +9,7 @@ home/
 ├── base/              # Cross-platform home manager configurations
 │   ├── core/          # Essential applications and settings
 │   │   ├── editors/   # Editor configurations (Neovim)
-│   │   ├── shells/    # Shell configurations (Nushell, Zellij)
+│   │   ├── shells/    # Shell configurations (Zsh, Zellij)
 │   │   └── ...
 │   ├── gui/           # GUI applications and desktop settings
 │   │   ├── terminal/  # Terminal emulators (Kitty, Alacritty, etc.)

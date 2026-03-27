@@ -4,7 +4,6 @@
 
   environment.systemPackages = with pkgs; [
     # Core tools
-    nushell
     zsh
     fastfetch
     neovim

@@ -30,5 +30,4 @@ in
 
   home.shellAliases = shellAliases;
   programs.zsh.shellAliases = shellAliases;
-  programs.nushell.shellAliases = shellAliases;
 }

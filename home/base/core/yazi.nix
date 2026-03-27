@@ -5,7 +5,6 @@
     package = pkgs.yazi;
     enableBashIntegration = true;
     enableZshIntegration = true;
-    enableNushellIntegration = true;
     shellWrapperName = "yy";
     settings = {
       mgr = {

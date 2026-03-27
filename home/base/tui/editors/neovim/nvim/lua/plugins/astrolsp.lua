@@ -70,7 +70,6 @@ return {
       -- "zls", -- zig language server
       "lua_ls", -- lua
       "bashls", -- bash
-      "nushell", -- nushell language server
 
       ---- Web Development
       "ts_ls", -- typescript/javascript language server
