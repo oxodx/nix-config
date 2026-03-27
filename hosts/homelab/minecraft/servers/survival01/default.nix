@@ -13,8 +13,11 @@ in
     serverProperties = {
       server-port = 25581;
       online-mode = false;
-      max-tick-time = -1;
       white-list = true;
+      max-tick-time = -1;
+      network-compression-threshold = 256;
+      simulation-distance = 4;
+      view-distance = 7;
     };
 
     symlinks = {
