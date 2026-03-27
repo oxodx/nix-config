@@ -322,10 +322,10 @@
     "mysecrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1774595339,
-        "narHash": "sha256-1XJMDxybMPzxnlHeubT3EcWK1a0ABw961XKJuD9BB98=",
+        "lastModified": 1774625910,
+        "narHash": "sha256-BgHkRoML9uXoqLZASe/6bKOGPIIQaJYcIt1klo9pz+g=",
         "ref": "main",
-        "rev": "bd2d6f285fba7e51ba9d4fbff2fa50d64d1dcd7c",
+        "rev": "301fe75b7b44b6da49b13fa25dee8705d82d9a47",
         "shallow": true,
         "type": "git",
         "url": "ssh://git@github.com/0x0Dx/nix-secrets.git"
@@ -443,11 +443,11 @@
     },
     "nixpkgs-master": {
       "locked": {
-        "lastModified": 1774638501,
-        "narHash": "sha256-xXqjm6K84WEb3K/jYVkFPsgH7bT/vVXePNnZX8HGrkQ=",
+        "lastModified": 1774642324,
+        "narHash": "sha256-Zfc5DJg1qossuU7uxkaakUAH/9itC49rZYPtmevBOLI=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "7c7979996740a90767f91be511b6c3b3ca9030cb",
+        "rev": "39fe1153fe6c8bcc624356212937b54579130aba",
         "type": "github"
       },
       "original": {
@@ -486,22 +486,6 @@
         "owner": "nixos",
         "ref": "nixos-unstable",
         "repo": "nixpkgs",
-        "type": "github"
-      }
-    },
-    "nu_scripts": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1773315180,
-        "narHash": "sha256-5FKqphXxVSgqGXbqOL3aiZEGFSr5SMjMVIWzB0dA/+I=",
-        "owner": "nushell",
-        "repo": "nu_scripts",
-        "rev": "196d94338d382561e7bacb29948ffcfa5ff1b2a1",
-        "type": "github"
-      },
-      "original": {
-        "owner": "nushell",
-        "repo": "nu_scripts",
         "type": "github"
       }
     },
@@ -578,7 +562,6 @@
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-master": "nixpkgs-master",
         "nixpkgs-stable": "nixpkgs-stable",
-        "nu_scripts": "nu_scripts",
         "pre-commit-hooks": "pre-commit-hooks",
         "preservation": "preservation",
         "prismlauncher": "prismlauncher"
