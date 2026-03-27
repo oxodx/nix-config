@@ -25,6 +25,7 @@ in
     virtualHosts."frieren.pufferfish-mirfak.ts.net".extraConfig = ''
       # Glances
       handle /glances/* {
+        uri strip_prefix /glances
         reverse_proxy http://localhost:61208
       }
     '';
