@@ -59,7 +59,7 @@ let
   recovery_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFq1eYW8+3zOgM1/8JofUiAlimyEBjSVLerE46pYQBTK oxod@romantic";
   systems = [
     kumquat
-    homelab
+    frieren
 
     recovery_key
   ];

@@ -11,7 +11,7 @@
   ...
 }@args:
 let
-  name = "homelab";
+  name = "frieren";
   tags = [
     name
   ];
