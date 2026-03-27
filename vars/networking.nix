@@ -10,7 +10,7 @@ rec {
 
   hostAddr = {
     homelab = {
-      iface = "eno1";
+      iface = "enp2s0";
       ipv4 = "192.168.1.191";
     };
   };
