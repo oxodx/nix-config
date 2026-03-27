@@ -23,7 +23,7 @@ in
     logDir = "/var/log/caddy";
 
     # Glances
-    virtualHosts."http://glances.frieren.pufferfish-mirfak.ts.net".extraConfig = ''
+    virtualHosts."glances.frieren.pufferfish-mirfak.ts.net".extraConfig = ''
       ${hostCommonConfig}
       reverse_proxy http://localhost:61208
     '';
