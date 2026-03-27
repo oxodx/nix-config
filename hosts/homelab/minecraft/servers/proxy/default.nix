@@ -24,4 +24,10 @@ in
       };
     };
   };
+
+  # Create Directories
+  # https://www.freedesktop.org/software/systemd/man/latest/tmpfiles.d.html#Type
+  systemd.tmpfiles.rules = [
+    "d /data/apps/minecraft/servers/proxy 0755 minecraft minecraft"
+  ];
 }
