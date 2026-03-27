@@ -12,14 +12,6 @@
 
   networking.firewall.allowedTCPPorts = [ 25565 ];
 
-  users.users.minecraft = {
-    isSystemUser = true;
-    group = "minecraft";
-    home = "/data/apps/minecraft";
-    createHome = true;
-  };
-  users.groups.minecraft = { };
-
   services.minecraft-servers = {
     enable = true;
     eula = true;
