@@ -45,11 +45,6 @@ in
         reverse_proxy http://localhost:53350
       '';
 
-      "http://git.oxod.nl".extraConfig = ''
-        ${hostCommonConfig}
-        reverse_proxy http://localhost:3008
-      '';
-
       "adguard.oxod.nl:80".extraConfig = ''
         ${hostCommonConfig}
         reverse_proxy http://localhost:3003
