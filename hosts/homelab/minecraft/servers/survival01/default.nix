@@ -18,6 +18,12 @@ in
     };
 
     symlinks = {
+      "plugins/Chunky.jar" = pkgs.fetchurl rec {
+        pname = "Chunky";
+        version = "1.4.40";
+        url = "https://cdn.modrinth.com/data/fALzjamp/versions/P3y2MXnd/${pname}-Bukkit-${version}.jar";
+        hash = "sha256:2a5477fc80f71012e15ade1ce34dbeb836e17623b28db112492c0f1443c09721";
+      };
       "plugins/ViaVersion.jar" = pkgs.fetchurl rec {
         pname = "ViaVersion";
         version = "5.7.2";
