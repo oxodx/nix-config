@@ -14,5 +14,8 @@
         "--password-store=gnome-libsecret"
       ];
     };
+    extensions = with pkgs-master.vscode-extensions; [
+      jnoortheen.nix-ide
+    ];
   };
 }
