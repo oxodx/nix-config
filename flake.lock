@@ -290,11 +290,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1774584114,
-        "narHash": "sha256-uWR9fC+4NykFJVn4GN4Ini9LX+w8Llj7BnWKKp0N6bw=",
+        "lastModified": 1774626137,
+        "narHash": "sha256-1WelwA45Xm4glTG8R9IX9jYeFKDG2HbR79jAauLezUE=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "4b1be5c38be350ee9452a4847945ce71d950dc31",
+        "rev": "9df3a639007cfe0d074433f7fc225ea94f877d08",
         "type": "github"
       },
       "original": {
@@ -443,11 +443,11 @@
     },
     "nixpkgs-master": {
       "locked": {
-        "lastModified": 1774621435,
-        "narHash": "sha256-cmmGMR+Y5ePfXrVdhnSAmVdoJrJJF+EI6QPCfVDdpTg=",
+        "lastModified": 1774638501,
+        "narHash": "sha256-xXqjm6K84WEb3K/jYVkFPsgH7bT/vVXePNnZX8HGrkQ=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "c998e5fb3a67f12abb467416887ed5f31fdd854f",
+        "rev": "7c7979996740a90767f91be511b6c3b3ca9030cb",
         "type": "github"
       },
       "original": {
@@ -489,19 +489,19 @@
         "type": "github"
       }
     },
-    "nu_scripts": {
+    "oh-my-zsh": {
       "flake": false,
       "locked": {
-        "lastModified": 1773315180,
-        "narHash": "sha256-5FKqphXxVSgqGXbqOL3aiZEGFSr5SMjMVIWzB0dA/+I=",
-        "owner": "nushell",
-        "repo": "nu_scripts",
-        "rev": "196d94338d382561e7bacb29948ffcfa5ff1b2a1",
+        "lastModified": 1774552196,
+        "narHash": "sha256-1E/jENGDp7ZsWX5URjmD0x7ccnGbij7O0FshOS3FxRU=",
+        "owner": "ohmyzsh",
+        "repo": "ohmyzsh",
+        "rev": "76ffd9e22acc7f11ca501f03d6999adbdb9baa61",
         "type": "github"
       },
       "original": {
-        "owner": "nushell",
-        "repo": "nu_scripts",
+        "owner": "ohmyzsh",
+        "repo": "ohmyzsh",
         "type": "github"
       }
     },
@@ -578,7 +578,7 @@
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-master": "nixpkgs-master",
         "nixpkgs-stable": "nixpkgs-stable",
-        "nu_scripts": "nu_scripts",
+        "oh-my-zsh": "oh-my-zsh",
         "pre-commit-hooks": "pre-commit-hooks",
         "preservation": "preservation",
         "prismlauncher": "prismlauncher"
