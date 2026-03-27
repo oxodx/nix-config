@@ -1,7 +1,6 @@
 {
   services.homepage-dashboard = {
     enable = true;
-    package = unstable.homepage-dashboard;
 
     # https://gethomepage.dev/latest/configs/settings/
     settings = {
