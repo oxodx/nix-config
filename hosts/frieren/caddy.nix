@@ -9,6 +9,8 @@ let
   '';
 in
 {
+  services.resolved.enable = false;
+
   services.tailscale = {
     enable = true;
     permitCertUid = "caddy";
