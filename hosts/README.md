@@ -10,8 +10,9 @@ This directory contains all host-specific configurations for my NixOS systems.
 
 Named after fruits:
 
-| Host | Platform | Hardware | Purpose | Status | | `kumquat` | NixOS | ASUS TUF Gaming A15 FA506NCR
-| Gaming & Daily Use | ✅ Active |
+| Host      | Platform | Hardware                     | Purpose            | Status    |
+| --------- | -------- | ---------------------------- | ------------------ | --------- |
+| `kumquat` | NixOS    | ASUS TUF Gaming A15 FA506NCR | Gaming & Daily Use | ✅ Active |
 
 #### Servers
 
