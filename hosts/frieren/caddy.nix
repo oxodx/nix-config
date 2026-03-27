@@ -22,10 +22,11 @@ in
     dataDir = "/data/apps/caddy";
     logDir = "/var/log/caddy";
 
-    # Glances
-    virtualHosts."glances.frieren.pufferfish-mirfak.ts.net:80".extraConfig = ''
-      ${hostCommonConfig}
-      reverse_proxy http://localhost:61208
+    virtualHosts."frieren.pufferfish-mirfak.ts.net".extraConfig = ''
+      # Glances
+      handle /glances/* {
+        reverse_proxy http://localhost:61208
+      }
     '';
   };
 
