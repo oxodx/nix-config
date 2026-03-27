@@ -74,6 +74,9 @@ in
           wind_charge = 8;
           wither_skull = 4;
         };
+        mob-spawn-range = 3;
+        tick-inactive-villagers = false;
+        nerf-spawner-mobs = true;
       };
       "bukkit.yml".value = {
         spawn-limits = {
