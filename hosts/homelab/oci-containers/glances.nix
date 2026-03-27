@@ -29,6 +29,7 @@ in
       };
       volumes = [
         "/var/run/podman/podman.sock:/var/run/docker.sock"
+        "/etc/os-release:/etc/os-release:ro"
         "${dataDir}:/app/data"
       ];
       autoStart = true;
