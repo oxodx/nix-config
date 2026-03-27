@@ -17,5 +17,11 @@
     extensions = with pkgs-master.vscode-extensions; [
       jnoortheen.nix-ide
     ];
+    userSettings = {
+      "[nix]" = {
+        "editor.defaultFormatter" = "jnoortheen.nix-ide";
+      };
+      "nix.serverPath" = "nixd";
+    };
   };
 }
