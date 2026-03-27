@@ -47,6 +47,42 @@ in
     };
 
     files = {
+      "config/paper-world-defaults.yml".value = {
+        despawn-ranges = {
+          ambient = {
+            hard = 72;
+            soft = 30;
+          };
+          axolotls = {
+            hard = 72;
+            soft = 30;
+          };
+          creature = {
+            hard = 72;
+            soft = 30;
+          };
+          misc = {
+            hard = 72;
+            soft = 30;
+          };
+          monster = {
+            hard = 72;
+            soft = 30;
+          };
+          underground_water_creature = {
+            hard = 72;
+            soft = 30;
+          };
+          water_ambient = {
+            hard = 72;
+            soft = 30;
+          };
+          water_creature = {
+            hard = 72;
+            soft = 30;
+          };
+        };
+      };
       "spigot.yml".value = {
         view-distance = "default";
         delay-chunk-unloads-by = "10s";
