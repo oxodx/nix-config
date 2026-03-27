@@ -23,10 +23,7 @@ in
     logDir = "/var/log/caddy";
 
     # Glances
-    virtualHosts."glances.frieren.pufferfish-mirfak.ts.net".extraConfig = ''
-      tls {
-        get_certificate tailscale
-      }
+    virtualHosts."glances.frieren.pufferfish-mirfak.ts.net:80".extraConfig = ''
       ${hostCommonConfig}
       reverse_proxy http://localhost:61208
     '';
