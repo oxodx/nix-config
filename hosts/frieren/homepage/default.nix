@@ -1,6 +1,7 @@
 {
   services.homepage-dashboard = {
     enable = true;
+    allowedHosts = "home.oxod.nl";
 
     # https://gethomepage.dev/configs/settings/
     settings = {
