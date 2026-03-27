@@ -14,7 +14,6 @@ let
     nixpkgs
     home-manager
     nixos-generators
-    nix-minecraft
     ;
 in
 nixpkgs.lib.nixosSystem {
@@ -24,8 +23,6 @@ nixpkgs.lib.nixosSystem {
     ++ [
       nixos-generators.nixosModules.all-formats
       { nixpkgs.config.allowUnfree = true; }
-      nix-minecraft.nixosModules.minecraft-servers
-      { nixpkgs.overlays = [ nix-minecraft.overlay ]; }
     ]
     ++ (lib.optionals ((lib.lists.length home-modules) > 0) [
       home-manager.nixosModules.home-manager
