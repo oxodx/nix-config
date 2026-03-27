@@ -14,6 +14,15 @@ in
     permitCertUid = "caddy";
   };
 
+  services.adguardhome = {
+    enable = true;
+    settings = {
+      dns = {
+        upstream_dns = [ "https://dns.cloudflare.com/dns-query" ];
+      };
+    };
+  };
+
   services.caddy = {
     enable = true;
     # Reload Caddy instead of restarting it when configuration file changes.
