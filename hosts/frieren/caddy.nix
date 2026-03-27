@@ -24,6 +24,9 @@ in
 
     # Glances
     virtualHosts."glances.frieren.pufferfish-mirfak.ts.net".extraConfig = ''
+      tls {
+        get_certificate tailscale
+      }
       ${hostCommonConfig}
       reverse_proxy http://localhost:61208
     '';
