@@ -9,7 +9,7 @@ rec {
   prefixLength = 24;
 
   hostsAddr = {
-    homelab = {
+    frieren = {
       iface = "enp2s0";
       ipv4 = "192.168.1.191";
     };
@@ -63,7 +63,7 @@ rec {
           publicKey = value.publicKey;
         })
         {
-          homelab.publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILUGA8ozQcDCxa3TvTLHmpinCmh6ZKZkM7MUSxBHPRM0 oxod@homelab";
+          frieren.publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILUGA8ozQcDCxa3TvTLHmpinCmh6ZKZkM7MUSxBHPRM0 oxod@homelab";
 
           # ==================================== Other SSH Service's Public Key =======================================
 
