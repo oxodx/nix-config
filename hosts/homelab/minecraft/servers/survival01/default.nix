@@ -75,6 +75,26 @@ in
           wither_skull = 4;
         };
       };
+      "bukkit.yml".value = {
+        spawn-limits = {
+          monsters = 20;
+          animals = 5;
+          water-animals = 2;
+          water-ambient = 2;
+          water-underground-creature = 3;
+          axolotls = 3;
+          ambient = 1;
+        };
+        ticks-per = {
+          monster-spawns = 10;
+          animal-spawns = 400;
+          water-spawns = 400;
+          water-ambient-spawns = 400;
+          water-underground-creature-spawns = 400;
+          axolotl-spawns = 400;
+          ambient-spawns = 400;
+        };
+      };
       "plugins/ViaVersion/config.yml".value = {
         checkforupdates = false;
       };
