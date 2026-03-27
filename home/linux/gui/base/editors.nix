@@ -6,6 +6,7 @@
 {
   programs.vscode = {
     enable = true;
+
     package = pkgs-master.vscode.override {
       commandLineArgs = [
         # https://code.visualstudio.com/docs/configure/settings-sync#_recommended-configure-the-keyring-to-use-with-vs-code
@@ -14,14 +15,17 @@
         "--password-store=gnome-libsecret"
       ];
     };
-    extensions = with pkgs-master.vscode-extensions; [
-      jnoortheen.nix-ide
-    ];
-    userSettings = {
-      "[nix]" = {
-        "editor.defaultFormatter" = "jnoortheen.nix-ide";
+
+    profiles.default = {
+      extensions = with pkgs-master.vscode-extensions; [
+        jnoortheen.nix-ide
+      ];
+      userSettings = {
+        "[nix]" = {
+          "editor.defaultFormatter" = "jnoortheen.nix-ide";
+        };
+        "nix.serverPath" = "nixd";
       };
-      "nix.serverPath" = "nixd";
     };
   };
 }

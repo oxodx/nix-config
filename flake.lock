@@ -489,19 +489,19 @@
         "type": "github"
       }
     },
-    "oh-my-zsh": {
+    "nu_scripts": {
       "flake": false,
       "locked": {
-        "lastModified": 1774552196,
-        "narHash": "sha256-1E/jENGDp7ZsWX5URjmD0x7ccnGbij7O0FshOS3FxRU=",
-        "owner": "ohmyzsh",
-        "repo": "ohmyzsh",
-        "rev": "76ffd9e22acc7f11ca501f03d6999adbdb9baa61",
+        "lastModified": 1773315180,
+        "narHash": "sha256-5FKqphXxVSgqGXbqOL3aiZEGFSr5SMjMVIWzB0dA/+I=",
+        "owner": "nushell",
+        "repo": "nu_scripts",
+        "rev": "196d94338d382561e7bacb29948ffcfa5ff1b2a1",
         "type": "github"
       },
       "original": {
-        "owner": "ohmyzsh",
-        "repo": "ohmyzsh",
+        "owner": "nushell",
+        "repo": "nu_scripts",
         "type": "github"
       }
     },
@@ -578,7 +578,7 @@
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-master": "nixpkgs-master",
         "nixpkgs-stable": "nixpkgs-stable",
-        "oh-my-zsh": "oh-my-zsh",
+        "nu_scripts": "nu_scripts",
         "pre-commit-hooks": "pre-commit-hooks",
         "preservation": "preservation",
         "prismlauncher": "prismlauncher"
