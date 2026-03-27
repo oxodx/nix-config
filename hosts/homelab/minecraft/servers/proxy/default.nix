@@ -16,8 +16,8 @@ in
         motd = "0x0D Network";
         online-mode = true;
         servers = {
-          survival = "localhost:${toString serversCfg.survival01.lazymc.server-port}";
-          try = [ "survival" ];
+          survival01 = "localhost:25571";
+          try = [ "survival01" ];
         };
         # It's safe to use, as long as you don't open the underlying server ports
         player-info-forwarding-mode = "legacy";
