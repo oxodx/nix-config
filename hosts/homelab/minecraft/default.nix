@@ -6,8 +6,11 @@
 }:
 {
   imports = [
+    ./servers/proxy
     ./servers/survival01
   ];
+
+  networking.firewall.allowedTCPPorts = [ 25565 ];
 
   services.minecraft-servers = {
     enable = true;
