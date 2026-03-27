@@ -24,6 +24,11 @@ in
     dataDir = "/data/apps/caddy";
     logDir = "/var/log/caddy";
 
+    virtualHosts."home.oxod.nl:80".extraConfig = ''
+      ${hostCommonConfig}
+      reverse_proxy http://localhost:54401
+    '';
+
     virtualHosts."glances.oxod.nl:80".extraConfig = ''
       ${hostCommonConfig}
       reverse_proxy http://localhost:61208
