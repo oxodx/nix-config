@@ -16,6 +16,11 @@ in
     permitCertUid = "caddy";
   };
 
+  services.uptime-kuma = {
+    enable = true;
+    settings.port = "53350";
+  };
+
   services.caddy = {
     enable = true;
     # Reload Caddy instead of restarting it when configuration file changes.
