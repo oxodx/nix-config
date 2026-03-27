@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ config, pkgs, ... }:
 let
   serversCfg = config.services.minecraft-servers.servers;
 in
