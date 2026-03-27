@@ -22,20 +22,18 @@ in
     chown -R ${user}:${user} ${configDir}
   '';
 
-  # https://github.com/NixOS/nixpkgs/blob/nixos-25.11/nixos/modules/virtualisation/oci-containers.nix
   virtualisation.oci-containers.containers = {
-    # check its logs via `journalctl -u podman-homepage`
     homepage = {
       hostname = "homepage";
       image = "ghcr.io/gethomepage/homepage:latest";
-      ports = [ "127.0.0.1:54401:3000" ];
       volumes = [
         "${configDir}:/app/config"
       ];
       autoStart = true;
-      extraOptions = [
-        "--network-option=disable_dns=true"
-      ];
+      network = "host";
+      environment = {
+        PORT = "54401";
+      };
     };
   };
 }
