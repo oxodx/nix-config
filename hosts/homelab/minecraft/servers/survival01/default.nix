@@ -14,6 +14,7 @@ in
       server-port = 25581;
       online-mode = false;
       max-tick-time = -1;
+      white-list = true;
     };
 
     symlinks = {
