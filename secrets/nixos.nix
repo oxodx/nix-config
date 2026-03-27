@@ -100,8 +100,8 @@ in
           mode = "0600";
           user = myvars.username;
         };
-        "agenix/ssh-key-homelab" = {
-          source = config.age.secrets."ssh-key-homelab".path;
+        "agenix/ssh-key-frieren" = {
+          source = config.age.secrets."ssh-key-frieren".path;
           mode = "0600";
           user = myvars.username;
         };
