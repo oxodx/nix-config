@@ -23,7 +23,7 @@ in
     glances = {
       hostname = "glances";
       image = "nicolargo/glances:latest";
-      ports = [ "127.0.0.1:80:3001" ];
+      ports = [ "127.0.0.1:53350:61208" ];
       environment = {
         GLANCES_OPT = "-w";
       };
