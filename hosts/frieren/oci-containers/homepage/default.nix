@@ -30,7 +30,7 @@ in
         "${configDir}:/app/config"
       ];
       autoStart = true;
-      network = "host";
+      extraOptions = [ "--net=host" ];
       environment = {
         PORT = "54401";
       };
