@@ -22,6 +22,12 @@ in
     };
 
     symlinks = {
+      "plugins/LuckPerms.jar" = pkgs.fetchurl rec {
+        pname = "LuckPerms";
+        version = "5.5.17";
+        url = "https://cdn.modrinth.com/data/Vebnzrzj/versions/OrIs0S6b/${pname}-Bukkit-${version}.jar";
+        hash = "sha256:d5b160a3971a8372cc5835bcd555e37c1aa61e9dd30559921a5f421a11bf97dd";
+      };
       "plugins/Chunky.jar" = pkgs.fetchurl rec {
         pname = "Chunky";
         version = "1.4.40";
