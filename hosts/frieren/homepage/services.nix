@@ -10,7 +10,7 @@
         };
       }
       {
-        AdGuardHome = {
+        "AdGuard Home" = {
           icon = "adguard-home.svg";
           href = "http://adguard.oxod.nl";
           description = "Network-wide ads & trackers blocking DNS server";
@@ -18,7 +18,7 @@
         };
       }
       {
-        UptimeKuma = {
+        "Uptime Kuma" = {
           icon = "uptime-kuma.svg";
           href = "http://uptime.oxod.nl";
           description = "A fancy self-hosted monitoring tool ";
