@@ -48,6 +48,34 @@ in
     };
 
     files = {
+      "spigot.yml".value = {
+        view-distance = "default";
+        delay-chunk-unloads-by = "10s";
+        prevent-moving-into-unloaded-chunks = true;
+        entity-per-chunk-save-limit = {
+          area_effect_cloud = 8;
+          arrow = 16;
+          breeze_wind_charge = 8;
+          dragon_fireball = 3;
+          egg = 8;
+          ender_pearl = 8;
+          experience_bottle = 3;
+          experience_orb = 16;
+          eye_of_ender = 8;
+          fireball = 8;
+          firework_rocket = 8;
+          llama_spit = 3;
+          splash_potion = 8;
+          lingering_potion = 8;
+          shulker_bullet = 8;
+          small_fireball = 8;
+          snowball = 8;
+          spectral_arrow = 16;
+          trident = 16;
+          wind_charge = 8;
+          wither_skull = 4;
+        };
+      };
       "plugins/ViaVersion/config.yml".value = {
         checkforupdates = false;
       };
