@@ -24,20 +24,27 @@ in
     dataDir = "/data/apps/caddy";
     logDir = "/var/log/caddy";
 
-    virtualHosts."home.oxod.nl:80".extraConfig = ''
-      ${hostCommonConfig}
-      reverse_proxy http://localhost:8082
-    '';
+    virtualHosts = {
+      "home.oxod.nl:80".extraConfig = ''
+        ${hostCommonConfig}
+        reverse_proxy http://localhost:8082
+      '';
 
-    virtualHosts."glances.oxod.nl:80".extraConfig = ''
-      ${hostCommonConfig}
-      reverse_proxy http://localhost:61208
-    '';
+      "glances.oxod.nl:80".extraConfig = ''
+        ${hostCommonConfig}
+        reverse_proxy http://localhost:61208
+      '';
 
-    virtualHosts."adguard.oxod.nl:80".extraConfig = ''
-      ${hostCommonConfig}
-      reverse_proxy http://localhost:3003
-    '';
+      "uptime.oxod.nl:80".extraConfig = ''
+        ${hostCommonConfig}
+        reverse_proxy http://localhost:53350
+      '';
+
+      "adguard.oxod.nl:80".extraConfig = ''
+        ${hostCommonConfig}
+        reverse_proxy http://localhost:3003
+      '';
+    };
   };
 
   networking.firewall.allowedTCPPorts = [
