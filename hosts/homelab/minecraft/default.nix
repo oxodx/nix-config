@@ -33,7 +33,7 @@
         settings = {
           logpath = "/data/apps/minecraft/servers/logs/latest.log";
           port = "25581";
-          maxretry = 5;
+          maxretry = 2;
           findtime = "1m";
         };
       };
