@@ -26,7 +26,7 @@ in
 
     virtualHosts."home.oxod.nl:80".extraConfig = ''
       ${hostCommonConfig}
-      reverse_proxy http://localhost:54401
+      reverse_proxy http://localhost:8082
     '';
 
     virtualHosts."glances.oxod.nl:80".extraConfig = ''
