@@ -27,7 +27,7 @@ in
         DOMAIN = "git.oxod.nl";
         HTTP_PORT = 3008;
         SSH_PORT = lib.head config.services.openssh.ports;
-        ROOT_URL = "https://${srv.DOMAIN}:3008";
+        ROOT_URL = "http://${srv.DOMAIN}:3008";
       };
       service.DISABLE_REGISTRATION = true;
       actions = {

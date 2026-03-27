@@ -45,7 +45,7 @@ in
         reverse_proxy http://localhost:53350
       '';
 
-      "git.oxod.nl".extraConfig = ''
+      "http://git.oxod.nl".extraConfig = ''
         ${hostCommonConfig}
         reverse_proxy http://localhost:3008
       '';
