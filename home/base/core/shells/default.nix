@@ -21,6 +21,14 @@ in
     '';
   };
 
+  programs.zsh = {
+    enable = true;
+    enableCompletion = true;
+    autosuggestion.enable = true;
+    syntaxHighlighting.enable = true;
+    inherit shellAliases;
+  };
+
   home.shellAliases = shellAliases;
 
   programs.nushell = {

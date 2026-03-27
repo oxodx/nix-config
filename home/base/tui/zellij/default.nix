@@ -12,22 +12,23 @@ in
   xdg.configFile."zellij/config.kdl".source = ./config.kdl;
   catppuccin.zellij.enable = false;
 
-  programs.nushell.extraConfig = ''
-    if (not ("ZELLIJ" in $env)) and (not ("INSIDE_EMACS" in $env)) {
-      if "ZELLIJ_AUTO_ATTACH" in $env and $env.ZELLIJ_AUTO_ATTACH == "true" {
-        ^zellij attach -c
-      } else {
-        ^zellij
-      }
+  programs.zsh.initContent = ''
+    if [[ -z "$ZELLIJ" ]] && [[ -z "$INSIDE_EMACS" ]]; then
+      if [[ -n "$ZELLIJ_AUTO_ATTACH" ]] && [[ "$ZELLIJ_AUTO_ATTACH" == "true" ]]; then
+        zellij attach -c
+      else
+        zellij
+      fi
 
       # Auto exit the shell session when zellij exit
-      $env.ZELLIJ_AUTO_EXIT = "false" # disable auto exit
-      if "ZELLIJ_AUTO_EXIT" in $env and $env.ZELLIJ_AUTO_EXIT == "true" {
+      export ZELLIJ_AUTO_EXIT="false" # disable auto exit
+      if [[ -n "$ZELLIJ_AUTO_EXIT" ]] && [[ "$ZELLIJ_AUTO_EXIT" == "true" ]]; then
         exit
-      }
-    }
+      fi
+    fi
   '';
 
   home.shellAliases = shellAliases;
+  programs.zsh.shellAliases = shellAliases;
   programs.nushell.shellAliases = shellAliases;
 }

@@ -11,7 +11,7 @@
         dpi-aware = "no";
         resize-keep-grid = "no";
 
-        shell = "${pkgs.bash}/bin/bash --login -c 'nu --login --interactive'";
+        shell = "${pkgs.bash}/bin/bash --login -c 'zsh --login --interactive'";
       };
 
       mouse = {

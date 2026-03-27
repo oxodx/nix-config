@@ -18,6 +18,8 @@
 
   programs.eza = {
     enable = true;
+    enableBashIntegration = true;
+    enableZshIntegration = true;
     enableNushellIntegration = false;
     git = true;
     icons = "auto";

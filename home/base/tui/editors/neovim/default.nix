@@ -16,6 +16,7 @@ in
   catppuccin.nvim.enable = false;
 
   home.shellAliases = shellAliases;
+  programs.zsh.shellAliases = shellAliases;
   programs.nushell.shellAliases = shellAliases;
 
   programs.neovim = {

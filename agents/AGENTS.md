@@ -52,8 +52,8 @@ If rules conflict, follow the higher-priority source and state the conflict brie
   (`rg`, `fd`).
 - Prefer project task runners (`just`, `make`, `task`, `npm scripts`, etc.) over ad-hoc commands
   when equivalent.
-- If a required command is not already available, use only `nix run`, `flake.nix`/`shell.nix` or `uv`/
-  `pnpm` to provide it.
+- If a required command is not already available, use only `nix run`, `flake.nix`/`shell.nix` or
+  `uv`/ `pnpm` to provide it.
 - If that is still insufficient, stop and ask the user to prepare the environment instead of using
   any other installation method.
 - Use `gh` CLI for GitHub operations, especially code/PR/issue search and inspection.
@@ -61,7 +61,7 @@ If rules conflict, follow the higher-priority source and state the conflict brie
 ## 7) Environment Defaults
 
 - Primary OS: NixOS.
-- Shell: default to `nushell`, `bash` also exists.
+- Shell: default to `zsh` but `nushell` and `bash` also exists.
 
 ## 8) Script Engineering Principles
 
