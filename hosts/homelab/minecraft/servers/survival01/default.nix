@@ -9,7 +9,6 @@ in
 
     package = pkgs.paperServers."paper-${serverVersion}";
     jvmOpts = ((import ../../aikar-flags.nix) "2G") + "-Dpaper.disableChannelLimit=true";
-    systemdConfig.CPUQuota = "150%";
     whitelist = import ./whitelist.nix;
     serverProperties = {
       server-port = 25581;
