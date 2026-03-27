@@ -9,6 +9,11 @@ let
   '';
 in
 {
+  services.tailscale = {
+    enable = true;
+    permitCertUid = "caddy";
+  };
+
   services.caddy = {
     enable = true;
     # Reload Caddy instead of restarting it when configuration file changes.
@@ -17,11 +22,11 @@ in
     dataDir = "/data/apps/caddy";
     logDir = "/var/log/caddy";
 
-    # Minecraft
-    # virtualHosts."http://minecraft-mc.oxod.nl".extraConfig = ''
-    #   ${hostCommonConfig}
-    #   reverse_proxy http://localhost:25571
-    # '';
+    # Glances
+    virtualHosts."http://glances.frieren.pufferfish-mirfak.ts.net".extraConfig = ''
+      ${hostCommonConfig}
+      reverse_proxy http://localhost:61208
+    '';
   };
 
   networking.firewall.allowedTCPPorts = [
