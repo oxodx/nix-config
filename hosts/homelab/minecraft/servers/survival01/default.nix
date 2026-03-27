@@ -13,7 +13,6 @@ in
     whitelist = import ./whitelist.nix;
     serverProperties = {
       server-port = 25581;
-      online-mode = false;
       white-list = true;
       max-tick-time = -1;
       network-compression-threshold = 256;

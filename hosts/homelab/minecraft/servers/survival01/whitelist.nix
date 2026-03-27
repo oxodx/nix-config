@@ -1,4 +1,4 @@
 # https://mcuuid.net/
 {
-  "0x0D_" = "fa38af0b-5a00-32a7-9d82-1e18f67f6703";
+  "0x0D_" = "ef9ebb67-034c-4520-a700-6c67a3d63bb1";
 }
