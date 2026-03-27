@@ -22,7 +22,7 @@ in
     dataDir = "/data/apps/caddy";
     logDir = "/var/log/caddy";
 
-    virtualHosts."frieren".extraConfig = ''
+    virtualHosts."http://frieren".extraConfig = ''
       # Glances
       handle /glances/* {
         reverse_proxy http://localhost:61208
