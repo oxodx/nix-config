@@ -33,6 +33,9 @@ in
         "${configDir}:/app/config"
       ];
       autoStart = true;
+      extraOptions = [
+        "--network-option=disable_dns=true"
+      ];
     };
   };
 }
