@@ -24,11 +24,9 @@ in
     dataDir = "/data/apps/caddy";
     logDir = "/var/log/caddy";
 
-    virtualHosts."glances.oxod.online".extraConfig = ''
-      # Glances
-      handle /glances/* {
-        reverse_proxy http://localhost:61208
-      }
+    virtualHosts."glances.oxod.nl:80".extraConfig = ''
+      ${hostCommonConfig}
+      reverse_proxy http://localhost:61208
     '';
   };
 
