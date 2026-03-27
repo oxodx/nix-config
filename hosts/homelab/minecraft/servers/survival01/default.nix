@@ -77,6 +77,22 @@ in
         mob-spawn-range = 3;
         tick-inactive-villagers = false;
         nerf-spawner-mobs = true;
+        entity-activation-range = {
+          animals = 16;
+          monsters = 24;
+          raiders = 48;
+          misc = 8;
+          water = 8;
+          villagers = 16;
+          flying-monsters = 48;
+        };
+        entity-tracking-range = {
+          players = 48;
+          animals = 48;
+          monsters = 48;
+          misc = 32;
+          other = 64;
+        };
       };
       "bukkit.yml".value = {
         spawn-limits = {
