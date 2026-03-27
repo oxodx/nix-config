@@ -1,7 +1,4 @@
 { config, pkgs, ... }:
-let
-  serversCfg = config.services.minecraft-servers.servers;
-in
 {
   services.minecraft-servers.servers.proxy = {
     enable = true;
@@ -11,16 +8,16 @@ in
     stopCommand = "end";
     files = {
       "velocity.toml".value = {
-        config-version = "2.5";
+        "config-version" = "2.5";
         bind = "0.0.0.0:25565";
         motd = "0x0D Network";
         online-mode = true;
+        "player-info-forwarding-mode" = "legacy";
         servers = {
           survival01 = "localhost:25571";
           try = [ "survival01" ];
         };
-        # It's safe to use, as long as you don't open the underlying server ports
-        player-info-forwarding-mode = "legacy";
+        "forced-hosts" = { };
       };
     };
   };
