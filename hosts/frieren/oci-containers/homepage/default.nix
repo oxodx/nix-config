@@ -26,6 +26,10 @@ in
     homepage = {
       hostname = "homepage";
       image = "ghcr.io/gethomepage/homepage:latest";
+      ports = [
+        "127.0.0.1:54401:3000"
+        "127.0.0.1:54:53"
+      ];
       volumes = [
         "${configDir}:/app/config"
       ];
