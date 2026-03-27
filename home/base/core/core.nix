@@ -20,7 +20,6 @@
     enable = true;
     enableBashIntegration = true;
     enableZshIntegration = true;
-    enableNushellIntegration = false;
     git = true;
     icons = "auto";
   };
@@ -53,13 +52,11 @@
     enable = true;
     enableBashIntegration = true;
     enableZshIntegration = true;
-    enableNushellIntegration = true;
   };
 
   programs.atuin = {
     enable = true;
     enableBashIntegration = true;
     enableZshIntegration = true;
-    enableNushellIntegration = true;
   };
 }

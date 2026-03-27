@@ -61,7 +61,7 @@ If rules conflict, follow the higher-priority source and state the conflict brie
 ## 7) Environment Defaults
 
 - Primary OS: NixOS.
-- Shell: default to `zsh` but `nushell` and `bash` also exists.
+- Shell: default to `zsh` but `bash` also exists.
 
 ## 8) Script Engineering Principles
 
