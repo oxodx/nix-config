@@ -43,7 +43,7 @@
         filter = "minecraft";
         settings = {
           logpath = "/data/apps/minecraft/servers/logs/latest.log";
-          port = "25581";
+          port = "25565";
           maxretry = 2;
           findtime = "1m";
         };
