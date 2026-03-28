@@ -1,4 +1,6 @@
 {
+  users.groups.docker = { };
+
   services.homepage-dashboard = {
     enable = true;
     allowedHosts = "home.oxod.nl";
@@ -24,5 +26,11 @@
     # https://gethomepage.dev/configs/custom-css-js/
     customJS = "";
     customCSS = "";
+  };
+
+  systemd.services.homepage-dashboard = {
+    serviceConfig = {
+      SupplementaryGroups = [ "docker" ];
+    };
   };
 }
