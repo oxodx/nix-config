@@ -47,5 +47,9 @@ in
     linkConfig.RequiredForOnline = "routable";
   };
 
+  users.users.oxod = {
+    linger = true;
+  };
+
   system.stateVersion = "25.11";
 }
