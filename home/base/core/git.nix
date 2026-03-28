@@ -17,7 +17,7 @@
     lfs.enable = true;
 
     settings = {
-      user.email = myvars.username;
+      user.email = myvars.useremail;
       user.name = myvars.userfullname;
 
       init.defaultBranch = "main";
