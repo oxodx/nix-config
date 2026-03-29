@@ -22,7 +22,7 @@ let
           modules.desktop.fonts.enable = true;
           modules.desktop.wayland.enable = true;
           modules.desktop.gaming.enable = true;
-          services.pipewire.lowLatency.enable = false;
+          services.pipewire.lowLatency.enable = lib.mkForce false;
         }
         inputs.agenix.nixosModules.default
       ];
