@@ -27,10 +27,4 @@
     customJS = "";
     customCSS = "";
   };
-
-  systemd.services.homepage-dashboard = {
-    serviceConfig = {
-      SupplementaryGroups = [ "docker" ];
-    };
-  };
 }
