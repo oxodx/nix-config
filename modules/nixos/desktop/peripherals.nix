@@ -1,7 +1,7 @@
 { pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
-    pulseaudio
+    # pulseaudio removed - pipewire-pulse provides pactl/pacmd
   ];
 
   services.pipewire = {
@@ -11,6 +11,42 @@
     pulse.enable = true;
     jack.enable = true;
     wireplumber.enable = true;
+
+    extraConfig.pipewire = {
+      "100-clock-quantum" = {
+        "context.properties" = {
+          "default.clock.rate" = 48000;
+          "default.clock.quantum" = 512;
+          "default.clock.min-quantum" = 512;
+          "default.clock.max-quantum" = 1024;
+        };
+      };
+    };
+
+    extraConfig.pipewire-pulse = {
+      "10-pulse-quantum" = {
+        "pulse.min.quantum" = "512/48000";
+      };
+    };
+
+    wireplumber.extraConfig = {
+      "10-alsa-quantum" = {
+        "monitor.alsa.rules" = [
+          {
+            matches = [
+              { "node.name" = "~alsa_output.*"; }
+            ];
+            actions = {
+              update-props = {
+                "api.alsa.period-size" = 512;
+                "api.alsa.headroom" = 8192;
+                "session.suspend-timeout-seconds" = 0;
+              };
+            };
+          }
+        ];
+      };
+    };
   };
   security.rtkit.enable = true;
   services.pulseaudio.enable = false;

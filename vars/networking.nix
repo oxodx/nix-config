@@ -13,6 +13,10 @@ rec {
       iface = "enp2s0";
       ipv4 = "192.168.1.191";
     };
+    fern = {
+      iface = "enp2s0";
+      ipv4 = "192.168.1.192";
+    };
   };
 
   hostsInterface = lib.attrsets.mapAttrs (key: val: {
@@ -64,6 +68,7 @@ rec {
         })
         {
           frieren.publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILUGA8ozQcDCxa3TvTLHmpinCmh6ZKZkM7MUSxBHPRM0 oxod@homelab";
+          fern.publicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL8i0gRrt7Wyd5HeQ3lgSsOsHYNDPNnnKU+Ed7HesX/A oxod@fern";
 
           # ==================================== Other SSH Service's Public Key =======================================
 

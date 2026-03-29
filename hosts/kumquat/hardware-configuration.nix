@@ -23,9 +23,22 @@
   ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
+  boot.kernelParams = [
+    "idle=nomwait"
+    "rtc_cmos.use_acpi_alarm=1"
+  ];
   boot.extraModulePackages = [ ];
   boot.extraModprobeConfig = ''
-    options snd-had-intel model=asus-zenbook
+    options snd-hda-intel model=generic power_save=0 power_save_controller=N enable=1,1
+    options nvidia_drm modeset=1 fbdev=1
+    options nvidia NVreg_EnableS0ixPowerManagement=1 NVreg_DynamicPowerManagement=0x00
+    blacklist snd_sof_pci
+    blacklist snd_sof_amd_acp
+    blacklist snd_sof_amd_renoir
+    blacklist snd_sof_amd_rembrandt
+    blacklist snd_sof_amd_vangogh
+    blacklist snd_sof_amd_acp63
+    blacklist snd_sof_amd_acp70
   '';
 
   fileSystems."/" = {
@@ -52,6 +65,11 @@
   networking.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
+  powerManagement.cpuFreqGovernor = lib.mkDefault "schedutil";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+
+  boot.kernel.sysctl = {
+    "dev.hpet.max-user-freq" = 3072;
+    "rtc.max-user-freq" = 3072;
+  };
 }

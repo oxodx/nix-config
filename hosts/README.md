@@ -21,6 +21,7 @@ Named after characters from "Frieren: Beyond Journey's End":
 | Host      | Platform | Hardware | Purpose            | Status    |
 | --------- | -------- | -------- | ------------------ | --------- |
 | `frieren` | NixOS    | i5-4570  | Homelab production | ✅ Active |
+| `fern`    | NixOS    | i5-4570  | Homelab testing    | ✅ Active |
 
 ## Naming Conventions
 
