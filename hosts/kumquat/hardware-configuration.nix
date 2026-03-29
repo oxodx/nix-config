@@ -23,9 +23,12 @@
   ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
+  boot.kernelParams = [ "idle=nomwait" ];
   boot.extraModulePackages = [ ];
   boot.extraModprobeConfig = ''
     options snd-hda-intel model=generic
+    options nvidia_drm modeset=1 fbdev=1
+    options nvidia NVreg_EnableS0ixPowerManagement=1 NVreg_DynamicPowerManagement=0x02
   '';
 
   fileSystems."/" = {
