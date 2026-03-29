@@ -11,6 +11,12 @@
     pulse.enable = true;
     jack.enable = true;
     wireplumber.enable = true;
+
+    extraConfig.pipewire-pulse = {
+      "10-pulse-quantum" = {
+        "pulse.min.quantum" = "1024/48000";
+      };
+    };
   };
   security.rtkit.enable = true;
   services.pulseaudio.enable = false;
