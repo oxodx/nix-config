@@ -2,9 +2,9 @@
   {
     "About Me" = [
       {
-        Blog = [
+        Portfolio = [
           {
-            abbr = "Blog";
+            abbr = "Portfolio";
             href = "https://oxod.nl";
           }
         ];
