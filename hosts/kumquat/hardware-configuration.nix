@@ -29,9 +29,9 @@
   ];
   boot.extraModulePackages = [ ];
   boot.extraModprobeConfig = ''
-    options snd-hda-intel model=generic power_save=0 enable=1,1
+    options snd-hda-intel model=generic power_save=0 power_save_controller=N enable=1,1
     options nvidia_drm modeset=1 fbdev=1
-    options nvidia NVreg_EnableS0ixPowerManagement=1 NVreg_DynamicPowerManagement=0x02
+    options nvidia NVreg_EnableS0ixPowerManagement=1 NVreg_DynamicPowerManagement=0x00
     blacklist snd_sof_pci
     blacklist snd_sof_amd_acp
     blacklist snd_sof_amd_renoir
@@ -65,7 +65,7 @@
   networking.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
+  powerManagement.cpuFreqGovernor = lib.mkDefault "schedutil";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 
   boot.kernel.sysctl = {
