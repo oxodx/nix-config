@@ -115,6 +115,12 @@ in
 
     (mkIf cfg.server.application.enable {
       age.secrets = {
+        forgejo-runner-token = {
+          file = "${mysecrets}/forgejo-runner-token.age";
+          mode = "0400";
+          owner = "forgejo";
+        };
+
         # "transmission-credentials.json" = {
         #   file = "${mysecrets}/server/transmission-credentials.json.age";
         # }
