@@ -49,6 +49,11 @@ in
         "ubuntu-22.04:docker://node:20-bookworm"
         "ubuntu-24.04:docker://node:22-noble"
       ];
+      settings = {
+        container = {
+          network = "host";
+        };
+      };
     };
   };
 }
