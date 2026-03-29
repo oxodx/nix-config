@@ -29,7 +29,7 @@
       };
     };
 
-    extraWireplumberConfig = {
+    wireplumber.extraConfig = {
       "10-alsa-quantum" = {
         "monitor.alsa.rules" = [
           {
