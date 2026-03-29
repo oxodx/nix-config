@@ -22,8 +22,6 @@ let
           modules.desktop.fonts.enable = true;
           modules.desktop.wayland.enable = true;
           modules.desktop.gaming.enable = true;
-          # Disable nix-gaming lowLatency - it sets min-quantum=64 causing audio xruns
-          services.pipewire.lowLatency.enable = false;
         }
         inputs.agenix.nixosModules.default
       ];

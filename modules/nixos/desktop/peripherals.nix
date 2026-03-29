@@ -13,7 +13,7 @@
     wireplumber.enable = true;
 
     extraConfig.pipewire = {
-      "10-clock-quantum" = {
+      "100-clock-quantum" = {
         "context.properties" = {
           "default.clock.rate" = 48000;
           "default.clock.quantum" = 512;
