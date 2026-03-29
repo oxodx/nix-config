@@ -28,6 +28,25 @@
         "pulse.min.quantum" = "512/48000";
       };
     };
+
+    extraWireplumberConfig = {
+      "10-alsa-quantum" = {
+        "monitor.alsa.rules" = [
+          {
+            matches = [
+              { "node.name" = "~alsa_output.*"; }
+            ];
+            actions = {
+              update-props = {
+                "api.alsa.period-size" = 512;
+                "api.alsa.headroom" = 8192;
+                "session.suspend-timeout-seconds" = 0;
+              };
+            };
+          }
+        ];
+      };
+    };
   };
   security.rtkit.enable = true;
   services.pulseaudio.enable = false;
