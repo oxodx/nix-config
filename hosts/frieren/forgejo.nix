@@ -29,7 +29,7 @@ in
         SSH_PORT = lib.head config.services.openssh.ports;
         ROOT_URL = "https://${srv.DOMAIN}";
       };
-      service.DISABLE_REGISTRATION = false;
+      service.DISABLE_REGISTRATION = true;
       actions = {
         ENABLED = true;
         DEFAULT_ACTIONS_URL = "github";
