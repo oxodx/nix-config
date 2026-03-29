@@ -29,6 +29,13 @@
     options snd-hda-intel model=generic
     options nvidia_drm modeset=1 fbdev=1
     options nvidia NVreg_EnableS0ixPowerManagement=1 NVreg_DynamicPowerManagement=0x02
+    blacklist snd_sof_pci
+    blacklist snd_sof_amd_acp
+    blacklist snd_sof_amd_renoir
+    blacklist snd_sof_amd_rembrandt
+    blacklist snd_sof_amd_vangogh
+    blacklist snd_sof_amd_acp63
+    blacklist snd_sof_amd_acp70
   '';
 
   fileSystems."/" = {
