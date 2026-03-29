@@ -4,7 +4,7 @@
       {
         Portfolio = [
           {
-            abbr = "Portfolio";
+            abbr = "Site";
             href = "https://oxod.nl";
           }
         ];
@@ -14,6 +14,14 @@
           {
             abbr = "GH";
             href = "https://github.com/0x0Dx";
+          }
+        ];
+      }
+      {
+        Git = [
+          {
+            abbr = "Git";
+            href = "https://git.oxod.nl/";
           }
         ];
       }
