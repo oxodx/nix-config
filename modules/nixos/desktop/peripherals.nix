@@ -14,7 +14,7 @@
 
     extraConfig.pipewire-pulse = {
       "10-pulse-quantum" = {
-        "pulse.min.quantum" = "1024/48000";
+        "pulse.min.quantum" = "256/48000";
       };
     };
   };
