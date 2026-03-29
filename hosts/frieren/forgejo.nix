@@ -36,4 +36,19 @@ in
       };
     };
   };
+
+  services.gitea-actions-runner = {
+    package = pkgs.forgejo-runner;
+    instances.default = {
+      enable = true;
+      name = "frieren";
+      url = "https://${srv.DOMAIN}";
+      tokenFile = config.age.secrets.forgejo-runner-token.path;
+      labels = [
+        "ubuntu-latest:docker://node:20-bookworm"
+        "ubuntu-22.04:docker://node:20-bookworm"
+        "ubuntu-24.04:docker://node:22-noble"
+      ];
+    };
+  };
 }
