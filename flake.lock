@@ -328,13 +328,13 @@
         "rev": "2dd5eef4da3a8bcfaaecb08b679b98d524b18346",
         "shallow": true,
         "type": "git",
-        "url": "ssh://git@github.com/0x0Dx/nix-secrets.git"
+        "url": "ssh://git@github.com/oxodx/nix-secrets.git"
       },
       "original": {
         "ref": "main",
         "shallow": true,
         "type": "git",
-        "url": "ssh://git@github.com/0x0Dx/nix-secrets.git"
+        "url": "ssh://git@github.com/oxodx/nix-secrets.git"
       }
     },
     "nix-gaming": {
