@@ -35,6 +35,11 @@ in
         reverse_proxy http://localhost:8082
       '';
 
+      "http://git.oxod.nl".extraConfig = ''
+        ${hostCommonConfig}
+        reverse_proxy http://localhost:3008
+      '';
+
       "glances.oxod.nl:80".extraConfig = ''
         ${hostCommonConfig}
         reverse_proxy http://localhost:61208
