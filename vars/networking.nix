@@ -13,6 +13,10 @@ rec {
       iface = "enp2s0";
       ipv4 = "192.168.1.191";
     };
+    fern = {
+      iface = "enp2s0";
+      ipv4 = "192.168.1.192";
+    };
   };
 
   hostsInterface = lib.attrsets.mapAttrs (key: val: {
