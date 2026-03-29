@@ -24,6 +24,9 @@
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
+  boot.extraModprobeConfig = ''
+    options snd-had-intel model=asus-zenbook
+  '';
 
   fileSystems."/" = {
     device = "/dev/disk/by-uuid/02d8bae7-0af2-4f6b-9c0d-65800fc321e9";
