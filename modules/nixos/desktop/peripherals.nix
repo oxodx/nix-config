@@ -1,7 +1,7 @@
 { pkgs, ... }:
 {
   environment.systemPackages = with pkgs; [
-    pulseaudio
+    # pulseaudio removed - pipewire-pulse provides pactl/pacmd
   ];
 
   services.pipewire = {
@@ -12,9 +12,20 @@
     jack.enable = true;
     wireplumber.enable = true;
 
+    extraConfig.pipewire = {
+      "10-clock-quantum" = {
+        "context.properties" = {
+          "default.clock.rate" = 48000;
+          "default.clock.quantum" = 1024;
+          "default.clock.min-quantum" = 1024;
+          "default.clock.max-quantum" = 2048;
+        };
+      };
+    };
+
     extraConfig.pipewire-pulse = {
       "10-pulse-quantum" = {
-        "pulse.min.quantum" = "256/48000";
+        "pulse.min.quantum" = "1024/48000";
       };
     };
   };
