@@ -24,8 +24,9 @@
   # 2. Or just use hardware security keys like Yubikey/CanoKey.
   mainSshAuthorizedKeys = [
     # The main ssh keys for daily usage
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKEJlh+mABI11oMlheEduOiPnTc8wgSs2/cHqhb9QW+Q oxod@kumquat"
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILUGA8ozQcDCxa3TvTLHmpinCmh6ZKZkM7MUSxBHPRM0 oxod@homelab"
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKEJlh+mABI11oMlheEduOiPnTc8wgSs2/cHqhb9QW+Q oxod@kumquat" # Kumquat
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILUGA8ozQcDCxa3TvTLHmpinCmh6ZKZkM7MUSxBHPRM0 oxod@homelab" # Frieren
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL8i0gRrt7Wyd5HeQ3lgSsOsHYNDPNnnKU+Ed7HesX/A oxod@fern" # Fern
   ];
   secondaryAuthorizedKeys = [
     # the backup ssh keys for disaster recovery
