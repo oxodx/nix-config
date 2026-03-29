@@ -25,7 +25,7 @@
   boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
   boot.extraModprobeConfig = ''
-    options snd-had-intel model=asus-zenbook
+    options snd-hda-intel snoop=0
   '';
 
   fileSystems."/" = {

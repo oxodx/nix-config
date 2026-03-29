@@ -12,4 +12,5 @@ check-filename = true
 extend-ignore-re = [
   "iterm2",
   "noice",
+  "snd-hda-intel",
 ]
