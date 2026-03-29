@@ -67,4 +67,9 @@
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+
+  boot.kernel.sysctl = {
+    "dev.hpet.max-user-freq" = 3072;
+    "rtc.max-user-freq" = 3072;
+  };
 }
