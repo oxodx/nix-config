@@ -15,7 +15,7 @@ in
     "d ${dataDir} 0755 ${user} ${user}"
   ];
 
-  environment."${dataDir}/compose.yaml".text = ''
+  environment.etc."${dataDir}/compose.yaml".text = ''
     services:
       mc:
         image: itzg/minecraft-server:latest
@@ -48,7 +48,7 @@ in
       docker compose -f ${dataDir}/compose.yaml up
     '';
     restartTriggers = [
-      config.environment."${dataDir}/compose.yaml".source
+      config.environment.etc."${dataDir}/compose.yaml".source
     ];
   };
 }
