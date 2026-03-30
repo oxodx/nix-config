@@ -18,15 +18,13 @@ let
   ssh-user = "root";
 
   modules = {
-    nixos-modules =
-      (map mylib.relativeToRoot [
+    nixos-modules = (
+      map mylib.relativeToRoot [
         "secrets/nixos.nix"
         "modules/nixos/server.nix"
         "hosts/${name}"
-      ])
-      ++ [
-        { modules.secrets.server.application.enable = true; }
-      ];
+      ]
+    );
   };
 
   systemArgs = modules // args;
