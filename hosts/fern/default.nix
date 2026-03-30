@@ -30,6 +30,8 @@ in
   networking.useNetworkd = true;
   systemd.network.enable = true;
 
+  services.tailscale.enable = true;
+
   systemd.network.networks."10-${iface}" = {
     matchConfig.Name = [ iface ];
     networkConfig = {
