@@ -1,4 +1,4 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 let
   user = "minecraft";
   dataDir = "/data/apps/minecraft";
