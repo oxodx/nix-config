@@ -28,12 +28,6 @@ in
         url = "https://ci.lucko.me/job/${pname}/524/artifact/${pname}-bukkit/build/libs/${pname}-${version}-bukkit.jar";
         hash = "sha256:4a37b57559f00c6eea84ee9f026316135b45312748676a1b2640b13c2b844cbd";
       };
-      "plugins/LuckPerms.jar" = pkgs.fetchurl rec {
-        pname = "LuckPerms";
-        version = "5.5.17";
-        url = "https://cdn.modrinth.com/data/Vebnzrzj/versions/OrIs0S6b/${pname}-Bukkit-${version}.jar";
-        hash = "sha256:d5b160a3971a8372cc5835bcd555e37c1aa61e9dd30559921a5f421a11bf97dd";
-      };
       "plugins/Chunky.jar" = pkgs.fetchurl rec {
         pname = "Chunky";
         version = "1.4.40";
