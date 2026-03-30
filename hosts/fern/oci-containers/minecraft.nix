@@ -15,7 +15,40 @@ in
     "d ${dataDir} 0755 ${user} ${user}"
   ];
 
-  environment.etc."stacks/minecraft.yaml".text = ''
+  environment.etc."stacks/minecraft/velocity.toml".text = ''
+    config-version = "2.7"
+    bind = "0.0.0.0:25565"
+    online-mode = true
+    force-key-authentication = true
+    prevent-client-proxy-connections = false
+    player-info-forwarding-mode = "modern"
+    kick-existing-players = false
+    ping-passthrough = "DISABLED"
+    enable-player-address-logging = true
+
+    [servers]
+    survival01 = "mc:25577"
+
+    [forced-hosts]
+
+    [advanced]
+    compression-threshold = 256
+    compression-level = -1
+    login-ratelimit = 3000
+    connection-timeout = 5000
+    read-timeout = 30000
+    haproxy-protocol = false
+    tcp-fast-open = false
+    bungee-plugin-message-channel = true
+    show-max-players = 500
+    fail-over-on-unexpected-server-disconnect = true
+
+    [query]
+    enabled = false
+    port = 25577
+  '';
+
+  environment.etc."stacks/minecraft/compose.yaml".text = ''
     services:
       proxy:
         image: itzg/mc-proxy
@@ -24,16 +57,18 @@ in
           DEBUG: "false"
           ENABLE_RCON: "true"
         ports:
-          - "25565:25577"
+          - "25565:25565"
         volumes:
-          - "${dataDir}/proxy/velocity.toml:/config/velocity.toml:ro"
+          - "/etc/stacks/minecraft/velocity.toml:/config/velocity.toml:ro"
           - "${dataDir}/proxy/forwarding.secret:/config/forwarding.secret:ro"
           - "${dataDir}/proxy:/server"
 
-      mc:
+      survival01:
         image: itzg/minecraft-server:latest
         tty: true
         stdin_open: true
+        expose:
+          - "25577"
         environment:
           EULA: "TRUE"
           ONLINE_MODE: "FALSE"
@@ -45,8 +80,10 @@ in
           SIMULATION_DISTANCE: "6"
           VIEW_DISTANCE: "8"
           SPAWN_PROTECTION: "0"
+          VELOCITY_FORWARDING_SECRET_FILE: "/data/forwarding.secret"
         volumes:
           - "${dataDir}/survival01:/data"
+          - "${dataDir}/proxy/forwarding.secret:/data/forwarding.secret:ro"
   '';
 
   networking.firewall = {
@@ -82,10 +119,11 @@ in
     ];
     path = [ pkgs.docker ];
     script = ''
-      docker compose -f /etc/stacks/minecraft.yaml up
+      docker compose -f /etc/stacks/minecraft/compose.yaml up
     '';
     restartTriggers = [
-      config.environment.etc."stacks/minecraft.yaml".source
+      config.environment.etc."stacks/minecraft/compose.yaml".source
+      config.environment.etc."stacks/minecraft/velocity.toml".source
     ];
   };
 }
