@@ -7,6 +7,7 @@
 {
   imports = [
     ./servers/proxy
+    ./servers/limbo
     ./servers/survival01
   ];
 
