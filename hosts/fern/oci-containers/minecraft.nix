@@ -17,14 +17,26 @@ in
 
   environment.etc."stacks/minecraft.yaml".text = ''
     services:
+      proxy:
+        image: itzg/mc-proxy
+        environment:
+          TYPE: VELOCITY
+          DEBUG: "false"
+          ENABLE_RCON: "true"
+        ports:
+          - "25565:25577"
+        volumes:
+          - "${dataDir}/proxy/velocity.toml:/config/velocity.toml:ro"
+          - "${dataDir}/proxy/forwarding.secret:/config/forwarding.secret:ro"
+          - "${dataDir}/proxy:/server"
+
       mc:
         image: itzg/minecraft-server:latest
         tty: true
         stdin_open: true
-        ports:
-          - "25565:25565"
         environment:
           EULA: "TRUE"
+          ONLINE_MODE: "FALSE"
           TYPE: "PAPER"
           MEMORY: "4096M"
           USE_MEOWICE_FLAGS: "true"
@@ -34,7 +46,7 @@ in
           VIEW_DISTANCE: "8"
           SPAWN_PROTECTION: "0"
         volumes:
-          - "${dataDir}:/data"
+          - "${dataDir}/survival01:/data"
   '';
 
   networking.firewall = {
