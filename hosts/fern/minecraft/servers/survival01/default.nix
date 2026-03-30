@@ -11,7 +11,7 @@ in
     jvmOpts = ((import ../../aikar-flags.nix) "2G") + "-Dpaper.disableChannelLimit=true";
     whitelist = import ../whitelist.nix;
     serverProperties = {
-      server-port = 25581;
+      server-port = 25571;
       white-list = true;
       max-tick-time = -1;
       network-compression-threshold = 256;
