@@ -15,7 +15,7 @@ in
     "d ${dataDir} 0755 ${user} ${user}"
   ];
 
-  environment.etc."${dataDir}/compose.yaml".text = ''
+  environment.etc."stacks/minecraft.yaml".text = ''
     services:
       mc:
         image: itzg/minecraft-server:latest
@@ -45,10 +45,10 @@ in
     ];
     path = [ pkgs.docker ];
     script = ''
-      docker compose -f ${dataDir}/compose.yaml up
+      docker compose -f /etc/stacks/minecraft.yaml up
     '';
     restartTriggers = [
-      config.environment.etc."${dataDir}/compose.yaml".source
+      config.environment.etc."stacks/minecraft.yaml".source
     ];
   };
 }
