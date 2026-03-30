@@ -43,10 +43,8 @@ in
           in
           {
             survival01 = mkIp servers.survival01;
-            limbo = mkIp servers.limbo;
             try = [
               "survival01"
-              "limbo"
             ];
           };
         "forced-hosts" = { };
