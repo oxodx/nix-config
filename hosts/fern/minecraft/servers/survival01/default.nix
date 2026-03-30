@@ -19,6 +19,7 @@ in
     whitelist = import ../whitelist.nix;
     operators = import ../operators.nix;
     serverProperties = {
+      server-ip = "127.0.0.1";
       server-port = 25581;
       white-list = true;
       online-mode = false;
