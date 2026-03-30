@@ -26,7 +26,7 @@ in
 
       volumes = [
         # Container runtime
-        "/var/run/docker.sock:/var/run/docker.sock"
+        "/var/run/podman/podman.sock:/var/run/docker.sock"
 
         # OS info
         "/etc/os-release:/etc/os-release:ro"
