@@ -37,6 +37,31 @@ in
           - "${dataDir}:/data"
   '';
 
+  networking.firewall = {
+    enable = true;
+    extraCommands = ''
+      # Allow established connections
+      iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+      # Rate limit new connections to Minecraft port
+      # Max 3 new connections per 60 seconds per IP
+      iptables -A INPUT -p tcp --dport 25565 -m state --state NEW \
+        -m recent --set --name MC_CONN
+
+      iptables -A INPUT -p tcp --dport 25565 -m state --state NEW \
+        -m recent --update --seconds 60 --hitcount 4 --name MC_CONN \
+        -j DROP
+    '';
+    extraStopCommands = ''
+      iptables -D INPUT -p tcp --dport 25565 -m state --state NEW \
+        -m recent --set --name MC_CONN 2>/dev/null || true
+
+      iptables -D INPUT -p tcp --dport 25565 -m state --state NEW \
+        -m recent --update --seconds 60 --hitcount 4 --name MC_CONN \
+        -j DROP 2>/dev/null || true
+    '';
+  };
+
   systemd.services.minecraft = {
     wantedBy = [ "multi-user.target" ];
     after = [
