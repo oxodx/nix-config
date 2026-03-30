@@ -13,6 +13,7 @@ in
     serverProperties = {
       server-port = 25571;
       white-list = true;
+      online-mode = false;
       max-tick-time = -1;
       network-compression-threshold = 256;
       simulation-distance = 4;
@@ -155,6 +156,7 @@ in
         creative-arrow-despawn-rate = 20;
       };
       "spigot.yml".value = {
+        settings.bungeecord = true;
         view-distance = "default";
         delay-chunk-unloads-by = "10s";
         prevent-moving-into-unloaded-chunks = true;
@@ -229,6 +231,9 @@ in
       };
       "plugins/ViaVersion/config.yml".value = {
         checkforupdates = false;
+      };
+      "config/paper-global.yml".value = {
+        proxies.bungeecord.online-mode = true;
       };
     };
   };

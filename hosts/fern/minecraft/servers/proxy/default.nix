@@ -1,4 +1,7 @@
 { config, pkgs, ... }:
+let
+  serversCfg = config.services.minecraft-servers.servers;
+in
 {
   services.minecraft-servers.servers.proxy = {
     enable = true;
@@ -13,7 +16,7 @@
         online-mode = true;
         "player-info-forwarding-mode" = "legacy";
         servers = {
-          survival01 = "localhost:25571";
+          survival01 = "localhost:${toString serversCfg.survival01.serverProperties."server-port"}";
           try = [ "survival01" ];
         };
         "forced-hosts" = { };
