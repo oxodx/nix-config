@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 let
   serverVersion = "1_21_11";
 in
@@ -7,12 +7,12 @@ in
     enable = true;
     enableReload = true;
 
-    package = pkgs.paperServers."paper-${serverVersion}";
-    jvmOpts = ((import ../../aikar-flags.nix) "2G") + "-Dpaper.disableChannelLimit=true";
+    package = pkgs.lazymc;
+    jvmOpts = "start";
     whitelist = import ../whitelist.nix;
     operators = import ../operators.nix;
     serverProperties = {
-      server-port = 25571;
+      server-port = 25581;
       white-list = true;
       online-mode = false;
       max-tick-time = -1;
@@ -49,6 +49,22 @@ in
     };
 
     files = {
+      "lazymc.toml".value = {
+        config.version = pkgs.lazymc.version;
+        public.address = "${cfg.serverProperties.server-ip}:${toString cfg.serverProperties.server-port}";
+        server = {
+          address = "0.0.0.0:${toString (cfg.serverProperties.server-port - 10)}";
+          command = "${lib.getExe pkgs.paperServers."paper-${serverVersion}"} ${
+            ((import ../../aikar-flags.nix) "2G") + "-Dpaper.disableChannelLimit=true"
+          }";
+          directory = ".";
+          freeze_process = true;
+          probe_on_start = true;
+          time.sleep_after = 60;
+        };
+        join.methods = [ "kick" ];
+      };
+
       "config/paper-world-defaults.yml".value = {
         despawn-ranges = {
           ambient = {
