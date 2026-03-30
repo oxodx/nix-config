@@ -14,7 +14,7 @@ in
   services.minecraft-servers = {
     enable = true;
     eula = true;
-    openFirewall = false;
+    openFirewall = true;
     servers = {
       proxy = {
         enable = true;
