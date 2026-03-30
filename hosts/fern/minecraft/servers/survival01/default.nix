@@ -44,13 +44,13 @@ in
         pname = "ViaVersion";
         version = "5.8.0";
         url = "https://github.com/ViaVersion/${pname}/releases/download/${version}/${pname}-${version}.jar";
-        hash = "sha256:4430a127f6cb21d7a52ec6a07a5dcc43ba235acc062c86330619b8de1d4958fd";
+        hash = "sha256:5c9fd2ab9b3d985e91a98f3fc9872a1817d3e6260a0668c69d786ed4bba6b202";
       };
       "plugins/ViaBackwards.jar" = pkgs.fetchurl rec {
         pname = "ViaBackwards";
         version = "5.8.0";
         url = "https://github.com/ViaVersion/${pname}/releases/download/${version}/${pname}-${version}.jar";
-        hash = "sha256:cbf4ce4dc132b1bcccc2abb9626ed18bb1bd116c9300657543458241b01000f7";
+        hash = "sha256:eb79a8616530f6ef5d3e489f0f41d1948e8df25fa9d94612c3b570eef7bbef16";
       };
     };
 
