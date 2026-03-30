@@ -19,7 +19,7 @@ in
       proxy = {
         enable = true;
         jvmOpts = "-Xmx1G -Xms1G";
-        package = pkgs.minecraftServers.velocity-server;
+        package = pkgs.velocity-server;
         stopCommand = "end";
         files = {
           "velocity.toml".value = {
@@ -39,7 +39,7 @@ in
       survival = {
         enable = true;
         jvmOpts = "-Xmx4G -Xms4G";
-        package = pkgs.minecraftServers.paper-server;
+        package = pkgs.paper-server;
         serverProperties = {
           server-port = 50001;
           # Required by proxy
