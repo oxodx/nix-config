@@ -1,5 +1,7 @@
 { pkgs, lib, ... }:
 let
+  servers = config.services.minecraft-servers.servers;
+  cfg = servers.survival01;
   serverVersion = "1_21_11";
 in
 {
