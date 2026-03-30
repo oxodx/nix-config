@@ -4,11 +4,10 @@
     enable = true;
     jvmOpts = "-Xmx1G -Xms1G";
     package = pkgs.velocity-server;
-    whitelist = import ../whitelist.nix;
-    stopCommand = "end";
+    stopCommand = "shutdown";
     files = {
       "velocity.toml".value = {
-        "config-version" = "2.5";
+        "config-version" = "2.7";
         bind = "0.0.0.0:25565";
         motd = "0x0D Network";
         online-mode = true;
