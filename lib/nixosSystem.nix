@@ -22,6 +22,7 @@ nixpkgs.lib.nixosSystem {
   modules =
     nixos-modules
     ++ [
+      nix-utils.nixosModules.docker-compose
       nixos-generators.nixosModules.all-formats
       { nixpkgs.config.allowUnfree = true; }
     ]
