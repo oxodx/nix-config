@@ -15,7 +15,7 @@ let
     let
       mshBinary = pkgs.stdenv.mkDerivation {
         name = "msh";
-        src = pkgs.fetchUrl {
+        src = pkgs.fetchurl {
           url = "https://github.com/gekware/minecraft-server-hibernation/releases/download/v2.5.0/msh-v2.5.0-0876091-linux-amd64.bin";
           hash = "sha256:0lw735rzdg251s3zcbk0ahbrxchw9y98zg1a3wz4r0mp4c54yfmx";
         };
