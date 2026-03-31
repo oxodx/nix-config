@@ -8,7 +8,7 @@ in
     autoStart = false;
     enableReload = true;
 
-    package = pkgs.papermcServers."paper-${serverVersion}";
+    package = pkgs.papermcServers."papermc-${serverVersion}";
     jvmOpts = ((import ../../aikar-flags.nix) "2G") + "-Dpaper.disableChannelLimit=true";
     whitelist = import ../whitelist.nix;
     operators = import ../operators.nix;
