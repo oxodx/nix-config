@@ -359,26 +359,6 @@
         "type": "github"
       }
     },
-    "nix-utils": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1774964467,
-        "narHash": "sha256-h8zBbH27AD+AoRIekgW276xxJPeZ6FrU1hSb0nZ+Exc=",
-        "owner": "oxodx",
-        "repo": "nix-utils",
-        "rev": "51b3eed4c4f6de3851b482ed67ed2a1a712b9a14",
-        "type": "github"
-      },
-      "original": {
-        "owner": "oxodx",
-        "repo": "nix-utils",
-        "type": "github"
-      }
-    },
     "nixlib": {
       "locked": {
         "lastModified": 1736643958,
@@ -577,7 +557,6 @@
         "home-manager": "home-manager_2",
         "mysecrets": "mysecrets",
         "nix-gaming": "nix-gaming",
-        "nix-utils": "nix-utils",
         "nixos-generators": "nixos-generators",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs_2",
