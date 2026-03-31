@@ -37,12 +37,16 @@ in
         "config-version" = "2.7";
         bind = "${cfg.serverProperties.server-ip}:${toString cfg.serverProperties.server-port}";
         "player-info-forwarding-mode" = "legacy";
-        servers = {
-          survival01 = "localhost:25572";
-          try = [
-            "survival01"
-          ];
-        };
+        servers =
+          let
+            mkIp = server: "localhost:${toString server.serverProperties.server-port}";
+          in
+          {
+            survival01 = mkIp servers.survival01;
+            try = [
+              "survival01"
+            ];
+          };
         "forced-hosts" = { };
         query = {
           enabled = true;
