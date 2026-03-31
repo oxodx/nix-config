@@ -30,27 +30,6 @@ let
           chmod +x $out/bin/msh
         '';
       };
-      mshConfig = pkgs.writeText "msh-${name}-config.json" (
-        builtins.toJSON {
-          Server = {
-            Folder = "/data/apps/minecraft/servers/${name}";
-            FileName = "minecraft-server.jar";
-            StopServer = "stop";
-            StopServerAllowKill = 30;
-          };
-          Msh = {
-            MshPort = mshPort;
-            MshPortQuery = mshPort;
-            EnableQuery = true;
-            TimeBeforeStoppingEmptyServer = stopAfter;
-            SuspendAllow = false;
-            InfoHibernation = " §fserver status:\n §b§lHIBERNATING";
-            InfoStarting = " §fserver status:\n §6§lWARMING UP";
-            CheckForUpdates = false;
-            Debug = 1;
-          };
-        }
-      );
     in
     {
       systemd.services."msh-${name}" = {
@@ -60,7 +39,18 @@ let
         serviceConfig = {
           User = "minecraft";
           Group = "minecraft";
-          ExecStart = "${mshBinary}/bin/msh -c ${mshConfig}";
+          ExecStart = lib.concatStringsSep " " [
+            "${mshBinary}/bin/msh"
+            "-folder /data/apps/minecraft/servers/${name}"
+            "-file minecraft-server.jar"
+            "-port ${toString mshPort}"
+            "-portquery ${toString mshPort}"
+            "-servport ${toString port}"
+            "-servportquery ${toString port}"
+            "-timeout ${toString stopAfter}"
+            "-allowkill 30"
+            "-enablequery"
+          ];
           WorkingDirectory = "/data/apps/minecraft/msh/${name}";
           Restart = "on-failure";
         };
