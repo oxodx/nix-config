@@ -14,7 +14,6 @@ let
     nixpkgs
     home-manager
     nixos-generators
-    nix-utils
     ;
 in
 nixpkgs.lib.nixosSystem {
@@ -22,7 +21,6 @@ nixpkgs.lib.nixosSystem {
   modules =
     nixos-modules
     ++ [
-      nix-utils.nixosModules.docker-compose
       nixos-generators.nixosModules.all-formats
       { nixpkgs.config.allowUnfree = true; }
     ]

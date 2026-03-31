@@ -6,13 +6,6 @@
 {
   imports = mylib.scanPaths ./.;
 
-  services.docker-compose = {
-    enable = true;
-    services = {
-      minecraft.composeFile = ./minecraft.yml;
-    };
-  };
-
   # Bind mount /var/lib/containers to /data/apps/docker
   fileSystems."/var/lib/containers" = {
     device = "/data/apps/docker";

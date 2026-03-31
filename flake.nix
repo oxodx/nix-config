@@ -38,10 +38,6 @@
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-utils = {
-      url = "github:oxodx/nix-utils";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
     # Gaming
     nix-gaming = {
