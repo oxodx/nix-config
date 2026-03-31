@@ -30,19 +30,29 @@ let
           chmod +x $out/bin/msh
         '';
       };
+
+      startScript = pkgs.writeShellScript "msh-start-${name}" ''
+        ${pkgs.systemd}/bin/systemctl start minecraft-${name}
+      '';
+
+      fakeJava = pkgs.writeShellScript "msh-fakejava-${name}" ''
+        exec ${startScript}
+      '';
     in
     {
       systemd.services."msh-${name}" = {
         description = "Minecraft Server Hibernation (${name})";
         after = [ "network.target" ];
         wantedBy = [ "multi-user.target" ];
+        path = [ pkgs.systemd ];
         serviceConfig = {
           User = "minecraft";
           Group = "minecraft";
           ExecStart = lib.concatStringsSep " " [
             "${mshBinary}/bin/msh"
             "-folder /data/apps/minecraft/servers/${name}"
-            "-file minecraft-server.jar"
+            "-file ${startScript}" # msh just needs a file to "execute"
+            "-msparam ''"
             "-port ${toString mshPort}"
             "-portquery ${toString mshPort}"
             "-servport ${toString port}"
@@ -51,8 +61,9 @@ let
             "-allowkill 30"
             "-enablequery"
           ];
-          WorkingDirectory = "/data/apps/minecraft/msh/${name}";
+          WorkingDirectory = "/data/apps/minecraft/servers/${name}";
           Restart = "on-failure";
+          RestartSec = "5s";
         };
       };
     };
@@ -85,6 +96,16 @@ in
   ];
 
   systemd.services = lib.mkMerge (map (m: m.systemd.services) mshInstances);
+
+  security.polkit.extraConfig = ''
+    polkit.addRule(function(action, subject) {
+      if (action.id == "org.freedesktop.systemd1.manage-units" &&
+          (action.lookup("unit") == "minecraft-survival01.service") &&
+          subject.user == "minecraft") {
+        return polkit.Result.YES;
+      }
+    });
+  '';
 
   services.fail2ban = {
     enable = true;
