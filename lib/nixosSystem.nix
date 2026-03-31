@@ -14,7 +14,7 @@ let
     nixpkgs
     home-manager
     nixos-generators
-    nix-minecraft
+    nix-utils
     ;
 in
 nixpkgs.lib.nixosSystem {
