@@ -5,6 +5,7 @@ in
 {
   services.minecraft-servers.servers.survival01 = {
     enable = true;
+    autoStart = false;
     enableReload = true;
 
     package = pkgs.paperServers."paper-${serverVersion}";
