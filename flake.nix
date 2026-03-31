@@ -38,6 +38,10 @@
       url = "github:ryantm/agenix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-utils = {
+      url = "github:oxodx/nix-utils";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     # Gaming
     nix-gaming = {
@@ -50,10 +54,6 @@
     };
     prismlauncher = {
       url = "github:PrismLauncher/PrismLauncher";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nix-minecraft = {
-      url = "github:Infinidoge/nix-minecraft";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
