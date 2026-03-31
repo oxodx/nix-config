@@ -11,7 +11,7 @@ in
           IN_DOCKER: true
           AUTO_SCALE_DOWN: true
           AUTO_SCALE_UP: true
-          AUTO_SCALE_DOWN_AFTER: 2h
+          AUTO_SCALE_DOWN_AFTER: 5m
           AUTO_SCALE_ASLEEP_MOTD: "Server is asleep. Join again to wake it up!"
         ports:
           - "25565:25565"
