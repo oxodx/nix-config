@@ -92,8 +92,7 @@ in
     "d /data/apps/minecraft 0755 minecraft minecraft"
     "d /data/apps/minecraft/servers 0755 minecraft minecraft"
     "d /data/apps/minecraft/msh 0755 minecraft minecraft"
-  ]
-  ++ lib.concatMap (m: m.systemd.tmpfiles.rules) mshInstances;
+  ];
 
   systemd.services = lib.mkMerge (map (m: m.systemd.services) mshInstances);
 
