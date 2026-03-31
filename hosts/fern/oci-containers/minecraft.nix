@@ -35,10 +35,10 @@ in
           VIEW_DISTANCE: "8"
           SPAWN_PROTECTION: "0"
           OPS: |-
-            0x0D_
+            "0x0D_"
           ENABLE_WHITELIST: "true"
           WHITELIST: |-
-            0x0D_
+            "0x0D_"
           PLUGINS: |-
             https://ci.lucko.me/job/spark/524/artifact/spark-bukkit/build/libs/spark-1.10.172-bukkit.jar
             https://cdn.modrinth.com/data/fALzjamp/versions/P3y2MXnd/Chunky-Bukkit-1.4.40.jar
