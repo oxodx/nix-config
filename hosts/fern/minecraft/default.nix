@@ -53,9 +53,6 @@ let
       );
     in
     {
-      systemd.tmpfiles.rules = [
-        "d /data/apps/minecraft/msh/${name} 0755 minecraft minecraft"
-      ];
       systemd.services."msh-${name}" = {
         description = "Minecraft Server Hibernation (${name})";
         after = [ "network.target" ];
@@ -63,8 +60,7 @@ let
         serviceConfig = {
           User = "minecraft";
           Group = "minecraft";
-          ExecStartPre = "${pkgs.coreutils}/bin/cp ${mshConfig} /data/apps/minecraft/msh/${name}/msh-config.json";
-          ExecStart = "${mshBinary}/bin/msh -c /data/apps/minecraft/msh/${name}/msh-config.json";
+          ExecStart = "${mshBinary}/bin/msh -c ${mshConfig}";
           WorkingDirectory = "/data/apps/minecraft/msh/${name}";
           Restart = "on-failure";
         };
