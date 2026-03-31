@@ -5,7 +5,7 @@
   ...
 }:
 let
-  makeMesh =
+  makeMsh =
     {
       name,
       port,
