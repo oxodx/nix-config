@@ -39,9 +39,10 @@ in
           ENABLE_AUTOSTOP: "TRUE"
           PLUGINS: |-
             https://ci.lucko.me/job/spark/524/artifact/spark-bukkit/build/libs/spark-1.10.172-bukkit.jar
-            https://cdn.modrinth.com/data/fALzjamp/versions/P3y2MXnd/Chunky-Bukkit-1.4.40.jar
             https://github.com/ViaVersion/ViaVersion/releases/download/5.8.1/ViaVersion-5.8.1.jar
             https://github.com/ViaVersion/ViaBackwards/releases/download/5.8.1/ViaBackwards-5.8.1.jar
+            https://cdn.modrinth.com/data/fALzjamp/versions/P3y2MXnd/Chunky-Bukkit-1.4.40.jar
+            https://cdn.modrinth.com/data/TsLS8Py5/versions/FWbUnxz1/SkinsRestorer.jar
           MANAGEMENT_SERVER_ENABLED: "false"
         volumes:
           - "/srv/minecraft/survival01:/data"
