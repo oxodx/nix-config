@@ -30,7 +30,6 @@ in
           MEMORY: "2048M"
           ONLINE_MODE: "false"
           USE_MEOWICE_FLAGS: "true"
-          ENABLE_AUTOSTOP: "TRUE"
           TZ: "Europe/Amsterdam"
           DIFFICULTY: "3"
           SIMULATION_DISTANCE: "4"
