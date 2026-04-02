@@ -45,7 +45,7 @@ in
             https://cdn.modrinth.com/data/TsLS8Py5/versions/FWbUnxz1/SkinsRestorer.jar
           MANAGEMENT_SERVER_ENABLED: "false"
         volumes:
-          - "/srv/minecraft/survival01:/data"
+          - "/data/apps/minecraft/survival01:/data"
         labels:
           mc-router.host: "survival01.fern"
           mc-router.default: "true"
