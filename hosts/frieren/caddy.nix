@@ -50,6 +50,11 @@ in
         reverse_proxy http://localhost:53350
       '';
 
+      "jellyfin.oxod.nl:80".extraConfig = ''
+        ${hostCommonConfig}
+        reverse_proxy http://localhost:8096
+      '';
+
       "adguard.oxod.nl:80".extraConfig = ''
         ${hostCommonConfig}
         reverse_proxy http://localhost:3003
