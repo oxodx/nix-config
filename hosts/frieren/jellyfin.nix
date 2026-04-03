@@ -13,7 +13,8 @@ in
 
   systemd.tmpfiles.rules = [
     "d ${dataDir} 0755 ${user} ${user}"
-    "d ${dataDir}/media/main 0755 ${user} ${user}"
+    "d ${dataDir}/media/shows 0755 ${user} ${user}"
+    "d ${dataDir}/media/movies 0755 ${user} ${user}"
   ];
 
   services.jellyfin = {
