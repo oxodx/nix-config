@@ -50,23 +50,6 @@
         };
       };
     };
-    disk.media = {
-      type = "disk";
-      device = "/dev/disk/by-id/ata-KINGSTON_SA400S37240G_50026B77837F81F4";
-      content = {
-        type = "btrfs";
-        extraArgs = [ "-f" ];
-        subvolumes = {
-          "@media" = {
-            mountpoint = "/media";
-            mountOptions = [
-              "compress-force=zstd:1"
-              "nofail"
-            ];
-          };
-        };
-      };
-    };
     disk.data = {
       type = "disk";
       device = "/dev/disk/by-id/ata-KINGSTON_SA400S37240G_50026B7380F693A8";

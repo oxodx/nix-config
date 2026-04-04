@@ -14,6 +14,16 @@
 
   boot.kernelPackages = pkgs.linuxPackages_6_18;
 
+  fileSystems."/media" = {
+    device = "/dev/disk/by-id/ata-KINGSTON_SA400S37240G_50026B77837F81F4";
+    fsType = "btrfs";
+    options = [
+      "subvol=@media"
+      "compress-force=zstd:1"
+      "nofail"
+    ];
+  };
+
   boot.initrd.availableKernelModules = [
     "xhci_pci"
     "ehci_pci"
