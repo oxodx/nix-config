@@ -52,7 +52,7 @@
     };
     disk.media = {
       type = "disk";
-      device = "/dev/disk/by-id/ata-KINGSTON_SA400S37240G_50026B77837F81F4";
+      device = "/dev/disk/by-id/ata-KINGSTON_SA400S37240G_50026B7380F693A8";
       content = {
         type = "btrfs";
         extraArgs = [ "-f" ];
@@ -69,7 +69,7 @@
     };
     disk.data = {
       type = "disk";
-      device = "/dev/disk/by-id/ata-KINGSTON_SA400S37240G_50026B7380F693A8";
+      device = "/dev/disk/by-id/ata-KINGSTON_SA400S37240G_50026B77837F81F4";
       content = {
         type = "btrfs";
         extraArgs = [ "-f" ];
