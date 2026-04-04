@@ -26,5 +26,15 @@
         };
       }
     ];
+    "Homelab Applications" = [
+      {
+        Jellyfin = {
+          icon = "jellyfin.svg";
+          href = "http://jellyfin.oxod.nl";
+          description = "Media system to organize, manage and share digital media";
+          siteMonitor = "http://jellyfin.oxod.nl";
+        };
+      }
+    ];
   }
 ]
