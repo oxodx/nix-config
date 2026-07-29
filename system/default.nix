@@ -5,6 +5,7 @@ let
     ./nix
     ./network
     ./programs
+    ./services
   ];
 
   laptop = desktop ++ [

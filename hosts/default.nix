@@ -4,6 +4,8 @@ let
 
   mod = "${self}/system";
   inherit (import mod) laptop;
+
+  specialArgs = { inherit inputs self; };
 in
 {
   flake.nixosConfigurations."oxod-laptop" = nixosSystem {
@@ -17,10 +19,11 @@ in
 
       inputs.home-manager.nixosModules.home-manager
       {
-        home-manager.useGlobalPkgs = true;
-        home-manager.useUserPackages = true;
-
-        home-manager.users.oxod = import ./home.nix;
+        home-manager = {
+          users.oxod = import ./home.nix;
+          extraSpecialArgs = specialArgs;
+          backupFileExtension = ".hm-backup";
+        };
       }
 
       inputs.agenix.nixosModules.default
