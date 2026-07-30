@@ -1,0 +1,6 @@
+{
+  "oxod@laptop" = [
+    ../.
+    ./oxod-laptop
+  ];
+}

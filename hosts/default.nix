@@ -2,6 +2,8 @@
 let
   inherit (inputs.nixpkgs.lib) nixosSystem;
 
+  homeImports = import "${self}/home/profiles";
+
   mod = "${self}/system";
   inherit (import mod) laptop;
 
@@ -20,7 +22,7 @@ in
       inputs.home-manager.nixosModules.home-manager
       {
         home-manager = {
-          users.oxod = import ./home.nix;
+          users.oxod.imports = homeImports."oxod@laptop";
           extraSpecialArgs = specialArgs;
           backupFileExtension = ".hm-backup";
         };
