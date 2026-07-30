@@ -45,18 +45,11 @@
   environment.systemPackages = with pkgs; [
     neovim
     wget
-    firefox
     nil
     nixd
   ];
 
   programs.zsh.enable = true;
-
-  # Uhh firefox fonts are not working without this idk why see https://github.com/NixOS/nixpkgs/issues/546204
-  environment.sessionVariables.XDG_DATA_DIRS = [
-    "${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}"
-    "${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}"
-  ];
 
   xdg.portal = {
     enable = true;

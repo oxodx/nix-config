@@ -6,6 +6,9 @@ in
   imports = [
     "${home}/editors/zed.nix"
 
+    "${home}/programs"
+    "${home}/programs/browsers/firefox.nix"
+
     "${home}/terminal/emulators/alacritty.nix"
   ];
 }
