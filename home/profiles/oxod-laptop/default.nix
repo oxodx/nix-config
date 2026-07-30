@@ -18,7 +18,6 @@ in
     "${home}/services/system/syncthing.nix"
     "${home}/services/system/theme.nix"
     "${home}/services/system/udiskie.nix"
-    "${home}/services/wayland/gammastep.nix"
     "${home}/services/wayland/hyprpaper.nix"
     "${home}/services/wayland/hypridle.nix"
 
