@@ -1,5 +1,8 @@
+let
+  home = "../..";
+in
 {
   imports = [
-    ../../terminal/emulators/alacritty.nix
+    "${home}/terminal/emulators/alacritty.nix"
   ];
 }
