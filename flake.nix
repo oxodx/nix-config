@@ -46,6 +46,7 @@
               pkgs.git
               pkgs.nil
               pkgs.nixd
+              pkgs.lua-language-server
             ];
             name = "dots";
             env.DIRENV_LOG_FORMAT = "";
