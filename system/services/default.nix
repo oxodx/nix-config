@@ -3,7 +3,6 @@
     ./gnome-services.nix
     ./location.nix
     ./pipewire.nix
-    ./power.nix
   ];
 
   # smooth backlight control

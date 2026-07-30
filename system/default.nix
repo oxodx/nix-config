@@ -9,7 +9,8 @@ let
   ];
 
   laptop = desktop ++ [
-
+    ./hardware/bluetooth.nix
+    ./services/power.nix
   ];
 in
 {
