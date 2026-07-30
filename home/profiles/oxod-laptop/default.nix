@@ -8,6 +8,7 @@ in
 
     "${home}/programs"
     "${home}/programs/wayland"
+    "${home}/programs/games.nix"
     "${home}/programs/browsers/firefox.nix"
 
     "${home}/services/quickshell"
