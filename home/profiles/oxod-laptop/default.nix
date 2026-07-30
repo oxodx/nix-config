@@ -10,6 +10,8 @@ in
     "${home}/programs/wayland"
     "${home}/programs/browsers/firefox.nix"
 
+    "${home}/services/quickshell"
+
     "${home}/terminal/emulators/alacritty.nix"
   ];
 }
