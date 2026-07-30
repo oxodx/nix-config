@@ -16,6 +16,8 @@ in
       ./oxod-laptop
 
       "${mod}/hardware/nvidia.nix"
+
+      "${mod}/programs/hyprland"
       "${mod}/programs/gamemode.nix"
       "${mod}/programs/games.nix"
 

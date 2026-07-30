@@ -3,7 +3,10 @@
   ...
 }:
 {
-  imports = [ ./hardware-configuration.nix ];
+  imports = [
+    ./hardware-configuration.nix
+    ./hyprland.nix
+  ];
 
   environment.variables.NH_FLAKE = "/home/oxod/dev/dotfiles";
 
@@ -22,9 +25,6 @@
   security.tpm2.enable = true;
 
   services = {
-    desktopManager.plasma6.enable = true;
-    displayManager.plasma-login-manager.enable = true;
-
     xserver = {
       enable = true;
       xkb.layout = "us";

@@ -3,6 +3,7 @@
     ./gnome-services.nix
     ./location.nix
     ./pipewire.nix
+    ./greetd.nix
   ];
 
   # smooth backlight control

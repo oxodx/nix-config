@@ -21,6 +21,8 @@
     agenix.inputs.home-manager.follows = "home-manager";
     agenix.inputs.systems.follows = "systems";
 
+    vicinae.url = "github:vicinaehq/vicinae";
+    vicinae-extensions.url = "github:vicinaehq/extensions";
     systems.url = "github:nix-systems/default-linux";
   };
 
