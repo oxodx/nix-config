@@ -39,6 +39,8 @@
           devShells.default = pkgs.mkShell {
             packages = [
               pkgs.git
+              pkgs.nil
+              pkgs.nixd
             ];
             name = "dots";
             env.DIRENV_LOG_FORMAT = "";

@@ -6,11 +6,12 @@ let
 in
 {
   imports = [
-    # ./programs
-    # ./shell/starship.nix
-    # ./shell/zsh.nix
-    # ./shell/zoxide.nix
+    ./programs
+    ./shell/starship.nix
+    ./shell/zsh.nix
   ];
+
+  programs.zoxide.enable = true;
 
   # add environment variables
   home.sessionVariables = {
