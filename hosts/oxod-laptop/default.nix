@@ -45,7 +45,6 @@
   environment.systemPackages = with pkgs; [
     neovim
     wget
-    zed-editor
     firefox
     nil
     nixd
