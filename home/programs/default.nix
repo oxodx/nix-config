@@ -1,16 +1,16 @@
 { pkgs, ... }:
 {
   imports = [
-    # ./media
-    # ./gtk.nix
-    # ./office
-    # ./qt.nix
+    ./office
+
+    ./gtk.nix
+    ./media.nix
+    ./qt.nix
   ];
 
   home.packages = with pkgs; [
     halloy
     signal-desktop
-    # telegram-desktop
     nheko
 
     gnome-calculator
