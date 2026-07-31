@@ -15,8 +15,8 @@ in
     modules = laptop ++ [
       ./oxod-laptop
 
+      "${mod}/core/virtualisation.nix"
       "${mod}/hardware/nvidia.nix"
-
       "${mod}/programs/hyprland"
       "${mod}/programs/gamemode.nix"
       "${mod}/programs/games.nix"
