@@ -105,7 +105,7 @@
       # UI and Behavior
       DisplayMenuBar = "never";
       DontCheckDefaultBrowser = true;
-      HardwareAcceleration = false;
+      HardwareAcceleration = true;
       OfferToSaveLogins = false;
       DefaultDownloadDirectory = "${config.home.username}/Downloads";
 
