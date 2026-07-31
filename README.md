@@ -10,12 +10,17 @@
   <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/oxodx/nix-config?style=for-the-badge&logo=protondrive&logoColor=D9E0EE&labelColor=1E202B&color=8ad7eb">
 </div>
 
+<p align="center">
+	<a href="docs/INSTALL.md">Install</a>
+</p>
+
 ---
 
 <div align="center">
   <h3>Credits</h1>
 
   <a href="https://github.com/fufexan/dotfiles"><b>fufexan/dotfiles</b></a>
+  <a href="https://github.com/ryan4yin/nix-config"><b>ryan4yin/nix-config</b></a>
 </div>
 
 ---
