@@ -42,11 +42,12 @@
         }:
         {
           devShells.default = pkgs.mkShell {
-            packages = [
-              pkgs.git
-              pkgs.nil
-              pkgs.nixd
-              pkgs.lua-language-server
+            packages = with pkgs; [
+              git
+              nil
+              nixd
+              alejandra
+              lua-language-server
             ];
             name = "dots";
             env.DIRENV_LOG_FORMAT = "";

@@ -4,7 +4,7 @@ let
 in
 {
   imports = [
-    "${home}/editors/zed.nix"
+    "${home}/editors/zed-editor"
 
     "${home}/programs"
     "${home}/programs/wayland"
