@@ -10,6 +10,12 @@
 For NixOS:
 
 ```bash
+# clone my dotfiles repository
+git clone https://github.com/oxodx/nix-config.git
+
+# go to the dotfiles folder
+cd nix-config
+
 # deploy one of the configurations based on hostname
 sudo nixos-rebuild switch --flake .#oxod-laptop
 ```
