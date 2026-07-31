@@ -2,7 +2,7 @@
   description = "oxod's NixOS flake";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-26.05";
 
     home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
@@ -10,7 +10,7 @@
     flake-parts.url = "github:hercules-ci/flake-parts";
     flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
 
-    nix-index-db.url = "github:Mic92/nix-index-database";
+    nix-index-db.url = "github:mic92/nix-index-database";
     nix-index-db.inputs.nixpkgs.follows = "nixpkgs";
 
     quickshell.url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
