@@ -17,7 +17,7 @@
 <div align="center">
   <h3>Credits</h1>
 
-  <ul>
+  <ul style="list-style-type: none;">
     <li><a href="https://github.com/fufexan/dotfiles"><b>fufexan/dotfiles</b></li>
   </ul>
 </div>
