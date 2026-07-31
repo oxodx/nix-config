@@ -1,4 +1,5 @@
 {
+  lib,
   pkgs,
   config,
   ...
@@ -34,4 +35,6 @@
       package = pkgs.adw-gtk3;
     };
   };
+
+  home.file."${config.xdg.configHome}/gtk-2.0/gtkrc".force = lib.mkForce true;
 }

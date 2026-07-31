@@ -1,10 +1,26 @@
-{ inputs, pkgs, ... }:
+{
+  inputs,
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 {
   imports = [ inputs.vicinae.homeManagerModules.default ];
 
   programs.vicinae = {
     enable = true;
-    systemd.enable = true;
+    systemd = {
+      enable = true;
+      autoStart = true;
+      environment = {
+        USE_LAYER_SHELL = 1;
+        XDG_DATA_DIRS = lib.concatStringsSep ":" [
+          "${config.home.profileDirectory}/share"
+          "/run/current-system/sw/share"
+        ];
+      };
+    };
 
     settings = {
       close_on_focus_loss = true;
