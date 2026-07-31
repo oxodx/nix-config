@@ -14,9 +14,13 @@
 
 ---
 
-### Credits
+<div align="center">
+  <h3>Credits</h1>
 
-- [**fufexan/dotfiles**](https://github.com/fufexan/dotfiles)
+  <ul>
+    <li><a href="https://github.com/fufexan/dotfiles"><b>fufexan/dotfiles</b></li>
+  </ul>
+</div>
 
 ---
 
