@@ -16,17 +16,19 @@
 
 ---
 
-<details>
-	<summary>Installation</summary>
+<div align="center">
+	<details>
+		<summary>Installation</summary>
 	
-	```bash
+```bash
 	git clone https://github.com/oxodx/nix-config.git
 	cd nix-config
 	sudo nixos-rebuild switch --flake .#oxod-laptop
-	```
+```
 
-	For more info please look at [INSTALL.md](docs/INSTALL.md)
-</details>
+		For more info please look at [INSTALL.md](docs/INSTALL.md)
+	</details>
+</div>
 
 <div align="center">
   <h3>Credits</h1>
