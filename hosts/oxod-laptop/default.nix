@@ -30,26 +30,8 @@
       xkb.layout = "us";
     };
 
-    pipewire = {
-      enable = true;
-      pulse.enable = true;
-    };
-
     fstrim.enable = true;
   };
-
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
-  environment.systemPackages = with pkgs; [
-    neovim
-    wget
-    nil
-    nixd
-  ];
-
-  programs.zsh.enable = true;
 
   xdg.portal = {
     enable = true;
