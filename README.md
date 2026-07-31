@@ -41,6 +41,7 @@ For more info please look at [INSTALL.md](docs/INSTALL.md)
 
   <div><a href="https://github.com/fufexan/dotfiles"><b>fufexan/dotfiles</b></a></div>
   <div><a href="https://github.com/ryan4yin/nix-config"><b>ryan4yin/nix-config</b></a></div>
+  <div><a href="https://github.com/end-4/dots-hyprland"><b>end-4/dots-hyprland</b></a></div>
 </div>
 
 ---
