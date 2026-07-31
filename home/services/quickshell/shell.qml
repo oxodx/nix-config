@@ -1,10 +1,10 @@
 //@ pragma UseQApplication
 //@ pragma DropExpensiveFonts
 import Quickshell
-import qs.bar
-import qs.notifications
-import qs.osd
-import qs.sidebar
+import qs.modules.bar
+import qs.modules.notifications
+import qs.modules.osd
+import qs.modules.sidebar
 
 ShellRoot {
   Bar {}
