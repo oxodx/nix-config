@@ -31,8 +31,8 @@
 <div align="center">
   <h3>Credits</h1>
 
-  <a href="https://github.com/fufexan/dotfiles"><b>fufexan/dotfiles</b></a>
-  <a href="https://github.com/ryan4yin/nix-config"><b>ryan4yin/nix-config</b></a>
+  <div><a href="https://github.com/fufexan/dotfiles"><b>fufexan/dotfiles</b></a></div>
+  <div><a href="https://github.com/ryan4yin/nix-config"><b>ryan4yin/nix-config</b></a></div>
 </div>
 
 ---
