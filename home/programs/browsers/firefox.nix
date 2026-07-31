@@ -120,6 +120,11 @@
             installation_mode = "force_installed";
             private_browsing = true;
           };
+          "addon@darkreader.org" = {
+            install_url = moz "darkreader";
+            installation_mode = "force_installed";
+            private_browsing = true;
+          };
           "78272b6fa58f4a1abaac99321d503a20@proton.me" = {
             install_url = moz "proton-pass";
             installation_mode = "force_installed";
