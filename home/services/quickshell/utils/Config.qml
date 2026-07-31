@@ -1,0 +1,40 @@
+pragma Singleton
+
+import Quickshell
+
+PersistentProperties {
+  reloadableId: "persistedStates"
+
+  property var preferredMonitor: {
+    // Filter out fallback screens
+    const screens = [...Quickshell.screens].filter(e => !e.name.startsWith("FALLBACK"));
+    // TODO: this is fragile, come up with a better approach
+    if (screens.length == 1)
+      return screens[0];
+    return [...Quickshell.screens].find(e => e.name == "HDMI-A-1");
+  }
+  property bool showSidebar: false
+  property bool doNotDisturb: false
+
+  readonly property int notificationExpireTimeout: 5000
+  readonly property int notificationIconSize: 48
+  readonly property int notificationWidth: 360
+  readonly property int hoverTimeoutMs: 500
+
+  readonly property int barHeight: 32
+  readonly property int osdWidth: 200
+
+  readonly property int textSize: 9
+  readonly property int iconSize: 14
+  readonly property real spacing: padding * 3
+  readonly property int radius: padding * 4
+  readonly property int padding: 4
+  readonly property real roundingPower: 2.5
+
+  readonly property int blurMax: 16
+  readonly property real shadowOpacity: 0.1
+  readonly property int shadowVerticalOffset: 2
+  readonly property bool shadowEnabled: true
+
+  readonly property int osdTimeout: 1000
+}

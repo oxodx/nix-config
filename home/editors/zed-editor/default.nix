@@ -31,6 +31,7 @@ in {
 
     extraPackages = with pkgs; [
       nixd
+      qt6.qtdeclarative
     ];
 
     userSettings =
