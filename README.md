@@ -16,10 +16,8 @@
 
 ---
 
-<div align="center">
-	<details>
-		<summary>Installation</summary>
-	
+## Quick Start:
+
 ```bash
 git clone https://github.com/oxodx/nix-config.git
 cd nix-config
@@ -27,8 +25,16 @@ sudo nixos-rebuild switch --flake .#oxod-laptop
 ```
 
 For more info please look at [INSTALL.md](docs/INSTALL.md)
-</details>
-</div>
+
+---
+
+## Documentation
+
+| | |
+|---|---|
+| [INSTALL.md](docs/INSTALL.md) | Installation guide |
+
+---
 
 <div align="center">
   <h3>Credits</h1>
