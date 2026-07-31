@@ -1,17 +1,10 @@
 { pkgs, ... }:
 {
   programs = {
-    gamescope = {
-      enable = true;
-      capSysNice = true;
-      args = [
-        "--rt"
-        "--expose-wayland"
-      ];
-    };
-
     steam = {
       enable = true;
+      protontricks.enable = true;
+      extest.enable = true;
 
       extraCompatPackages = [
         pkgs.proton-ge-bin
@@ -24,6 +17,15 @@
           "--expose-wayland"
         ];
       };
+    };
+
+    gamescope = {
+      enable = true;
+      capSysNice = true;
+      args = [
+        "--rt"
+        "--expose-wayland"
+      ];
     };
   };
 }
