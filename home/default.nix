@@ -2,6 +2,7 @@
   imports = [
     ./terminal
     inputs.nix-index-db.homeModules.nix-index
+    inputs.zed-extensions.homeManagerModules.default
   ];
 
   home = {

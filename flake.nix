@@ -21,37 +21,37 @@
     agenix.inputs.home-manager.follows = "home-manager";
     agenix.inputs.systems.follows = "systems";
 
+    zed-extensions.type = "github";
+    zed-extensions.owner = "dusksystems";
+    zed-extensions.repo = "nix-zed-extensions";
+    zed-extensions.rev = "554e7959396a95efc1c7ee1e9c4eeea187fb4be8";
+    zed-extensions.inputs.nixpkgs.follows = "nixpkgs";
+
     vicinae.url = "github:vicinaehq/vicinae";
     vicinae-extensions.url = "github:vicinaehq/extensions";
     systems.url = "github:nix-systems/default-linux";
   };
 
-  outputs =
-    inputs:
-    inputs.flake-parts.lib.mkFlake { inherit inputs; } {
-      systems = [ "x86_64-linux" ];
+  outputs = inputs:
+    inputs.flake-parts.lib.mkFlake {inherit inputs;} {
+      systems = ["x86_64-linux"];
 
       imports = [
         ./hosts
       ];
 
-      perSystem =
-        {
-          pkgs,
-          ...
-        }:
-        {
-          devShells.default = pkgs.mkShell {
-            packages = with pkgs; [
-              git
-              nil
-              nixd
-              alejandra
-              lua-language-server
-            ];
-            name = "dots";
-            env.DIRENV_LOG_FORMAT = "";
-          };
+      perSystem = {pkgs, ...}: {
+        devShells.default = pkgs.mkShell {
+          packages = with pkgs; [
+            git
+            nil
+            nixd
+            alejandra
+            lua-language-server
+          ];
+          name = "dots";
+          env.DIRENV_LOG_FORMAT = "";
         };
+      };
     };
 }
