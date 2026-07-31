@@ -5,71 +5,78 @@ import Quickshell.Wayland
 import qs.utils
 import qs.modules.bar.tray
 
-PanelWindow {
-  id: barWindow
-  WlrLayershell.namespace: "quickshell:bar"
-  screen: Config.preferredMonitor
+Variants {
+  model: Quickshell.screens
 
-  anchors.top: true
-  anchors.left: true
-  anchors.right: true
+  PanelWindow {
+    id: barWindow
 
-  implicitHeight: 32
+    required property ShellScreen modelData
 
-  color: "transparent"
+    WlrLayershell.namespace: "quickshell:bar"
+    screen: modelData
 
-  Rectangle {
-    id: bar
-    anchors.fill: parent
+    anchors.top: true
+    anchors.left: true
+    anchors.right: true
+
+    implicitHeight: 32
 
     color: "transparent"
 
-    RowLayout {
-      id: barLeft
+    Rectangle {
+      id: bar
+      anchors.fill: parent
 
-      anchors.bottom: parent.bottom
-      anchors.left: parent.left
-      anchors.top: parent.top
+      color: "transparent"
 
-      anchors.leftMargin: Config.spacing
-      anchors.rightMargin: Config.spacing
-      spacing: Config.spacing
+      RowLayout {
+        id: barLeft
 
-      Workspaces {}
-    }
+        anchors.bottom: parent.bottom
+        anchors.left: parent.left
+        anchors.top: parent.top
 
-    RowLayout {
-      id: barMiddle
+        anchors.leftMargin: Config.spacing
+        anchors.rightMargin: Config.spacing
+        spacing: Config.spacing
 
-      anchors.bottom: parent.bottom
-      anchors.horizontalCenter: parent.horizontalCenter
-      anchors.top: parent.top
+        Workspaces {}
+      }
 
-      anchors.leftMargin: Config.spacing
-      anchors.rightMargin: Config.spacing
-      spacing: Config.spacing
+      RowLayout {
+        id: barMiddle
 
-      Mpris {}
-    }
+        anchors.bottom: parent.bottom
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: parent.top
 
-    RowLayout {
-      id: barRight
+        anchors.leftMargin: Config.spacing
+        anchors.rightMargin: Config.spacing
+        spacing: Config.spacing
 
-      anchors.bottom: parent.bottom
-      anchors.right: parent.right
-      anchors.top: parent.top
+        Mpris {}
+      }
 
-      anchors.leftMargin: Config.spacing
-      anchors.rightMargin: Config.spacing
-      spacing: Config.spacing
+      RowLayout {
+        id: barRight
 
-      Comms {}
-      Tray {}
-      Resources {}
-      Network {}
-      Bluetooth {}
-      Battery {}
-      Clock {}
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        anchors.top: parent.top
+
+        anchors.leftMargin: Config.spacing
+        anchors.rightMargin: Config.spacing
+        spacing: Config.spacing
+
+        Comms {}
+        Tray {}
+        Resources {}
+        Network {}
+        Bluetooth {}
+        Battery {}
+        Clock {}
+      }
     }
   }
 }
