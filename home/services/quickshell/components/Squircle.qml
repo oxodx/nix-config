@@ -11,7 +11,7 @@ Item {
   // Styling
   property color color: "black"
   property color strokeColor: "transparent"
-  property color innerStrokeColor: Colors.innerBorder
+  property color innerStrokeColor: Colors.outline
   property real strokeWidth: strokeColor.alpha != 0 ? 1 : 0
   property real innerStrokeWidth: 0.5
   property bool useInnerStroke: false

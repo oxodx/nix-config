@@ -117,7 +117,7 @@ WrapperMouseArea {
                 }
               }
               color: {
-                ws.modelData.workspace ?? false ? Colors.monitorColors[ws.modelData.workspace?.monitor?.id ?? 0] : Colors.bgBar;
+                ws.modelData.workspace ?? false ? Colors.primary : Colors.surface;
               }
             }
             MultiEffect {

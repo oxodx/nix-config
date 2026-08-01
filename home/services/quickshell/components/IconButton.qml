@@ -31,7 +31,7 @@ HoverTooltip {
       implicitHeight: Config.iconSize
       implicitWidth: Config.iconSize
       isMask: true
-      color: Colors.foreground
+      color: Colors.primary
     }
 
     MultiEffect {

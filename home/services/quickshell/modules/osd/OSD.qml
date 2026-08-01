@@ -112,7 +112,7 @@ Scope {
         Squircle {
           anchors.fill: parent
           color: Colors.bgBar
-          progressColor: Colors.foregroundOSD
+          progressColor: Colors.primary
           progress: scope.progress
           useInnerStroke: true
           innerStrokeColor: Colors.osdBorder

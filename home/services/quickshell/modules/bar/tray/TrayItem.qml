@@ -32,7 +32,7 @@ MouseArea {
   Rectangle {
     id: trayIconItem
 
-    color: root.menu.visible ? Colors.buttonDisabledHover : root.containsMouse ? Colors.buttonDisabled : "transparent"
+    color: root.menu.visible ? Colors.surface : root.containsMouse ? Colors.surfaceVariant : "transparent"
     radius: 20
 
     implicitWidth: trayIcon.implicitWidth + Config.padding * 2

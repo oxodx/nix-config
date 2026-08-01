@@ -24,7 +24,7 @@ HoverTooltip {
     // This recolors the entire svg, instead of only classless components.
     // Hopefully in the future classes can be selected for recoloring.
     isMask: true
-    color: Colors.foreground
+    color: Colors.primary
 
     source: {
       const nearestTen = Math.round(root.percentage / 10) * 10;

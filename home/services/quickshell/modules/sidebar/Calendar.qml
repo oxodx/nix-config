@@ -160,7 +160,7 @@ WrapperMouseArea {
                   if (cellContainer.today) {
                     return Colors.bg;
                   }
-                  return Colors.foreground;
+                  return Colors.primary;
                 }
               }
             }

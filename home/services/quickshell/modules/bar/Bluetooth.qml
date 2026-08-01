@@ -60,7 +60,7 @@ HoverTooltip {
     implicitWidth: Config.iconSize
 
     isMask: true
-    color: Colors.foreground
+    color: Colors.primary
 
     source: root.iconPath
   }

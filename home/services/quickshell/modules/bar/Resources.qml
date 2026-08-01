@@ -15,7 +15,7 @@ Item {
   readonly property int textSize: 5
   readonly property int spacing: 0
 
-  property color valueColor: Colors.foreground
+  property color valueColor: Colors.primary
   property color textColor: Colors.overlay
 
   // Prevents this component making the bar's elements shift around

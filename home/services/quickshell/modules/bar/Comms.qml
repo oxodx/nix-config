@@ -23,19 +23,19 @@ WrapperItem {
       name: "Camera",
       visible: CommsState.cameraActive,
       icon: "camera-photo-symbolic",
-      color: Colors.monitorColors[3]
+      color: Colors.secondary
     },
     {
       name: "Microphone",
       visible: CommsState.microphoneActive,
       icon: CommsState.microphoneMuted ? "microphone-disabled-symbolic" : "audio-input-microphone-symbolic",
-      color: Colors.monitorColors[2]
+      color: Colors.secondary
     },
     {
       name: "Screenshare",
       visible: CommsState.screensharingActive,
       icon: "screen-shared-symbolic",
-      color: Colors.monitorColors[0]
+      color: Colors.secondary
     },
   ]
 
@@ -58,7 +58,7 @@ WrapperItem {
         implicitWidth: Config.iconSize - parent.margin
 
         isMask: true
-        color: Colors.bg
+        color: Colors.background
       }
     }
   }

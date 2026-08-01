@@ -32,9 +32,9 @@ Loader {
     }
 
     background: Squircle {
-      color: Colors.bgBlur
+      color: Colors.background
       strokeWidth: 1
-      strokeColor: Colors.border
+      strokeColor: Colors.outline
       useInnerStroke: true
     }
   }

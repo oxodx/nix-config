@@ -34,6 +34,6 @@ Item {
 
     anchors.fill: parent
     renderType: Text.NativeRendering
-    color: Colors.foreground
+    color: Colors.primaryText
   }
 }

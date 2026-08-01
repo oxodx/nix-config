@@ -66,7 +66,7 @@ Squircle {
         implicitHeight: Config.iconSize
 
         isMask: true
-        color: Colors.foreground
+        color: Colors.primary
 
         source: Utils.getImage(root.modelData?.icon ?? "")
       }
@@ -79,7 +79,7 @@ Squircle {
       Layout.fillWidth: true
 
       text: root.modelData?.text ?? ""
-      color: (root.modelData?.enabled ?? false) ? Colors.foreground : Qt.lighter(Colors.foreground, 0.6)
+      color: (root.modelData?.enabled ?? false) ? Colors.primary : Qt.lighter(Colors.primary, 0.6)
     }
 
     MaterialIcon {

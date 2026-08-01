@@ -16,7 +16,7 @@ HoverTooltip {
 
   Rectangle {
     radius: Config.radius
-    color: root.containsMouse ? Colors.buttonDisabledHover : Colors.buttonDisabled
+    color: root.containsMouse ? Colors.surface : Colors.surfaceVariant
     implicitWidth: Config.iconSize + 2 * Config.padding
     implicitHeight: Config.iconSize + 2 * Config.padding
 

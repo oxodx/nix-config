@@ -50,7 +50,7 @@ LazyLoader {
           asynchronous: true
 
           sourceComponent: Rectangle {
-            color: Theme.surface
+            color: Colors.surface
 
             Row {
               anchors.centerIn: parent
@@ -58,7 +58,7 @@ LazyLoader {
 
               MaterialIcon {
                 text: "sentiment_stressed"
-                color: Theme.surfaceVariantText
+                color: Colors.surfaceVariantText
                 anchors.verticalCenter: parent.verticalCenter
               }
 
@@ -68,14 +68,14 @@ LazyLoader {
 
                 Text {
                   text: "Wallpaper missing?"
-                  color: Theme.surfaceVariantText
+                  color: Colors.surfaceVariantText
                   font.pixelSize: Theme.fontSizeXLarge * 2
                   font.weight: Font.Bold
                 }
 
                 Text {
                   text: "Set wallpaper in Settings"
-                  color: Theme.primary
+                  color: Colors.primary
                   font.pixelSize: Theme.fontSizeLarge
                 }
               }
