@@ -43,13 +43,6 @@ Variants {
       Component.onCompleted: running = true
     }
 
-    Timer {
-      interval: 2000        // Every 2 seconds
-      running: true         // Start immediately
-      repeat: true          // Keep going forever
-      onTriggered: cpuProc.running = true
-    }
-
     // Memory process
     Process {
       id: memProc
