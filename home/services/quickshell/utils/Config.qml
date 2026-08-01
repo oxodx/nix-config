@@ -37,4 +37,6 @@ PersistentProperties {
   readonly property bool shadowEnabled: true
 
   readonly property int osdTimeout: 1000
+
+  property string wallpaperPath: Quickshell.env("HOME") + "/Pictures/wallpapers/current.png"
 }
