@@ -7,9 +7,6 @@
     home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
-    flake-parts.url = "github:hercules-ci/flake-parts";
-    flake-parts.inputs.nixpkgs-lib.follows = "nixpkgs";
-
     nix-index-db.url = "github:mic92/nix-index-database";
     nix-index-db.inputs.nixpkgs.follows = "nixpkgs";
 
@@ -32,26 +29,38 @@
     systems.url = "github:nix-systems/default-linux";
   };
 
-  outputs = inputs:
-    inputs.flake-parts.lib.mkFlake {inherit inputs;} {
-      systems = ["x86_64-linux"];
-
-      imports = [
-        ./hosts
-      ];
-
-      perSystem = {pkgs, ...}: {
-        devShells.default = pkgs.mkShell {
-          packages = with pkgs; [
-            git
-            nil
-            nixd
-            alejandra
-            lua-language-server
-          ];
-          name = "dots";
-          env.DIRENV_LOG_FORMAT = "";
-        };
+  outputs = {
+    self,
+    nixpkgs,
+    systems,
+    ...
+  } @ inputs: let
+    inherit (nixpkgs) lib;
+    forAllSystems = lib.genAttrs (import systems);
+    pkgsFor = system:
+      import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
       };
-    };
+  in {
+    nixosConfigurations = import ./hosts {inherit self inputs;};
+
+    devShells = forAllSystems (system: let
+      pkgs = pkgsFor system;
+    in {
+      default = pkgs.mkShell {
+        packages = with pkgs; [
+          git
+          nil
+          nixd
+          alejandra
+          lua-language-server
+        ];
+        name = "dots";
+        env.DIRENV_LOG_FORMAT = "";
+      };
+    });
+
+    formatter = forAllSystems (system: (pkgsFor system).alejandra);
+  };
 }
