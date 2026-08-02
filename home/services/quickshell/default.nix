@@ -64,6 +64,7 @@ in {
       hyprsunset
       wl-clipboard
       gnome-keyring
+      libsecret
       networkmanager
       xdg-desktop-portal
       xdg-desktop-portal-gtk
