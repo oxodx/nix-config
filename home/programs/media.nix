@@ -1,8 +1,7 @@
-{ pkgs, ... }:
-{
+{pkgs, ...}: {
   programs.mpv = {
     enable = true;
-    scripts = [ pkgs.mpvScripts.mpris ];
+    scripts = [pkgs.mpvScripts.mpris];
     config = {
       save-position-on-quit = true;
     };
@@ -13,6 +12,13 @@
     pulsemixer
     pwvucontrol
     crosspipe
+
+    # dolphin file explorer
+    kdePackages.dolphin
+    kdePackages.qtsvg
+    kdePackages.kio
+    kdePackages.kio-fuse
+    kdePackages.kio-extras
 
     # audio
     amberol
