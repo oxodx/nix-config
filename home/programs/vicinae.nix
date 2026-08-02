@@ -4,9 +4,8 @@
   pkgs,
   config,
   ...
-}:
-{
-  imports = [ inputs.vicinae.homeManagerModules.default ];
+}: {
+  imports = [inputs.vicinae.homeManagerModules.default];
 
   programs.vicinae = {
     enable = true;

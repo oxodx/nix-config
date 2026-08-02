@@ -36,6 +36,8 @@
     ...
   } @ inputs: let
     inherit (nixpkgs) lib;
+    mylib = import ./lib {inherit lib;};
+
     forAllSystems = lib.genAttrs (import systems);
     pkgsFor = system:
       import nixpkgs {
@@ -43,7 +45,7 @@
         config.allowUnfree = true;
       };
   in {
-    nixosConfigurations = import ./hosts {inherit self inputs;};
+    nixosConfigurations = import ./hosts {inherit self mylib inputs;};
 
     devShells = forAllSystems (system: let
       pkgs = pkgsFor system;

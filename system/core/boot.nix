@@ -1,8 +1,8 @@
-{ pkgs, ... }: {
+{pkgs, ...}: {
   boot = {
     initrd = {
       systemd.enable = true;
-      supportedFilesystems = [ "ext4" ];
+      supportedFilesystems = ["ext4"];
     };
 
     kernelPackages = pkgs.linuxPackages_latest;

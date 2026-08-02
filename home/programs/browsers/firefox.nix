@@ -3,12 +3,11 @@
   pkgs,
   lib,
   ...
-}:
-{
+}: {
   programs.firefox = {
     enable = true;
     configPath = "${config.xdg.configHome}/mozilla/firefox";
-    languagePacks = [ "en-US" ];
+    languagePacks = ["en-US"];
     profiles.oxod = {
       id = 0;
       path = config.home.username;
@@ -36,7 +35,7 @@
               }
             ];
             icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-            definedAliases = [ "@np" ];
+            definedAliases = ["@np"];
           };
 
           "Nix Options" = {
@@ -56,7 +55,7 @@
               }
             ];
             icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-            definedAliases = [ "@no" ];
+            definedAliases = ["@no"];
           };
 
           "NixOS Wiki" = {
@@ -72,7 +71,7 @@
               }
             ];
             icon = "${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg";
-            definedAliases = [ "@nw" ];
+            definedAliases = ["@nw"];
           };
         };
       };
@@ -110,27 +109,25 @@
       DefaultDownloadDirectory = "${config.home.username}/Downloads";
 
       # Extensions
-      ExtensionSettings =
-        let
-          moz = short: "https://addons.mozilla.org/firefox/downloads/latest/${short}/latest.xpi";
-        in
-        {
-          "uBlock0@raymondhill.net" = {
-            install_url = moz "ublock-origin";
-            installation_mode = "force_installed";
-            private_browsing = true;
-          };
-          "addon@darkreader.org" = {
-            install_url = moz "darkreader";
-            installation_mode = "force_installed";
-            private_browsing = true;
-          };
-          "78272b6fa58f4a1abaac99321d503a20@proton.me" = {
-            install_url = moz "proton-pass";
-            installation_mode = "force_installed";
-            private_browsing = false;
-          };
+      ExtensionSettings = let
+        moz = short: "https://addons.mozilla.org/firefox/downloads/latest/${short}/latest.xpi";
+      in {
+        "uBlock0@raymondhill.net" = {
+          install_url = moz "ublock-origin";
+          installation_mode = "force_installed";
+          private_browsing = true;
         };
+        "addon@darkreader.org" = {
+          install_url = moz "darkreader";
+          installation_mode = "force_installed";
+          private_browsing = true;
+        };
+        "78272b6fa58f4a1abaac99321d503a20@proton.me" = {
+          install_url = moz "proton-pass";
+          installation_mode = "force_installed";
+          private_browsing = false;
+        };
+      };
 
       # Extension configuration
       "3rdparty".Extensions = {

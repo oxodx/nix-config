@@ -1,12 +1,9 @@
 {
   pkgs,
+  mylib,
   ...
-}:
-{
-  imports = [
-    ./hardware-configuration.nix
-    ./hyprland.nix
-  ];
+}: {
+  imports = mylib.scanPaths ./.;
 
   environment.variables.NH_FLAKE = "/home/oxod/dev/dotfiles";
 
@@ -35,8 +32,8 @@
 
   xdg.portal = {
     enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-    config.common.default = [ "gtk" ];
+    extraPortals = [pkgs.xdg-desktop-portal-gtk];
+    config.common.default = ["gtk"];
   };
 
   system.stateVersion = "26.05";

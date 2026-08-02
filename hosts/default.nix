@@ -1,6 +1,7 @@
 {
   self,
   inputs,
+  mylib,
   ...
 }: let
   inherit (inputs.nixpkgs.lib) nixosSystem;
@@ -10,10 +11,10 @@
   mod = "${self}/system";
   inherit (import mod) laptop;
 
-  specialArgs = {inherit inputs self;};
+  specialArgs = {inherit self inputs mylib;};
 in {
   "oxod-laptop" = nixosSystem {
-    specialArgs = {inherit inputs;};
+    inherit specialArgs;
     modules =
       laptop
       ++ [

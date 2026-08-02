@@ -1,13 +1,10 @@
 {
   pkgs,
   lib,
+  mylib,
   ...
-}:
-{
-  imports = [
-    ./hyprlock.nix
-    ./wlogout.nix
-  ];
+}: {
+  imports = mylib.scanPaths ./.;
 
   home.packages = with pkgs; [
     # screenshot
@@ -25,5 +22,5 @@
     XDG_SESSION_TYPE = "wayland";
   };
 
-  systemd.user.targets.tray.Unit.Requires = lib.mkForce [ "graphical-session.target" ];
+  systemd.user.targets.tray.Unit.Requires = lib.mkForce ["graphical-session.target"];
 }

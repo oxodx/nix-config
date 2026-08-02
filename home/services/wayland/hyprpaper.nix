@@ -2,6 +2,6 @@
   services.hyprpaper = {
     enable = true;
 
-    importantPrefixes = [ "monitor" ];
+    importantPrefixes = ["monitor"];
   };
 }

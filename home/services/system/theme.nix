@@ -3,11 +3,9 @@
   lib,
   pkgs,
   ...
-}:
-let
+}: let
   themeName = "KvLibadwaita";
-in
-{
+in {
   services.darkman = {
     enable = true;
 

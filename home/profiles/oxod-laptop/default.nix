@@ -1,8 +1,6 @@
-{ self, ... }:
-let
+{self, ...}: let
   home = "${self}/home";
-in
-{
+in {
   imports = [
     "${home}/editors/zed-editor"
 

@@ -1,5 +1,5 @@
-{ pkgs, ... }: {
-  boot.kernelModules = [ "vfio-pci" ];
+{pkgs, ...}: {
+  boot.kernelModules = ["vfio-pci"];
 
   services.flatpak.enable = true;
 
@@ -12,7 +12,7 @@
       autoPrune = {
         enable = true;
         dates = "weekly";
-        flags = [ "--all" ];
+        flags = ["--all"];
       };
     };
 

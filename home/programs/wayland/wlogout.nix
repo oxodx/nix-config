@@ -2,15 +2,13 @@
   pkgs,
   lib,
   ...
-}:
-let
+}: let
   bgImageSection = name: ''
     #${name} {
       background-image: image(url("${pkgs.wlogout}/share/wlogout/icons/${name}.png"));
     }
   '';
-in
-{
+in {
   programs.wlogout = {
     enable = true;
 

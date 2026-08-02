@@ -1,8 +1,4 @@
-{
-  pkgs,
-  ...
-}:
-{
+{pkgs, ...}: {
   home.packages = with pkgs; [
     # archives
     zip
@@ -35,27 +31,27 @@
         # default ssh config
         "*" = {
           addKeysToAgent = "no";
-          certificateFile = [ ];
+          certificateFile = [];
           checkHostIP = true;
           compression = false;
           controlMaster = "no";
           controlPath = "~/.ssh/master-%r@%n:%p";
           controlPersist = "no";
-          dynamicForwards = [ ];
-          extraOptions = { };
+          dynamicForwards = [];
+          extraOptions = {};
           forwardAgent = false;
           forwardX11 = false;
           forwardX11Trusted = false;
           hashKnownHosts = false;
           identitiesOnly = false;
-          identityAgent = [ ];
-          identityFile = [ ];
-          localForwards = [ ];
-          remoteForwards = [ ];
-          sendEnv = [ ];
+          identityAgent = [];
+          identityFile = [];
+          localForwards = [];
+          remoteForwards = [];
+          sendEnv = [];
           serverAliveCountMax = 3;
           serverAliveInterval = 0;
-          setEnv = { };
+          setEnv = {};
           userKnownHostsFile = "~/.ssh/known_hosts";
         };
       };

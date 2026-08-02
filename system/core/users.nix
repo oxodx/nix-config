@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{pkgs, ...}: {
   users.users.oxod = {
     isNormalUser = true;
     shell = pkgs.zsh;

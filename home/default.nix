@@ -1,4 +1,4 @@
-{ inputs, ... }: {
+{inputs, ...}: {
   imports = [
     ./terminal
     inputs.nix-index-db.homeModules.nix-index

@@ -1,5 +1,8 @@
-{ pkgs, lib, ... }:
-let
+{
+  pkgs,
+  lib,
+  ...
+}: let
   idle-brightness = pkgs.writeShellScriptBin "idle-brightness" ''
     B="${lib.getExe pkgs.brillo}"
     DIRECTION="''${1-"low"}"
@@ -29,8 +32,7 @@ let
 
     $B $ARGS $@
   '';
-in
-{
+in {
   environment.systemPackages = [
     bright
     idle-brightness

@@ -8,11 +8,12 @@ let
     ./services
   ];
 
-  laptop = desktop ++ [
-    ./hardware/bluetooth.nix
-    ./services/power.nix
-  ];
-in
-{
+  laptop =
+    desktop
+    ++ [
+      ./hardware/bluetooth.nix
+      ./services/power.nix
+    ];
+in {
   inherit desktop laptop;
 }

@@ -3,8 +3,7 @@
   lib,
   pkgs,
   ...
-}:
-{
+}: {
   programs.zsh = {
     enable = true;
     autosuggestion.enable = true;
@@ -74,33 +73,32 @@
       source $XDG_CONFIG_HOME/zsh/zlong_alert.zsh
     '';
 
-    shellAliases = {
-      grep = "grep --color";
-      ip = "ip --color";
-      l = "eza -l";
-      la = "eza -la";
-      md = "mkdir -p";
-      ppc = "powerprofilesctl";
-      pf = "powerprofilesctl launch -p performance";
+    shellAliases =
+      {
+        grep = "grep --color";
+        ip = "ip --color";
+        l = "eza -l";
+        la = "eza -la";
+        md = "mkdir -p";
+        ppc = "powerprofilesctl";
+        pf = "powerprofilesctl launch -p performance";
 
-      us = "systemctl --user"; # mnemonic for user systemctl
-      rs = "sudo systemctl"; # mnemonic for root systemctl
-    }
-    // lib.optionalAttrs config.programs.bat.enable { cat = "bat"; };
+        us = "systemctl --user"; # mnemonic for user systemctl
+        rs = "sudo systemctl"; # mnemonic for root systemctl
+      }
+      // lib.optionalAttrs config.programs.bat.enable {cat = "bat";};
     shellGlobalAliases = {
       eza = "eza --icons --git";
     };
   };
 
   # BEL in terminal when commands complete after a long time
-  xdg.configFile."zsh/zlong_alert.zsh".source =
-    let
-      zlong_alert = pkgs.fetchFromGitHub {
-        owner = "kevinywlui";
-        repo = "zlong_alert.zsh";
-        rev = "8df5b6808bba4bf896f6765cca28b5705a048bad";
-        hash = "sha256-liwaOzv70igaJy9bEom2ntu/x64BitjLxvuMUcgajVw=";
-      };
-    in
-    "${zlong_alert}/zlong_alert.zsh";
+  xdg.configFile."zsh/zlong_alert.zsh".source = let
+    zlong_alert = pkgs.fetchFromGitHub {
+      owner = "kevinywlui";
+      repo = "zlong_alert.zsh";
+      rev = "8df5b6808bba4bf896f6765cca28b5705a048bad";
+      hash = "sha256-liwaOzv70igaJy9bEom2ntu/x64BitjLxvuMUcgajVw=";
+    };
+  in "${zlong_alert}/zlong_alert.zsh";
 }

@@ -1,5 +1,4 @@
-{ pkgs, ... }:
-{
+{pkgs, ...}: {
   services = {
     # needed for GNOME services outside of GNOME Desktop
     dbus.packages = with pkgs; [

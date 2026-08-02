@@ -3,15 +3,13 @@
   lib,
   config,
   ...
-}:
-let
+}: let
   lock = "${pkgs.systemd}/bin/loginctl lock-session";
   dpms = action: ''hyprctl dispatch 'hl.dsp.dpms({action = "${action}"})''\''';
 
   # timeout after which DPMS kicks in
   timeout = 300;
-in
-{
+in {
   # screen idle
   services.hypridle = {
     enable = true;

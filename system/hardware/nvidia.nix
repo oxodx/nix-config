@@ -1,5 +1,9 @@
-{ config, lib, ... }: {
-  services.xserver.videoDrivers = [ "nvidia" ];
+{
+  config,
+  lib,
+  ...
+}: {
+  services.xserver.videoDrivers = ["nvidia"];
   hardware = {
     graphics.enable = lib.mkForce true;
     nvidia = {

@@ -1,5 +1,8 @@
-{ lib, pkgs, ... }:
 {
+  lib,
+  pkgs,
+  ...
+}: {
   services.pipewire = {
     enable = true;
     alsa.enable = true;
@@ -10,7 +13,7 @@
     wireplumber.extraConfig."wireplumber.profiles".main."monitor.libcamera" = "disabled";
 
     # Stolen from TLATER
-    extraLadspaPackages = [ pkgs.deepfilternet ];
+    extraLadspaPackages = [pkgs.deepfilternet];
     extraConfig.pipewire."99-input-denoising" = {
       "context.properties" = {
         "link.max-buffers" = 16;
