@@ -20,7 +20,7 @@ in {
       cava
       cliphist
       ddcutil
-
+      upscayl
       qt6.qt5compat
       qt6.qtpositioning
       kdePackages.syntax-highlighting
@@ -31,7 +31,7 @@ in {
       ripgrep
       procps
       util-linux
-
+      killall
       qt6.qtimageformats
       qt6.qtmultimedia
       qt6.qtpositioning

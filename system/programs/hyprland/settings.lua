@@ -19,6 +19,7 @@ hl.env("GRIMBLAST_NO_CURSOR", "0")
 ---- AUTOSTART ----
 -------------------
 hl.on("hyprland.start", function()
+	hl.exec_cmd("$HOME/.config/quickshell/scripts/hypr/start_geoclue_agent.sh")
 	hl.exec_cmd("hyprctl setcursor " .. cursorName .. " " .. cursorSize)
 	hl.exec_cmd("qs")
 
