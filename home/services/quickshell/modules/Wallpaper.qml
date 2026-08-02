@@ -6,7 +6,7 @@ import qs.components
 import qs.utils
 
 LazyLoader {
-  active: Config.wallpaperPath !== ""
+  active: Config.options.wallpaper.path !== ""
 
   Variants {
     model: Quickshell.screens
@@ -32,7 +32,7 @@ LazyLoader {
         id: root
         anchors.fill: parent
 
-        property string source: Config.wallpaperPath || ""
+        property string source: Config.options.wallpaper.path || ""
         property Image current: one
 
         onSourceChanged: {
