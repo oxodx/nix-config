@@ -3,7 +3,6 @@
     steam = {
       enable = true;
       protontricks.enable = true;
-      extest.enable = true;
 
       extraCompatPackages = [
         pkgs.proton-ge-bin
