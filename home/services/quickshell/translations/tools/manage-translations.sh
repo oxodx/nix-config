@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Translation management script - convenient wrapper
 
 set -e
@@ -37,17 +37,17 @@ show_help() {
 
 show_status() {
     echo "Analyzing translation status..."
-    
+
     # Extract current text count
     echo "=== Current Project Status ==="
     python3 "$SCRIPT_DIR/translation-manager.py" \
         --translations-dir "$TRANSLATIONS_DIR" \
         --source-dir "$SOURCE_DIR" \
         --extract-only | grep "Extracted"
-    
+
     echo ""
     echo "=== Translation File Status ==="
-    
+
     if [ -d "$TRANSLATIONS_DIR" ]; then
         for file in "$TRANSLATIONS_DIR"/*.json; do
             if [ -f "$file" ]; then

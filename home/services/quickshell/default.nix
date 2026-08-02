@@ -49,7 +49,6 @@ in {
       cpptrace
       jemalloc
       mesa
-
       playerctl
       geoclue2
       brightnessctl
@@ -94,6 +93,7 @@ in {
       kdePackages.dolphin
       kdePackages.systemsettings
       kdePackages.xdg-desktop-portal-kde
+      pulseaudio
     ]
     ++ [quickshell];
 
