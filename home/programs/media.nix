@@ -28,8 +28,8 @@
 
     thunar
     xfconf
-    xfce.thunar-archive-plugin
-    xfce.thunar-volman
+    thunar-archive-plugin
+    thunar-volman
     gvfs
     tumbler
   ];
