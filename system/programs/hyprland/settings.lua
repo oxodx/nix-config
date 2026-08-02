@@ -1,7 +1,15 @@
 --------------------------
 ---- ENVIRONMENT VARS ----
 --------------------------
-hl.env("QT_WAYLAND_DISABLE_WINDOWDECORATION", "1")
+hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
+hl.env("XDG_DATA_DIRS",
+	os.getenv("HOME") ..
+	"/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share:" ..
+	(os.getenv("XDG_DATA_DIRS") or ""))
+hl.env("QT_QPA_PLATFORM", "wayland;xcb")
+hl.env("QT_QPA_PLATFORMTHEME", "kde")
+hl.env("XDG_MENU_PREFIX", "plasma-")
+hl.env("ILLOGICAL_IMPULSE_VIRTUAL_ENV", os.getenv("HOME") .. "/.local/state/quickshell/.venv")
 hl.env("HYPRCURSOR_THEME", cursorName)
 hl.env("HYPRCURSOR_SIZE", cursorSize)
 -- See https://github.com/hyprwm/contrib/issues/142
