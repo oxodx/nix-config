@@ -5,7 +5,6 @@
     ./gtk.nix
     ./media.nix
     ./qt.nix
-    ./vicinae.nix
   ];
 
   home.packages = with pkgs; [

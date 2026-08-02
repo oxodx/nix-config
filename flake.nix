@@ -24,8 +24,6 @@
     zed-extensions.rev = "554e7959396a95efc1c7ee1e9c4eeea187fb4be8";
     zed-extensions.inputs.nixpkgs.follows = "nixpkgs";
 
-    vicinae.url = "github:vicinaehq/vicinae";
-    vicinae-extensions.url = "github:vicinaehq/extensions";
     systems.url = "github:nix-systems/default-linux";
   };
 
