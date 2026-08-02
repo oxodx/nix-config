@@ -1,13 +1,9 @@
-{
-  lib,
-  ...
-}:
-{
+{lib, ...}: {
   imports = [
     ./variables.nix
   ];
 
-  environment.pathsToLink = [ "/share/icons" ];
+  environment.pathsToLink = ["/share/icons"];
 
   programs.hyprland = {
     enable = true;
@@ -18,22 +14,22 @@
   environment.variables.NIXOS_OZONE_WL = "1";
 
   # write the Lua config
-  environment.etc =
-    let
-      lua = [
-        ./hyprland.lua
-        ./settings.lua
-        ./animations.lua
-        ./binds.lua
-        ./smartgaps.lua
-      ];
-    in
+  environment.etc = let
+    lua = [
+      ./hyprland.lua
+      ./settings.lua
+      ./animations.lua
+      ./binds.lua
+      ./rules.lua
+    ];
+  in
     builtins.listToAttrs (
       map (e: {
         name = "xdg/hypr/${lib.baseNameOf e}";
         value = {
           source = e;
         };
-      }) lua
+      })
+      lua
     );
 }
