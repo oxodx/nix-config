@@ -3,9 +3,7 @@
   pkgs,
   lib,
   ...
-}:
-{
-
+}: {
   environment.etc."xdg/hypr/variables.lua".text = ''
     cursorName = "Bibata-Modern-Classic"
     cursorSize = "16"
@@ -14,12 +12,13 @@
     rounding_power = 2.5
 
     gaps_in = 4
-    gaps_out = 8
+    gaps_out = 5
+    gaps_workspaces = 50
 
     mod = "SUPER"
 
-    active_border = "rgba(88888888)"
-    inactive_border = "rgba(00000088)"
+    active_border = "rgba(0DB7D455)"
+    inactive_border = "rgba(31313600)"
     text_color = "rgb(000000)"
     text_color_inactive = "rgba(ffffff66)"
     group_active_color = "rgba(ffffff66)"
