@@ -17,6 +17,52 @@
     ripgrep
     procps
     util-linux
+    cava
+    playerctl
+    geoclue2
+    brightnessctl
+    ddcutil
+    bc
+    cliphist
+    curl
+    wget
+    ripgrep
+    jq
+    xdg-user-dirs
+    matugen
+    hyprland
+    hyprsunset
+    wl-clipboard
+    gnome-keyring
+    networkmanager
+    xdg-desktop-portal
+    xdg-desktop-portal-gtk
+    xdg-desktop-portal-hyprland
+    clang
+    uv
+    hyprshot
+    slurp
+    swappy
+    tesseract
+    wf-recorder
+    upower
+    wtype
+    ydotool
+    fuzzel
+    glib
+    imagemagick
+    hypridle
+    hyprlock
+    hyprpicker
+    songrec
+    translate-shell
+    wlogout
+    libqalculate
+    kdePackages.bluedevil
+    kdePackages.networkmanager-qt
+    kdePackages.dolphin
+    kdePackages.systemsettings
+    kdePackages.xdg-desktop-portal-kde
   ];
 
   QML2_IMPORT_PATH = lib.concatStringsSep ":" [
