@@ -2,20 +2,19 @@
   config,
   pkgs,
   ...
-}:
-let
-  browser = [ "firefox" ];
-  imageViewer = [ "org.gnome.Loupe" ];
-  videoPlayer = [ "io.github.celluloid_player.Celluloid" ];
-  audioPlayer = [ "io.bassi.Amberol" ];
+}: let
+  browser = ["firefox"];
+  imageViewer = ["org.gnome.Loupe"];
+  videoPlayer = ["io.github.celluloid_player.Celluloid"];
+  audioPlayer = ["io.bassi.Amberol"];
 
-  xdgAssociations =
-    type: program: list:
+  xdgAssociations = type: program: list:
     builtins.listToAttrs (
       map (e: {
         name = "${type}/${e}";
         value = program;
-      }) list
+      })
+      list
     );
 
   image = xdgAssociations "image" imageViewer [
@@ -57,22 +56,21 @@ let
   # XDG MIME types
   associations = builtins.mapAttrs (_: v: (map (e: "${e}.desktop") v)) (
     {
-      "application/pdf" = [ "org.pwmt.zathura-pdf-mupdf" ];
+      "application/pdf" = ["org.pwmt.zathura-pdf-mupdf"];
       "text/html" = browser;
-      "text/plain" = [ "Helix" ];
-      "inode/directory" = [ "yazi" ];
-      "x-scheme-handler/magnet" = [ "transmission-gtk" ];
+      "text/plain" = ["Helix"];
+      "inode/directory" = ["thunar"];
+      "x-scheme-handler/magnet" = ["transmission-gtk"];
       # Full entry is org.telegram.desktop.desktop
-      "x-scheme-handler/tg" = [ "org.telegram.desktop" ];
-      "x-scheme-handler/tonsite" = [ "org.telegram.desktop" ];
+      "x-scheme-handler/tg" = ["org.telegram.desktop"];
+      "x-scheme-handler/tonsite" = ["org.telegram.desktop"];
     }
     // image
     // video
     // audio
     // browserTypes
   );
-in
-{
+in {
   xdg = {
     enable = true;
     cacheHome = config.home.homeDirectory + "/.local/cache";

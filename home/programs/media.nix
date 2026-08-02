@@ -13,13 +13,6 @@
     pwvucontrol
     crosspipe
 
-    # dolphin file explorer
-    kdePackages.dolphin
-    kdePackages.qtsvg
-    kdePackages.kio
-    kdePackages.kio-fuse
-    kdePackages.kio-extras
-
     # audio
     amberol
 
@@ -32,5 +25,12 @@
 
     # torrents
     transmission_4-gtk
+
+    thunar
+    xfconf
+    xfce.thunar-archive-plugin
+    xfce.thunar-volman
+    gvfs
+    tumbler
   ];
 }
