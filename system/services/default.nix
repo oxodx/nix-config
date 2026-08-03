@@ -1,6 +1,5 @@
-{
+{pkgs, ...}: {
   imports = [
-    ./gnome-services.nix
     ./location.nix
     ./pipewire.nix
     ./greetd.nix
@@ -11,6 +10,11 @@
 
   services = {
     dbus.implementation = "broker";
+
+    dbus.packages = with pkgs; [
+      gcr
+      gnome-settings-daemon
+    ];
 
     # profile-sync-daemon
     psd = {

@@ -62,7 +62,6 @@ in {
       hyprland
       hyprsunset
       wl-clipboard
-      gnome-keyring
       libsecret
       networkmanager
       xdg-desktop-portal
@@ -75,7 +74,6 @@ in {
       swappy
       tesseract
       wf-recorder
-      upower
       wtype
       ydotool
       fuzzel
