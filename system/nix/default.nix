@@ -25,13 +25,29 @@
     # set the path for channels compat
     nixPath = lib.mapAttrsToList (key: _: "${key}=flake:${key}") config.nix.registry;
 
+    gc = {
+      automatic = lib.mkDefault true;
+      dates = lib.mkDefault "weekly";
+      options = lib.mkDefault "--delete-older-than 7d";
+    };
+
     settings = {
       auto-optimise-store = true;
-      builders-use-substitutes = true;
+
+      auto-allocate-uids = true;
+      extra-system-features = ["uid-range"];
       experimental-features = [
+        "auto-allocate-uids"
+        "cgroups"
         "nix-command"
         "flakes"
       ];
+
+      extra-sandbox-paths = [
+        "/dev/net"
+      ];
+
+      builders-use-substitutes = true;
       flake-registry = "/etc/nix/registry.json";
 
       # for direnv GC roots
@@ -45,5 +61,7 @@
 
       accept-flake-config = false;
     };
+
+    channel.enable = false;
   };
 }
