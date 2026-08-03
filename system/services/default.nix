@@ -16,10 +16,7 @@
       gnome-settings-daemon
     ];
 
-    # profile-sync-daemon
-    psd = {
-      enable = true;
-      resyncTimer = "10m";
-    };
+    gvfs.enable = true;
+    tumbler.enable = true;
   };
 }
