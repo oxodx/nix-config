@@ -2,6 +2,8 @@
   home = "${self}/home";
 in {
   imports = [
+    "${home}/nvidia.nix"
+
     "${home}/editors/zed-editor"
 
     "${home}/programs"
