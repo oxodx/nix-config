@@ -1,6 +1,7 @@
 {lib, ...}: {
   imports = [
     ./boot.nix
+    ./core.nix
     ./fhs.nix
     ./security.nix
     ./users.nix
