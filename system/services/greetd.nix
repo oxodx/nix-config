@@ -1,28 +1,24 @@
-{
-  config,
-  lib,
-  ...
-}: {
-  # greetd display manager
-  services.greetd = let
-    session = {
-      command = "${lib.getExe config.programs.uwsm.package} start hyprland.desktop";
-      user = "oxod";
-    };
-  in {
+{...}: {
+  # greetd display manager with regreet greeter (password login)
+  programs.regreet = {
     enable = true;
 
-    # do not restart on session exit (useful on autologin)
-    restart = false;
-
     settings = {
-      terminal.vt = 1;
-      default_session = session;
-      initial_session = session;
+      commands = {
+        reboot = ["systemctl" "reboot"];
+        poweroff = ["systemctl" "poweroff"];
+      };
+
+      appearance.greeting_msg = "Welcome back!";
     };
   };
 
-  # unlock GPG keyring on login
-  # disabled as it doesn't work with autologin
-  # security.pam.services.greetd.enableGnomeKeyring = true;
+  services.greetd = {
+    enable = true;
+    # restart the greeter after the session ends
+    restart = true;
+  };
+
+  # give the greeter direct access to the GPU
+  users.users.greeter.extraGroups = ["video"];
 }
