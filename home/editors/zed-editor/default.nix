@@ -1,5 +1,6 @@
 {pkgs, ...}: let
   mySettings = import ./settings.nix;
+  myAgent = import ./agent.nix;
   myLsp = import ./lsp.nix;
 
   # https://github.com/yuja/tree-sitter-qmljs
@@ -38,9 +39,8 @@ in {
 
     userSettings =
       mySettings
-      // {
-        lsp = myLsp;
-      };
+      // myAgent
+      // {lsp = myLsp;};
   };
 
   programs.zed-editor-extensions = {
