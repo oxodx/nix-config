@@ -2,18 +2,15 @@
   pkgs,
   inputs,
   lib,
+  config,
   ...
 }: let
   quickshell = inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
   dependencies = with pkgs; [
-    cava
-    cliphist
-    ddcutil
-    upscayl
-    qt6.qt5compat
-    qt6.qtpositioning
-    kdePackages.syntax-highlighting
+    # Core system utils Quickshell calls directly via subprocesses
+    which
+    findutils
     bash
     coreutils
     gawk
@@ -22,9 +19,30 @@
     procps
     util-linux
     killall
+    bc
+    curl
+    wget
+    jq
+    glib
+    imagemagick
+
+    # Icons & KDE dependencies
+    kdePackages.breeze-icons
+    hicolor-icon-theme
+    kdePackages.kirigami
+    kdePackages.kdialog
+    kdePackages.syntax-highlighting
+    kdePackages.bluedevil
+    kdePackages.networkmanager-qt
+    kdePackages.dolphin
+    kdePackages.systemsettings
+    kdePackages.xdg-desktop-portal-kde
+
+    # Qt6 packages
+    qt6.qt5compat
+    qt6.qtpositioning
     qt6.qtimageformats
     qt6.qtmultimedia
-    qt6.qtpositioning
     qt6.qtquicktimeline
     qt6.qtsensors
     qt6.qtsvg
@@ -32,8 +50,12 @@
     qt6.qttranslations
     qt6.qtvirtualkeyboard
     qt6.qtwayland
-    kdePackages.kirigami
-    kdePackages.kdialog
+
+    # Desktop tools & Hyprland utilities
+    cava
+    cliphist
+    ddcutil
+    upscayl
     vulkan-headers
     libdrm
     cpptrace
@@ -42,11 +64,6 @@
     playerctl
     geoclue2
     brightnessctl
-    bc
-    curl
-    wget
-    ripgrep
-    jq
     xdg-user-dirs
     matugen
     hyprland
@@ -67,8 +84,6 @@
     wtype
     ydotool
     fuzzel
-    glib
-    imagemagick
     hypridle
     hyprlock
     hyprpicker
@@ -76,11 +91,6 @@
     translate-shell
     wlogout
     libqalculate
-    kdePackages.bluedevil
-    kdePackages.networkmanager-qt
-    kdePackages.dolphin
-    kdePackages.systemsettings
-    kdePackages.xdg-desktop-portal-kde
     pulseaudio
   ];
 
@@ -92,6 +102,14 @@
     "${pkgs.kdePackages.kirigami.unwrapped}/lib/qt-6/qml"
     "${pkgs.kdePackages.syntax-highlighting}/lib/qt-6/qml"
   ];
+
+  xdgDataDirs = lib.concatStringsSep ":" [
+    "${config.home.homeDirectory}/.nix-profile/share"
+    "/etc/profiles/per-user/${config.home.username}/share"
+    "/run/current-system/sw/share"
+    "${pkgs.kdePackages.breeze-icons}/share"
+    "${pkgs.hicolor-icon-theme}/share"
+  ];
 in {
   home.packages = dependencies ++ [quickshell];
 
@@ -99,18 +117,29 @@ in {
 
   systemd.user.services.quickshell = {
     Unit = {
-      Description = "Quickshell";
+      Description = "Quickshell Desktop Shell";
       PartOf = [
         "tray.target"
         "graphical-session.target"
       ];
       After = "graphical-session.target";
     };
+
     Service = {
-      Environment = "PATH=/run/wrappers/bin:${lib.makeBinPath dependencies} QML2_IMPORT_PATH=${QML2_IMPORT_PATH} QSG_RHI_BACKEND=vulkan";
-      ExecStart = lib.getExe quickshell;
+      ExecStartPre = "${pkgs.bash}/bin/bash -c 'systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE XDG_DATA_DIRS'";
+      ExecStart = "${pkgs.bash}/bin/bash -c '${lib.getExe quickshell}'";
+
+      Environment = [
+        "QSG_RHI_BACKEND=vulkan"
+        "QML2_IMPORT_PATH=${QML2_IMPORT_PATH}"
+        "QT_PLUGIN_PATH=${pkgs.qt6.qtbase}/lib/qt-6/plugins:${pkgs.kdePackages.kirigami}/lib/qt-6/plugins"
+        "PATH=${lib.makeBinPath dependencies}:${config.home.homeDirectory}/.nix-profile/bin:/run/current-system/sw/bin"
+        "XDG_DATA_DIRS=${xdgDataDirs}:%h/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share"
+      ];
+
       Restart = "on-failure";
     };
+
     Install.WantedBy = ["graphical-session.target"];
   };
 }
