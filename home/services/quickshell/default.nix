@@ -8,7 +8,6 @@
   quickshell = inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
   dependencies = with pkgs; [
-    # Core system utils Quickshell calls directly via subprocesses
     which
     findutils
     bash
@@ -26,7 +25,6 @@
     glib
     imagemagick
 
-    # Icons & KDE dependencies
     kdePackages.breeze-icons
     hicolor-icon-theme
     kdePackages.kirigami
@@ -38,7 +36,6 @@
     kdePackages.systemsettings
     kdePackages.xdg-desktop-portal-kde
 
-    # Qt6 packages
     qt6.qt5compat
     qt6.qtpositioning
     qt6.qtimageformats
@@ -51,7 +48,6 @@
     qt6.qtvirtualkeyboard
     qt6.qtwayland
 
-    # Desktop tools & Hyprland utilities
     cava
     cliphist
     ddcutil
