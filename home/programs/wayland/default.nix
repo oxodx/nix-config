@@ -21,5 +21,11 @@
     XDG_SESSION_TYPE = "wayland";
   };
 
+  home.file.".wayland-session" = {
+    source = pkgs.writeScript "init-session" ''
+      ${lib.getExe pkgs.uwsm} start hyprland.desktop
+    '';
+  };
+
   systemd.user.targets.tray.Unit.Requires = lib.mkForce ["graphical-session.target"];
 }

@@ -1,24 +1,17 @@
-{...}: {
-  # greetd display manager with regreet greeter (password login)
-  programs.regreet = {
-    enable = true;
-
-    settings = {
-      commands = {
-        reboot = ["systemctl" "reboot"];
-        poweroff = ["systemctl" "poweroff"];
+{pkgs, ...}: {
+  services = {
+    # https://wiki.archlinux.org/title/Greetd
+    greetd = {
+      enable = true;
+      settings = {
+        default_session = {
+          user = "oxod";
+          command = "${pkgs.tuigreet}/bin/tuigreet --time --cmd $HOME/.wayland-session";
+        };
       };
-
-      appearance.greeting_msg = "Welcome back!";
     };
   };
 
-  services.greetd = {
-    enable = true;
-    # restart the greeter after the session ends
-    restart = true;
-  };
-
-  # give the greeter direct access to the GPU
-  users.users.greeter.extraGroups = ["video"];
+  # fix https://github.com/ryan4yin/nix-config/issues/10
+  security.pam.services.swaylock = {};
 }

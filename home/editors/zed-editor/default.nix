@@ -16,7 +16,7 @@
 
   # https://github.com/lkroll/zed-qml
   zedQml = pkgs.buildZedRustExtension (finalAttrs: {
-    name = "qml";
+    name = "zed-qml";
     version = "1c5badf066af33234c589fbc627029074c0a6699";
     src = pkgs.fetchFromGitHub {
       owner = "lkroll";
