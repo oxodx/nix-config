@@ -2,6 +2,7 @@
   pkgs,
   inputs,
   lib,
+  mylib,
   config,
   ...
 }: let
@@ -98,44 +99,11 @@
     "${pkgs.kdePackages.kirigami.unwrapped}/lib/qt-6/qml"
     "${pkgs.kdePackages.syntax-highlighting}/lib/qt-6/qml"
   ];
-
-  xdgDataDirs = lib.concatStringsSep ":" [
-    "${config.home.homeDirectory}/.nix-profile/share"
-    "/etc/profiles/per-user/${config.home.username}/share"
-    "/run/current-system/sw/share"
-    "${pkgs.kdePackages.breeze-icons}/share"
-    "${pkgs.hicolor-icon-theme}/share"
-  ];
 in {
   home.packages = dependencies ++ [quickshell];
 
   home.sessionVariables.QML2_IMPORT_PATH = QML2_IMPORT_PATH;
 
-  systemd.user.services.quickshell = {
-    Unit = {
-      Description = "Quickshell Desktop Shell";
-      PartOf = [
-        "tray.target"
-        "graphical-session.target"
-      ];
-      After = "graphical-session.target";
-    };
-
-    Service = {
-      ExecStartPre = "${pkgs.bash}/bin/bash -c 'systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP HYPRLAND_INSTANCE_SIGNATURE XDG_DATA_DIRS'";
-      ExecStart = "${pkgs.bash}/bin/bash -c '${lib.getExe quickshell}'";
-
-      Environment = [
-        "QSG_RHI_BACKEND=vulkan"
-        "QML2_IMPORT_PATH=${QML2_IMPORT_PATH}"
-        "QT_PLUGIN_PATH=${pkgs.qt6.qtbase}/lib/qt-6/plugins:${pkgs.kdePackages.kirigami}/lib/qt-6/plugins"
-        "PATH=${lib.makeBinPath dependencies}:${config.home.homeDirectory}/.nix-profile/bin:/run/current-system/sw/bin"
-        "XDG_DATA_DIRS=${xdgDataDirs}:%h/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share"
-      ];
-
-      Restart = "on-failure";
-    };
-
-    Install.WantedBy = ["graphical-session.target"];
-  };
+  xdg.configFile."quickshell".source =
+    config.lib.file.mkOutOfStoreSymlink "${mylib.relativeToRoot "home/services/quickshell"}";
 }

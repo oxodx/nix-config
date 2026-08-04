@@ -27,6 +27,9 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("dbus-update-activation-environment --all")
 	hl.exec_cmd("sleep 1 && dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
 
+	-- TODO: I realy need to fix this ugly syntax
+	hl.exec_cmd(
+		"pkill -9 quickshell; pkill -9 qs; pkill -9 ydotool; sleep 0.15; zsh -c 'source ~/.zshrc; nohup quickshell >/dev/null 2>&1 &'")
 	hl.exec_cmd("sleep 1 && wl-paste --type text --watch bash -c 'cliphist store && qs ipc call cliphistService update'")
 	hl.exec_cmd("sleep 1 && wl-paste --type image --watch bash -c 'cliphist store && qs ipc call cliphistService update'")
 end)

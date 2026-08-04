@@ -12,7 +12,7 @@
       }
       {
         provider = "openrouter";
-        model = "openai/gpt-oss-20b:free";
+        model = "inclusionai/ling-3.0-flash:free";
         enable_thinking = false;
       }
     ];
