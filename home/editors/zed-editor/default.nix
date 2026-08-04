@@ -53,4 +53,8 @@ in {
       ]
       ++ [zedQml];
   };
+
+  home.packages = with pkgs; [
+    vtsls
+  ];
 }
