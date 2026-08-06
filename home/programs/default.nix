@@ -2,6 +2,7 @@
   imports = [
     ./office
 
+    ./dev-tools.nix
     ./gtk.nix
     ./media.nix
     ./qt.nix

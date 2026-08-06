@@ -89,6 +89,7 @@
     wlogout
     libqalculate
     pulseaudio
+    python
   ];
 
   QML2_IMPORT_PATH = lib.concatStringsSep ":" [
