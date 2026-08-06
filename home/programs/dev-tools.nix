@@ -24,7 +24,7 @@
     gitleaks
 
     # Python
-    python
+    python3
     uv
   ];
 }
