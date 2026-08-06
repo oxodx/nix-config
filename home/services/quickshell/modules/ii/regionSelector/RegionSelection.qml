@@ -232,7 +232,7 @@ PanelWindow {
 
   Process {
     id: imageDetectionProcess
-    command: ["python", `${Directories.scriptPath}/images/find-regions.py ` + `--hyprctl ` + `--image '
+    command: ["python", `${Directories.scriptPath}/images/findRegions.py ` + `--hyprctl ` + `--image '
 
 ${StringUtils.shellSingleQuoteEscape(root.screenshotPath)}' ` + `--max-width ${Math.round(root.screen.width * root.falsePositivePreventionRatio)} ` + `--max-height ${Math.round(root.screen.height * root.falsePositivePreventionRatio)} `]
     stdout: StdioCollector {

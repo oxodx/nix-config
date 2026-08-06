@@ -21,10 +21,8 @@ Item {
   property color textColor: "white"
   required property string screenshotPath
 
-  readonly property string wikiLink:
-  "https://ii.clsty.link/en/ii-qs/02usage/#setting-it-up" // TODO: write a page for this
-  readonly property string textColorDetectionScriptPath: Quickshell.shellPath(
-                                                           "scripts/images/text-color-venv.sh")
+  readonly property string wikiLink: "https://ii.clsty.link/en/ii-qs/02usage/#setting-it-up" // TODO: write a page for this
+  readonly property string textColorDetectionScriptPath: Quickshell.shellPath("scripts/images/textColor.py")
 
   property bool loading: true
   property var visionParagraphs: []
@@ -84,17 +82,17 @@ Item {
         anchors.horizontalCenter: parent.horizontalCenter
         text: {
           if (cloudVision.state == GCloudApi.State.Preparing)
-          return Translation.tr("Uploading image");
+            return Translation.tr("Uploading image");
           else if (cloudVision.state == GCloudApi.State.Processing)
-          return Translation.tr("Reading image");
+            return Translation.tr("Reading image");
           else if (cloudVision.state == GCloudApi.State.Error)
-          return Translation.tr("Error");
+            return Translation.tr("Error");
           else if (cloudTrans.state == GCloudApi.State.Preparing)
-          return Translation.tr("Getting ready to translate");
+            return Translation.tr("Getting ready to translate");
           else if (cloudTrans.state == GCloudApi.State.Processing)
-          return Translation.tr("Translating");
+            return Translation.tr("Translating");
           else
-          return " ";
+            return " ";
         }
         font.pixelSize: Appearance.font.pixelSize.small * root.scaleFactor
         animateChange: true
@@ -122,8 +120,7 @@ Item {
         horizontalAlignment: Text.AlignHCenter
         textFormat: Text.MarkdownText
         wrapMode: Text.Wrap
-        text: `**${Translation.tr("Screen Translator")}**\n\n${root.errorMessage}\n\n__[${Translation.tr(
-                "See setup instructions on the wiki")}](${root.wikiLink})__`
+        text: `**${Translation.tr("Screen Translator")}**\n\n${root.errorMessage}\n\n__[${Translation.tr("See setup instructions on the wiki")}](${root.wikiLink})__`
         font.pixelSize: Appearance.font.pixelSize.small * root.scaleFactor
         color: root.textColor
         onLinkActivated: link => {
@@ -174,8 +171,8 @@ Item {
       root.translation = ({});
       for (var i = 0; i < keys.length; i++) {
         Object.assign(root.translation, {
-                        [keys[i]]: values[i]
-                      });
+          [keys[i]]: values[i]
+        });
       }
       // print("TRANSLATION:", JSON.stringify(root.translation));
       root.loading = false;
@@ -313,16 +310,15 @@ Item {
       sourceComponent: MultiTurnProcess {
         Component.onCompleted: {
           runSequence([ //
-                       [ //
-                        "bash", "-c" //
-                        , `magick ${StringUtils.shellSingleQuoteEscape(root.screenshotPath)} +repage -crop 
-${StringUtils.shellSingleQuoteEscape(ti.unscaledWidth)}x${StringUtils.shellSingleQuoteEscape(
-                          ti.unscaledHeight)}+${StringUtils.shellSingleQuoteEscape(ti.unscaledX)}+
-${StringUtils.shellSingleQuoteEscape(ti.unscaledY)} png:- | ${root.textColorDetectionScriptPath}`], (out => {
-  var colorData = JSON.parse(out);
-  ti.color = ColorUtils.transparentize(colorData.background, 0.4);
-  tiText.color = colorData.text;
-})]);
+            [ //
+              "bash", "-c" //
+              , `magick ${StringUtils.shellSingleQuoteEscape(root.screenshotPath)} +repage -crop
+${StringUtils.shellSingleQuoteEscape(ti.unscaledWidth)}x${StringUtils.shellSingleQuoteEscape(ti.unscaledHeight)}+${StringUtils.shellSingleQuoteEscape(ti.unscaledX)}+
+${StringUtils.shellSingleQuoteEscape(ti.unscaledY)} png:- | python ${root.textColorDetectionScriptPath}`], (out => {
+                var colorData = JSON.parse(out);
+                ti.color = ColorUtils.transparentize(colorData.background, 0.4);
+                tiText.color = colorData.text;
+              })]);
         }
       }
     }
