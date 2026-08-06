@@ -12,7 +12,7 @@ var AngleEpsilon = 1e-6;
  * @returns {boolean}
  */
 function convex(previous, current, next) {
-    return (current.minus(previous)).clockwise(next.minus(current));
+  return (current.minus(previous)).clockwise(next.minus(current));
 }
 
 /**
@@ -22,7 +22,7 @@ function convex(previous, current, next) {
  * @returns {float}
  */
 function interpolate(start, stop, fraction) {
-    return (1 - fraction) * start + fraction * stop;
+  return (1 - fraction) * start + fraction * stop;
 }
 
 /**
@@ -31,8 +31,8 @@ function interpolate(start, stop, fraction) {
  * @returns {Point}
  */
 function directionVector(x, y) {
-    const d = distance(x, y);
-    return new Point(x / d, y / d);
+  const d = distance(x, y);
+  return new Point(x / d, y / d);
 }
 
 /**
@@ -41,7 +41,7 @@ function directionVector(x, y) {
  * @returns {float}
  */
 function distance(x, y) {
-    return Math.sqrt(x * x + y * y);
+  return Math.sqrt(x * x + y * y);
 }
 
 /**
@@ -50,7 +50,7 @@ function distance(x, y) {
  * @returns {float}
  */
 function distanceSquared(x, y) {
-    return x * x + y * y;
+  return x * x + y * y;
 }
 
 /**
@@ -60,9 +60,9 @@ function distanceSquared(x, y) {
  * @returns {Point}
  */
 function radialToCartesian(radius, angleRadians, center = new Point(0, 0)) {
-    return new Point(Math.cos(angleRadians), Math.sin(angleRadians))
-        .times(radius)
-        .plus(center);
+  return new Point(Math.cos(angleRadians), Math.sin(angleRadians))
+    .times(radius)
+    .plus(center);
 }
 
 /**
@@ -72,15 +72,15 @@ function radialToCartesian(radius, angleRadians, center = new Point(0, 0)) {
  * @returns {float}
  */
 function coerceIn(value, min, max) {
-    if (max === undefined) {
-        if (typeof min === 'object' && 'start' in min && 'endInclusive' in min) {
-            return Math.max(min.start, Math.min(min.endInclusive, value));
-        }
-        throw new Error("Invalid arguments for coerceIn");
+  if (max === undefined) {
+    if (typeof min === 'object' && 'start' in min && 'endInclusive' in min) {
+      return Math.max(min.start, Math.min(min.endInclusive, value));
     }
+    throw new Error("Invalid arguments for coerceIn");
+  }
 
-    const [actualMin, actualMax] = min <= max ? [min, max] : [max, min];
-    return Math.max(actualMin, Math.min(actualMax, value));
+  const [actualMin, actualMax] = min <= max ? [min, max] : [max, min];
+  return Math.max(actualMin, Math.min(actualMax, value));
 }
 
 /**
@@ -89,6 +89,6 @@ function coerceIn(value, min, max) {
  * @returns {float}
  */
 function positiveModulo(value, mod) {
-    return ((value % mod) + mod) % mod;
+  return ((value % mod) + mod) % mod;
 }
 

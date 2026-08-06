@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 if [[ -z "$1" ]]; then
-    echo "Usage: $0 <target_locale> [model]"
-    exit 1
+  echo "Usage: $0 <target_locale> [model]"
+  exit 1
 fi
 
 # Variables
@@ -28,20 +28,20 @@ prompt_json=$(jq -n --arg prompt_text "$instruction" --arg content "$content" '$
 
 # Prepare request data using jq
 payload=$(jq -n \
-    --arg prompt "$prompt_json" \
-    --arg temperature "0" \
-    --arg model "$MODEL" \
-    '{
-        contents: [{
-            parts: [
-                {text: $prompt}
-            ]
-        }],
-        generationConfig: {
-            temperature: ($temperature | tonumber),
-            "responseMimeType": "application/json",
-        }
-    }'
+  --arg prompt "$prompt_json" \
+  --arg temperature "0" \
+  --arg model "$MODEL" \
+  '{
+    contents: [{
+      parts: [
+        {text: $prompt}
+      ]
+    }],
+    generationConfig: {
+      temperature: ($temperature | tonumber),
+      "responseMimeType": "application/json",
+    }
+  }'
 )
 # echo "$payload" | jq
 

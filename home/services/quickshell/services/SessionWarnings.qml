@@ -7,33 +7,35 @@ import Quickshell
 import Quickshell.Io
 
 Singleton {
-    id: root
+  id: root
 
-    property bool packageManagerRunning: false
-    property bool downloadRunning: false
+  property bool packageManagerRunning: false
+  property bool downloadRunning: false
 
-    function refresh() {
-        packageManagerRunning = false;
-        downloadRunning = false;
-        detectPackageManagerProc.running = false;
-        detectPackageManagerProc.running = true;
-        detectDownloadProc.running = false;
-        detectDownloadProc.running = true;
+  function refresh() {
+    packageManagerRunning = false;
+    downloadRunning = false;
+    detectPackageManagerProc.running = false;
+    detectPackageManagerProc.running = true;
+    detectDownloadProc.running = false;
+    detectDownloadProc.running = true;
+  }
+
+  Process {
+    id: detectPackageManagerProc
+    command: ["bash", "-c",
+      "pidof yay paru dnf zypper apt apx xbps snap apk yum epsi pikman || ls /var/lib/pacman/db.lck"]
+    onExited: (exitCode, exitStatus) => {
+      root.packageManagerRunning = (exitCode === 0);
     }
+  }
 
-    Process {
-        id: detectPackageManagerProc
-        command: ["bash", "-c", "pidof yay paru dnf zypper apt apx xbps snap apk yum epsi pikman || ls /var/lib/pacman/db.lck"]
-        onExited: (exitCode, exitStatus) => {
-            root.packageManagerRunning = (exitCode === 0);
-        }
+  Process {
+    id: detectDownloadProc
+    command: ["bash", "-c",
+      "pidof curl wget aria2c yt-dlp || ls ~/Downloads | grep -E '\.crdownload$|\.part$'"]
+    onExited: (exitCode, exitStatus) => {
+      root.downloadRunning = (exitCode === 0);
     }
-
-    Process {
-        id: detectDownloadProc
-        command: ["bash", "-c", "pidof curl wget aria2c yt-dlp || ls ~/Downloads | grep -E '\.crdownload$|\.part$'"]
-        onExited: (exitCode, exitStatus) => {
-            root.downloadRunning = (exitCode === 0);
-        }
-    }
+  }
 }

@@ -182,7 +182,8 @@ ApplicationWindow {
               Qt.openUrlExternally(`${Directories.config}/illogical-impulse/config.json`);
             }
             altAction: () => {
-              Quickshell.clipboardText = CF.FileUtils.trimFileProtocol(`${Directories.config}/illogical-impulse/config.json`);
+              Quickshell.clipboardText = CF.FileUtils.trimFileProtocol(`${Directories.config
+                                                                       }/illogical-impulse/config.json`);
               fab.justCopied = true;
               revertTextTimer.restart();
             }

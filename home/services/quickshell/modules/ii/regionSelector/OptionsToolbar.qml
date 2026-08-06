@@ -15,23 +15,30 @@ import Quickshell.Hyprland
 
 // Options toolbar
 Toolbar {
-    id: root
+  id: root
 
-    // Use a synchronizer on these
-    property var action
-    property var selectionMode
-    // Signals
-    signal dismiss()
+  // Use a synchronizer on these
+  property var action
+  property var selectionMode
+  // Signals
+  signal dismiss
 
-    ToolbarTabBar {
-        id: tabBar
-        tabButtonList: [
-            {"icon": "activity_zone", "name": Translation.tr("Rect")},
-            {"icon": "gesture", "name": Translation.tr("Circle")}
-        ]
-        currentIndex: root.selectionMode === RegionSelection.SelectionMode.RectCorners ? 0 : 1
-        onCurrentIndexChanged: {
-            root.selectionMode = currentIndex === 0 ? RegionSelection.SelectionMode.RectCorners : RegionSelection.SelectionMode.Circle;
-        }
+  ToolbarTabBar {
+    id: tabBar
+    tabButtonList: [
+      {
+        "icon": "activity_zone",
+        "name": Translation.tr("Rect")
+      },
+      {
+        "icon": "gesture",
+        "name": Translation.tr("Circle")
+      }
+    ]
+    currentIndex: root.selectionMode === RegionSelection.SelectionMode.RectCorners ? 0 : 1
+    onCurrentIndexChanged: {
+      root.selectionMode = currentIndex === 0 ? RegionSelection.SelectionMode.RectCorners :
+                                                RegionSelection.SelectionMode.Circle;
     }
+  }
 }

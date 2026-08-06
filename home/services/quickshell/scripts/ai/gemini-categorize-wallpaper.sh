@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 if [[ -z "$1" ]]; then
-    echo "Usage: $0 <image_path> [model] [prompt]"
-    echo "Tip: set GEMINI_WALLPAPER_MODEL and/or GEMINI_WALLPAPER_PROMPT to provide defaults."
-    exit 1
+  echo "Usage: $0 <image_path> [model] [prompt]"
+  echo "Tip: set GEMINI_WALLPAPER_MODEL and/or GEMINI_WALLPAPER_PROMPT to provide defaults."
+  exit 1
 fi
 
 # Variables
@@ -22,34 +22,34 @@ API_KEY=$(secret-tool lookup 'application' 'illogical-impulse' | jq -r '.apiKeys
 
 # Encode image to base64
 if [[ "$(base64 --version 2>&1)" = *"FreeBSD"* ]]; then
-    B64FLAGS="--input"
+  B64FLAGS="--input"
 else
-    B64FLAGS="-w0"
+  B64FLAGS="-w0"
 fi
 B64DATA="$(base64 $B64FLAGS $RESIZED_IMG_PATH)"
 # echo $B64DATA
 
 # Prepare request data
 payload='{
-    "contents": [{
-        "parts":[
-            {
-                "inline_data": {
-                "mime_type":"image/jpeg",
-                "data": "'"$B64DATA"'"
-                }
-            },
-            {"text": "'"$PROMPT"'"}
-        ]
-    }],
-    "generationConfig": {
-        "responseMimeType": "text/x.enum",
-        "responseSchema": {
-            "type": "string",
-            "enum": [ "abstract", "anime", "city", "minimalist", "landscape", "plants", "person", "space" ]
-        },
-        "temperature": 0
-    }
+  "contents": [{
+    "parts":[
+      {
+        "inline_data": {
+        "mime_type":"image/jpeg",
+        "data": "'"$B64DATA"'"
+        }
+      },
+      {"text": "'"$PROMPT"'"}
+    ]
+  }],
+  "generationConfig": {
+    "responseMimeType": "text/x.enum",
+    "responseSchema": {
+      "type": "string",
+      "enum": [ "abstract", "anime", "city", "minimalist", "landscape", "plants", "person", "space" ]
+    },
+    "temperature": 0
+  }
 }'
 # echo "$payload" | jq
 

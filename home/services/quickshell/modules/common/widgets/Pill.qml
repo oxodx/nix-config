@@ -1,5 +1,5 @@
 import QtQuick
 
 Rectangle {
-    radius: Math.min(width, height) / 2
+  radius: Math.min(width, height) / 2
 }

@@ -4,14 +4,14 @@
  * Represents corner rounding configuration
  */
 class CornerRounding {
-    /**
-     * @param {float} [radius=0]
-     * @param {float} [smoothing=0]
-     */
-    constructor(radius = 0, smoothing = 0) {
-        this.radius = radius;
-        this.smoothing = smoothing;
-    }
+  /**
+   * @param {float} [radius=0]
+   * @param {float} [smoothing=0]
+   */
+  constructor(radius = 0, smoothing = 0) {
+    this.radius = radius;
+    this.smoothing = smoothing;
+  }
 }
 
 // Static property

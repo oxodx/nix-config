@@ -25,7 +25,9 @@ ApplicationWindow {
   property bool showNextTime: false
   visible: true
   onClosing: {
-    Quickshell.execDetached(["notify-send", Translation.tr("Welcome app"), Translation.tr("Enjoy! You can reopen the welcome app any time with <tt>Super+Shift+Alt+/</tt>. To open the settings app, hit <tt>Super+I</tt>"), "-a", "Shell"]);
+    Quickshell.execDetached(["notify-send", Translation.tr("Welcome app"), Translation.tr(
+                               "Enjoy! You can reopen the welcome app any time with <tt>Super+Shift+Alt+/</tt>. To open the settings app, hit <tt>Super+I</tt>"),
+                             "-a", "Shell"]);
     Qt.quit();
   }
   title: Translation.tr("illogical-impulse Welcome")
@@ -103,7 +105,9 @@ ApplicationWindow {
             if (checked) {
               Quickshell.execDetached(["rm", root.firstRunFilePath]);
             } else {
-              Quickshell.execDetached(["bash", "-c", `echo '${StringUtils.shellSingleQuoteEscape(root.firstRunFileContent)}' > '${StringUtils.shellSingleQuoteEscape(root.firstRunFilePath)}'`]);
+              Quickshell.execDetached(["bash", "-c", `echo '${StringUtils.shellSingleQuoteEscape(
+                                         root.firstRunFileContent)}' > '${StringUtils.shellSingleQuoteEscape(
+                                         root.firstRunFilePath)}'`]);
             }
           }
         }
@@ -168,7 +172,8 @@ ApplicationWindow {
 
           NoticeBox {
             Layout.fillWidth: true
-            text: Translation.tr("Language not listed or incomplete translations?\nYou can choose to generate translations for it with Gemini.\n1. Open the left sidebar with Super+A, set model to Gemini (if it isn't already)\n2. Type /key, hit Enter and follow the instructions\n3. Type /key YOUR_API_KEY\n4. Type the locale of your language below and press Generate")
+            text: Translation.tr(
+                    "Language not listed or incomplete translations?\nYou can choose to generate translations for it with Gemini.\n1. Open the left sidebar with Super+A, set model to Gemini (if it isn't already)\n2. Type /key, hit Enter and follow the instructions\n3. Type /key YOUR_API_KEY\n4. Type the locale of your language below and press Generate")
           }
 
           ContentSubsection {
@@ -186,7 +191,8 @@ ApplicationWindow {
                 Layout.fillHeight: true
                 nerdIcon: ""
                 enabled: !translationProc.running || (translationProc.locale !== localeInput.text.trim())
-                mainText: enabled ? Translation.tr("Generate\nTypically takes 2 minutes") : Translation.tr("Generating...\nDon't close this window!")
+                mainText: enabled ? Translation.tr("Generate\nTypically takes 2 minutes") : Translation.tr(
+                                      "Generating...\nDon't close this window!")
                 onClicked: {
                   translationProc.locale = localeInput.text.trim();
                   translationProc.running = false;
@@ -286,13 +292,15 @@ ApplicationWindow {
               Layout.alignment: Qt.AlignHCenter
               buttonRadius: Appearance.rounding.small
               materialIcon: "ifl"
-              mainText: konachanWallProc.running ? Translation.tr("Be patient...") : Translation.tr("Random: Konachan")
+              mainText: konachanWallProc.running ? Translation.tr("Be patient...") : Translation.tr(
+                                                     "Random: Konachan")
               onClicked: {
                 console.log(konachanWallProc.command.join(" "));
                 konachanWallProc.running = true;
               }
               StyledToolTip {
-                text: Translation.tr("Random SFW Anime wallpaper from Konachan\nImage is saved to ~/Pictures/Wallpapers")
+                text: Translation.tr(
+                        "Random SFW Anime wallpaper from Konachan\nImage is saved to ~/Pictures/Wallpapers")
               }
             }
             RippleButtonWithIcon {
@@ -334,7 +342,8 @@ ApplicationWindow {
 
           NoticeBox {
             Layout.fillWidth: true
-            text: Translation.tr("Change any time later with /dark, /light, /wallpaper in the launcher\nIf the shell's colors aren't changing:\n    1. Open the right sidebar with Super+N\n    2. Click \"Reload Hyprland & Quickshell\" in the top-right corner")
+            text: Translation.tr(
+                    "Change any time later with /dark, /light, /wallpaper in the launcher\nIf the shell's colors aren't changing:\n    1. Open the right sidebar with Super+N\n    2. Click \"Reload Hyprland & Quickshell\" in the top-right corner")
           }
         }
 
@@ -414,7 +423,8 @@ ApplicationWindow {
             RippleButtonWithIcon {
               materialIcon: "keyboard_alt"
               onClicked: {
-                Quickshell.execDetached(["qs", "-p", Quickshell.shellPath(""), "ipc", "call", "cheatsheet", "toggle"]);
+                Quickshell.execDetached(["qs", "-p", Quickshell.shellPath(""), "ipc", "call", "cheatsheet",
+                                         "toggle"]);
               }
               mainContentComponent: Component {
                 RowLayout {

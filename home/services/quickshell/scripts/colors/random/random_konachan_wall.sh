@@ -1,20 +1,20 @@
 #!/usr/bin/env bash
 
 get_pictures_dir() {
-    if command -v xdg-user-dir &> /dev/null; then
-        xdg-user-dir PICTURES
-        return
-    fi
+  if command -v xdg-user-dir &> /dev/null; then
+    xdg-user-dir PICTURES
+    return
+  fi
 
-    local config_file="${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs"
-    if [ -f "$config_file" ]; then
-        local pictures_path
-        pictures_path=$(source "$config_file" >/dev/null 2>&1; echo "$XDG_PICTURES_DIR")
-        echo "${pictures_path/#\$HOME/$HOME}"
-        return
-    fi
+  local config_file="${XDG_CONFIG_HOME:-$HOME/.config}/user-dirs.dirs"
+  if [ -f "$config_file" ]; then
+    local pictures_path
+    pictures_path=$(source "$config_file" >/dev/null 2>&1; echo "$XDG_PICTURES_DIR")
+    echo "${pictures_path/#\$HOME/$HOME}"
+    return
+  fi
 
-    echo "$HOME/Pictures"
+  echo "$HOME/Pictures"
 }
 
 QUICKSHELL_CONFIG_NAME="ii"
@@ -37,7 +37,7 @@ ext=$(echo "$link" | awk -F. '{print $NF}')
 downloadPath="$PICTURES_DIR/Wallpapers/random_wallpaper.$ext"
 currentWallpaperPath=$(jq -r '.background.wallpaperPath' "$illogicalImpulseConfigPath")
 if [ "$downloadPath" == "$currentWallpaperPath" ]; then
-    downloadPath="$PICTURES_DIR/Wallpapers/random_wallpaper-1.$ext"
+  downloadPath="$PICTURES_DIR/Wallpapers/random_wallpaper-1.$ext"
 fi
 curl -A "$userAgent" "$link" -o "$downloadPath"
 "$SCRIPT_DIR/../switchwall.sh" --image "$downloadPath"

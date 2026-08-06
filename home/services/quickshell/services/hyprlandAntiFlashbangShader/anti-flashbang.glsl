@@ -7,7 +7,7 @@ out vec4 fragColor;
 
 float overlayOpacityForBrightness(float x) {
     // Note: range 0 to 1
-    
+
     // Will a fancy curve help?... I'll have to experiment more at night
     // float y = pow(x, 2.0) * 0.75;
     // float y = (1.0 - exp(-x))*1.15;
@@ -24,7 +24,7 @@ void main() {
     // 2. Calculate average screen brightness
     vec3 totalRGB = vec3(0.0);
     float samples = 0.0;
-    
+
     // We use a nested loop to create a 10x10 grid (100 samples)
     // This is dense enough to catch small icons/text but light enough to run fast.
     for(float x = 0.05; x < 1.0; x += 0.1) {
@@ -33,7 +33,7 @@ void main() {
             samples++;
         }
     }
-    
+
     vec3 avgColor = totalRGB / samples;
     float globalBrightness = dot(avgColor, vec3(0.2126, 0.7152, 0.0722));
 

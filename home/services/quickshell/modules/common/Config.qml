@@ -86,20 +86,22 @@ Singleton {
       }
 
       property JsonObject ai: JsonObject {
-        property string systemPrompt: "## Style\n- Use casual tone, don't be formal!\n- Always be brief and to the point, unless asked otherwise\n- Don't repeat the user's question\n- Be approachable: Avoid using overly complicated, domain-specific terms and provide analogies when asked to explain a concept\n\n## Context (ignore when irrelevant)\n- You are a helpful and inspiring sidebar assistant on a {DISTRO} Linux system\n- Desktop environment: {DE}\n- Current date & time: {DATETIME}\n- Focused app: {WINDOWCLASS}\n\n## Presentation\n- Use Markdown features in your response: \n  - **Bold** text to **highlight keywords** in your response\n  - **Split long information into small sections** with h2 headers and a relevant emoji at the start of it (for example `## 🐧 Linux`). Bullet points are preferred over long paragraphs, unless you're offering writing support or instructed otherwise by the user.\n- Asked to compare different options? You should firstly use a table to compare the main aspects, then elaborate or include relevant comments from online forums *after* the table. Make sure to provide a final recommendation for the user's use case!\n- Use LaTeX formatting for mathematical and scientific notations whenever appropriate. Enclose all LaTeX '$$' delimiters. NEVER generate LaTeX code in a latex block unless the user explicitly asks for it. DO NOT use LaTeX for regular documents (resumes, letters, essays, CVs, etc.).\n\nThanks!\n"
+        property string systemPrompt:
+        "## Style\n- Use casual tone, don't be formal!\n- Always be brief and to the point, unless asked otherwise\n- Don't repeat the user's question\n- Be approachable: Avoid using overly complicated, domain-specific terms and provide analogies when asked to explain a concept\n\n## Context (ignore when irrelevant)\n- You are a helpful and inspiring sidebar assistant on a {DISTRO} Linux system\n- Desktop environment: {DE}\n- Current date & time: {DATETIME}\n- Focused app: {WINDOWCLASS}\n\n## Presentation\n- Use Markdown features in your response: \n  - **Bold** text to **highlight keywords** in your response\n  - **Split long information into small sections** with h2 headers and a relevant emoji at the start of it (for example `## 🐧 Linux`). Bullet points are preferred over long paragraphs, unless you're offering writing support or instructed otherwise by the user.\n- Asked to compare different options? You should firstly use a table to compare the main aspects, then elaborate or include relevant comments from online forums *after* the table. Make sure to provide a final recommendation for the user's use case!\n- Use LaTeX formatting for mathematical and scientific notations whenever appropriate. Enclose all LaTeX '$$' delimiters. NEVER generate LaTeX code in a latex block unless the user explicitly asks for it. DO NOT use LaTeX for regular documents (resumes, letters, essays, CVs, etc.).\n\nThanks!\n"
         property string tool: "functions" // search, functions, or none
         property list<var> extraModels: [
           {
             "api_format": "openai" // Most of the time you want "openai". Use "gemini" for Google's models
-            ,
-            "description": "This is a custom model. Edit the config to add more! | Anyway, this is DeepSeek R1 Distill LLaMA 70B",
+                          ,
+            "description":
+            "This is a custom model. Edit the config to add more! | Anyway, this is DeepSeek R1 Distill LLaMA 70B",
             "endpoint": "https://openrouter.ai/api/v1/chat/completions",
             "homepage": "https://openrouter.ai/deepseek/deepseek-r1-distill-llama-70b:free" // Not mandatory
-            ,
+                        ,
             "icon": "spark-symbolic" // Not mandatory
-            ,
+                    ,
             "key_get_link": "https://openrouter.ai/settings/keys" // Not mandatory
-            ,
+                            ,
             "key_id": "openrouter",
             "model": "deepseek/deepseek-r1-distill-llama-70b:free",
             "name": "Custom: DS R1 Dstl. LLaMA 70B",
@@ -138,7 +140,8 @@ Singleton {
           }
         }
         property JsonObject palette: JsonObject {
-          property string type: "auto" // Allowed: auto, scheme-content, scheme-expressive, scheme-fidelity, scheme-fruit-salad, scheme-monochrome, scheme-neutral, scheme-rainbow, scheme-tonal-spot
+          property string type:
+          "auto" // Allowed: auto, scheme-content, scheme-expressive, scheme-fidelity, scheme-fruit-salad, scheme-monochrome, scheme-neutral, scheme-rainbow, scheme-tonal-spot
           property string accentColor: ""
         }
       }
@@ -162,7 +165,8 @@ Singleton {
         property string taskManager: "plasma-systemmonitor --page-name Processes"
         property string terminal: "kitty -1" // This is only for shell actions
         property string update: "kitty -1 --hold=yes fish -i -c 'pkexec pacman -Syu'"
-        property string volumeMixer: `~/.config/hypr/hyprland/scripts/launch_first_available.sh "pavucontrol-qt" "pavucontrol"`
+        property string volumeMixer:
+        `~/.config/hypr/hyprland/scripts/launch_first_available.sh "pavucontrol-qt" "pavucontrol"`
       }
 
       property JsonObject background: JsonObject {
@@ -241,7 +245,8 @@ Singleton {
         property int cornerStyle: 0 // 0: Hug | 1: Float | 2: Plain rectangle
         property bool floatStyleShadow: true // Show shadow behind bar when cornerStyle == 1 (Float)
         property bool borderless: false // true for no grouping of items
-        property string topLeftIcon: "spark" // Options: "distro" or any icon name in ~/.config/quickshell/ii/assets/icons
+        property string topLeftIcon:
+        "spark" // Options: "distro" or any icon name in ~/.config/quickshell/ii/assets/icons
         property bool showBackground: true
         property bool verbose: true
         property bool vertical: false
@@ -252,7 +257,8 @@ Singleton {
           property int swapWarningThreshold: 85
           property int cpuWarningThreshold: 90
         }
-        property list<string> screenList: [] // List of names, like "eDP-1", find out with 'hyprctl monitors' command
+        property list<string> screenList:
+          [] // List of names, like "eDP-1", find out with 'hyprctl monitors' command
         property JsonObject utilButtons: JsonObject {
           property bool showScreenSnip: true
           property bool showColorPicker: false
@@ -268,7 +274,8 @@ Singleton {
           property bool showAppIcons: true
           property bool alwaysShowNumbers: false
           property int showNumberDelay: 300 // milliseconds
-          property list<string> numberMap: ["1", "2"] // Characters to show instead of numbers on workspace indicator
+          property list<string> numberMap: ["1",
+            "2"] // Characters to show instead of numbers on workspace indicator
           property bool useNerdFont: false
         }
         property JsonObject weather: JsonObject {
@@ -341,19 +348,23 @@ Singleton {
       property JsonObject interactions: JsonObject {
         property JsonObject scrolling: JsonObject {
           property bool fasterTouchpadScroll: false // Enable faster scrolling with touchpad
-          property int mouseScrollDeltaThreshold: 120 // delta >= this then it gets detected as mouse scroll rather than touchpad
+          property int mouseScrollDeltaThreshold:
+          120 // delta >= this then it gets detected as mouse scroll rather than touchpad
           property int mouseScrollFactor: 120
           property int touchpadScrollFactor: 450
         }
-        property JsonObject deadPixelWorkaround: JsonObject { // Hyprland leaves out 1 pixel on the right for interactions
+        property JsonObject deadPixelWorkaround:
+        JsonObject { // Hyprland leaves out 1 pixel on the right for interactions
           property bool enable: false
         }
       }
 
       property JsonObject language: JsonObject {
-        property string ui: "auto" // UI language. "auto" for system locale, or specific language code like "zh_CN", "en_US"
+        property string ui:
+        "auto" // UI language. "auto" for system locale, or specific language code like "zh_CN", "en_US"
         property JsonObject translator: JsonObject {
-          property string engine: "auto" // Run `trans -list-engines` for available engines. auto should use google
+          property string engine:
+          "auto" // Run `trans -list-engines` for available engines. auto should use google
           property string targetLanguage: "auto" // Run `trans -list-all` for available languages
           property string sourceLanguage: "auto"
         }
@@ -398,14 +409,16 @@ Singleton {
       }
 
       property JsonObject networking: JsonObject {
-        property string userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+        property string userAgent:
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
       }
 
       property JsonObject notifications: JsonObject {
         property int timeout: 7000
         property JsonObject monitor: JsonObject {
           property bool enable: false
-          property string name: "" // Name of the monitor to show notifications on, like "eDP-1". Find out with 'hyprctl monitors' command
+          property string name:
+          "" // Name of the monitor to show notifications on, like "eDP-1". Find out with 'hyprctl monitors' command
         }
       }
 
@@ -468,7 +481,8 @@ Singleton {
       property JsonObject tray: JsonObject {
         property bool monochromeIcons: true
         property bool showItemId: false
-        property bool invertPinnedItems: true // Makes the below a whitelist for the tray and blacklist for the pinned area
+        property bool invertPinnedItems:
+        true // Makes the below a whitelist for the tray and blacklist for the pinned area
         property list<var> pinnedItems: ["Fcitx"]
         property bool filterPassive: true
       }
@@ -482,7 +496,8 @@ Singleton {
         property int nonAppResultDelay: 30 // This prevents lagging when typing
         property string engineBaseUrl: "https://www.google.com/search?q="
         property list<string> excludedSites: ["quora.com", "facebook.com"]
-        property bool sloppy: false // Uses levenshtein distance based scoring instead of fuzzy sort. Very weird.
+        property bool sloppy:
+        false // Uses levenshtein distance based scoring instead of fuzzy sort. Very weird.
         property JsonObject prefix: JsonObject {
           property bool showDefaultActionsWithoutPrefix: true
           property string action: "/"
@@ -624,9 +639,12 @@ Singleton {
           property bool clipboard: false
         }
         property JsonObject triggerCondition: JsonObject {
-          property list<string> networkNameKeywords: ["airport", "cafe", "college", "company", "eduroam", "free", "guest", "public", "school", "university"]
-          property list<string> fileKeywords: ["anime", "booru", "ecchi", "hentai", "yande.re", "konachan", "breast", "nipples", "pussy", "nsfw", "spoiler", "girl"]
-          property list<string> linkKeywords: ["hentai", "porn", "sukebei", "hitomi.la", "rule34", "gelbooru", "fanbox", "dlsite"]
+          property list<string> networkNameKeywords: ["airport", "cafe", "college", "company", "eduroam",
+            "free", "guest", "public", "school", "university"]
+          property list<string> fileKeywords: ["anime", "booru", "ecchi", "hentai", "yande.re", "konachan", "breast",
+            "nipples", "pussy", "nsfw", "spoiler", "girl"]
+          property list<string> linkKeywords: ["hentai", "porn", "sukebei", "hitomi.la", "rule34", "gelbooru",
+            "fanbox", "dlsite"]
         }
       }
 
@@ -644,7 +662,9 @@ Singleton {
           property bool leftAlignApps: false
         }
         property JsonObject actionCenter: JsonObject {
-          property list<string> toggles: ["network", "bluetooth", "easyEffects", "powerProfile", "idleInhibitor", "nightLight", "darkMode", "antiFlashbang", "cloudflareWarp", "mic", "musicRecognition", "notifications", "onScreenKeyboard", "gameMode", "screenSnip", "colorPicker"]
+          property list<string> toggles: ["network", "bluetooth", "easyEffects", "powerProfile",
+            "idleInhibitor", "nightLight", "darkMode", "antiFlashbang", "cloudflareWarp", "mic",
+            "musicRecognition", "notifications", "onScreenKeyboard", "gameMode", "screenSnip", "colorPicker"]
         }
         property JsonObject calendar: JsonObject {
           property bool force2CharDayOfWeek: true
