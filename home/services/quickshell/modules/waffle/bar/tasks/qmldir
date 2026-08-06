@@ -1,0 +1,5 @@
+module qs.modules.waffle.bar.tasks
+TaskAppButton 1.0 TaskAppButton.qml
+TaskPreview 1.0 TaskPreview.qml
+Tasks 1.0 Tasks.qml
+WindowPreview 1.0 WindowPreview.qml

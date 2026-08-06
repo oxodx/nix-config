@@ -1,0 +1,9 @@
+module qs.modules.settings
+About 1.0 About.qml
+AdvancedConfig 1.0 AdvancedConfig.qml
+BackgroundConfig 1.0 BackgroundConfig.qml
+BarConfig 1.0 BarConfig.qml
+GeneralConfig 1.0 GeneralConfig.qml
+InterfaceConfig 1.0 InterfaceConfig.qml
+QuickConfig 1.0 QuickConfig.qml
+ServicesConfig 1.0 ServicesConfig.qml

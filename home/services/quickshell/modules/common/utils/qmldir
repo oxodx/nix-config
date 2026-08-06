@@ -1,0 +1,5 @@
+module qs.modules.common.utils
+ImageDownloaderProcess 1.0 ImageDownloaderProcess.qml
+MultiTurnProcess 1.0 MultiTurnProcess.qml
+ScreenshotAction 1.0 ScreenshotAction.qml
+TempScreenshotProcess 1.0 TempScreenshotProcess.qml

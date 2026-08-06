@@ -1,0 +1,2 @@
+module qs.modules.waffle.actionCenter.nightLight
+NightLightControl 1.0 NightLightControl.qml

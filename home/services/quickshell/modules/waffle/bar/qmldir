@@ -1,0 +1,16 @@
+module qs.modules.waffle.bar
+AppButton 1.0 AppButton.qml
+BarButton 1.0 BarButton.qml
+BarIconButton 1.0 BarIconButton.qml
+BarMenu 1.0 BarMenu.qml
+BarPopup 1.0 BarPopup.qml
+BarToolTip 1.0 BarToolTip.qml
+SearchButton 1.0 SearchButton.qml
+StartButton 1.0 StartButton.qml
+SystemButton 1.0 SystemButton.qml
+TaskViewButton 1.0 TaskViewButton.qml
+TimeButton 1.0 TimeButton.qml
+UpdatesButton 1.0 UpdatesButton.qml
+WaffleBarContent 1.0 WaffleBarContent.qml
+WaffleBar 1.0 WaffleBar.qml
+WidgetsButton 1.0 WidgetsButton.qml

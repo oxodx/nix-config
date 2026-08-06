@@ -1,0 +1,5 @@
+module qs.modules.waffle.startMenu
+SearchBar 1.0 SearchBar.qml
+StartMenuContent 1.0 StartMenuContent.qml
+StartMenuContext 1.0 StartMenuContext.qml
+WaffleStartMenu 1.0 WaffleStartMenu.qml

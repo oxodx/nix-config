@@ -1,0 +1,5 @@
+module qs.modules.common.models.gCloud
+GCloudApi 1.0 GCloudApi.qml
+GCloudTranslate 1.0 GCloudTranslate.qml
+GCloudVision 1.0 GCloudVision.qml
+GCloudVisionResult 1.0 GCloudVisionResult.qml

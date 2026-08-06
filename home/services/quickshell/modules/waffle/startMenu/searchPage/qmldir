@@ -1,0 +1,6 @@
+module qs.modules.waffle.startMenu.searchPage
+SearchEntryIcon 1.0 SearchEntryIcon.qml
+SearchPageContent 1.0 SearchPageContent.qml
+SearchResultButton 1.0 SearchResultButton.qml
+SearchResults 1.0 SearchResults.qml
+TagStrip 1.0 TagStrip.qml

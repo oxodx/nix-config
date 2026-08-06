@@ -1,0 +1,4 @@
+module qs.modules.ii.onScreenDisplay.indicators
+BrightnessIndicator 1.0 BrightnessIndicator.qml
+GammaIndicator 1.0 GammaIndicator.qml
+VolumeIndicator 1.0 VolumeIndicator.qml

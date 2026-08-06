@@ -1,0 +1,5 @@
+module qs.modules.waffle.sessionScreen
+PowerButton 1.0 PowerButton.qml
+SessionScreenContent 1.0 SessionScreenContent.qml
+WaffleSessionScreen 1.0 WaffleSessionScreen.qml
+WSessionScreenTextButton 1.0 WSessionScreenTextButton.qml

@@ -1,0 +1,9 @@
+module qs.modules.waffle.startMenu.startPage
+AggregatedAppCategoryModel 1.0 AggregatedAppCategoryModel.qml
+AllAppsGrid 1.0 AllAppsGrid.qml
+AppCategoryGrid 1.0 AppCategoryGrid.qml
+BigAppGrid 1.0 BigAppGrid.qml
+StartAppButton 1.0 StartAppButton.qml
+StartPageApps 1.0 StartPageApps.qml
+StartPageContent 1.0 StartPageContent.qml
+StartUserButton 1.0 StartUserButton.qml

@@ -1,0 +1,4 @@
+module qs.modules.waffle.screenSnip
+WRectangularSelection 1.0 WRectangularSelection.qml
+WRegionSelectionPanel 1.0 WRegionSelectionPanel.qml
+WScreenSnip 1.0 WScreenSnip.qml
