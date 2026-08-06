@@ -12,7 +12,11 @@
     minicom
 
     # Ai related
-    python313Packages.huggingface-hub
+    (python3.withPackages (ps:
+      with ps; [
+        huggingface-hub
+        opencv4
+      ]))
     yt-dlp
 
     # Misc
@@ -24,7 +28,6 @@
     gitleaks
 
     # Python
-    python3
     uv
   ];
 }

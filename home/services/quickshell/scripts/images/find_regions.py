@@ -1,13 +1,22 @@
 #!/usr/bin/env python3
 
 import argparse
+import glob
 import json
+import os
 import sys
 
 import cv2
 import numpy as np
 
 DEFAULT_IMAGE_PATH = "/tmp/quickshell/media/screenshot/image"
+
+
+def newest_screenshot():
+    matches = glob.glob("/tmp/quickshell/media/screenshot/image-*")
+    if not matches:
+        return DEFAULT_IMAGE_PATH
+    return max(matches, key=os.path.getmtime)
 
 
 def iou(boxA, boxB):
@@ -111,7 +120,10 @@ def main():
         description="Find regions of interest in an image using selective search."
     )
     parser.add_argument(
-        "-i", "--image", default=DEFAULT_IMAGE_PATH, help="Path to input image"
+        "-i",
+        "--image",
+        default=os.environ.get("IMAGE_PATH", DEFAULT_IMAGE_PATH),
+        help="Path to input image",
     )
     parser.add_argument(
         "-do", "--debug-output", help="Path to save debug image with rectangles"
@@ -165,6 +177,9 @@ def main():
         help='Mimics hyprctl\'s window output, like {"at": [x, y], "size": [w, h]}',
     )
     args = parser.parse_args()
+
+    if args.image == DEFAULT_IMAGE_PATH and not os.path.exists(args.image):
+        args.image = newest_screenshot()
 
     regions, image = find_regions(
         args.image,
