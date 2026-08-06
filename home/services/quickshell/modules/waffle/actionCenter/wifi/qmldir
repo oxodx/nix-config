@@ -1,3 +1,0 @@
-module qs.modules.waffle.actionCenter.wifi
-WifiControl 1.0 WifiControl.qml
-WWifiNetworkItem 1.0 WWifiNetworkItem.qml

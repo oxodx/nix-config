@@ -1,4 +1,0 @@
-module qs.modules.waffle.bar.tray
-TrayButton 1.0 TrayButton.qml
-TrayOverflowMenu 1.0 TrayOverflowMenu.qml
-Tray 1.0 Tray.qml

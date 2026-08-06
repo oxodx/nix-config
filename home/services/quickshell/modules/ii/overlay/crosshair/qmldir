@@ -1,3 +1,0 @@
-module qs.modules.ii.overlay.crosshair
-CrosshairContent 1.0 CrosshairContent.qml
-Crosshair 1.0 Crosshair.qml

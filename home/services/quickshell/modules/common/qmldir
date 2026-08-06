@@ -1,7 +1,0 @@
-module qs.modules.common
-Appearance 1.0 Appearance.qml
-Config 1.0 Config.qml
-Directories 1.0 Directories.qml
-Icons 1.0 Icons.qml
-Images 1.0 Images.qml
-Persistent 1.0 Persistent.qml
