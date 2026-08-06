@@ -70,6 +70,29 @@
         "type": "github"
       }
     },
+    "matugen": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "systems": [
+          "systems"
+        ]
+      },
+      "locked": {
+        "lastModified": 1785920672,
+        "narHash": "sha256-Bfo2/FB0bKBs4sQIDCMED7I3rigPdfOEEXKnzPuYlfo=",
+        "owner": "iniox",
+        "repo": "matugen",
+        "rev": "133e410751c7c484a9fdddc299851d4494e59871",
+        "type": "github"
+      },
+      "original": {
+        "owner": "iniox",
+        "repo": "matugen",
+        "type": "github"
+      }
+    },
     "nix-index-db": {
       "inputs": {
         "nixpkgs": [
@@ -146,6 +169,7 @@
       "inputs": {
         "agenix": "agenix",
         "home-manager": "home-manager",
+        "matugen": "matugen",
         "nix-index-db": "nix-index-db",
         "nixpkgs": "nixpkgs",
         "quickshell": "quickshell",

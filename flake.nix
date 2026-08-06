@@ -18,6 +18,10 @@
     agenix.inputs.home-manager.follows = "home-manager";
     agenix.inputs.systems.follows = "systems";
 
+    matugen.url = "github:iniox/matugen";
+    matugen.inputs.nixpkgs.follows = "nixpkgs";
+    matugen.inputs.systems.follows = "systems";
+
     zed-extensions.type = "github";
     zed-extensions.owner = "dusksystems";
     zed-extensions.repo = "nix-zed-extensions";

@@ -1,6 +1,7 @@
 {inputs, ...}: {
   imports = [
     ./terminal
+    inputs.matugen.nixosModules.default
     inputs.nix-index-db.homeModules.nix-index
     inputs.zed-extensions.homeManagerModules.default
   ];
