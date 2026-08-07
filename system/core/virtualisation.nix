@@ -23,5 +23,6 @@
     virt-manager
     qemu_kvm
     qemu
+    distrobox
   ];
 }
