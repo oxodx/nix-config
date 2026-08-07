@@ -40,7 +40,7 @@ in {
     userSettings =
       mySettings
       // myAgent
-      // {lsp = myLsp;};
+      // {lsp = myLsp {inherit pkgs;};};
   };
 
   programs.zed-editor-extensions = {

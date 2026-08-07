@@ -1,4 +1,4 @@
-{
+{pkgs, ...}: {
   # LSP configuration recipes
   # Copy relevant blocks into your settings.json "lsp" section.
   # Docs: https://zed.dev/docs/configuring-languages#configuring-language-servers
@@ -84,6 +84,14 @@
           tabSize = 2;
         };
       };
+    };
+  };
+
+  # https://zed.dev/docs/languages/cpp
+  clangd = {
+    binary = {
+      path = "${pkgs.clang-tools}/bin/clangd";
+      arguments = [];
     };
   };
 }
