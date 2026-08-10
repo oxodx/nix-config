@@ -71,6 +71,8 @@
       # zlong_alert
       export zlong_ignore_cmds="$EDITOR fg journalctl less man ssh y yazi"
       source $XDG_CONFIG_HOME/zsh/zlong_alert.zsh
+
+      export PATH="/home/oxod/.local/cache/.bun/bin:$PATH"
     '';
 
     shellAliases =
