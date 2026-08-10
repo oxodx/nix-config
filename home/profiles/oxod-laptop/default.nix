@@ -7,6 +7,7 @@
     "home/nvidia.nix"
 
     "home/editors/zed-editor"
+    "home/editors/intelij.nix"
 
     "home/programs"
     "home/programs/wayland"
