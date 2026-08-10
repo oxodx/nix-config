@@ -6,11 +6,11 @@
   # https://github.com/yuja/tree-sitter-qmljs
   qmljsGrammar = pkgs.buildZedGrammar (finalAttrs: {
     name = "qmljs";
-    version = "febf48a5b6928600cd8fb2a01254743af550780d";
+    version = "de96ed62abded51fcdfcbeaaa120e0dd0d20c697";
     src = pkgs.fetchFromGitHub {
       owner = "yuja";
       repo = "tree-sitter-qmljs";
-      hash = "sha256-bRb5h6gBBxbzhxpCxJK8CsQ5BCtPTuKtuZesE/+mDY0=";
+      hash = "sha256-Yn3/adOETfPHBVCIVfI5qXUwC2wQr14pbhK2aUtdCiY=";
       rev = finalAttrs.version;
     };
   });

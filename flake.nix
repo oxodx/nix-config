@@ -22,10 +22,11 @@
     matugen.inputs.nixpkgs.follows = "nixpkgs";
     matugen.inputs.systems.follows = "systems";
 
+    # https://github.com/swornsystems/nix-zed-extensions
     zed-extensions.type = "github";
-    zed-extensions.owner = "dusksystems";
+    zed-extensions.owner = "swornsystems";
     zed-extensions.repo = "nix-zed-extensions";
-    zed-extensions.rev = "554e7959396a95efc1c7ee1e9c4eeea187fb4be8";
+    zed-extensions.rev = "038c0432b922c9083fd4cd0fe7bf472994358c15";
     zed-extensions.inputs.nixpkgs.follows = "nixpkgs";
 
     systems.url = "github:nix-systems/default-linux";
