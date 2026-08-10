@@ -6,16 +6,19 @@ hl.window_rule({ match = { class = "^()$", title = "^()$" }, no_blur = true })
 -- Disable blur for every window
 hl.window_rule({ match = { class = ".*" }, no_blur = true })
 
--- Fixing popup size issue on intelij
-hl.window_rule({ match = { class = "(.*jetbrains.*)$", title = "^$", float = true }, size = "50% 50%" })
-
--- Fix tooltips (always have a title of `win.<id>`) on intelij
+-- Intelij fixes hopefully
+hl.window_rule({ match = { class = "^(.*jetbrains.*)$", title = "^$", float = true }, size = "50% 50%" })
 hl.window_rule({ match = { class = "^(.*jetbrains.*)$", title = "^(win.*)$" }, no_initial_focus = true })
 hl.window_rule({ match = { class = "^(.*jetbrains.*)$", title = "^(win.*)$" }, no_focus = true })
-
--- Fix tab dragging (always have a single space character as their title) on intelij
 hl.window_rule({ match = { class = "^(.*jetbrains.*)$", title = "^\\s$" }, no_initial_focus = true })
 hl.window_rule({ match = { class = "^(.*jetbrains.*)$", title = "^\\s$" }, no_focus = true })
+hl.window_rule({ match = { class = "jetbrains-toolbox", float = true }, no_initial_focus = true })
+hl.window_rule({ match = { class = "(jetbrains-)(.*)", title = "^$", initial_title = "^$", float = true }, no_initial_focus = true })
+hl.window_rule({ match = { class = "(jetbrains-)(.*)", title = "^$", initial_title = "^$", float = true }, center = true })
+hl.window_rule({ match = { class = "(jetbrains-)(.*)", initial_title = "(.+)", float = true }, center = true })
+hl.window_rule({ match = { class = "(jetbrains-)(.*)", float = true }, no_initial_focus = true })
+hl.window_rule({ match = { class = "(jetbrains-)(.*)", title = "^win(.*)", initial_title = "win.*", float = true }, no_initial_focus = true })
+hl.window_rule({ match = { class = "(jetbrains-studio)", title = "^win(.*)" }, no_initial_focus = true })
 
 -- Floating
 hl.window_rule({ match = { title = "^(Open File)(.*)$" }, center = true })
