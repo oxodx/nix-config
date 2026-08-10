@@ -2,6 +2,7 @@
   home.packages = with pkgs; [
     colmena
     tokei
+    bun
 
     # Database
     pgcli
