@@ -7,23 +7,16 @@ hl.window_rule({ match = { class = "^()$", title = "^()$" }, no_blur = true })
 hl.window_rule({ match = { class = ".*" }, no_blur = true })
 
 -- Intelij fixes hopefully i have no idea which one does anything
-hl.window_rule({ match = { class = "^(.*jetbrains.*)$", title = "^$", float = true }, size = "50% 50%" })
-hl.window_rule({ match = { class = "^(.*jetbrains.*)$", title = "^(win.*)$" }, no_initial_focus = true })
-hl.window_rule({ match = { class = "^(.*jetbrains.*)$", title = "^(win.*)$" }, no_focus = true })
-hl.window_rule({ match = { class = "^(.*jetbrains.*)$", title = "^\\s$" }, no_initial_focus = true })
-hl.window_rule({ match = { class = "^(.*jetbrains.*)$", title = "^\\s$" }, no_focus = true })
-hl.window_rule({ match = { class = "jetbrains-toolbox", float = true }, no_initial_focus = true })
-hl.window_rule({ match = { class = "(jetbrains-)(.*)", title = "^$", initial_title = "^$", float = true }, no_initial_focus = true })
-hl.window_rule({ match = { class = "(jetbrains-)(.*)", title = "^$", initial_title = "^$", float = true }, center = true })
-hl.window_rule({ match = { class = "(jetbrains-)(.*)", initial_title = "(.+)", float = true }, center = true })
-hl.window_rule({ match = { class = "(jetbrains-)(.*)", float = true }, no_initial_focus = true })
-hl.window_rule({ match = { class = "(jetbrains-)(.*)", title = "^win(.*)", initial_title = "win.*", float = true }, no_initial_focus = true })
-hl.window_rule({ match = { class = "(jetbrains-studio)", title = "^win(.*)" }, no_initial_focus = true })
-hl.window_rule({ match = { class = "^(jetbrains-.*)$", title = "^(splash)$", float = true }, center = true })
-hl.window_rule({ match = { class = "^(jetbrains-.*)$", title = "^(splash)$", float = true }, no_focus = true })
-hl.window_rule({ match = { class = "^(jetbrains-.*)$", title = "^( )$", float = true }, center = true })
-hl.window_rule({ match = { class = "^(jetbrains-.*)$", title = "^( )$", float = true }, stay_focused = true })
-hl.window_rule({ match = { class = "^(jetbrains-.*)$", title = "^(win.*)$", float = true }, no_focus = true })
+hl.window_rule({ match = { class = "^jetbrains-.*$" }, tile = true })
+hl.window_rule({ match = { class = "^jetbrains-.*$", title = "^(win%d+|win.*|^$|%s+)$" }, center = false })
+hl.window_rule({ match = { class = "^jetbrains-.*$", title = "^(splash|Welcome to.*)$" }, float = true, center = true })
+hl.window_rule({ match = { class = "^jetbrains-.*$" }, suppress_event = "activatefocus" })
+hl.window_rule({
+	match = { class = "^jetbrains-.*$", title = "^(win%d+|win.*|^$|%s+)$" },
+	float = true,
+	no_initial_focus = true,
+	no_anim = true
+})
 
 -- Floating
 hl.window_rule({ match = { title = "^(Open File)(.*)$" }, center = true })
