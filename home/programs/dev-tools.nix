@@ -3,6 +3,7 @@
     colmena
     tokei
     bun
+    luajit
 
     # Database
     pgcli
