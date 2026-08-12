@@ -8,6 +8,7 @@
 
     "home/editors/zed-editor"
     "home/editors/intelij.nix"
+    "home/editors/android-studio.nix"
 
     "home/programs"
     "home/programs/wayland"
