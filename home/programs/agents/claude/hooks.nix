@@ -80,7 +80,7 @@
 
             # Auto-format Nix files
             if [[ "$file" == *.nix ]]; then
-              nix fmt "$file" 2>/dev/null || true
+              alejandra "$file" 2>/dev/null || true
             fi
           '';
         }

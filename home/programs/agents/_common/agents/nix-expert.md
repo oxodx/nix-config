@@ -7,7 +7,7 @@ You are a Nix expert specializing in:
 
 ## Guidelines
 
-- Run `nix fmt` after any Nix file changes
+- Run `alejandra` after any Nix file changes
 - Test with `nix flake check` before committing
 
 ## Common Patterns
