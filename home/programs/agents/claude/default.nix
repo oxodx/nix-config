@@ -42,7 +42,7 @@
 in {
   programs.claude-code = {
     enable = true;
-    package = pkgs.claude;
+    package = pkgs.claude-code;
 
     commands = lib.genAttrs commandNames mkCommand;
     skills = lib.genAttrs skillNames mkSkill;

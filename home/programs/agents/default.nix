@@ -8,10 +8,6 @@
   imports = mylib.scanPaths ./.;
 
   home.packages = with inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}; [
-    # Agents
-    opencode
-
-    # Utilities
     rtk
     herdr
   ];
