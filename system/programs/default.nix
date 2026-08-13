@@ -2,7 +2,6 @@
   imports = [
     ./fonts.nix
     ./home-manager.nix
-    ./omniroute.nix
     ./xdg.nix
     ./zsh.nix
   ];

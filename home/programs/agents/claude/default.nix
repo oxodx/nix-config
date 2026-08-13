@@ -39,41 +39,10 @@
     mkYamlFrontmatter frontmatter + body;
 
   ccstatusline = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.ccstatusline;
-
-  wrappedClaude = pkgs.writeShellScriptBin "claude" ''
-    set -euo pipefail
-
-    export ANTHROPIC_BASE_URL="http://localhost:20128"
-    export ANTHROPIC_AUTH_TOKEN="sk_omniroute"
-    export ANTHROPIC_MODEL="auto"
-    export CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY="1"
-
-    sudo systemctl start podman-omniroute
-    trap 'sudo systemctl stop podman-omniroute' EXIT
-
-    for _ in $(seq 1 120); do
-      if curl -fsS http://localhost:20128/api/monitoring/health >/dev/null 2>&1; then
-        break
-      fi
-      sleep 1
-    done
-
-    CLAUDE_JSON="$HOME/.claude.json"
-    if [ -f "$CLAUDE_JSON" ]; then
-      if ! ${pkgs.jq}/bin/jq -e 'has("hasCompletedOnboarding")' "$CLAUDE_JSON" >/dev/null 2>&1; then
-        tmp="$CLAUDE_JSON.tmp"
-        ${pkgs.jq}/bin/jq '. + {hasCompletedOnboarding: true}' "$CLAUDE_JSON" >"$tmp" \
-          && chmod 600 "$tmp" \
-          && mv "$tmp" "$CLAUDE_JSON"
-      fi
-    fi
-
-    exec ${pkgs.claude-code}/bin/claude "$@"
-  '';
 in {
   programs.claude-code = {
     enable = true;
-    package = wrappedClaude;
+    package = pkgs.claude;
 
     commands = lib.genAttrs commandNames mkCommand;
     skills = lib.genAttrs skillNames mkSkill;
@@ -88,13 +57,6 @@ in {
         command = "${ccstatusline}/bin/ccstatusline";
         padding = 0;
         type = "command";
-      };
-
-      env = {
-        ANTHROPIC_BASE_URL = "http://localhost:20128";
-        ANTHROPIC_AUTH_TOKEN = "sk_omniroute";
-        ANTHROPIC_MODEL = "auto";
-        CLAUDE_CODE_ENABLE_GATEWAY_MODEL_DISCOVERY = "1";
       };
 
       enableAllProjectMcpServers = true;
