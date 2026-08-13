@@ -22,6 +22,10 @@
     matugen.inputs.nixpkgs.follows = "nixpkgs";
     matugen.inputs.systems.follows = "systems";
 
+    llm-agents.url = "github:numtide/llm-agents.nix";
+    llm-agents.inputs.nixpkgs.follows = "nixpkgs";
+    llm-agents.inputs.systems.follows = "systems";
+
     # https://github.com/swornsystems/nix-zed-extensions
     zed-extensions.type = "github";
     zed-extensions.owner = "swornsystems";
