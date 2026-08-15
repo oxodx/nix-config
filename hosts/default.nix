@@ -9,7 +9,7 @@
   homeImports = import "${self}/home/profiles";
 
   mod = "${self}/system";
-  inherit (import mod) laptop;
+  inherit (import mod) desktop laptop;
 
   specialArgs = {inherit self inputs mylib;};
 in {
@@ -30,6 +30,28 @@ in {
         {
           home-manager = {
             users.oxod.imports = homeImports."oxod@laptop";
+            extraSpecialArgs = specialArgs;
+            backupFileExtension = ".hm-backup";
+          };
+        }
+
+        inputs.agenix.nixosModules.default
+      ];
+  };
+
+  "homelab-01" = nixosSystem {
+    inherit specialArgs;
+    modules =
+      desktop
+      ++ [
+        ./homelab-01
+
+        "${mod}/core/virtualisation.nix"
+
+        inputs.home-manager.nixosModules.home-manager
+        {
+          home-manager = {
+            users.oxod.imports = homeImports."oxod@homelab-01";
             extraSpecialArgs = specialArgs;
             backupFileExtension = ".hm-backup";
           };
