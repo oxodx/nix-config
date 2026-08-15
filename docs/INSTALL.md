@@ -18,4 +18,6 @@ cd nix-config
 
 # deploy one of the configurations based on hostname
 sudo nixos-rebuild switch --flake .#oxod-laptop
+# or you could also use
+nh os switch .#oxod-laptop
 ```
