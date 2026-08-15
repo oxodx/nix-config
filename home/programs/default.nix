@@ -1,6 +1,5 @@
 {pkgs, ...}: {
   imports = [
-    ./agents
     ./office
 
     ./dev-tools.nix

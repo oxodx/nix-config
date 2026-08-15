@@ -11,6 +11,7 @@
     "home/editors/android-studio.nix"
 
     "home/programs"
+    "home/programs/agents"
     "home/programs/wayland"
     "home/programs/games.nix"
     "home/programs/browsers/firefox.nix"
