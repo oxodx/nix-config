@@ -9,6 +9,7 @@
       "my"
       "shopping_list"
       "wled"
+      "tapo"
     ];
     config = {
       # Includes dependencies for a basic setup
