@@ -1,11 +1,21 @@
-{
-  virtualisation.oci-containers.containers.home-assistant = {
-    image = "ghcr.io/home-assistant/home-assistant:stable";
-    volumes = [
-      "/var/lib/home-assistant:/config"
-      "/var/run/dbus:/run/dbus:ro"
+{config, ...}: {
+  services.home-assistant = {
+    enable = true;
+    configDir = "/var/lib/home-assistant";
+    extraComponents = [
+      "analytics"
+      "default_config"
+      "esphome"
+      "my"
+      "shopping_list"
+      "wled"
     ];
-    environment.TZ = "Europe/Amsterdam";
-    extraOptions = ["--network=host"];
+    config = {
+      # Includes dependencies for a basic setup
+      # https://www.home-assistant.io/integrations/default_config/
+      default_config = {};
+    };
   };
+
+  networking.firewall.allowedTCPPorts = [config.services.home-assistant.config.http.server_port];
 }
