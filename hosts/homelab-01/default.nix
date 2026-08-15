@@ -1,7 +1,7 @@
 {mylib, ...}: {
   imports = mylib.scanPaths ./.;
 
-  environment.variables.NH_FLAKE = "/home/oxod/dev/dotfiles";
+  environment.variables.NH_FLAKE = "/home/oxod/dev/nix-config";
 
   networking.hostName = "homelab-01";
 
