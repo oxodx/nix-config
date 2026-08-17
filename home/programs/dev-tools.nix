@@ -4,6 +4,7 @@
     tokei
     bun
     luajit
+    go
 
     # Database
     pgcli
