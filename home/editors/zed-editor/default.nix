@@ -34,6 +34,7 @@ in {
 
     extraPackages = with pkgs; [
       nixd
+      gopls
       qt6.qtdeclarative
     ];
 
