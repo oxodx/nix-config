@@ -3,7 +3,8 @@
   pkgs,
   mylib,
   ...
-}: let
+}:
+let
   customCss = "@import url('https://cdn.jsdelivr.net/npm/jellyskin@latest/dist/main.css');";
   jellyfinDir = config.services.jellyfin.dataDir;
   brandingXml = pkgs.writeText "branding.xml" (
@@ -23,18 +24,19 @@
         children = [
           {
             tag = "CustomCss";
-            children = [customCss];
+            children = [ customCss ];
           }
         ];
       }
     ]
   );
-in {
+in
+{
   systemd.services.jellyfin.preStart = ''
     mkdir -p ${jellyfinDir}
     cp ${brandingXml} ${jellyfinDir}/branding.xml
   '';
 
   services.jellyfin.enable = true;
-  networking.firewall.allowedTCPPorts = [8096];
+  networking.firewall.allowedTCPPorts = [ 8096 ];
 }

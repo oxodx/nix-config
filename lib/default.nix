@@ -5,7 +5,9 @@
     let
       indent = level: lib.concatStrings (lib.genList (_: "  ") level);
 
-      escapeXml =
+      escapeText = s: builtins.replaceStrings [ "&" "<" ">" ] [ "&amp;" "&lt;" "&gt;" ] (toString s);
+
+      escapeAttr =
         s:
         builtins.replaceStrings [ "&" "<" ">" "'" "\"" ] [ "&amp;" "&lt;" "&gt;" "&apos;" "&quot;" ] (
           toString s
@@ -13,12 +15,14 @@
 
       renderAttrs =
         attrs:
-        lib.concatStringsSep "" (lib.mapAttrsToList (name: value: " ${name}=\"${escapeXml value}\"") attrs);
+        lib.concatStringsSep "" (
+          lib.mapAttrsToList (name: value: " ${name}=\"${escapeAttr value}\"") attrs
+        );
 
       render =
         level: elem:
         if builtins.isString elem then
-          "${indent level}${escapeXml elem}"
+          "${indent level}${escapeText elem}"
         else if elem ? declaration then
           "${indent level}<?xml ${renderAttrs elem.declaration}?>"
         else
