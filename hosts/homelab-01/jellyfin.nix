@@ -6,7 +6,7 @@
 }:
 let
   customCss = "@import url('https://cdn.jsdelivr.net/npm/jellyskin@latest/dist/main.css');";
-  jellyfinDir = config.services.jellyfin.dataDir;
+  jellyfinConfigDir = config.services.jellyfin.configDir;
   brandingXml = pkgs.writeText "branding.xml" (
     mylib.toXML [
       {
@@ -33,8 +33,8 @@ let
 in
 {
   systemd.services.jellyfin.preStart = ''
-    mkdir -p ${jellyfinDir}
-    cp ${brandingXml} ${jellyfinDir}/branding.xml
+    mkdir -p ${jellyfinConfigDir}
+    cp ${brandingXml} ${jellyfinConfigDir}/branding.xml
   '';
 
   services.jellyfin.enable = true;
