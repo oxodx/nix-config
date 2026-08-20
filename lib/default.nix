@@ -2,6 +2,7 @@
   relativeToRoot = lib.path.append ../.;
 
   toXML = let
+    # Standard 2-space indentation (no Unicode non-breaking spaces)
     indent = level: lib.concatStrings (lib.genList (_: "  ") level);
 
     escapeText = s: builtins.replaceStrings ["&" "<" ">"] ["&amp;" "&lt;" "&gt;"] (toString s);
@@ -18,7 +19,9 @@
 
     render = level: elem:
       if elem ? declaration
-      then "<?xml${renderAttrs elem.declaration}?>"
+      then
+        # Removed space between <?xml and renderAttrs to avoid double-spacing
+        "<?xml${renderAttrs elem.declaration}?>"
       else if !builtins.isAttrs elem
       then "${indent level}${escapeText (toString elem)}"
       else let
@@ -29,7 +32,7 @@
       in
         if children == []
         then "${indent level}<${tag}${attrStr} />"
-        # Inline single string/primitive children so text nodes don't break with newlines/indentation
+        # Render single text children inline (prevents newlines in CSS/text tags)
         else if builtins.length children == 1 && !builtins.isAttrs (builtins.head children)
         then "${indent level}<${tag}${attrStr}>${escapeText (toString (builtins.head children))}</${tag}>"
         else "${indent level}<${tag}${attrStr}>\n${
