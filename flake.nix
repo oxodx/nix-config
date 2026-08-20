@@ -7,6 +7,9 @@
     home-manager.url = "github:nix-community/home-manager/release-26.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
+    nixos-hardware.url = "github:NixOS/nixos-hardware";
+    nixos-hardware.inputs.nixpkgs.follows = "nixpkgs";
+
     nix-index-db.url = "github:mic92/nix-index-database";
     nix-index-db.inputs.nixpkgs.follows = "nixpkgs";
 
