@@ -27,6 +27,8 @@
     "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG7W3t1Iqy/s2ztBP+f24+QvuASSpCIZfUvAtc4tc2BE oxod@laptop"
   ];
 
+  services.jellyfin.enable = true;
+
   security.tpm2.enable = true;
 
   system.stateVersion = "26.05";
