@@ -28,6 +28,7 @@
   ];
 
   services.jellyfin.enable = true;
+  networking.firewall.allowedTCPPorts = [8096];
 
   security.tpm2.enable = true;
 
