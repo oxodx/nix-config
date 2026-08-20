@@ -1,18 +1,56 @@
-{lib, ...}: {
+{ lib, ... }: {
   relativeToRoot = lib.path.append ../.;
-  scanPaths = path:
+
+  toXML =
+    let
+      indent = level: lib.concatStrings (lib.genList (_: "  ") level);
+
+      escapeXml =
+        s:
+        builtins.replaceStrings [ "&" "<" ">" "'" "\"" ] [ "&amp;" "&lt;" "&gt;" "&apos;" "&quot;" ] (
+          toString s
+        );
+
+      renderAttrs =
+        attrs:
+        lib.concatStringsSep "" (lib.mapAttrsToList (name: value: " ${name}=\"${escapeXml value}\"") attrs);
+
+      render =
+        level: elem:
+        if builtins.isString elem then
+          "${indent level}${escapeXml elem}"
+        else if elem ? declaration then
+          "${indent level}<?xml ${renderAttrs elem.declaration}?>"
+        else
+          let
+            tag = elem.tag;
+            attrs = elem.attrs or { };
+            children = elem.children or [ ];
+            attrStr = renderAttrs attrs;
+          in
+          if children == [ ] then
+            "${indent level}<${tag}${attrStr} />"
+          else
+            "${indent level}<${tag}${attrStr}>\n${
+              lib.concatStringsSep "\n" (map (render (level + 1)) children)
+            }\n${indent level}</${tag}>";
+    in
+    elems: lib.concatStringsSep "\n" (map (render 0) elems);
+
+  scanPaths =
+    path:
     map (f: (path + "/${f}")) (
       builtins.attrNames (
         lib.attrsets.filterAttrs (
           path: _type:
-            !(lib.strings.hasPrefix "_" path) # Skip private dirs/files
-            && (
-              (_type == "directory") # Include directories
-              || (
-                (path != "default.nix") # Ignore default.nix
-                && (lib.strings.hasSuffix ".nix" path) # Include .nix files
-              )
+          !(lib.strings.hasPrefix "_" path) # Skip private dirs/files
+          && (
+            (_type == "directory") # Include directories
+            || (
+              (path != "default.nix") # Ignore default.nix
+              && (lib.strings.hasSuffix ".nix" path) # Include .nix files
             )
+          )
         ) (builtins.readDir path)
       )
     );
