@@ -33,7 +33,6 @@ in {
   systemd.services.jellyfin.preStart = ''
     mkdir -p ${jellyfinDir}
     cp ${brandingXml} ${jellyfinDir}/branding.xml
-    chown -R jellyfin:jellyfin ${jellyfinDir}
   '';
 
   services.jellyfin.enable = true;
