@@ -5,6 +5,7 @@
     bun
     luajit
     go
+    cmake
 
     # Database
     pgcli
