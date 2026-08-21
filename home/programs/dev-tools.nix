@@ -6,6 +6,8 @@
     luajit
     go
     cmake
+    gnumake
+    ninja
 
     # Database
     pgcli
