@@ -8,6 +8,7 @@
     cmake
     gnumake
     ninja
+    dotnet-sdk_10
 
     # Database
     pgcli
