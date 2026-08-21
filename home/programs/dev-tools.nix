@@ -8,6 +8,7 @@
     cmake
     gnumake
     ninja
+    libGL
 
     # Database
     pgcli
