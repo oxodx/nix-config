@@ -8,7 +8,10 @@
     cmake
     gnumake
     ninja
+
+    # Dev libs
     libGL
+    libx11
 
     # Database
     pgcli
