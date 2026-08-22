@@ -1,5 +1,6 @@
 {pkgs, ...}: {
   imports = [
+    ./dotnet.nix
     ./fonts.nix
     ./home-manager.nix
     ./xdg.nix
