@@ -8,7 +8,14 @@
     (modulesPath + "/installer/scan/not-detected.nix")
   ];
 
-  boot.initrd.availableKernelModules = ["xhci_pci" "ehci_pci" "ahci" "usbhid" "usb_storage" "sd_mod"];
+  boot.initrd.availableKernelModules = [
+    "xhci_pci"
+    "ehci_pci"
+    "ahci"
+    "usbhid"
+    "usb_storage"
+    "sd_mod"
+  ];
   boot.initrd.kernelModules = [];
   boot.kernelModules = ["kvm-intel"];
   boot.extraModulePackages = [];
@@ -18,15 +25,24 @@
     fsType = "ext4";
   };
 
+  # nofail: a missing/changed media disk must not fail local-fs.target and
+  # drop the host into emergency mode mid-rebuild (killing SSH sessions)
   fileSystems."/mnt/media" = {
-    device = "/dev/disk/by-uuid/02628e0a-0e74-4c7c-8fb7-e9c0779a1a5a";
+    device = "/dev/disk/by-uuid/2b422eeb-dc37-42de-aee7-4157b71ae11a";
     fsType = "ext4";
+    options = [
+      "nofail"
+      "x-systemd.device-timeout=5s"
+    ];
   };
 
   fileSystems."/boot" = {
     device = "/dev/disk/by-uuid/9DFD-165E";
     fsType = "vfat";
-    options = ["fmask=0022" "dmask=0022"];
+    options = [
+      "fmask=0022"
+      "dmask=0022"
+    ];
   };
 
   swapDevices = [];
