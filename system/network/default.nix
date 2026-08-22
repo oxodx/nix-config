@@ -27,6 +27,8 @@
       # Waiting for https://github.com/NixOS/nixpkgs/pull/440130 to land in nixos-unstable
       # dnsovertls = "opportunistic";
     };
+
+    mullvad-vpn.enable = true;
   };
 
   systemd.services.NetworkManager-wait-online.serviceConfig.ExecStart = [
