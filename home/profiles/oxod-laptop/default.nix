@@ -13,6 +13,7 @@
     "home/programs"
     "home/programs/agents"
     "home/programs/wayland"
+    "home/programs/jellyfin.nix"
     "home/programs/games.nix"
     "home/programs/browsers/firefox.nix"
 
