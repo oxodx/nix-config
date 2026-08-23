@@ -120,15 +120,5 @@ in {
         "${storage.state}/prowlarr:/config"
       ];
     };
-
-    flaresolverr = {
-      image = "ghcr.io/flaresolverr/flaresolverr:latest";
-      dependsOn = ["gluetun"];
-      extraOptions = ["--network=container:gluetun"];
-      environment = {
-        TZ = "Europe/Amsterdam";
-        LOG_LEVEL = "info";
-      };
-    };
   };
 }
