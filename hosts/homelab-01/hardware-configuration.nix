@@ -26,7 +26,7 @@
   };
 
   fileSystems."/mnt/media" = {
-    device = "/dev/disk/by-uuid/2b422eeb-dc37-42de-aee7-4157b71ae11a";
+    device = "/dev/disk/by-uuid/35b39b61-9794-4ec2-94d3-40113db5d95e";
     fsType = "ext4";
     options = [
       "nofail"
