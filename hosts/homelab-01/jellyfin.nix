@@ -70,11 +70,6 @@ in {
       user = "media";
       group = "media";
     };
-
-    prowlarr = {
-      enable = true;
-      openFirewall = true; # Automatically opens 9696
-    };
   };
 
   virtualisation.oci-containers.containers = {
