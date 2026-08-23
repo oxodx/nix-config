@@ -17,8 +17,13 @@ in {
     extraPackages = with pkgs; [
       intel-media-driver # For modern chips, but also works alongside legacy
       intel-vaapi-driver # Specifically good for older 4th-gen Haswell (i5-4570)
+      vaapiVdpau
       libvpl
     ];
+  };
+
+  environment.sessionVariables = {
+    LIBVA_DRIVER_NAME = "i965";
   };
 
   systemd.tmpfiles.rules = [
