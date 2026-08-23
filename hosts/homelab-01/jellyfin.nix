@@ -10,9 +10,6 @@ let
 in {
   networking.firewall = {
     enable = true;
-    # 8080 is required to access the qBittorrent Web UI.
-    # We do NOT need to open 6881 here because the torrent traffic
-    # goes through the Mullvad VPN tunnel (tun0), not your local network interface.
     allowedTCPPorts = [8080];
   };
 
@@ -47,26 +44,26 @@ in {
   services = {
     jellyfin = {
       enable = true;
-      openFirewall = true; # Automatically opens 8096
+      openFirewall = true;
       user = "media";
       group = "media";
     };
 
     seerr = {
       enable = true;
-      openFirewall = true; # Automatically opens 5055
+      openFirewall = true;
     };
 
     sonarr = {
       enable = true;
-      openFirewall = true; # Automatically opens 8989
+      openFirewall = true;
       user = "media";
       group = "media";
     };
 
     radarr = {
       enable = true;
-      openFirewall = true; # Automatically opens 7878
+      openFirewall = true;
       user = "media";
       group = "media";
     };
@@ -79,6 +76,7 @@ in {
       ports = [
         "8080:8080" # qBittorrent Web UI
         "9696:9696" # Prowlarr Web UI
+        "8191:8191" # FlareSolverr API Port
         "6881:6881" # Torrent TCP
         "6881:6881/udp" # Torrent UDP
       ];
@@ -121,6 +119,16 @@ in {
       volumes = [
         "${storage.state}/prowlarr:/config"
       ];
+    };
+
+    flaresolverr = {
+      image = "ghcr.io/flaresolverr/flaresolverr:latest";
+      dependsOn = ["gluetun"];
+      extraOptions = ["--network=container:gluetun"];
+      environment = {
+        TZ = "Europe/Amsterdam";
+        LOG_LEVEL = "info";
+      };
     };
   };
 }
