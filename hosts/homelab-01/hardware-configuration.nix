@@ -25,8 +25,6 @@
     fsType = "ext4";
   };
 
-  # nofail: a missing/changed media disk must not fail local-fs.target and
-  # drop the host into emergency mode mid-rebuild (killing SSH sessions)
   fileSystems."/mnt/media" = {
     device = "/dev/disk/by-uuid/2b422eeb-dc37-42de-aee7-4157b71ae11a";
     fsType = "ext4";
