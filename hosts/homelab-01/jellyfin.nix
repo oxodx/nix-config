@@ -82,7 +82,8 @@ in {
       image = "qmcgaw/gluetun:latest";
       extraOptions = ["--cap-add=NET_ADMIN"];
       ports = [
-        "8080:8080" # qBittorrent Web UI exposed to host
+        "8080:8080" # qBittorrent Web UI
+        "9696:9696" # Prowlarr Web UI
         "6881:6881" # Torrent TCP
         "6881:6881/udp" # Torrent UDP
       ];
@@ -110,6 +111,20 @@ in {
       volumes = [
         "${storage.state}/qbittorrent/config:/config"
         "${storage.media}/downloads:/downloads"
+      ];
+    };
+
+    prowlarr = {
+      image = "linuxserver/prowlarr:latest";
+      dependsOn = ["gluetun"];
+      extraOptions = ["--network=container:gluetun"];
+      environment = {
+        PUID = toString mediaUid;
+        PGID = toString mediaGid;
+        TZ = "Europe/Amsterdam";
+      };
+      volumes = [
+        "${storage.state}/prowlarr:/config"
       ];
     };
   };
