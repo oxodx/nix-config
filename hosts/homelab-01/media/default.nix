@@ -9,8 +9,8 @@
     cache = "/var/cache";
   };
 
-  mediaUid = 999;
-  mediaGid = 999;
+  uids.media = 999;
+  gids.media = 196;
 in {
   imports = mylib.scanPaths ./.;
 
@@ -50,12 +50,10 @@ in {
     "Z ${storage.cache}/jellyfin 0755 media media -"
   ];
 
-  users.groups.media = {
-    gid = mediaGid;
-  };
+  users.groups.media.gid = gids.media;
   users.users.media = {
     isSystemUser = true;
-    uid = mediaUid;
+    uid = uids.media;
     group = "media";
     createHome = false;
     extraGroups = ["video" "render"];
