@@ -5,7 +5,7 @@
 }: let
   browser = ["firefox"];
   imageViewer = ["org.gnome.Loupe"];
-  videoPlayer = ["io.github.celluloid_player.Celluloid"];
+  videoPlayer = ["mpv.desktop"];
   audioPlayer = ["io.bassi.Amberol"];
 
   xdgAssociations = type: program: list:

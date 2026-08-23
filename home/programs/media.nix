@@ -20,7 +20,7 @@
     loupe
 
     # videos
-    celluloid
+    mpv
     stremio-linux-shell
 
     # torrents
