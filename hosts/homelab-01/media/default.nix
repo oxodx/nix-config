@@ -1,4 +1,8 @@
-{pkgs, ...}: let
+{
+  pkgs,
+  mylib,
+  ...
+}: let
   storage = {
     media = "/mnt/media";
     state = "/var/lib";
@@ -8,6 +12,8 @@
   mediaUid = 999;
   mediaGid = 999;
 in {
+  imports = mylib.scanPaths ./.;
+
   networking.firewall = {
     enable = true;
     allowedTCPPorts = [8080];
@@ -56,16 +62,6 @@ in {
   };
 
   services = {
-    jellyfin = {
-      enable = true;
-      openFirewall = true;
-      user = "media";
-      group = "media";
-
-      hardwareAcceleration.enable = true;
-      hardwareAcceleration.device = "/dev/dri/renderD128";
-    };
-
     seerr = {
       enable = true;
       openFirewall = true;
@@ -93,7 +89,6 @@ in {
       ports = [
         "8080:8080" # qBittorrent Web UI
         "9696:9696" # Prowlarr Web UI
-        "8191:8191" # FlareSolverr API Port
         "6881:6881" # Torrent TCP
         "6881:6881/udp" # Torrent UDP
       ];
