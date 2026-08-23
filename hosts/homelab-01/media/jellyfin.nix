@@ -17,19 +17,6 @@
     group = libraryOwner.group;
   };
 in {
-  users = {
-    groups.${jellyfin.group}.gid = gids.${jellyfin.group};
-    users.${jellyfin.user} = {
-      isSystemUser = true;
-      group = "media";
-      uid = uids.${jellyfin.user};
-      extraGroups = [
-        "video"
-        "render"
-      ];
-    };
-  };
-
   systemd.tmpfiles.rules = [
     "d '${stateDir}' 				0700 ${jellyfin.user} root - -"
     "d '${stateDir}/log' 		0700 ${jellyfin.user} root - -"
@@ -64,5 +51,18 @@ in {
 
     hardwareAcceleration.enable = true;
     hardwareAcceleration.device = "/dev/dri/renderD128";
+  };
+
+  users = {
+    groups.${jellyfin.group}.gid = gids.${jellyfin.group};
+    users.${jellyfin.user} = {
+      isSystemUser = true;
+      group = jellyfin.group;
+      uid = uids.${jellyfin.user};
+      extraGroups = [
+        "video"
+        "render"
+      ];
+    };
   };
 }

@@ -35,8 +35,6 @@ in {
   systemd.tmpfiles.rules = [
     "d ${storage.media} 0775 media media -"
     "d ${storage.media}/downloads 0775 media media -"
-    "d ${storage.media}/tv 0775 media media -"
-    "d ${storage.media}/movies 0775 media media -"
 
     "d ${storage.state}/gluetun 0755 root root -"
     "d ${storage.state}/qbittorrent 0755 media media -"
@@ -44,10 +42,6 @@ in {
     "d ${storage.state}/sonarr 0755 media media -"
     "d ${storage.state}/radarr 0755 media media -"
     "d ${storage.state}/prowlarr 0755 media media -"
-    "d ${storage.state}/jellyfin 0755 media media -"
-    "Z ${storage.state}/jellyfin 0755 media media -"
-    "d ${storage.cache}/jellyfin 0755 media media -"
-    "Z ${storage.cache}/jellyfin 0755 media media -"
   ];
 
   users.groups.media.gid = gids.media;
@@ -60,11 +54,6 @@ in {
   };
 
   services = {
-    seerr = {
-      enable = true;
-      openFirewall = true;
-    };
-
     sonarr = {
       enable = true;
       openFirewall = true;
