@@ -36,12 +36,12 @@ in {
     "d '${stateDir}/cache' 	0700 ${jellyfin.user} root - -"
     "d '${stateDir}/config' 0700 ${jellyfin.user} root - -"
 
-    "d '${mediaDir}/library' 						0755 ${libraryOwner.user} ${libraryOwner.group} - -"
-    "d '${mediaDir}/library/shows' 			0755 ${libraryOwner.user} ${libraryOwner.group} - -"
-    "d '${mediaDir}/library/movies' 		0755 ${libraryOwner.user} ${libraryOwner.group} - -"
-    "d '${mediaDir}/library/music' 			0755 ${libraryOwner.user} ${libraryOwner.group} - -"
-    "d '${mediaDir}/library/books' 			0755 ${libraryOwner.user} ${libraryOwner.group} - -"
-    "d '${mediaDir}/library/audiobooks' 0755 ${libraryOwner.user} ${libraryOwner.group} - -"
+    "d '${mediaDir}/library' 						0775 ${libraryOwner.user} ${libraryOwner.group} - -"
+    "d '${mediaDir}/library/shows' 			0775 ${libraryOwner.user} ${libraryOwner.group} - -"
+    "d '${mediaDir}/library/movies' 		0775 ${libraryOwner.user} ${libraryOwner.group} - -"
+    "d '${mediaDir}/library/music' 			0775 ${libraryOwner.user} ${libraryOwner.group} - -"
+    "d '${mediaDir}/library/books' 			0775 ${libraryOwner.user} ${libraryOwner.group} - -"
+    "d '${mediaDir}/library/audiobooks' 0775 ${libraryOwner.user} ${libraryOwner.group} - -"
   ];
 
   # Always prioritise Jellyfin IO
