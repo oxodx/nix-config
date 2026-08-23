@@ -20,6 +20,10 @@ in {
     "d ${storage.media}/downloads 0775 media media -"
     "d ${storage.media}/tv 0775 media media -"
     "d ${storage.media}/movies 0775 media media -"
+
+    "d ${storage.state}/gluetun 0755 root root -"
+    "d ${storage.state}/qbittorrent 0755 media media -"
+    "d ${storage.state}/qbittorrent/config 0755 media media -"
   ];
 
   users.groups.media = {
