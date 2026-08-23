@@ -1,4 +1,4 @@
-let
+{pkgs, ...}: let
   storage = {
     media = "/mnt/media";
     state = "/var/lib";
@@ -11,6 +11,14 @@ in {
   networking.firewall = {
     enable = true;
     allowedTCPPorts = [8080];
+  };
+
+  hardware.graphics = {
+    extraPackages = with pkgs; [
+      intel-media-driver # For modern chips, but also works alongside legacy
+      intel-vaapi-driver # Specifically good for older 4th-gen Haswell (i5-4570)
+      libvpl
+    ];
   };
 
   systemd.tmpfiles.rules = [
@@ -39,6 +47,7 @@ in {
     uid = mediaUid;
     group = "media";
     createHome = false;
+    extraGroups = ["video" "render"];
   };
 
   services = {
@@ -47,6 +56,9 @@ in {
       openFirewall = true;
       user = "media";
       group = "media";
+
+      hardwareAcceleration.enable = true;
+      hardwareAcceleration.device = "/dev/dri/renderD128";
     };
 
     seerr = {
