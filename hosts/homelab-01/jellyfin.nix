@@ -24,6 +24,10 @@ in {
     "d ${storage.state}/gluetun 0755 root root -"
     "d ${storage.state}/qbittorrent 0755 media media -"
     "d ${storage.state}/qbittorrent/config 0755 media media -"
+    "d ${storage.state}/sonarr 0755 media media -"
+    "d ${storage.state}/radarr 0755 media media -"
+    "d ${storage.state}/prowlarr 0755 media media -"
+    "d ${storage.state}/jellyfin 0755 media media -"
   ];
 
   users.groups.media = {
