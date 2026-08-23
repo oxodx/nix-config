@@ -28,6 +28,7 @@ in {
     "d ${storage.state}/radarr 0755 media media -"
     "d ${storage.state}/prowlarr 0755 media media -"
     "d ${storage.state}/jellyfin 0755 media media -"
+    "Z ${storage.state}/jellyfin 0755 media media -"
   ];
 
   users.groups.media = {
