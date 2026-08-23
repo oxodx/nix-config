@@ -16,8 +16,8 @@ in {
   hardware.graphics = {
     extraPackages = with pkgs; [
       intel-media-driver # For modern chips, but also works alongside legacy
-      intel-vaapi-driver # Specifically good for older 4th-gen Haswell (i5-4570)
-      vaapiVdpau
+      intel-vaapi-driver
+      libva-vdpau-driver # Specifically good for older 4th-gen Haswell (i5-4570)
       libvpl
     ];
   };
