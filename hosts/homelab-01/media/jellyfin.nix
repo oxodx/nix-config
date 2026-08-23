@@ -23,7 +23,10 @@ in {
       isSystemUser = true;
       group = "media";
       uid = uids.${jellyfin.user};
-      extraGroups = ["video" "render"];
+      extraGroups = [
+        "video"
+        "render"
+      ];
     };
   };
 
@@ -31,10 +34,8 @@ in {
     "d '${stateDir}' 				0700 ${jellyfin.user} root - -"
     "d '${stateDir}/log' 		0700 ${jellyfin.user} root - -"
     "d '${stateDir}/cache' 	0700 ${jellyfin.user} root - -"
-    "d '${stateDir}/data' 	0700 ${jellyfin.user} root - -"
     "d '${stateDir}/config' 0700 ${jellyfin.user} root - -"
 
-    # Media dirs
     "d '${mediaDir}/library' 						0755 ${libraryOwner.user} ${libraryOwner.group} - -"
     "d '${mediaDir}/library/shows' 			0755 ${libraryOwner.user} ${libraryOwner.group} - -"
     "d '${mediaDir}/library/movies' 		0755 ${libraryOwner.user} ${libraryOwner.group} - -"
@@ -56,9 +57,9 @@ in {
     user = jellyfin.user;
     group = jellyfin.group;
 
+    dataDir = stateDir;
     logDir = "${stateDir}/log";
     cacheDir = "${stateDir}/cache";
-    dataDir = "${stateDir}/data";
     configDir = "${stateDir}/config";
 
     hardwareAcceleration.enable = true;
