@@ -85,7 +85,7 @@ in {
       environment = {
         VPN_SERVICE_PROVIDER = "mullvad";
         VPN_TYPE = "wireguard";
-        SERVER_COUNTRIES = "Netherlands";
+        SERVER_COUNTRIES = "Germany";
       };
     };
 
