@@ -1,34 +1,28 @@
 {pkgs, ...}: let
+  vars = import ./variables.nix;
+  vUser = vars.services.jellyfin.user;
+  vGroup = vars.services.jellyfin.group;
+  vLibUser = vars.libraryOwner.user;
+  vLibGroup = vars.libraryOwner.group;
+
   enable = true;
-  package = pkgs.jellyfin;
-  stateDir = "/var/lib/jellyfin";
-  mediaDir = "/mnt/media";
+  package = pkgs.seerr;
+  stateDir = "${vars.dirs.state}/seerr";
+  libDir = "${vars.dirs.media}/library";
   openFirewall = true;
-
-  uids.jellyfin = 146;
-  gids.media = 196;
-
-  libraryOwner = {
-    user = "root";
-    group = "media";
-  };
-  jellyfin = {
-    user = "jellyfin";
-    group = libraryOwner.group;
-  };
 in {
   systemd.tmpfiles.rules = [
-    "d '${stateDir}' 				0700 ${jellyfin.user} root - -"
-    "d '${stateDir}/log' 		0700 ${jellyfin.user} root - -"
-    "d '${stateDir}/cache' 	0700 ${jellyfin.user} root - -"
-    "d '${stateDir}/config' 0700 ${jellyfin.user} root - -"
+    "d '${stateDir}' 				0700 ${vUser} root - -"
+    "d '${stateDir}/log' 		0700 ${vUser} root - -"
+    "d '${stateDir}/cache' 	0700 ${vUser} root - -"
+    "d '${stateDir}/config' 0700 ${vUser} root - -"
 
-    "d '${mediaDir}/library' 						0775 ${libraryOwner.user} ${libraryOwner.group} - -"
-    "d '${mediaDir}/library/shows' 			0775 ${libraryOwner.user} ${libraryOwner.group} - -"
-    "d '${mediaDir}/library/movies' 		0775 ${libraryOwner.user} ${libraryOwner.group} - -"
-    "d '${mediaDir}/library/music' 			0775 ${libraryOwner.user} ${libraryOwner.group} - -"
-    "d '${mediaDir}/library/books' 			0775 ${libraryOwner.user} ${libraryOwner.group} - -"
-    "d '${mediaDir}/library/audiobooks' 0775 ${libraryOwner.user} ${libraryOwner.group} - -"
+    "d '${libDir}' 					  0775 ${vLibUser} ${vLibGroup} - -"
+    "d '${libDir}/shows' 		  0775 ${vLibUser} ${vLibGroup} - -"
+    "d '${libDir}/movies' 	  0775 ${vLibUser} ${vLibGroup} - -"
+    "d '${libDir}/music' 		  0775 ${vLibUser} ${vLibGroup} - -"
+    "d '${libDir}/books' 		  0775 ${vLibUser} ${vLibGroup} - -"
+    "d '${libDir}/audiobooks' 0775 ${vLibUser} ${vLibGroup} - -"
   ];
 
   # Always prioritise Jellyfin IO
@@ -41,8 +35,8 @@ in {
       openFirewall
       ;
 
-    user = jellyfin.user;
-    group = jellyfin.group;
+    user = vUser;
+    group = vGroup;
 
     dataDir = stateDir;
     logDir = "${stateDir}/log";
@@ -54,11 +48,11 @@ in {
   };
 
   users = {
-    groups.${jellyfin.group}.gid = gids.${jellyfin.group};
-    users.${jellyfin.user} = {
+    groups.${vGroup}.gid = vars.gids.${vGroup};
+    users.${vUser} = {
       isSystemUser = true;
-      group = jellyfin.group;
-      uid = uids.${jellyfin.user};
+      group = vGroup;
+      uid = vars.uids.${vUser};
       extraGroups = [
         "video"
         "render"

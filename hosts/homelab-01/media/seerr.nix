@@ -3,30 +3,19 @@
   lib,
   ...
 }: let
+  vars = import ./variables.nix;
+  vUser = vars.services.seerr.user;
+  vGroup = vars.services.seerr.group;
+
   enable = true;
   package = pkgs.seerr;
-  stateDir = "/var/lib/seerr";
+  stateDir = "${vars.dirs.state}/seerr";
   openFirewall = true;
   port = 5055;
-
-  uids.seerr = 262;
-  gids = {
-    seerr = 250;
-    media = 196;
-  };
-
-  libraryOwner = {
-    user = "root";
-    group = "media";
-  };
-  seerr = {
-    user = "seerr";
-    group = libraryOwner.group;
-  };
 in
   lib.mkIf enable {
     systemd.tmpfiles.rules = [
-      "d '${stateDir}' 0700 ${seerr.user} root - -"
+      "d '${stateDir}' 0700 ${vUser} root - -"
     ];
 
     systemd.services.seerr = {
@@ -42,8 +31,8 @@ in
         Type = "exec";
         StateDirectory = "seerr";
         DynamicUser = false;
-        User = seerr.user;
-        Group = seerr.group;
+        User = vUser;
+        Group = vGroup;
         ExecStart = lib.getExe package;
         Restart = "on-failure";
 
@@ -68,11 +57,11 @@ in
     };
 
     users = {
-      groups.${seerr.group}.gid = gids.${seerr.group};
-      users.${seerr.user} = {
+      groups.${vGroup}.gid = vars.gids.${vGroup};
+      users.${vUser} = {
         isSystemUser = true;
-        group = seerr.group;
-        uid = uids.${seerr.user};
+        group = vGroup;
+        uid = vars.uids.${vUser};
       };
     };
 
