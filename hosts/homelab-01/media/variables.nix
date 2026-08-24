@@ -10,6 +10,7 @@ rec {
   uids = {
     media = 999;
     jellyfin = 146;
+    sonarr = 274;
     seerr = 262;
   };
   gids = {
@@ -18,12 +19,16 @@ rec {
   };
 
   services = {
-    seerr = {
-      user = "seerr";
-      group = libraryOwner.group;
-    };
     jellyfin = {
       user = "jellyfin";
+      group = libraryOwner.group;
+    };
+    sonarr = {
+      user = "sonarr";
+      group = libraryOwner.group;
+    };
+    seerr = {
+      user = "seerr";
       group = libraryOwner.group;
     };
   };

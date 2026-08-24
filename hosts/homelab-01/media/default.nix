@@ -47,13 +47,6 @@ in {
   };
 
   services = {
-    sonarr = {
-      enable = true;
-      openFirewall = true;
-      user = "media";
-      group = "media";
-    };
-
     radarr = {
       enable = true;
       openFirewall = true;
