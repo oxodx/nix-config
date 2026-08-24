@@ -22,7 +22,7 @@ in {
     "d '${libDir}/shows'  2775 ${vLibUser} ${vLibGroup} - -"
   ];
 
-  sonarr = {
+  services.sonarr = {
     inherit
       enable
       package
