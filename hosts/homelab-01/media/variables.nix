@@ -8,12 +8,13 @@ rec {
   libraryOwner.group = "media";
 
   uids = {
+    media = 999;
     jellyfin = 146;
     seerr = 262;
   };
   gids = {
-    seerr = 250;
     media = 196;
+    seerr = 250;
   };
 
   services = {

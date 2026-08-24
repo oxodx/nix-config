@@ -3,14 +3,9 @@
   mylib,
   ...
 }: let
-  storage = {
-    media = "/mnt/media";
-    state = "/var/lib";
-    cache = "/var/cache";
-  };
+  vars = import ./variables.nix;
 
-  uids.media = 999;
-  gids.media = 196;
+  storage.cache = "/var/cache";
 in {
   imports = mylib.scanPaths ./.;
 
@@ -33,21 +28,21 @@ in {
   };
 
   systemd.tmpfiles.rules = [
-    "d ${storage.media} 0775 media media -"
-    "d ${storage.media}/downloads 0775 media media -"
+    "d ${vars.dirs.media} 0775 media media -"
+    "d ${vars.dirs.media}/downloads 0775 media media -"
 
-    "d ${storage.state}/gluetun 0755 root root -"
-    "d ${storage.state}/qbittorrent 0755 media media -"
-    "d ${storage.state}/qbittorrent/config 0755 media media -"
-    "d ${storage.state}/sonarr 0755 media media -"
-    "d ${storage.state}/radarr 0755 media media -"
-    "d ${storage.state}/prowlarr 0755 media media -"
+    "d ${vars.dirs.state}/gluetun 0755 root root -"
+    "d ${vars.dirs.state}/qbittorrent 0755 media media -"
+    "d ${vars.dirs.state}/qbittorrent/config 0755 media media -"
+    "d ${vars.dirs.state}/sonarr 0755 media media -"
+    "d ${vars.dirs.state}/radarr 0755 media media -"
+    "d ${vars.dirs.state}/prowlarr 0755 media media -"
   ];
 
-  users.groups.media.gid = gids.media;
+  users.groups.media.gid = vars.gids.media;
   users.users.media = {
     isSystemUser = true;
-    uid = uids.media;
+    uid = vars.uids.media;
     group = "media";
     createHome = false;
     extraGroups = ["video" "render"];
@@ -80,7 +75,7 @@ in {
         "6881:6881/udp" # Torrent UDP
       ];
       volumes = [
-        "${storage.state}/gluetun:/gluetun"
+        "${vars.dirs.state}/gluetun:/gluetun"
       ];
       environmentFiles = ["/root/secrets/mullvad.env"];
       environment = {
@@ -96,14 +91,14 @@ in {
       dependsOn = ["gluetun"];
       extraOptions = ["--network=container:gluetun"];
       environment = {
-        PUID = toString uids.media;
-        PGID = toString gids.media;
+        PUID = toString vars.uids.media;
+        PGID = toString vars.gids.media;
         TZ = "Europe/Amsterdam";
         WEBUI_PORT = "8080";
       };
       volumes = [
-        "${storage.state}/qbittorrent/config:/config"
-        "${storage.media}/downloads:/downloads"
+        "${vars.dirs.state}/qbittorrent/config:/config"
+        "${vars.dirs.media}/downloads:/downloads"
       ];
     };
 
@@ -112,12 +107,12 @@ in {
       dependsOn = ["gluetun"];
       extraOptions = ["--network=container:gluetun"];
       environment = {
-        PUID = toString uids.media;
-        PGID = toString gids.media;
+        PUID = toString vars.uids.media;
+        PGID = toString vars.gids.media;
         TZ = "Europe/Amsterdam";
       };
       volumes = [
-        "${storage.state}/prowlarr:/config"
+        "${vars.dirs.state}/prowlarr:/config"
       ];
     };
   };
