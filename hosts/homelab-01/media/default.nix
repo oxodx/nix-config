@@ -4,8 +4,6 @@
   ...
 }: let
   vars = import ./variables.nix;
-
-  storage.cache = "/var/cache";
 in {
   imports = mylib.scanPaths ./.;
 
