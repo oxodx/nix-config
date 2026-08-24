@@ -3,7 +3,7 @@
   lib,
   ...
 }: let
-  vars = import ./variables.nix;
+  vars = import ./_variables.nix;
   vUser = vars.services.seerr.user;
   vGroup = vars.services.seerr.group;
 

@@ -3,7 +3,7 @@
   lib,
   ...
 }: let
-  vars = import ./variables.nix;
+  vars = import ./_variables.nix;
   vUser = vars.services.sonarr.user;
   vGroup = vars.services.sonarr.group;
   vLibUser = vars.libraryOwner.user;

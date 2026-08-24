@@ -3,7 +3,7 @@
   mylib,
   ...
 }: let
-  vars = import ./variables.nix;
+  vars = import ./_variables.nix;
 in {
   imports = mylib.scanPaths ./.;
 

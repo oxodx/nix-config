@@ -1,5 +1,5 @@
 {pkgs, ...}: let
-  vars = import ./variables.nix;
+  vars = import ./_variables.nix;
   vUser = vars.services.jellyfin.user;
   vGroup = vars.services.jellyfin.group;
   vLibUser = vars.libraryOwner.user;
