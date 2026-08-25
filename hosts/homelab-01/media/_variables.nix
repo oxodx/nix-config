@@ -44,7 +44,7 @@ rec {
     };
     prowlarr = {
       user = "prowlarr";
-      group = "prowlarr";
+      group = libraryOwner.group;
     };
     jellyfin = {
       user = "jellyfin";

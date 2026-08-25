@@ -48,8 +48,8 @@ in {
   systemd.tmpfiles.rules = [
     "d '${stateDir}' 0700 ${vUser} root - -"
     "d '${stateDir}/config' 0700 ${vUser} root - -"
-    "d '${downloadDir}' 0775 ${vUser} ${vars.libraryOwner.group} - -"
-    "d '${downloadDir}/.incomplete' 0775 ${vUser} ${vars.libraryOwner.group} - -"
+    "d '${downloadDir}' 0775 ${vUser} media - -"
+    "d '${downloadDir}/.incomplete' 0775 ${vUser} media - -"
   ];
 
   services.qbittorrent = {
@@ -91,6 +91,7 @@ in {
       isSystemUser = true;
       group = vGroup;
       uid = vars.uids.${vUser};
+      extraGroups = ["media"];
     };
   };
 
