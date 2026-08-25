@@ -2,14 +2,13 @@
   lib,
   config,
   ...
-}:
-{
+}: {
   nixflix = {
     enable = true;
     stateDir = "/var/lib";
     mediaDir = "/mnt/media";
     downloadsDir = "/mnt/media/downloads";
-    mediaUsers = [ "oxod" ];
+    mediaUsers = ["oxod"];
 
     theme = {
       enable = true;
@@ -39,6 +38,11 @@
         apiKey._secret = "/root/secrets/radarr/api_key";
         hostConfig.password._secret = "/root/secrets/radarr/password";
       };
+    };
+
+    recyclarr = {
+      enable = true;
+      cleanupUnmanagedProfiles = true;
     };
 
     prowlarr = {
@@ -77,7 +81,7 @@
     vpn = {
       enable = true;
       wgConfFile = "/root/secrets/mullvad.conf";
-      accessibleFrom = [ "192.168.1.0/24" ];
+      accessibleFrom = ["192.168.1.0/24"];
     };
   };
 }
