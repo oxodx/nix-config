@@ -136,52 +136,24 @@ in {
       vpn-test = pkgs.writeShellApplication {
         name = "vpn-test";
         runtimeInputs = with pkgs; [
-          util-linux
-          unixtools.ping
           coreutils
           curl
-          bash
-          libressl
-          netcat-gnu
-          openresolv
           dig
         ];
-        text =
-          ''
-            cd "$(mktemp -d)"
+        text = ''
+          echo "=== VPN Confinement Test ==="
 
-            # DNS information
-            dig google.com
+          echo -e "\n--- DNS Resolution ---"
+          dig +short google.com
 
-            # Print resolv.conf
-            echo "/etc/resolv.conf contains:"
-            cat /etc/resolv.conf
+          echo -e "\n--- /etc/resolv.conf ---"
+          cat /etc/resolv.conf
 
-            # Check if resolvconf is available
-            if command -v resolvconf >/dev/null 2>&1; then
-              # Query resolvconf
-              echo "resolvconf output:"
-              resolvconf -l
-              echo ""
-            fi
+          echo -e "\n--- External IP ---"
+          curl -s https://ipinfo.io
 
-            # Get ip
-            echo "Getting IP:"
-            curl -s ipinfo.io
-
-            echo -ne "DNS leak test:"
-            curl -s https://raw.githubusercontent.com/macvk/dnsleaktest/b03ab54d574adbe322ca48cbcb0523be720ad38d/dnsleaktest.sh -o dnsleaktest.sh
-            chmod +x dnsleaktest.sh
-            ./dnsleaktest.sh
-          ''
-          + (
-            if vars.vpn.vpnTestService.port != null
-            then ''
-              echo "starting netcat on port ${toString vars.vpn.vpnTestService.port}:"
-              nc -vnlp ${toString vars.vpn.vpnTestService.port}
-            ''
-            else ""
-          );
+          echo -e "\n=== Test Complete ==="
+        '';
       };
     in "${vpn-test}/bin/vpn-test";
   };
