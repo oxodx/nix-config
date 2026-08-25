@@ -27,7 +27,7 @@ in
       };
       Preferences.WebUI = {
         Username = "oxod";
-        Password_PBKDF2 = "@ByteArray(E8Rb7a+iNYZVZ1syplyf4w==:6xklmx1436K9mMDS01lItuaacQYBXnDiP0rEAOtEJw0=)";
+        Password_PBKDF2 = "@ByteArray(RThSYjdhK2lOWVpWWjFzeXBseWY0dz09OmI4cE5SOGxPaWZIUmtsR3c0S1h0aVQrSGtuQlZGUXBucG9HZHBKakJYekpYSUgwMkZwU2c4dnI2Nmx3TU5aRWRmVlJVdlMzZE5zQU9ZMGRkZU95RUpRPT0=)";
       };
       General.Locale = "en";
     };
