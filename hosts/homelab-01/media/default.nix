@@ -40,12 +40,7 @@ in {
       accessibleFrom = ["192.168.1.0/24"];
     };
 
-    nginx = {
-      enable = true;
-      addHostsEntries = true;
-      domain = "oxod.nl";
-    };
-
+    nginx.enable = false;
     postgres.enable = true;
 
     recyclarr = {
