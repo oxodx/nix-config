@@ -1,42 +1,93 @@
 {
   nix = {
-    command = ["nixd"];
-    extensions = [".nix"];
+    command = [ "nixd" ];
+    extensions = [ ".nix" ];
+    settings = {
+      formatting = {
+        command = [ "alejandra" ];
+      };
+    };
   };
   html = {
-    command = ["vscode-html-language-server" "--stdio"];
-    extensions = [".html" ".htm"];
+    command = [
+      "vscode-html-language-server"
+      "--stdio"
+    ];
+    extensions = [
+      ".html"
+      ".htm"
+    ];
   };
   css = {
-    command = ["vscode-css-language-server" "--stdio"];
-    extensions = [".css" ".scss" ".less"];
+    command = [
+      "vscode-css-language-server"
+      "--stdio"
+    ];
+    extensions = [
+      ".css"
+      ".scss"
+      ".less"
+    ];
   };
   json = {
-    command = ["vscode-json-language-server" "--stdio"];
-    extensions = [".json" ".jsonc"];
+    command = [
+      "vscode-json-language-server"
+      "--stdio"
+    ];
+    extensions = [
+      ".json"
+      ".jsonc"
+    ];
   };
   svelte = {
-    command = ["svelteserver" "--stdio"];
-    extensions = [".svelte"];
+    command = [
+      "svelteserver"
+      "--stdio"
+    ];
+    extensions = [ ".svelte" ];
   };
   emmet = {
-    command = ["emmet-language-server" "--stdio"];
-    extensions = [".html" ".css" ".jsx" ".tsx" ".vue"];
+    command = [
+      "emmet-language-server"
+      "--stdio"
+    ];
+    extensions = [
+      ".html"
+      ".css"
+      ".jsx"
+      ".tsx"
+      ".vue"
+    ];
   };
   haskell = {
-    command = ["haskell-language-server-wrapper" "--lsp"];
-    extensions = [".hs" ".lhs"];
+    command = [
+      "haskell-language-server-wrapper"
+      "--lsp"
+    ];
+    extensions = [
+      ".hs"
+      ".lhs"
+    ];
   };
   python = {
-    command = ["pylsp"];
-    extensions = [".py" ".pyi"];
+    command = [ "pylsp" ];
+    extensions = [
+      ".py"
+      ".pyi"
+    ];
   };
   lua = {
-    command = ["lua-language-server"];
-    extensions = [".lua"];
+    command = [ "lua-language-server" ];
+    extensions = [ ".lua" ];
   };
   yaml = {
-    command = ["yaml-language-server" "--stdio"];
-    extensions = [".yaml" ".yml"];
+    command = [
+      "yaml-language-server"
+      "--stdio"
+    ];
+    extensions = [
+      ".yaml"
+      ".yml"
+    ];
   };
 }
