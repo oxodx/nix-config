@@ -46,15 +46,6 @@ in {
     extraGroups = ["video" "render"];
   };
 
-  services = {
-    radarr = {
-      enable = true;
-      openFirewall = true;
-      user = "media";
-      group = "media";
-    };
-  };
-
   virtualisation.oci-containers.containers = {
     gluetun = {
       image = "qmcgaw/gluetun:latest";
