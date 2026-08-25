@@ -3,9 +3,8 @@
   lib,
   ...
 }:
-with lib;
-let
-  secrets = import ../../lib/secrets { inherit lib; };
+with lib; let
+  secrets = import ../../lib/secrets {inherit lib;};
 
   categoriesOption = mkOption {
     type = types.submodule {
@@ -42,85 +41,85 @@ let
       };
     };
 
-    default = { };
+    default = {};
     description = "Categories per Starr service instance";
   };
 
-  mkDownloadClientType =
-    {
-      implementationName,
-      enable ? { },
-      dependencies ? { },
-      host ? { },
-      port ? { },
-      urlBase ? { },
-      extraOptions ? { },
-    }:
+  mkDownloadClientType = {
+    implementationName,
+    enable ? {},
+    dependencies ? {},
+    host ? {},
+    port ? {},
+    urlBase ? {},
+    extraOptions ? {},
+  }:
     types.submodule {
       freeformType = types.attrsOf types.anything;
-      options = {
-        enable = mkOption (
-          {
-            type = types.bool;
-            default = false;
-            description = "Whether or not this download client is enabled.";
-          }
-          // enable
-        );
+      options =
+        {
+          enable = mkOption (
+            {
+              type = types.bool;
+              default = false;
+              description = "Whether or not this download client is enabled.";
+            }
+            // enable
+          );
 
-        dependencies = mkOption (
-          {
-            type = types.listOf types.str;
-            default = [ ];
-            description = "systemd services that this integration depends on";
-          }
-          // dependencies
-        );
+          dependencies = mkOption (
+            {
+              type = types.listOf types.str;
+              default = [];
+              description = "systemd services that this integration depends on";
+            }
+            // dependencies
+          );
 
-        name = mkOption {
-          type = types.str;
-          default = implementationName;
-          description = "User-defined name for the download client instance.";
-        };
-
-        implementationName = mkOption {
-          type = types.str;
-          readOnly = true;
-          default = implementationName;
-          description = "Type of download client to configure (matches schema implementationName).";
-        };
-
-        host = mkOption (
-          {
+          name = mkOption {
             type = types.str;
-            description = "Host of the download client.";
-            default = "127.0.0.1";
-            example = "example.com";
-          }
-          // host
-        );
+            default = implementationName;
+            description = "User-defined name for the download client instance.";
+          };
 
-        port = mkOption (
-          {
-            type = types.port;
-            description = "Port of the download client.";
-            default = 8080;
-          }
-          // port
-        );
-
-        urlBase = mkOption (
-          {
+          implementationName = mkOption {
             type = types.str;
-            description = "Adds a prefix to the ${implementationName} url, such as http://[host]:[port]/[urlBase].";
-            default = "";
-          }
-          // urlBase
-        );
+            readOnly = true;
+            default = implementationName;
+            description = "Type of download client to configure (matches schema implementationName).";
+          };
 
-        categories = categoriesOption;
-      }
-      // extraOptions;
+          host = mkOption (
+            {
+              type = types.str;
+              description = "Host of the download client.";
+              default = "127.0.0.1";
+              example = "example.com";
+            }
+            // host
+          );
+
+          port = mkOption (
+            {
+              type = types.port;
+              description = "Port of the download client.";
+              default = 8080;
+            }
+            // port
+          );
+
+          urlBase = mkOption (
+            {
+              type = types.str;
+              description = "Adds a prefix to the ${implementationName} url, such as http://[host]:[port]/[urlBase].";
+              default = "";
+            }
+            // urlBase
+          );
+
+          categories = categoriesOption;
+        }
+        // extraOptions;
     };
 
   sabnzbdType = mkDownloadClientType {
@@ -131,7 +130,7 @@ let
       defaultText = literalExpression "config.nixflix.usenetClients.sabnzbd.enable";
     };
 
-    dependencies.default = [ "sabnzbd-categories.service" ];
+    dependencies.default = ["sabnzbd-categories.service"];
 
     host = {
       default = config.nixflix.usenetClients.sabnzbd.connectionAddress;
@@ -146,10 +145,9 @@ let
 
     urlBase = {
       default =
-        if config.nixflix.usenetClients.sabnzbd.settings.misc.url_base == "" then
-          ""
-        else
-          lib.removePrefix "/" config.nixflix.usenetClients.sabnzbd.settings.misc.url_base;
+        if config.nixflix.usenetClients.sabnzbd.settings.misc.url_base == ""
+        then ""
+        else lib.removePrefix "/" config.nixflix.usenetClients.sabnzbd.settings.misc.url_base;
       defaultText = literalExpression ''
         if config.nixflix.usenetClients.sabnzbd.settings.misc.url_base == "" then
           ""
@@ -177,15 +175,11 @@ let
       defaultText = literalExpression "config.nixflix.torrentClients.qbittorrent.enable";
     };
 
-    dependencies.default = [ "qbittorrent.service" ];
+    dependencies.default = ["qbittorrent.service"];
 
     host = {
-      default =
-        if config.nixflix.vpn.enable && config.nixflix.torrentClients.qbittorrent.vpn.enable then
-          "127.0.0.1"
-        else
-          config.nixflix.torrentClients.qbittorrent.connectionAddress;
-      defaultText = literalExpression "if config.nixflix.vpn.enable && config.nixflix.torrentClients.qbittorrent.vpn.enable then \"127.0.0.1\" else config.nixflix.torrentClients.qbittorrent.connectionAddress";
+      default = config.nixflix.torrentClients.qbittorrent.connectionAddress;
+      defaultText = literalExpression "config.nixflix.torrentClients.qbittorrent.connectionAddress";
     };
 
     port = {
@@ -284,8 +278,7 @@ let
       };
     };
   };
-in
-{
+in {
   options.nixflix.downloadarr = mkOption {
     type = types.submodule {
       options = {
@@ -296,37 +289,37 @@ in
         };
         sabnzbd = mkOption {
           type = sabnzbdType;
-          default = { };
+          default = {};
           description = "SABnzbd download client definition for Starr services.";
         };
 
         qbittorrent = mkOption {
           type = qbittorrentType;
-          default = { };
+          default = {};
           description = "qBittorrent download client definition for Starr services.";
         };
 
         rtorrent = mkOption {
           type = rtorrentType;
-          default = { };
+          default = {};
           description = "rTorrent download client definition for Starr services.";
         };
 
         deluge = mkOption {
           type = delugeType;
-          default = { };
+          default = {};
           description = "Deluge download client definition for Starr services.";
         };
 
         transmission = mkOption {
           type = transmissionType;
-          default = { };
+          default = {};
           description = "Transmission download client definition for Starr services.";
         };
 
         extraClients = mkOption {
           type = types.listOf (types.attrsOf types.anything);
-          default = [ ];
+          default = [];
           description = ''
             For more clients or if you have more than one instance of a specific client.
             Follows the same schema general schema as the other options. `implementationName` is a required field.
@@ -346,7 +339,7 @@ in
         };
       };
     };
-    default = { };
+    default = {};
     description = ''
       Downloadarr is a service that is responsible for configuring Starr services with download clients.
       When you enable the service for that client to run, Downloadarr integrates it automatically with each Starr service.

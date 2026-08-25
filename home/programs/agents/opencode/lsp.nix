@@ -1,10 +1,10 @@
 {
   nix = {
-    command = [ "nixd" ];
-    extensions = [ ".nix" ];
+    command = ["nixd"];
+    extensions = [".nix"];
     settings = {
       formatting = {
-        command = [ "alejandra" ];
+        command = ["alejandra"];
       };
     };
   };
@@ -44,7 +44,7 @@
       "svelteserver"
       "--stdio"
     ];
-    extensions = [ ".svelte" ];
+    extensions = [".svelte"];
   };
   emmet = {
     command = [
@@ -70,15 +70,15 @@
     ];
   };
   python = {
-    command = [ "pylsp" ];
+    command = ["pylsp"];
     extensions = [
       ".py"
       ".pyi"
     ];
   };
   lua = {
-    command = [ "lua-language-server" ];
-    extensions = [ ".lua" ];
+    command = ["lua-language-server"];
+    extensions = [".lua"];
   };
   yaml = {
     command = [

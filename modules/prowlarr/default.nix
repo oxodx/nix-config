@@ -57,7 +57,7 @@ in {
     })
     {
       nixflix.prowlarr.config = {
-        apiVersion = lib.mkDefault "v1";
+        apiVersion = "v1";
         hostConfig = {
           port = lib.mkDefault 9696;
           branch = lib.mkDefault "master";

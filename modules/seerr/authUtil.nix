@@ -16,7 +16,7 @@ in {
     set -euo pipefail
 
     SEERR_API_KEY=${secrets.toShellValue cfg.apiKey}
-    printf 'X-Api-Key: %s' "$SEERR_API_KEY" > "${apiKeyHeaderFile}"
+    printf 'X-Api-Key: %s\n' "$SEERR_API_KEY" > "${apiKeyHeaderFile}"
     chmod 600 "${apiKeyHeaderFile}"
   '';
 }
