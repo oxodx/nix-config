@@ -48,6 +48,13 @@ in {
 
   vpnNamespaces.wg = lib.mkIf vars.vpn.enable {
     enable = true;
+    portMappings = [
+      {
+        from = 8080;
+        to = 8080;
+        protocol = "tcp";
+      }
+    ];
     openVPNPorts = lib.optional (vars.vpn.vpnTestService.port != null) {
       port = vars.vpn.vpnTestService.port;
       protocol = "tcp";
