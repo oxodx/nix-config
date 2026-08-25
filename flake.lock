@@ -260,6 +260,7 @@
         "nixpkgs": "nixpkgs",
         "quickshell": "quickshell",
         "systems": "systems",
+        "vpn-confinement": "vpn-confinement",
         "zed-extensions": "zed-extensions"
       }
     },
@@ -317,6 +318,21 @@
       "original": {
         "owner": "numtide",
         "repo": "treefmt-nix",
+        "type": "github"
+      }
+    },
+    "vpn-confinement": {
+      "locked": {
+        "lastModified": 1785142579,
+        "narHash": "sha256-WEPxDMiKt3uGVVu/aorHnIgYYW62mEq2Q+rlN3qH6bg=",
+        "owner": "maroka-chan",
+        "repo": "vpn-confinement",
+        "rev": "b3aa71a7edfe6af748c23729d1bdec3b499741ff",
+        "type": "github"
+      },
+      "original": {
+        "owner": "maroka-chan",
+        "repo": "vpn-confinement",
         "type": "github"
       }
     },
