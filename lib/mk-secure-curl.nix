@@ -1,26 +1,30 @@
 {
   lib,
   pkgs,
-}: apiKeyValue: {
+}:
+apiKeyValue:
+{
   url,
   method ? "GET",
-  headers ? {},
+  headers ? { },
   data ? null,
   extraArgs ? "",
   silent ? true,
   apiKeyHeader ? "X-Api-Key",
-}: let
-  secrets = import ./secrets {inherit lib;};
+}:
+let
+  secrets = import ./secrets { inherit lib; };
 
   baseArgs = lib.optionalString silent "-s";
   methodArg = lib.optionalString (method != "GET") "-X ${method}";
 
   apiKeyHeaderArg =
-    if apiKeyValue == null
-    then ""
-    else if secrets.isSecretRef apiKeyValue
-    then ''--header "${apiKeyHeader}: $(${pkgs.coreutils}/bin/cat ${lib.escapeShellArg (toString apiKeyValue._secret)} | ${pkgs.gnused}/bin/tr -d '\\n')"''
-    else ''--header "${apiKeyHeader}: ${lib.escapeShellArg (toString apiKeyValue)}"'';
+    if apiKeyValue == null then
+      ""
+    else if secrets.isSecretRef apiKeyValue then
+      ''--header "${apiKeyHeader}: $(${pkgs.coreutils}/bin/cat ${lib.escapeShellArg (toString apiKeyValue._secret)} | ${pkgs.gnused}/bin/tr -d '\n' | ${pkgs.gnused}/bin/sed 's/"/\\"/g')"''
+    else
+      ''--header "${apiKeyHeader}: ${lib.escapeShellArg (toString apiKeyValue)}"'';
 
   otherHeaderArgs = lib.concatStringsSep " " (
     lib.mapAttrsToList (name: value: ''--header "${name}: ${value}"'') headers
@@ -36,13 +40,14 @@
   '';
 
   dataBinaryArg =
-    if data == null
-    then ""
-    else if lib.hasPrefix "@" data
-    then "-d ${data}"
-    else "--data-binary @$CURL_DATA_FILE";
+    if data == null then
+      ""
+    else if lib.hasPrefix "@" data then
+      "-d ${data}"
+    else
+      "--data-binary @$CURL_DATA_FILE";
 in
-  lib.optionalString (data != null) ''
-    ${dataHandling}
-  ''
-  + "${pkgs.curl}/bin/curl ${apiKeyHeaderArg} ${baseArgs} ${methodArg} ${dataBinaryArg} ${otherHeaderArgs} ${extraArgs} \"${url}\""
+lib.optionalString (data != null) ''
+  ${dataHandling}
+''
++ "${pkgs.curl}/bin/curl ${apiKeyHeaderArg} ${baseArgs} ${methodArg} ${dataBinaryArg} ${otherHeaderArgs} ${extraArgs} \"${url}\""
