@@ -59,6 +59,7 @@ in {
 
         inputs.agenix.nixosModules.default
         inputs.vpn-confinement.nixosModules.default
+        "${self}/lib/nixflix/modules"
       ];
   };
 }
