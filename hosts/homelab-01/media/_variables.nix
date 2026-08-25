@@ -24,6 +24,7 @@ rec {
   uids = {
     media = 999;
     qbittorrent = 998;
+    prowlarr = 996;
     jellyfin = 146;
     sonarr = 274;
     radarr = 275;
@@ -32,6 +33,7 @@ rec {
   gids = {
     media = 196;
     qbittorrent = 997;
+    prowlarr = 995;
     seerr = 250;
   };
 
@@ -39,6 +41,10 @@ rec {
     qbittorrent = {
       user = "qbittorrent";
       group = "qbittorrent";
+    };
+    prowlarr = {
+      user = "prowlarr";
+      group = "prowlarr";
     };
     jellyfin = {
       user = "jellyfin";
