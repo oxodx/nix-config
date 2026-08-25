@@ -5,6 +5,7 @@ in {
     sonarr = {
       enable = true;
       openFirewall = true;
+      mediaDirs = ["/mnt/media/library/shows"];
       config = {
         apiKey._secret = vars.secrets.sonarr.apiKey;
         hostConfig.password._secret = vars.secrets.sonarr.password;
