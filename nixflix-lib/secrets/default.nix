@@ -1,0 +1,141 @@
+{ lib }:
+with lib;
+let
+  secretOrStrType = types.oneOf [
+    types.str
+    (types.submodule {
+      options._secret = mkOption {
+        type = types.oneOf [
+          types.str
+          types.path
+        ];
+        description = "Path to a file containing the secret value";
+      };
+    })
+  ];
+in
+rec {
+  isSecretRef = value: (builtins.isAttrs value) && (value ? _secret) && !(value ? __unfix__);
+
+  toShellValue =
+    value:
+    if (builtins.isAttrs value) && (value ? _secret) && !(value ? __unfix__) then
+      "$(cat ${escapeShellArg value._secret})"
+    else
+      "${escapeShellArg (toString value)}";
+
+  mkSecretOption =
+    {
+      nullable ? false,
+      type ? secretOrStrType,
+      default ? null,
+      defaultText ? null,
+      example ? null,
+      description,
+    }:
+    mkOption {
+      inherit default defaultText;
+      type = if nullable then types.nullOr type else type;
+      example =
+        if example != null then
+          example
+        else
+          literalExpression ''{ _secret = "/run/secrets/secret-file"; }'';
+      description = ''
+        ${description}
+
+        !!! warning
+            Can be a plain string (visible in Nix store) or `{ _secret = /path/to/file; }` for file-based secrets.
+
+            Plain-text secrets will be visible in the Nix store. Use `{ _secret = path; }` for sensitive data.
+      '';
+    };
+
+  mkJqSecretArgs =
+    secretFields:
+    let
+      processedFields = lib.mapAttrs (
+        name: value:
+        if value == null then
+          {
+            flag = "--arg ${name} \"\"";
+            ref = "$" + name;
+          }
+        else if isSecretRef value then
+          {
+            flag = "--rawfile ${name}Content ${lib.escapeShellArg (toString value._secret)}";
+            ref = "($" + name + "Content | sub(\"\\n+$\"; \"\"))";
+          }
+        else
+          {
+            flag = "--arg ${name} ${lib.escapeShellArg (toString value)}";
+            ref = "$" + name;
+          }
+      ) secretFields;
+
+      flags = lib.mapAttrsToList (_name: field: field.flag) processedFields;
+      refs = lib.mapAttrs (_name: field: field.ref) processedFields;
+    in
+    {
+      inherit refs;
+      flagsString = lib.concatStringsSep " " flags;
+    };
+
+  # Recursively replace every ._secret ref with null, leaving all other
+  # values intact so builtins.toJSON produces safe JSON with no file paths.
+  stripSecretRefs =
+    value:
+    if isSecretRef value then
+      null
+    else if builtins.isAttrs value && !(value ? __unfix__) then
+      lib.mapAttrs (_: stripSecretRefs) value
+    else if builtins.isList value then
+      map stripSecretRefs value
+    else
+      value;
+
+  # Collect every ._secret ref in a nested structure as a list of
+  # { path = ["key" 0 "sub" ...]; file = "/runtime/path"; } records.
+  collectSecretRefsRec =
+    path: value:
+    if isSecretRef value then
+      [
+        {
+          inherit path;
+          file = toString value._secret;
+        }
+      ]
+    else if builtins.isAttrs value && !(value ? __unfix__) then
+      lib.concatLists (lib.mapAttrsToList (k: v: collectSecretRefsRec (path ++ [ k ]) v) value)
+    else if builtins.isList value then
+      lib.concatLists (lib.imap0 (i: v: collectSecretRefsRec (path ++ [ i ]) v) value)
+    else
+      [ ];
+
+  # Like mkJqSecretArgs but handles ._secret refs at any nesting depth.
+  # Returns { flagsString, assignments, hasSecrets } where assignments is a
+  # list of jq path-assignment strings ready to be joined with " | ".
+  mkNestedJqSecretArgs =
+    rawConfig:
+    let
+      allRefs = collectSecretRefsRec [ ] rawConfig;
+      indexedRefs = lib.imap0 (i: ref: ref // { varName = "nixflixSecret${toString i}"; }) allRefs;
+      flags = map (ref: "--rawfile ${ref.varName}Content ${lib.escapeShellArg ref.file}") indexedRefs;
+      assignments = map (
+        ref:
+        let
+          jqPath =
+            "."
+            + lib.concatMapStringsSep "" (
+              k: if builtins.isInt k then "[${toString k}]" else ''["${k}"]''
+            ) ref.path;
+        in
+        "${jqPath} = ($" + ref.varName + ''Content | sub("\n+$"; ""))''
+      ) indexedRefs;
+    in
+    {
+      flagsString = lib.concatStringsSep " " flags;
+      inherit assignments;
+      hasSecrets = allRefs != [ ];
+    };
+}

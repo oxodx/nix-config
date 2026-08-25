@@ -1,0 +1,41 @@
+{ lib, ... }:
+with lib;
+{
+  options.nixflix.globals = mkOption {
+    type = types.attrs;
+    description = "Global values to be used by nixflix services";
+    default = { };
+  };
+
+  config.nixflix.globals = {
+    libraryOwner.user = "root";
+    libraryOwner.group = "media";
+
+    uids = {
+      jellyfin = 146;
+      autobrr = 188;
+      bazarr = 232;
+      lidarr = 306;
+      navidrome = 282;
+      prowlarr = 293;
+      seerr = 262;
+      sonarr = 274;
+      sonarr-anime = 273;
+      radarr = 275;
+      recyclarr = 269;
+      sabnzbd = 38;
+      qbittorrent = 70;
+      cross-seed = 183;
+      maintainerr = 322;
+    };
+    gids = {
+      autobrr = 188;
+      cross-seed = 183;
+      jellyfin = 146;
+      seerr = 250;
+      media = 169;
+      prowlarr = 287;
+      recyclarr = 269;
+    };
+  };
+}
