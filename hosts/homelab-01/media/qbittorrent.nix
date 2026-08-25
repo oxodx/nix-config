@@ -12,11 +12,17 @@
 
     serverConfig = {
       LegalNotice.Accepted = true;
-      BitTorrent.Session = {
-        AddTorrentStopped = false;
-        Port = 45500;
-        QueueingSystemEnabled = true;
-        SSL.Port = 32380;
+      BitTorrent = {
+        Session = {
+          AddTorrentStopped = false;
+          Port = 45500;
+          QueueingSystemEnabled = true;
+          SSL.Port = 32380;
+        };
+        ShareLimits = {
+          RatioLimit = 0;
+          RatioAction = 0;
+        };
       };
       Preferences.WebUI = {
         Username = "oxod";
