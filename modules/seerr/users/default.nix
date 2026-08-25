@@ -38,14 +38,19 @@ in {
 
         BASE_URL="${baseUrl}"
 
-        # Authenticate
-        source ${authUtil.authScript}
-
         echo "Configuring default user settings..."
 
-        # POST user settings (endpoint accepts partial documents)
+        # Use session cookie from setup service if available (API key alone
+        # lacks admin perms until an admin user has been created via Jellyfin auth)
+        AUTH_ARGS=""
+        if [ -f "${authUtil.cookieFile}" ]; then
+          AUTH_ARGS="-b ${authUtil.cookieFile}"
+        else
+          AUTH_ARGS="${authUtil.curlAuthArgs}"
+        fi
+
         SETTINGS_RESPONSE=$(${pkgs.curl}/bin/curl -s -X POST \
-          ${authUtil.curlAuthArgs} \
+          $AUTH_ARGS \
           -H "Content-Type: application/json" \
           -d '${userSettingsJson}' \
           -w "\n%{http_code}" \

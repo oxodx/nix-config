@@ -15,17 +15,12 @@
   baseArgs = lib.optionalString silent "-s";
   methodArg = lib.optionalString (method != "GET") "-X ${method}";
 
-  apiKeyVariable =
-    if apiKeyValue == null
-    then ""
-    else if secrets.isSecretRef apiKeyValue
-    then "--variable apiKey@${lib.escapeShellArg (toString apiKeyValue._secret)}"
-    else "--variable apiKey=${lib.escapeShellArg (toString apiKeyValue)}";
-
   apiKeyHeaderArg =
     if apiKeyValue == null
     then ""
-    else ''--expand-header "${apiKeyHeader}: {{apiKey:trim}}"'';
+    else if secrets.isSecretRef apiKeyValue
+    then ''--header "${apiKeyHeader}: $(${pkgs.coreutils}/bin/cat ${lib.escapeShellArg (toString apiKeyValue._secret)} | ${pkgs.gnused}/bin/tr -d '\\n')"''
+    else ''--header "${apiKeyHeader}: ${lib.escapeShellArg (toString apiKeyValue)}"'';
 
   otherHeaderArgs = lib.concatStringsSep " " (
     lib.mapAttrsToList (name: value: ''--header "${name}: ${value}"'') headers
@@ -50,4 +45,4 @@ in
   lib.optionalString (data != null) ''
     ${dataHandling}
   ''
-  + "${pkgs.curl}/bin/curl ${apiKeyVariable} ${apiKeyHeaderArg} ${baseArgs} ${methodArg} ${dataBinaryArg} ${otherHeaderArgs} ${extraArgs} \"${url}\""
+  + "${pkgs.curl}/bin/curl ${apiKeyHeaderArg} ${baseArgs} ${methodArg} ${dataBinaryArg} ${otherHeaderArgs} ${extraArgs} \"${url}\""
