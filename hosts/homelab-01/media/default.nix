@@ -149,6 +149,7 @@ in
             netcat-gnu
             openresolv
             dig
+            jq
           ];
           text = ''
             cd "$(mktemp -d)"
