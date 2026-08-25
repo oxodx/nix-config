@@ -249,13 +249,14 @@ in {
       systemd.services.qbittorrent = {
         after = ["nixflix-setup-dirs.service"] ++ config.nixflix.serviceDependencies;
         requires = ["nixflix-setup-dirs.service"] ++ config.nixflix.serviceDependencies;
-        preStart = lib.mkIf (cfg.categories != {}) (
-          lib.mkAfter ''
+        preStart = lib.mkAfter ''
+          rm -f '${configPath}/qBittorrent-data.conf'
+          ${lib.optionalString (cfg.categories != {}) ''
             cp -f '${categoriesFile}' '${configPath}/categories.json'
             chmod 640 '${configPath}/categories.json'
             chown ${service.user}:${service.group} '${configPath}/categories.json'
-          ''
-        );
+          ''}
+        '';
       };
     }
     (mkIf (config.nixflix.vpn.enable && cfg.vpn.enable) {
