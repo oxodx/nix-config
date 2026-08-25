@@ -67,6 +67,7 @@
 
     seerr = {
       enable = true;
+      openFirewall = true;
       apiKey._secret = "/root/secrets/seerr/api_key";
     };
 
@@ -127,7 +128,12 @@
         enableDecodingColorDepth12HevcRext = false;
         enableEnhancedNvdecDecoder = true;
         preferSystemNativeHwDecoder = true;
-        hardwareDecodingCodecs = ["h264" "hevc" "mpeg2video" "vc1"];
+        hardwareDecodingCodecs = [
+          "h264"
+          "hevc"
+          "mpeg2video"
+          "vc1"
+        ];
         enableIntelLowPowerH264HwEncoder = true;
         enableIntelLowPowerHevcHwEncoder = true;
         enableSubtitleExtraction = true;
@@ -137,39 +143,21 @@
       libraries = {
         Shows = {
           collectionType = "tvshows";
-          paths = "/mnt/media/library/shows";
+          paths = ["/mnt/media/library/shows"];
           typeOptions = [
             {
               type = "Series";
-              imageFetchers = [
-                "TheMovieDb"
-              ];
-              imageFetcherOrder = [
-                "TheMovieDb"
-              ];
-              metadataFetchers = [
-                "TheMovieDb"
-                "The Open Movie Database"
-              ];
-              metadataFetcherOrder = [
-                "TheMovieDb"
-                "The Open Movie Database"
-              ];
+              imageFetchers = ["TheMovieDb"];
+              imageFetcherOrder = ["TheMovieDb"];
+              metadataFetchers = ["TheMovieDb" "The Open Movie Database"];
+              metadataFetcherOrder = ["TheMovieDb" "The Open Movie Database"];
             }
             {
               type = "Season";
-              imageFetchers = [
-                "TheMovieDb"
-              ];
-              imageFetcherOrder = [
-                "TheMovieDb"
-              ];
-              metadataFetchers = [
-                "TheMovieDb"
-              ];
-              metadataFetcherOrder = [
-                "TheMovieDb"
-              ];
+              imageFetchers = ["TheMovieDb"];
+              imageFetcherOrder = ["TheMovieDb"];
+              metadataFetchers = ["TheMovieDb"];
+              metadataFetcherOrder = ["TheMovieDb"];
             }
             {
               type = "Episode";
@@ -185,10 +173,8 @@
                 "Embedded Image Extractor"
                 "Screen Grabber"
               ];
-              metadataFetchers = [
-                "TheMovieDb"
-                "The Open Movie Database"
-              ];
+              metadataFetchers = ["TheMovieDb"
+                "The Open Movie Database"];
               metadataFetcherOrder = [
                 "TheMovieDb"
                 "The Open Movie Database"
@@ -198,7 +184,7 @@
         };
         Anime = {
           collectionType = "tvshows";
-          paths = "/mnt/media/library/anime";
+          paths = ["/mnt/media/library/anime"];
           typeOptions = [
             {
               type = "Series";
@@ -331,4 +317,6 @@
       accessibleFrom = ["192.168.1.0/24"];
     };
   };
+
+  networking.firewall.allowedTCPPorts = [8282];
 }
