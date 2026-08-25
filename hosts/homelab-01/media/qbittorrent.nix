@@ -32,10 +32,7 @@
     };
     Preferences = {
       "WebUI\\Port" = webuiPort;
-      "WebUI\\Address" =
-        if vars.vpn.enable
-        then "192.168.15.1"
-        else "*";
+      "WebUI\\Address" = "*";
       "WebUI\\LocalHostAuth" = false;
       "WebUI\\HostHeaderValidation" = false;
       "Downloads\\SavePath" = downloadDir;
