@@ -3,7 +3,8 @@
   pkgs,
   config,
   ...
-}: {
+}:
+{
   hardware.graphics = {
     extraPackages = with pkgs; [
       intel-media-driver
@@ -22,7 +23,7 @@
     stateDir = "/var/lib";
     mediaDir = "/mnt/media";
     downloadsDir = "/mnt/media/downloads";
-    mediaUsers = ["oxod"];
+    mediaUsers = [ "oxod" ];
 
     theme = {
       enable = true;
@@ -78,12 +79,13 @@
 
       branding = {
         customCss =
-          if config.nixflix.theme.enable
-          then ''@import url("https://theme-park.dev/css/base/jellyfin/${config.nixflix.theme.name}.css");''
-          else "";
+          if config.nixflix.theme.enable then
+            ''@import url("https://theme-park.dev/css/base/jellyfin/${config.nixflix.theme.name}.css");''
+          else
+            "";
         loginDisclaimer = "";
         splashscreenEnabled = false;
-        splashscreenLocation = [];
+        splashscreenLocation = [ ];
       };
 
       encoding = {
@@ -137,18 +139,18 @@
         enableIntelLowPowerH264HwEncoder = true;
         enableIntelLowPowerHevcHwEncoder = true;
         enableSubtitleExtraction = true;
-        allowOnDemandMetadataBasedKeyframeExtractionForExtensions = ["mkv"];
+        allowOnDemandMetadataBasedKeyframeExtractionForExtensions = [ "mkv" ];
       };
 
       libraries = {
         Shows = {
           collectionType = "tvshows";
-          paths = ["/mnt/media/library/shows"];
+          paths = [ "/mnt/media/library/shows" ];
           typeOptions = [
             {
               type = "Series";
-              imageFetchers = ["TheMovieDb"];
-              imageFetcherOrder = ["TheMovieDb"];
+              imageFetchers = [ "TheMovieDb" ];
+              imageFetcherOrder = [ "TheMovieDb" ];
               metadataFetchers = [
                 "TheMovieDb"
                 "The Open Movie Database"
@@ -160,10 +162,10 @@
             }
             {
               type = "Season";
-              imageFetchers = ["TheMovieDb"];
-              imageFetcherOrder = ["TheMovieDb"];
-              metadataFetchers = ["TheMovieDb"];
-              metadataFetcherOrder = ["TheMovieDb"];
+              imageFetchers = [ "TheMovieDb" ];
+              imageFetcherOrder = [ "TheMovieDb" ];
+              metadataFetchers = [ "TheMovieDb" ];
+              metadataFetcherOrder = [ "TheMovieDb" ];
             }
             {
               type = "Episode";
@@ -192,7 +194,7 @@
         };
         Anime = {
           collectionType = "tvshows";
-          paths = ["/mnt/media/library/anime"];
+          paths = [ "/mnt/media/library/anime" ];
           typeOptions = [
             {
               type = "Series";
@@ -269,7 +271,7 @@
         };
         Movies = {
           collectionType = "movies";
-          paths = ["/mnt/media/library/movies"];
+          paths = [ "/mnt/media/library/movies" ];
           typeOptions = [
             {
               type = "Movie";
@@ -298,7 +300,7 @@
         };
         Music = {
           collectionType = "music";
-          paths = /mnt/media/library/music;
+          paths = [ "/mnt/media/library/music" ];
         };
       };
 
@@ -322,9 +324,9 @@
     vpn = {
       enable = true;
       wgConfFile = "/root/secrets/mullvad.conf";
-      accessibleFrom = ["192.168.1.0/24"];
+      accessibleFrom = [ "192.168.1.0/24" ];
     };
   };
 
-  networking.firewall.allowedTCPPorts = [8282];
+  networking.firewall.allowedTCPPorts = [ 8282 ];
 }
