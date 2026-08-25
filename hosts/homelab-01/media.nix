@@ -2,14 +2,13 @@
   lib,
   config,
   ...
-}:
-{
+}: {
   nixflix = {
     enable = true;
     stateDir = "/var/lib";
     mediaDir = "/mnt/media";
     downloadsDir = "/mnt/media/downloads";
-    mediaUsers = [ "oxod" ];
+    mediaUsers = ["oxod"];
 
     theme = {
       enable = true;
@@ -19,6 +18,7 @@
     nginx = {
       enable = true;
       addHostsEntries = true;
+      domain = "homelab.local";
     };
 
     postgres.enable = true;
@@ -82,7 +82,7 @@
     vpn = {
       enable = true;
       wgConfFile = "/root/secrets/mullvad.conf";
-      accessibleFrom = [ "192.168.1.0/24" ];
+      accessibleFrom = ["192.168.1.0/24"];
     };
   };
 }
