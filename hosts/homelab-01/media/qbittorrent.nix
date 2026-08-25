@@ -83,6 +83,10 @@ in {
         port = peerPort;
         protocol = "both";
       }
+      {
+        port = internalPort;
+        protocol = "tcp";
+      }
     ];
   };
 
