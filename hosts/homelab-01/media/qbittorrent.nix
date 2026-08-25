@@ -13,6 +13,7 @@
   downloadDir = "${vars.dirs.media}/downloads";
   openFirewall = true;
   webuiPort = 8080;
+  internalPort = 8085;
   peerPort = 6881;
 
   qbittorrentConfig = {
@@ -31,8 +32,11 @@
       "Session\\MaxActiveUploads" = 10;
     };
     Preferences = {
-      "WebUI\\Port" = webuiPort;
-      "WebUI\\Address" = "*";
+      "WebUI\\Port" = internalPort;
+      "WebUI\\Address" =
+        if vars.vpn.enable
+        then "192.168.15.1"
+        else "*";
       "WebUI\\LocalHostAuth" = false;
       "WebUI\\HostHeaderValidation" = false;
       "Downloads\\SavePath" = downloadDir;
@@ -61,7 +65,7 @@ in {
     group = vGroup;
 
     profileDir = stateDir;
-    webuiPort = webuiPort;
+    webuiPort = internalPort;
     torrentingPort = peerPort;
     serverConfig = qbittorrentConfig;
   };
@@ -80,6 +84,27 @@ in {
         protocol = "both";
       }
     ];
+  };
+
+  services.nginx = lib.mkIf vars.vpn.enable {
+    enable = true;
+    recommendedTlsSettings = true;
+    recommendedOptimisation = true;
+    recommendedGzipSettings = true;
+
+    virtualHosts."127.0.0.1:${toString webuiPort}" = {
+      listen = [
+        {
+          addr = "0.0.0.0";
+          port = webuiPort;
+        }
+      ];
+      locations."/" = {
+        recommendedProxySettings = true;
+        proxyWebsockets = true;
+        proxyPass = "http://192.168.15.1:${toString internalPort}";
+      };
+    };
   };
 
   users = {
