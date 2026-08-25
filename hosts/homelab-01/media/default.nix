@@ -3,14 +3,16 @@
   pkgs,
   mylib,
   ...
-}: let
+}:
+let
   vars = import ./_variables.nix;
-in {
+in
+{
   imports = mylib.scanPaths ./.;
 
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [8080];
+    allowedTCPPorts = [ 8080 ];
   };
 
   hardware.graphics = {
@@ -53,7 +55,7 @@ in {
   virtualisation.oci-containers.containers = {
     gluetun = {
       image = "qmcgaw/gluetun:latest";
-      extraOptions = ["--cap-add=NET_ADMIN"];
+      extraOptions = [ "--cap-add=NET_ADMIN" ];
       ports = [
         "8080:8080" # qBittorrent Web UI
         "9696:9696" # Prowlarr Web UI
@@ -63,7 +65,7 @@ in {
       volumes = [
         "${vars.dirs.state}/gluetun:/gluetun"
       ];
-      environmentFiles = ["/root/secrets/mullvad.env"];
+      environmentFiles = [ "/root/secrets/mullvad.env" ];
       environment = {
         VPN_SERVICE_PROVIDER = "mullvad";
         VPN_TYPE = "wireguard";
@@ -74,8 +76,8 @@ in {
 
     qbittorrent = {
       image = "linuxserver/qbittorrent:latest";
-      dependsOn = ["gluetun"];
-      extraOptions = ["--network=container:gluetun"];
+      dependsOn = [ "gluetun" ];
+      extraOptions = [ "--network=container:gluetun" ];
       environment = {
         PUID = toString vars.uids.media;
         PGID = toString vars.gids.media;
@@ -90,8 +92,8 @@ in {
 
     prowlarr = {
       image = "linuxserver/prowlarr:latest";
-      dependsOn = ["gluetun"];
-      extraOptions = ["--network=container:gluetun"];
+      dependsOn = [ "gluetun" ];
+      extraOptions = [ "--network=container:gluetun" ];
       environment = {
         PUID = toString vars.uids.media;
         PGID = toString vars.gids.media;
@@ -111,13 +113,14 @@ in {
     };
     accessibleFrom =
       (
-        if vars.vpn.exposeOnLAN
-        then [
-          "10.0.0.0/8"
-          "172.16.0.0/12"
-          "192.168.0.0/16"
-        ]
-        else ["127.0.0.1"]
+        if vars.vpn.exposeOnLAN then
+          [
+            "10.0.0.0/8"
+            "172.16.0.0/12"
+            "192.168.0.0/16"
+          ]
+        else
+          [ "127.0.0.1" ]
       )
       ++ vars.vpn.accessibleFrom;
     wireguardConfigFile = vars.vpn.wgConf;
@@ -125,36 +128,66 @@ in {
 
   systemd.services.vpn-test-service = lib.mkIf vars.vpn.vpnTestService.enable {
     enable = true;
-    wantedBy = ["multi-user.target"];
+    wantedBy = [ "multi-user.target" ];
 
     vpnConfinement = {
       enable = true;
       vpnNamespace = "wg";
     };
 
-    script = let
-      vpn-test = pkgs.writeShellApplication {
-        name = "vpn-test";
-        runtimeInputs = with pkgs; [
-          coreutils
-          curl
-          dig
-        ];
-        text = ''
-          echo "=== VPN Confinement Test ==="
+    script =
+      let
+        vpn-test = pkgs.writeShellApplication {
+          name = "vpn-test";
+          runtimeInputs = with pkgs; [
+            util-linux
+            unixtools.ping
+            coreutils
+            curl
+            bash
+            libressl
+            netcat-gnu
+            openresolv
+            dig
+          ];
+          text = ''
+            cd "$(mktemp -d)"
 
-          echo -e "\n--- DNS Resolution ---"
-          dig +short google.com
+            echo "=== VPN Confinement Test ==="
 
-          echo -e "\n--- /etc/resolv.conf ---"
-          cat /etc/resolv.conf
+            echo -e "\n--- DNS Resolution ---"
+            dig google.com
 
-          echo -e "\n--- External IP ---"
-          curl -s https://ipinfo.io
+            echo -e "\n--- /etc/resolv.conf ---"
+            cat /etc/resolv.conf
 
-          echo -e "\n=== Test Complete ==="
-        '';
-      };
-    in "${vpn-test}/bin/vpn-test";
+            if command -v resolvconf >/dev/null 2>&1; then
+              echo -e "\n--- resolvconf output ---"
+              resolvconf -l || true
+            fi
+
+            echo -e "\n--- External IP ---"
+            curl -s https://ipinfo.io || true
+
+            echo -e "\n--- DNS Leak Test ---"
+            curl -s https://raw.githubusercontent.com/macvk/dnsleaktest/b03ab54d574adbe322ca48cbcb0523be720ad38d/dnsleaktest.sh -o dnsleaktest.sh || true
+            chmod +x dnsleaktest.sh || true
+            ./dnsleaktest.sh || true
+
+            echo -e "\n=== Test Complete ==="
+          ''
+          + (
+            if vars.vpn.vpnTestService.port != null then
+              ''
+
+                echo -e "\n--- Listening on port ${toString vars.vpn.vpnTestService.port} ---"
+                nc -vnlp ${toString vars.vpn.vpnTestService.port}
+              ''
+            else
+              ""
+          );
+        };
+      in
+      "${vpn-test}/bin/vpn-test";
   };
 }
