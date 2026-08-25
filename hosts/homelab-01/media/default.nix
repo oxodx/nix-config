@@ -44,8 +44,6 @@ in {
       enable = true;
       addHostsEntries = true;
       domain = "oxod.nl";
-      forceSSL = true;
-      enableACME = true;
     };
 
     postgres.enable = true;
