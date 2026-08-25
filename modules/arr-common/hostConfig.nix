@@ -281,6 +281,23 @@ in {
       {
         systemd.services."${serviceName}-config" = let
           hc = cfg.config.hostConfig;
+          # The config service runs in the host namespace. When the target
+          # service is VPN-confined, its bindAddress is a VPN-internal IP
+          # that is unreachable from the host. Use 127.0.0.1 instead, which
+          # reaches the service via the vpnNamespaces port mapping.
+          apiAddress =
+            if config.nixflix.vpn.enable && cfg.vpn.enable
+            then "127.0.0.1"
+            else hc.bindAddress;
+          apiConfig =
+            cfg.config
+            // {
+              hostConfig =
+                cfg.config.hostConfig
+                // {
+                  bindAddress = apiAddress;
+                };
+            };
           jqSecrets = secrets.mkJqSecretArgs {
             inherit (cfg.config) apiKey;
             inherit
@@ -302,14 +319,14 @@ in {
           serviceConfig = {
             Type = "oneshot";
             RemainAfterExit = true;
-            ExecStartPre = mkWaitForApiScript serviceName cfg.config;
-            ExecStartPost = mkWaitForApiScript serviceName cfg.config;
+            ExecStartPre = mkWaitForApiScript serviceName apiConfig;
+            ExecStartPost = mkWaitForApiScript serviceName apiConfig;
           };
 
           script = ''
             set -eu
 
-            BASE_URL="http://${hc.bindAddress}:${builtins.toString hc.port}${hc.urlBase}/api/${cfg.config.apiVersion}"
+            BASE_URL="http://${apiAddress}:${builtins.toString hc.port}${hc.urlBase}/api/${cfg.config.apiVersion}"
 
             echo "Fetching current host configuration..."
             HOST_CONFIG=$(${
