@@ -2,13 +2,14 @@
   lib,
   config,
   ...
-}: {
+}:
+{
   nixflix = {
     enable = true;
     stateDir = "/var/lib";
     mediaDir = "/mnt/media";
     downloadsDir = "/mnt/media/downloads";
-    mediaUsers = ["oxod"];
+    mediaUsers = [ "oxod" ];
 
     theme = {
       enable = true;
@@ -45,13 +46,13 @@
       openFirewall = true;
       config = {
         apiKey._secret = "/root/secrets/prowlarr/api_key";
-        hostConfig.password._secret = "/root/secrets/prowlarr/password";};
+        hostConfig.password._secret = "/root/secrets/prowlarr/password";
       };
     };
 
     seerr = {
-    	enable = true;
-     	apiKey._secret = "/root/secrets/seerr/api_key";
+      enable = true;
+      apiKey._secret = "/root/secrets/seerr/api_key";
     };
 
     jellyfin = {
@@ -59,11 +60,11 @@
       openFirewall = true;
       apiKey._secret = "/root/secrets/jellyfin/api_key";
       users = {
-	      oxod = {
-		      mutable = false;
-	        policy.isAdministrator = true;
-	        password._secret = "/root/secrets/jellyfin/passwords/oxod";
-	      };
+        oxod = {
+          mutable = false;
+          policy.isAdministrator = true;
+          password._secret = "/root/secrets/jellyfin/passwords/oxod";
+        };
       };
     };
 
