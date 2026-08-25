@@ -59,7 +59,7 @@ in {
 
         inputs.agenix.nixosModules.default
         inputs.vpn-confinement.nixosModules.default
-        "${self}/nixflix-modules"
+        "${self}/modules"
       ];
   };
 }
