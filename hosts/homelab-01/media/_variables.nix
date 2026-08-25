@@ -1,13 +1,11 @@
 rec {
-  secrets =
-    "root/secrets/"
-    ++ {
-      vpn = "mullvad.conf";
-      jellyfin = {
-        apiKey = "jellyfin/api_key";
-        passwords = {
-          oxod = "jellyfin/passwords/oxod";
-        };
+  secrets = {
+    vpn = "root/secrets/mullvad.conf";
+    jellyfin = {
+      apiKey = "root/secrets/jellyfin/api_key";
+      passwords = {
+        oxod = "root/secrets/jellyfin/passwords/oxod";
       };
     };
+  };
 }
