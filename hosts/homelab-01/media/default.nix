@@ -47,38 +47,5 @@ in {
       enable = true;
       cleanupUnmanagedProfiles.enable = true;
     };
-
-    sonarr = {
-      enable = true;
-      openFirewall = true;
-      config = {
-        apiKey._secret = "/root/secrets/sonarr/api_key";
-        hostConfig.password._secret = "/root/secrets/sonarr/password";
-      };
-    };
-
-    radarr = {
-      enable = true;
-      openFirewall = true;
-      config = {
-        apiKey._secret = "/root/secrets/radarr/api_key";
-        hostConfig.password._secret = "/root/secrets/radarr/password";
-      };
-    };
-
-    prowlarr = {
-      enable = true;
-      openFirewall = true;
-      config = {
-        apiKey._secret = "/root/secrets/prowlarr/api_key";
-        hostConfig.password._secret = "/root/secrets/prowlarr/password";
-      };
-    };
-
-    seerr = {
-      enable = true;
-      openFirewall = true;
-      apiKey._secret = "/root/secrets/seerr/api_key";
-    };
   };
 }
