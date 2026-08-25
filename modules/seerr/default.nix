@@ -186,12 +186,14 @@ in {
             ++ optional (
               config.nixflix.recyclarr.enable && config.nixflix.recyclarr.cleanupUnmanagedProfiles.enable
             ) "recyclarr-cleanup-profiles.service";
-
           wants =
             [
               "network-online.target"
             ]
-            ++ optional config.nixflix.recyclarr.enable "recyclarr.service";
+            ++ optional config.nixflix.recyclarr.enable "recyclarr.service"
+            ++ optional (
+              config.nixflix.recyclarr.enable && config.nixflix.recyclarr.cleanupUnmanagedProfiles.enable
+            ) "recyclarr-cleanup-profiles.service";
 
           requires =
             [
@@ -200,10 +202,7 @@ in {
             ++ optional config.nixflix.jellyfin.enable "jellyfin-setup-wizard.service"
             ++ optional config.nixflix.jellyfin.enable "jellyfin-plugins.service"
             ++ optional (cfg.apiKey != null) "seerr-env.service"
-            ++ optional config.nixflix.postgres.enable "postgresql-ready.target"
-            ++ optional (
-              config.nixflix.recyclarr.enable && config.nixflix.recyclarr.cleanupUnmanagedProfiles.enable
-            ) "recyclarr-cleanup-profiles.service";
+            ++ optional config.nixflix.postgres.enable "postgresql-ready.target";
 
           wantedBy = ["multi-user.target"];
 
