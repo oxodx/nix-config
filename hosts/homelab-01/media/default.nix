@@ -44,7 +44,10 @@ in {
     uid = vars.uids.media;
     group = "media";
     createHome = false;
-    extraGroups = ["video" "render"];
+    extraGroups = [
+      "video"
+      "render"
+    ];
   };
 
   virtualisation.oci-containers.containers = {
@@ -122,6 +125,7 @@ in {
 
   systemd.services.vpn-test-service = lib.mkIf vars.vpn.vpnTestService.enable {
     enable = true;
+    wantedBy = ["multi-user.target"];
 
     vpnConfinement = {
       enable = true;
@@ -131,7 +135,17 @@ in {
     script = let
       vpn-test = pkgs.writeShellApplication {
         name = "vpn-test";
-        runtimeInputs = with pkgs; [util-linux unixtools.ping coreutils curl bash libressl netcat-gnu openresolv dig];
+        runtimeInputs = with pkgs; [
+          util-linux
+          unixtools.ping
+          coreutils
+          curl
+          bash
+          libressl
+          netcat-gnu
+          openresolv
+          dig
+        ];
         text =
           ''
             cd "$(mktemp -d)"
