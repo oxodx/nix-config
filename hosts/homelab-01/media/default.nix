@@ -3,16 +3,13 @@
   pkgs,
   mylib,
   ...
-}:
-let
+}: let
   vars = import ./_variables.nix;
-in
-{
+in {
   imports = mylib.scanPaths ./.;
 
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [ 8080 ];
   };
 
   hardware.graphics = {
@@ -32,9 +29,6 @@ in
     "d ${vars.dirs.media} 0775 media media -"
     "d ${vars.dirs.media}/downloads 0775 media media -"
 
-    "d ${vars.dirs.state}/gluetun 0755 root root -"
-    "d ${vars.dirs.state}/qbittorrent 0755 media media -"
-    "d ${vars.dirs.state}/qbittorrent/config 0755 media media -"
     "d ${vars.dirs.state}/sonarr 0755 media media -"
     "d ${vars.dirs.state}/radarr 0755 media media -"
     "d ${vars.dirs.state}/prowlarr 0755 media media -"
@@ -52,59 +46,6 @@ in
     ];
   };
 
-  virtualisation.oci-containers.containers = {
-    gluetun = {
-      image = "qmcgaw/gluetun:latest";
-      extraOptions = [ "--cap-add=NET_ADMIN" ];
-      ports = [
-        "8080:8080" # qBittorrent Web UI
-        "9696:9696" # Prowlarr Web UI
-        "6881:6881" # Torrent TCP
-        "6881:6881/udp" # Torrent UDP
-      ];
-      volumes = [
-        "${vars.dirs.state}/gluetun:/gluetun"
-      ];
-      environmentFiles = [ "/root/secrets/mullvad.env" ];
-      environment = {
-        VPN_SERVICE_PROVIDER = "mullvad";
-        VPN_TYPE = "wireguard";
-        SERVER_COUNTRIES = "Sweden";
-        FIREWALL_OUTBOUND_SUBNETS = "192.168.1.0/24";
-      };
-    };
-
-    qbittorrent = {
-      image = "linuxserver/qbittorrent:latest";
-      dependsOn = [ "gluetun" ];
-      extraOptions = [ "--network=container:gluetun" ];
-      environment = {
-        PUID = toString vars.uids.media;
-        PGID = toString vars.gids.media;
-        TZ = "Europe/Amsterdam";
-        WEBUI_PORT = "8080";
-      };
-      volumes = [
-        "${vars.dirs.state}/qbittorrent/config:/config"
-        "${vars.dirs.media}/downloads:/downloads"
-      ];
-    };
-
-    prowlarr = {
-      image = "linuxserver/prowlarr:latest";
-      dependsOn = [ "gluetun" ];
-      extraOptions = [ "--network=container:gluetun" ];
-      environment = {
-        PUID = toString vars.uids.media;
-        PGID = toString vars.gids.media;
-        TZ = "Europe/Amsterdam";
-      };
-      volumes = [
-        "${vars.dirs.state}/prowlarr:/config"
-      ];
-    };
-  };
-
   vpnNamespaces.wg = lib.mkIf vars.vpn.enable {
     enable = true;
     openVPNPorts = lib.optional (vars.vpn.vpnTestService.port != null) {
@@ -113,14 +54,13 @@ in
     };
     accessibleFrom =
       (
-        if vars.vpn.exposeOnLAN then
-          [
-            "10.0.0.0/8"
-            "172.16.0.0/12"
-            "192.168.0.0/16"
-          ]
-        else
-          [ "127.0.0.1" ]
+        if vars.vpn.exposeOnLAN
+        then [
+          "10.0.0.0/8"
+          "172.16.0.0/12"
+          "192.168.0.0/16"
+        ]
+        else ["127.0.0.1"]
       )
       ++ vars.vpn.accessibleFrom;
     wireguardConfigFile = vars.vpn.wgConf;
@@ -128,30 +68,30 @@ in
 
   systemd.services.vpn-test-service = lib.mkIf vars.vpn.vpnTestService.enable {
     enable = true;
-    wantedBy = [ "multi-user.target" ];
+    wantedBy = ["multi-user.target"];
 
     vpnConfinement = {
       enable = true;
       vpnNamespace = "wg";
     };
 
-    script =
-      let
-        vpn-test = pkgs.writeShellApplication {
-          name = "vpn-test";
-          runtimeInputs = with pkgs; [
-            util-linux
-            unixtools.ping
-            coreutils
-            curl
-            bash
-            libressl
-            netcat-gnu
-            openresolv
-            dig
-            jq
-          ];
-          text = ''
+    script = let
+      vpn-test = pkgs.writeShellApplication {
+        name = "vpn-test";
+        runtimeInputs = with pkgs; [
+          util-linux
+          unixtools.ping
+          coreutils
+          curl
+          bash
+          libressl
+          netcat-gnu
+          openresolv
+          dig
+          jq
+        ];
+        text =
+          ''
             cd "$(mktemp -d)"
 
             echo "=== VPN Confinement Test ==="
@@ -178,17 +118,14 @@ in
             echo -e "\n=== Test Complete ==="
           ''
           + (
-            if vars.vpn.vpnTestService.port != null then
-              ''
-
-                echo -e "\n--- Listening on port ${toString vars.vpn.vpnTestService.port} ---"
-                nc -vnlp ${toString vars.vpn.vpnTestService.port}
-              ''
-            else
-              ""
+            if vars.vpn.vpnTestService.port != null
+            then ''
+              echo -e "\n--- Listening on port ${toString vars.vpn.vpnTestService.port} ---"
+              nc -vnlp ${toString vars.vpn.vpnTestService.port}
+            ''
+            else ""
           );
-        };
-      in
-      "${vpn-test}/bin/vpn-test";
+      };
+    in "${vpn-test}/bin/vpn-test";
   };
 }

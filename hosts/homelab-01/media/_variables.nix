@@ -23,6 +23,7 @@ rec {
 
   uids = {
     media = 999;
+    qbittorrent = 998;
     jellyfin = 146;
     sonarr = 274;
     radarr = 275;
@@ -30,10 +31,15 @@ rec {
   };
   gids = {
     media = 196;
+    qbittorrent = 997;
     seerr = 250;
   };
 
   services = {
+    qbittorrent = {
+      user = "qbittorrent";
+      group = "qbittorrent";
+    };
     jellyfin = {
       user = "jellyfin";
       group = libraryOwner.group;

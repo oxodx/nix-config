@@ -1,5 +1,4 @@
-{ pkgs, ... }:
-let
+{pkgs, ...}: let
   vars = import ./_variables.nix;
   vUser = vars.services.jellyfin.user;
   vGroup = vars.services.jellyfin.group;
@@ -11,8 +10,7 @@ let
   stateDir = "${vars.dirs.state}/jellyfin";
   libDir = "${vars.dirs.media}/library";
   openFirewall = true;
-in
-{
+in {
   systemd.tmpfiles.rules = [
     "d '${stateDir}' 				0700 ${vUser} root - -"
     "d '${stateDir}/log' 		0700 ${vUser} root - -"
