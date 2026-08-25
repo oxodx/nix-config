@@ -80,20 +80,5 @@ in {
       openFirewall = true;
       apiKey._secret = "/root/secrets/seerr/api_key";
     };
-
-    torrentClients.qbittorrent = {
-      enable = true;
-      vpn.enable = true;
-      openFirewall = true;
-      password._secret = "/root/secrets/qbittorrent/password";
-      serverConfig = {
-        Preferences.WebUI = {
-          Username = "oxod";
-          Password_PBKDF2 = "@ByteArray(cUJpdHRvcnJlbnQ=:RMITXNabieBgLLQI01vv3wrdVeiq2MN2OV0lLkQiM8s=)";
-        };
-      };
-    };
   };
-
-  networking.firewall.allowedTCPPorts = [8282];
 }

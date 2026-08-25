@@ -13,7 +13,6 @@ in {
       enable = true;
       openFirewall = true;
       apiKey._secret = vars.secrets.jellyfin.apiKey;
-      subdomain = "watch";
       network.enableRemoteAccess = true;
 
       branding = {

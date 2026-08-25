@@ -7,5 +7,6 @@ rec {
         oxod = "/root/secrets/jellyfin/passwords/oxod";
       };
     };
+    qbittorrent.password = "/root/secrets/qbittorrent/password";
   };
 }
