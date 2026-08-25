@@ -11,6 +11,7 @@ rec {
     media = 999;
     jellyfin = 146;
     sonarr = 274;
+    radarr = 275;
     seerr = 262;
   };
   gids = {
@@ -21,6 +22,10 @@ rec {
   services = {
     jellyfin = {
       user = "jellyfin";
+      group = libraryOwner.group;
+    };
+    radarr = {
+      user = "radarr";
       group = libraryOwner.group;
     };
     sonarr = {
