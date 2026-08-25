@@ -95,7 +95,7 @@ in {
           PLUGINS_RESPONSE=$(${
           mkSecureCurl authUtil.token {
             url = "$BASE_URL/Plugins";
-            apiKeyHeader = "Authorization";
+            apiKeyHeader = "X-Emby-Token";
             extraArgs = "-w \"\\n%{http_code}\"";
           }
         })
@@ -226,7 +226,7 @@ in {
                     CURRENT_CONFIG=$(${
                     mkSecureCurl authUtil.token {
                       url = "$BASE_URL/Plugins/$PLUGIN_ID/Configuration";
-                      apiKeyHeader = "Authorization";
+                      apiKeyHeader = "X-Emby-Token";
                     }
                   })
 
@@ -240,7 +240,7 @@ in {
                     mkSecureCurl authUtil.token {
                       method = "POST";
                       url = "$BASE_URL/Plugins/$PLUGIN_ID/Configuration";
-                      apiKeyHeader = "Authorization";
+                      apiKeyHeader = "X-Emby-Token";
                       headers = {
                         "Content-Type" = "application/json";
                       };

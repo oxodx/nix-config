@@ -66,7 +66,7 @@ in {
         USERS_RESPONSE=$(${
           mkSecureCurl authUtil.token {
             url = "$BASE_URL/users";
-            apiKeyHeader = "Authorization";
+            apiKeyHeader = "X-Emby-Token";
             extraArgs = "-w \"\n%{http_code}\"";
           }
         })
@@ -109,7 +109,7 @@ in {
                 mkSecureCurl authUtil.token {
                   method = "POST";
                   url = "$BASE_URL/Users/New";
-                  apiKeyHeader = "Authorization";
+                  apiKeyHeader = "X-Emby-Token";
                   headers = {
                     "Content-Type" = "application/json";
                   };
@@ -131,7 +131,7 @@ in {
                 USERS_JSON=$(${
                 mkSecureCurl authUtil.token {
                   url = "$BASE_URL/Users";
-                  apiKeyHeader = "Authorization";
+                  apiKeyHeader = "X-Emby-Token";
                 }
               })
                 USER_ID=$(echo "$USERS_JSON" | ${pkgs.jq}/bin/jq -r --arg name ${escapeShellArg userName} '.[] | select(.Name | ascii_downcase == ($name | ascii_downcase)) | .Id')
@@ -168,7 +168,7 @@ in {
                 mkSecureCurl authUtil.token {
                   method = "POST";
                   url = "$BASE_URL/Users/$USER_ID";
-                  apiKeyHeader = "Authorization";
+                  apiKeyHeader = "X-Emby-Token";
                   headers = {
                     "Content-Type" = "application/json";
                   };
@@ -195,7 +195,7 @@ in {
                 CURRENT_POLICY=$(${
                 mkSecureCurl authUtil.token {
                   url = "$BASE_URL/Users/$USER_ID";
-                  apiKeyHeader = "Authorization";
+                  apiKeyHeader = "X-Emby-Token";
                 }
               })
 
@@ -209,7 +209,7 @@ in {
                 mkSecureCurl authUtil.token {
                   method = "POST";
                   url = "$BASE_URL/Users/$USER_ID/Policy";
-                  apiKeyHeader = "Authorization";
+                  apiKeyHeader = "X-Emby-Token";
                   headers = {
                     "Content-Type" = "application/json";
                   };
@@ -234,7 +234,7 @@ in {
                 VERIFY_RESPONSE=$(${
                 mkSecureCurl authUtil.token {
                   url = "$BASE_URL/Users/$USER_ID";
-                  apiKeyHeader = "Authorization";
+                  apiKeyHeader = "X-Emby-Token";
                 }
               })
                 echo "$VERIFY_RESPONSE" | ${pkgs.jq}/bin/jq .

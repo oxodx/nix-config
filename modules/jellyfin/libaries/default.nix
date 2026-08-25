@@ -94,7 +94,7 @@ in {
         LIBRARIES_RESPONSE=$(${
           mkSecureCurl authUtil.token {
             url = "$BASE_URL/Library/VirtualFolders";
-            apiKeyHeader = "Authorization";
+            apiKeyHeader = "X-Emby-Token";
             extraArgs = "-w \"\\n%{http_code}\"";
           }
         })
@@ -133,7 +133,7 @@ in {
           mkSecureCurl authUtil.token {
             method = "DELETE";
             url = "$BASE_URL/Library/VirtualFolders?name=$(${pkgs.jq}/bin/jq -rn --arg n \"$lib_name\" '\$n|@uri')";
-            apiKeyHeader = "Authorization";
+            apiKeyHeader = "X-Emby-Token";
             extraArgs = "-w \"\\n%{http_code}\"";
           }
         })
@@ -153,7 +153,7 @@ in {
         LIBRARIES_JSON=$(${
           mkSecureCurl authUtil.token {
             url = "$BASE_URL/Library/VirtualFolders";
-            apiKeyHeader = "Authorization";
+            apiKeyHeader = "X-Emby-Token";
           }
         })
 
@@ -170,7 +170,7 @@ in {
               mkSecureCurl authUtil.token {
                 method = "POST";
                 url = "$BASE_URL/Library/VirtualFolders?name=$(${pkgs.jq}/bin/jq -rn --arg n \"${libraryName}\" '\$n|@uri')&collectionType=${libraryCfg.collectionType}&refreshLibrary=true";
-                apiKeyHeader = "Authorization";
+                apiKeyHeader = "X-Emby-Token";
                 headers = {
                   "Content-Type" = "application/json";
                 };
@@ -217,7 +217,7 @@ in {
               mkSecureCurl authUtil.token {
                 method = "POST";
                 url = "$BASE_URL/Library/VirtualFolders/LibraryOptions";
-                apiKeyHeader = "Authorization";
+                apiKeyHeader = "X-Emby-Token";
                 headers = {
                   "Content-Type" = "application/json";
                 };
@@ -251,7 +251,7 @@ in {
               mkSecureCurl authUtil.token {
                 method = "DELETE";
                 url = "$BASE_URL/Library/VirtualFolders/Paths?name=$(${pkgs.jq}/bin/jq -rn --arg n \"${libraryName}\" '\$n|@uri')&path=$(${pkgs.jq}/bin/jq -rn --arg p \"$existing_path\" '\$p|@uri')";
-                apiKeyHeader = "Authorization";
+                apiKeyHeader = "X-Emby-Token";
                 extraArgs = "-w \"\\n%{http_code}\"";
               }
             })
@@ -275,7 +275,7 @@ in {
               mkSecureCurl authUtil.token {
                 method = "POST";
                 url = "$BASE_URL/Library/VirtualFolders/Paths";
-                apiKeyHeader = "Authorization";
+                apiKeyHeader = "X-Emby-Token";
                 headers = {
                   "Content-Type" = "application/json";
                 };
@@ -300,7 +300,7 @@ in {
               mkSecureCurl authUtil.token {
                 method = "DELETE";
                 url = "$BASE_URL/Library/VirtualFolders?name=$(${pkgs.jq}/bin/jq -rn --arg n \"${libraryName}\" '\$n|@uri')";
-                apiKeyHeader = "Authorization";
+                apiKeyHeader = "X-Emby-Token";
                 extraArgs = "-w \"\\n%{http_code}\"";
               }
             })
@@ -316,7 +316,7 @@ in {
               mkSecureCurl authUtil.token {
                 method = "POST";
                 url = "$BASE_URL/Library/VirtualFolders?name=$(${pkgs.jq}/bin/jq -rn --arg n \"${libraryName}\" '\$n|@uri')&collectionType=${libraryCfg.collectionType}&refreshLibrary=true";
-                apiKeyHeader = "Authorization";
+                apiKeyHeader = "X-Emby-Token";
                 headers = {
                   "Content-Type" = "application/json";
                 };

@@ -59,7 +59,7 @@ in {
           mkSecureCurl authUtil.token {
             method = "POST";
             url = "$BASE_URL/System/Configuration/Branding";
-            apiKeyHeader = "Authorization";
+            apiKeyHeader = "X-Emby-Token";
             headers = {
               "Content-Type" = "application/json";
             };
@@ -107,7 +107,7 @@ in {
             mkSecureCurl authUtil.token {
               method = "POST";
               url = "$BASE_URL/Branding/Splashscreen";
-              apiKeyHeader = "Authorization";
+              apiKeyHeader = "X-Emby-Token";
               headers = {
                 "Content-Type" = "$CONTENT_TYPE";
               };

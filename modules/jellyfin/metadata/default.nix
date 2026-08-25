@@ -56,7 +56,7 @@ in {
           mkSecureCurl authUtil.token {
             method = "POST";
             url = "$BASE_URL/System/Configuration/metadata";
-            apiKeyHeader = "Authorization";
+            apiKeyHeader = "X-Emby-Token";
             headers = {
               "Content-Type" = "application/json";
             };

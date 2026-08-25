@@ -22,7 +22,7 @@ let
     if apiKeyValue == null then
       ""
     else if secrets.isSecretRef apiKeyValue then
-      ''--header "${apiKeyHeader}: $(${pkgs.coreutils}/bin/cat ${lib.escapeShellArg (toString apiKeyValue._secret)} | ${pkgs.gnused}/bin/tr -d '\n' | ${pkgs.gnused}/bin/sed 's/"/\\"/g')"''
+      ''--header "${apiKeyHeader}: $(${pkgs.coreutils}/bin/cat ${lib.escapeShellArg (toString apiKeyValue._secret)} | ${pkgs.gnused}/bin/tr -d '\n')"''
     else
       ''--header "${apiKeyHeader}: ${lib.escapeShellArg (toString apiKeyValue)}"'';
 
