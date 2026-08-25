@@ -77,6 +77,12 @@ in {
   };
 
   vpnNamespaces.wg = lib.mkIf vars.vpn.enable {
+    portMappings = [
+      {
+        from = webuiPort;
+        to = webuiPort;
+      }
+    ];
     openVPNPorts = [
       {
         port = peerPort;
