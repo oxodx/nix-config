@@ -58,6 +58,7 @@ in {
         }
 
         inputs.agenix.nixosModules.default
+        inputs.vpn-confinement.nixosModules.default
       ];
   };
 }

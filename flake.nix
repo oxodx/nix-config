@@ -36,6 +36,7 @@
     zed-extensions.rev = "038c0432b922c9083fd4cd0fe7bf472994358c15";
     zed-extensions.inputs.nixpkgs.follows = "nixpkgs";
 
+    vpn-confinement.url = "github:maroka-chan/vpn-confinement";
     systems.url = "github:nix-systems/default-linux";
   };
 

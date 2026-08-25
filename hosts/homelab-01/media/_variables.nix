@@ -4,6 +4,20 @@ rec {
     state = "/var/lib";
   };
 
+  vpn = {
+    enable = true;
+    wgConf = "/root/secrets/mullvad.conf";
+    accessibleFrom = [];
+    vpnTestService = {
+      enable = true;
+      port = 58403;
+    };
+    openTcpPorts = [];
+    openUdpPorts = [];
+    proxyListenAddr = "0.0.0.0";
+    exposeOnLAN = true;
+  };
+
   libraryOwner.user = "root";
   libraryOwner.group = "media";
 

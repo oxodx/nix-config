@@ -1,4 +1,5 @@
 {
+  lib,
   pkgs,
   mylib,
   ...
@@ -97,5 +98,77 @@ in {
         "${vars.dirs.state}/prowlarr:/config"
       ];
     };
+  };
+
+  vpnNamespaces.wg = lib.mkIf vars.vpn.enable {
+    enable = true;
+    openVPNPorts = lib.optional (vars.vpn.vpnTestService.port != null) {
+      port = vars.vpn.vpnTestService.port;
+      protocol = "tcp";
+    };
+    accessibleFrom =
+      (
+        if vars.vpn.exposeOnLAN
+        then [
+          "10.0.0.0/8"
+          "172.16.0.0/12"
+          "192.168.0.0/16"
+        ]
+        else ["127.0.0.1"]
+      )
+      ++ vars.vpn.accessibleFrom;
+    wireguardConfigFile = vars.vpn.wgConf;
+  };
+
+  systemd.services.vpn-test-service = lib.mkIf vars.vpn.vpnTestService.enable {
+    enable = true;
+
+    vpnConfinement = {
+      enable = true;
+      vpnNamespace = "wg";
+    };
+
+    script = let
+      vpn-test = pkgs.writeShellApplication {
+        name = "vpn-test";
+        runtimeInputs = with pkgs; [util-linux unixtools.ping coreutils curl bash libressl netcat-gnu openresolv dig];
+        text =
+          ''
+            cd "$(mktemp -d)"
+
+            # DNS information
+            dig google.com
+
+            # Print resolv.conf
+            echo "/etc/resolv.conf contains:"
+            cat /etc/resolv.conf
+
+            # Check if resolvconf is available
+            if command -v resolvconf >/dev/null 2>&1; then
+              # Query resolvconf
+              echo "resolvconf output:"
+              resolvconf -l
+              echo ""
+            fi
+
+            # Get ip
+            echo "Getting IP:"
+            curl -s ipinfo.io
+
+            echo -ne "DNS leak test:"
+            curl -s https://raw.githubusercontent.com/macvk/dnsleaktest/b03ab54d574adbe322ca48cbcb0523be720ad38d/dnsleaktest.sh -o dnsleaktest.sh
+            chmod +x dnsleaktest.sh
+            ./dnsleaktest.sh
+          ''
+          + (
+            if vars.vpn.vpnTestService.port != null
+            then ''
+              echo "starting netcat on port ${toString vars.vpn.vpnTestService.port}:"
+              nc -vnlp ${toString vars.vpn.vpnTestService.port}
+            ''
+            else ""
+          );
+      };
+    in "${vpn-test}/bin/vpn-test";
   };
 }
