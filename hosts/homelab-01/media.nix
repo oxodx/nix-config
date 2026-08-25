@@ -149,8 +149,14 @@
               type = "Series";
               imageFetchers = ["TheMovieDb"];
               imageFetcherOrder = ["TheMovieDb"];
-              metadataFetchers = ["TheMovieDb" "The Open Movie Database"];
-              metadataFetcherOrder = ["TheMovieDb" "The Open Movie Database"];
+              metadataFetchers = [
+                "TheMovieDb"
+                "The Open Movie Database"
+              ];
+              metadataFetcherOrder = [
+                "TheMovieDb"
+                "The Open Movie Database"
+              ];
             }
             {
               type = "Season";
@@ -173,8 +179,14 @@
                 "Embedded Image Extractor"
                 "Screen Grabber"
               ];
-              metadataFetchers = ["TheMovieDb" "The Open Movie Database"];
-              metadataFetcherOrder = ["TheMovieDb" "The Open Movie Database"];
+              metadataFetchers = [
+                "TheMovieDb"
+                "The Open Movie Database"
+              ];
+              metadataFetcherOrder = [
+                "TheMovieDb"
+                "The Open Movie Database"
+              ];
             }
           ];
         };
@@ -184,8 +196,16 @@
           typeOptions = [
             {
               type = "Series";
-              imageFetchers = ["AniDB" "AniSearch" "TheMovieDb"];
-              imageFetcherOrder = ["AniDB" "AniSearch" "TheMovieDb"];
+              imageFetchers = [
+                "AniDB"
+                "AniSearch"
+                "TheMovieDb"
+              ];
+              imageFetcherOrder = [
+                "AniDB"
+                "AniSearch"
+                "TheMovieDb"
+              ];
               metadataFetchers = [
                 "AniDB"
                 "AniSearch"
@@ -201,10 +221,24 @@
             }
             {
               type = "Season";
-              imageFetchers = ["AniDB" "AniSearch" "TheMovieDb"];
-              imageFetcherOrder = ["AniDB" "AniSearch" "TheMovieDb"];
-              metadataFetchers = ["AniDB" "TheMovieDb"];
-              metadataFetcherOrder = ["AniDB" "TheMovieDb"];
+              imageFetchers = [
+                "AniDB"
+                "AniSearch"
+                "TheMovieDb"
+              ];
+              imageFetcherOrder = [
+                "AniDB"
+                "AniSearch"
+                "TheMovieDb"
+              ];
+              metadataFetchers = [
+                "AniDB"
+                "TheMovieDb"
+              ];
+              metadataFetcherOrder = [
+                "AniDB"
+                "TheMovieDb"
+              ];
             }
             {
               type = "Episode";
@@ -235,7 +269,7 @@
         };
         Movies = {
           collectionType = "movies";
-          paths = "/mnt/media/library/movies";
+          paths = ["/mnt/media/library/movies"];
           typeOptions = [
             {
               type = "Movie";
@@ -251,8 +285,14 @@
                 "Embedded Image Extractor"
                 "Screen Grabber"
               ];
-              metadataFetchers = ["TheMovieDb" "The Open Movie Database"];
-              metadataFetcherOrder = ["TheMovieDb" "The Open Movie Database"];
+              metadataFetchers = [
+                "TheMovieDb"
+                "The Open Movie Database"
+              ];
+              metadataFetcherOrder = [
+                "TheMovieDb"
+                "The Open Movie Database"
+              ];
             }
           ];
         };
