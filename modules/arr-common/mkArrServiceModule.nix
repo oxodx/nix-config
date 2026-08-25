@@ -1,17 +1,16 @@
-{ serviceName }:
-{
+{serviceName}: {
   config,
   lib,
   pkgs,
   ...
 }:
-with lib;
-let
+with lib; let
   cfg = config.nixflix.${serviceName};
-  secrets = import ../../lib/secrets { inherit lib; };
-  inherit (import ../../lib/mkVirtualHosts.nix { inherit lib config; }) mkVirtualHost;
+  secrets = import ../../lib/secrets {inherit lib;};
+  inherit (import ../../lib/mkVirtualHosts.nix {inherit lib config;}) mkVirtualHost;
   inherit (config.nixflix) globals;
-  inherit (import ./utils.nix { inherit lib pkgs serviceName; })
+  inherit
+    (import ./utils.nix {inherit lib pkgs serviceName;})
     usesMediaDirs
     capitalizedName
     capitalize
@@ -30,33 +29,35 @@ let
       };
     };
 
-  mkServarrSettingsEnvVars =
-    name: settings:
+  mkServarrSettingsEnvVars = name: settings:
     pipe settings [
       (mapAttrsRecursive (
         path: value:
-        optionalAttrs (value != null) {
-          name = toUpper "${name}__${concatStringsSep "__" path}";
-          value = toString (if isBool value then boolToString value else value);
-        }
+          optionalAttrs (value != null) {
+            name = toUpper "${name}__${concatStringsSep "__" path}";
+            value = toString (
+              if isBool value
+              then boolToString value
+              else value
+            );
+          }
       ))
       (collect (x: isString x.name or false && isString x.value or false))
       listToAttrs
     ];
-in
-{
+in {
   imports = [
-    (import ./delayProfiles.nix { inherit serviceName; })
-    (import ./hostConfig.nix { inherit serviceName; })
-    (import ./mediaManagement.nix { inherit serviceName; })
-    (import ./mediaDirs.nix { inherit serviceName; })
-    (import ./postgres.nix { inherit serviceName; })
-    (import ./rootFolders.nix { inherit serviceName; })
+    (import ./delayProfiles.nix {inherit serviceName;})
+    (import ./hostConfig.nix {inherit serviceName;})
+    (import ./mediaManagement.nix {inherit serviceName;})
+    (import ./mediaDirs.nix {inherit serviceName;})
+    (import ./postgres.nix {inherit serviceName;})
+    (import ./rootFolders.nix {inherit serviceName;})
   ];
 
   options.nixflix.${serviceName} = {
     enable = mkEnableOption "${capitalizedName}";
-    package = mkPackageOption pkgs serviceBase { };
+    package = mkPackageOption pkgs serviceBase {};
 
     vpn = {
       enable = mkOption {
@@ -78,10 +79,9 @@ in
       type = types.str;
       readOnly = true;
       default =
-        if cfg.config.hostConfig.bindAddress == "0.0.0.0" then
-          "127.0.0.1"
-        else
-          cfg.config.hostConfig.bindAddress;
+        if cfg.config.hostConfig.bindAddress == "0.0.0.0"
+        then "127.0.0.1"
+        else cfg.config.hostConfig.bindAddress;
       description = "Address for connecting to this service.";
     };
 
@@ -126,7 +126,7 @@ in
 
     settings = mkOption {
       type = types.submodule {
-        freeformType = (pkgs.formats.ini { }).type;
+        freeformType = (pkgs.formats.ini {}).type;
         options = {
           app = {
             instanceName = mkOption {
@@ -137,8 +137,7 @@ in
           };
           update = {
             mechanism = mkOption {
-              type =
-                with types;
+              type = with types;
                 nullOr (enum [
                   "external"
                   "builtIn"
@@ -198,7 +197,7 @@ in
           };
         }
       '';
-      default = { };
+      default = {};
       description = ''
         Attribute set of arbitrary config options.
         Please consult the documentation at the [wiki](https://wiki.servarr.com/useful-tools#using-environment-variables-for-config).
@@ -226,6 +225,7 @@ in
       };
 
       apiKey = secrets.mkSecretOption {
+        nullable = true;
         default = null;
         description = ''
           API key for ${capitalizedName}. Can be created by running:
@@ -289,18 +289,19 @@ in
         groups.${cfg.group} = optionalAttrs (globals.gids ? ${cfg.group}) {
           gid = globals.gids.${cfg.group};
         };
-        users.${cfg.user} = {
-          inherit (cfg) group;
-          home = cfg.dataDir;
-          isSystemUser = true;
-        }
-        // optionalAttrs (globals.uids ? ${cfg.user}) {
-          uid = globals.uids.${cfg.user};
-        };
+        users.${cfg.user} =
+          {
+            inherit (cfg) group;
+            home = cfg.dataDir;
+            isSystemUser = true;
+          }
+          // optionalAttrs (globals.uids ? ${cfg.user}) {
+            uid = globals.uids.${cfg.user};
+          };
       };
 
       networking.firewall = mkIf cfg.openFirewall {
-        allowedTCPPorts = [ cfg.config.hostConfig.port ];
+        allowedTCPPorts = [cfg.config.hostConfig.port];
       };
 
       systemd.tmpfiles.settings."10-${serviceName}" = {
@@ -318,36 +319,39 @@ in
             ${apiKeyEnvVar} = toString cfg.config.apiKey;
           };
 
-        after = [
-          "network.target"
-          "nixflix-setup-dirs.service"
-        ]
-        ++ config.nixflix.serviceDependencies;
-        requires = [
-          "nixflix-setup-dirs.service"
-        ]
-        ++ config.nixflix.serviceDependencies;
-        wantedBy = [ "multi-user.target" ];
+        after =
+          [
+            "network.target"
+            "nixflix-setup-dirs.service"
+          ]
+          ++ config.nixflix.serviceDependencies;
+        requires =
+          [
+            "nixflix-setup-dirs.service"
+          ]
+          ++ config.nixflix.serviceDependencies;
+        wantedBy = ["multi-user.target"];
 
-        serviceConfig = {
-          Type = "simple";
-          User = cfg.user;
-          Group = cfg.group;
-          ExecStart =
-            if apiKeyIsSecretRef then
-              pkgs.writeShellScript "${serviceName}-start" ''
-                export ${apiKeyEnvVar}="$(cat ${credentialPath})"
-                exec ${getExe cfg.package} -nobrowser -data='${cfg.dataDir}'
-              ''
-            else
-              "${getExe cfg.package} -nobrowser -data='${cfg.dataDir}'";
-          ExecStartPost = mkWaitForApiScript serviceName waitConfig;
-          Restart = "on-failure";
-          UMask = "0002";
-        }
-        // optionalAttrs apiKeyIsSecretRef {
-          LoadCredential = [ "apiKey:${toString cfg.config.apiKey._secret}" ];
-        };
+        serviceConfig =
+          {
+            Type = "simple";
+            User = cfg.user;
+            Group = cfg.group;
+            ExecStart =
+              if apiKeyIsSecretRef
+              then
+                pkgs.writeShellScript "${serviceName}-start" ''
+                  export ${apiKeyEnvVar}="$(cat ${credentialPath})"
+                  exec ${getExe cfg.package} -nobrowser -data='${cfg.dataDir}'
+                ''
+              else "${getExe cfg.package} -nobrowser -data='${cfg.dataDir}'";
+            ExecStartPost = mkWaitForApiScript serviceName waitConfig;
+            Restart = "on-failure";
+            UMask = "0002";
+          }
+          // optionalAttrs apiKeyIsSecretRef {
+            LoadCredential = ["apiKey:${toString cfg.config.apiKey._secret}"];
+          };
       };
     }
     (mkIf (config.nixflix.vpn.enable && cfg.vpn.enable) {
