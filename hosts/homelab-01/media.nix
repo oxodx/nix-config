@@ -2,13 +2,14 @@
   lib,
   config,
   ...
-}: {
+}:
+{
   nixflix = {
     enable = true;
     stateDir = "/var/lib";
     mediaDir = "/mnt/media";
     downloadsDir = "/mnt/media/downloads";
-    mediaUsers = ["oxod"];
+    mediaUsers = [ "oxod" ];
 
     theme = {
       enable = true;
@@ -42,7 +43,7 @@
 
     recyclarr = {
       enable = true;
-      cleanupUnmanagedProfiles = true;
+      cleanupUnmanagedProfiles.enable = true;
     };
 
     prowlarr = {
@@ -81,7 +82,7 @@
     vpn = {
       enable = true;
       wgConfFile = "/root/secrets/mullvad.conf";
-      accessibleFrom = ["192.168.1.0/24"];
+      accessibleFrom = [ "192.168.1.0/24" ];
     };
   };
 }
