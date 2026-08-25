@@ -5,58 +5,78 @@
 }: {
   nixflix = {
     enable = true;
-
+    stateDir = "/var/lib";
     mediaDir = "/mnt/media";
     downloadsDir = "/mnt/media/downloads";
-    stateDir = "/var/lib";
-
     mediaUsers = ["oxod"];
 
-    vpn = {
+    theme = {
       enable = true;
-      wgConfFile = "/root/secrets/mullvad.conf";
-      accessibleFrom = [
-        "10.0.0.0/8"
-        "172.16.0.0/12"
-        "192.168.0.0/16"
-      ];
+      name = "overseerr";
     };
 
     nginx = {
       enable = true;
-      domain = "homelab.local";
       addHostsEntries = true;
     };
 
-    jellyfin = {
-      enable = true;
-      openFirewall = true;
-    };
+    postgres.enable = true;
 
     sonarr = {
       enable = true;
       openFirewall = true;
+      config = {
+        apiKey._secret = "/root/secrets/sonarr/api_key";
+        hostConfig.password._secret = "/root/secrets/sonarr/password";
+      };
     };
 
     radarr = {
       enable = true;
       openFirewall = true;
+      config = {
+        apiKey._secret = "/root/secrets/radarr/api_key";
+        hostConfig.password._secret = "/root/secrets/radarr/password";
+      };
     };
 
     prowlarr = {
       enable = true;
       openFirewall = true;
+      config = {
+        apiKey._secret = "/root/secrets/prowlarr/api_key";
+        hostConfig.password._secret = "/root/secrets/prowlarr/password";};
+      };
     };
 
     seerr = {
+    	enable = true;
+     	apiKey._secret = "/root/secrets/seerr/api_key";
+    };
+
+    jellyfin = {
       enable = true;
       openFirewall = true;
+      apiKey._secret = "/root/secrets/jellyfin/api_key";
+      users = {
+	      oxod = {
+		      mutable = false;
+	        policy.isAdministrator = true;
+	        password._secret = "/root/secrets/jellyfin/passwords/oxod";
+	      };
+      };
     };
 
     torrentClients.qbittorrent = {
       enable = true;
       vpn.enable = true;
       openFirewall = true;
+    };
+
+    vpn = {
+      enable = true;
+      wgConfFile = "/root/secrets/mullvad.conf";
+      accessibleFrom = [ "192.168.1.0/24" ];
     };
   };
 }
