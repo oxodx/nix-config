@@ -4,11 +4,9 @@
   mylib,
   config,
   ...
-}:
-let
+}: let
   vars = import ./_variables.nix;
-in
-{
+in {
   nixflix.torrentClients.qbittorrent = {
     enable = true;
     vpn.enable = true;
@@ -27,11 +25,11 @@ in
       };
       Preferences.WebUI = {
         Username = "oxod";
-        Password_PBKDF2 = "@ByteArray(RThSYjdhK2lOWVpWWjFzeXBseWY0dz09OmI4cE5SOGxPaWZIUmtsR3c0S1h0aVQrSGtuQlZGUXBucG9HZHBKakJYekpYSUgwMkZwU2c4dnI2Nmx3TU5aRWRmVlJVdlMzZE5zQU9ZMGRkZU95RUpRPT0=)";
+        Password_PBKDF2 = "@ByteArray(RThSYjdhK2lOWVpWWjFzeXBseWY0dz09Om42dmlnSU42SDJRZkMvTUJ1K0pzUFRmTmJzbS9adDU3ajNXU2NiSlFxZ0hzbFRqQ1BtclJqM2Q1bXREQ3N1MktxRzViYkJBT3dpUHlkV2NWbis3SDVnPT0=)";
       };
       General.Locale = "en";
     };
   };
 
-  networking.firewall.allowedTCPPorts = [ 8282 ];
+  networking.firewall.allowedTCPPorts = [8282];
 }
