@@ -43,7 +43,7 @@ in {
       in {
         Shows =
           subtitleSettings
-          ++ {
+          // {
             collectionType = "tvshows";
             paths = ["/mnt/media/library/shows"];
             typeOptions = [
@@ -51,8 +51,14 @@ in {
                 type = "Series";
                 imageFetchers = ["TheMovieDb"];
                 imageFetcherOrder = ["TheMovieDb"];
-                metadataFetchers = ["TheMovieDb" "The Open Movie Database"];
-                metadataFetcherOrder = ["TheMovieDb" "The Open Movie Database"];
+                metadataFetchers = [
+                  "TheMovieDb"
+                  "The Open Movie Database"
+                ];
+                metadataFetcherOrder = [
+                  "TheMovieDb"
+                  "The Open Movie Database"
+                ];
               }
               {
                 type = "Season";
@@ -75,30 +81,68 @@ in {
                   "Embedded Image Extractor"
                   "Screen Grabber"
                 ];
-                metadataFetchers = ["TheMovieDb" "The Open Movie Database"];
-                metadataFetcherOrder = ["TheMovieDb" "The Open Movie Database"];
+                metadataFetchers = [
+                  "TheMovieDb"
+                  "The Open Movie Database"
+                ];
+                metadataFetcherOrder = [
+                  "TheMovieDb"
+                  "The Open Movie Database"
+                ];
               }
             ];
           };
         Anime =
           subtitleSettings
-          ++ {
+          // {
             collectionType = "tvshows";
             paths = ["/mnt/media/library/anime"];
             typeOptions = [
               {
                 type = "Series";
-                imageFetchers = ["AniDB" "AniSearch" "TheMovieDb"];
-                imageFetcherOrder = ["AniDB" "AniSearch" "TheMovieDb"];
-                metadataFetchers = ["AniDB" "AniSearch" "TheMovieDb" "The Open Movie Database"];
-                metadataFetcherOrder = ["AniDB" "AniSearch" "TheMovieDb" "The Open Movie Database"];
+                imageFetchers = [
+                  "AniDB"
+                  "AniSearch"
+                  "TheMovieDb"
+                ];
+                imageFetcherOrder = [
+                  "AniDB"
+                  "AniSearch"
+                  "TheMovieDb"
+                ];
+                metadataFetchers = [
+                  "AniDB"
+                  "AniSearch"
+                  "TheMovieDb"
+                  "The Open Movie Database"
+                ];
+                metadataFetcherOrder = [
+                  "AniDB"
+                  "AniSearch"
+                  "TheMovieDb"
+                  "The Open Movie Database"
+                ];
               }
               {
                 type = "Season";
-                imageFetchers = ["AniDB" "AniSearch" "TheMovieDb"];
-                imageFetcherOrder = ["AniDB" "AniSearch" "TheMovieDb"];
-                metadataFetchers = ["AniDB" "TheMovieDb"];
-                metadataFetcherOrder = ["AniDB" "TheMovieDb"];
+                imageFetchers = [
+                  "AniDB"
+                  "AniSearch"
+                  "TheMovieDb"
+                ];
+                imageFetcherOrder = [
+                  "AniDB"
+                  "AniSearch"
+                  "TheMovieDb"
+                ];
+                metadataFetchers = [
+                  "AniDB"
+                  "TheMovieDb"
+                ];
+                metadataFetcherOrder = [
+                  "AniDB"
+                  "TheMovieDb"
+                ];
               }
               {
                 type = "Episode";
@@ -114,14 +158,22 @@ in {
                   "Embedded Image Extractor"
                   "Screen Grabber"
                 ];
-                metadataFetchers = ["AniDB" "TheMovieDb" "The Open Movie Database"];
-                metadataFetcherOrder = ["AniDB" "TheMovieDb" "The Open Movie Database"];
+                metadataFetchers = [
+                  "AniDB"
+                  "TheMovieDb"
+                  "The Open Movie Database"
+                ];
+                metadataFetcherOrder = [
+                  "AniDB"
+                  "TheMovieDb"
+                  "The Open Movie Database"
+                ];
               }
             ];
           };
         Movies =
           subtitleSettings
-          ++ {
+          // {
             collectionType = "movies";
             paths = ["/mnt/media/library/movies"];
             typeOptions = [
@@ -139,8 +191,14 @@ in {
                   "Embedded Image Extractor"
                   "Screen Grabber"
                 ];
-                metadataFetchers = ["TheMovieDb" "The Open Movie Database"];
-                metadataFetcherOrder = ["TheMovieDb" "The Open Movie Database"];
+                metadataFetchers = [
+                  "TheMovieDb"
+                  "The Open Movie Database"
+                ];
+                metadataFetcherOrder = [
+                  "TheMovieDb"
+                  "The Open Movie Database"
+                ];
               }
             ];
           };
@@ -282,7 +340,12 @@ in {
         enableDecodingColorDepth12HevcRext = false;
         enableEnhancedNvdecDecoder = true;
         preferSystemNativeHwDecoder = true;
-        hardwareDecodingCodecs = ["h264" "hevc" "mpeg2video" "vc1"];
+        hardwareDecodingCodecs = [
+          "h264"
+          "hevc"
+          "mpeg2video"
+          "vc1"
+        ];
         enableIntelLowPowerH264HwEncoder = true;
         enableIntelLowPowerHevcHwEncoder = true;
         enableSubtitleExtraction = true;
