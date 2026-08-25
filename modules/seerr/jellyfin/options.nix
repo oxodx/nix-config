@@ -3,17 +3,21 @@
   lib,
   ...
 }:
-with lib;
-let
-  secrets = import ../../../lib/secrets { inherit lib; };
+with lib; let
+  secrets = import ../../../lib/secrets {inherit lib;};
   jellyfinCfg = config.nixflix.jellyfin;
   adminUsers = filterAttrs (_: user: user.policy.isAdministrator) jellyfinCfg.users;
   sortedAdminNames = sort (a: b: a < b) (attrNames adminUsers);
-  hasLocalAdmin = jellyfinCfg.enable && sortedAdminNames != [ ];
-  firstAdminName = if hasLocalAdmin then head sortedAdminNames else null;
-  firstAdminUser = if hasLocalAdmin then adminUsers.${firstAdminName} else null;
-in
-{
+  hasLocalAdmin = jellyfinCfg.enable && sortedAdminNames != [];
+  firstAdminName =
+    if hasLocalAdmin
+    then head sortedAdminNames
+    else null;
+  firstAdminUser =
+    if hasLocalAdmin
+    then adminUsers.${firstAdminName}
+    else null;
+in {
   options.nixflix.seerr.jellyfin = {
     adminUsername = mkOption {
       type = types.nullOr types.str;
@@ -28,7 +32,10 @@ in
     };
 
     adminPassword = secrets.mkSecretOption {
-      default = if hasLocalAdmin then firstAdminUser.password else null;
+      default =
+        if hasLocalAdmin
+        then firstAdminUser.password
+        else null;
       defaultText = literalExpression "password of first admin from nixflix.jellyfin.users, or null";
       description = ''
         Jellyfin admin password for Seerr authentication.
@@ -61,28 +68,24 @@ in
     urlBase = mkOption {
       type = types.str;
       default =
-        if config.nixflix.jellyfin.network.baseUrl == "" then
-          ""
-        else
-          "/${config.nixflix.jellyfin.network.baseUrl}";
+        if config.nixflix.jellyfin.network.baseUrl == ""
+        then ""
+        else "/${config.nixflix.jellyfin.network.baseUrl}";
       description = "Jellyfin URL base";
     };
 
-    externalHostname =
-      let
-        jellyfinBaseUrl =
-          if config.nixflix.jellyfin.network.baseUrl == "" then
-            ""
-          else
-            "/${config.nixflix.jellyfin.network.baseUrl}";
-      in
+    externalHostname = let
+      jellyfinBaseUrl =
+        if config.nixflix.jellyfin.network.baseUrl == ""
+        then ""
+        else "/${config.nixflix.jellyfin.network.baseUrl}";
+    in
       mkOption {
         type = types.str;
         default =
-          if config.nixflix.reverseProxy.enable then
-            "${config.nixflix.reverseProxy.httpScheme}://${config.nixflix.jellyfin.subdomain}.${config.nixflix.reverseProxy.domain}${jellyfinBaseUrl}"
-          else
-            "";
+          if config.nixflix.reverseProxy.enable
+          then "${config.nixflix.reverseProxy.httpScheme}://${config.nixflix.jellyfin.subdomain}.${config.nixflix.reverseProxy.domain}${jellyfinBaseUrl}"
+          else "";
         defaultText = literalExpression ''
           if config.nixflix.reverseProxy.enable != ""
           then "$${config.nixflix.reverseProxy.httpScheme}://$${config.nixflix.jellyfin.subdomain}.$${config.nixflix.reverseProxy.domain}"
@@ -112,7 +115,7 @@ in
                 "show"
               ]
             );
-            default = [ ];
+            default = [];
             description = "Only enable libraries of these types (empty = all types)";
             example = [
               "movie"
@@ -121,7 +124,7 @@ in
           };
           names = mkOption {
             type = types.listOf types.str;
-            default = [ ];
+            default = [];
             description = "Only enable libraries matching these names (empty = all names)";
             example = [
               "Movies"
@@ -130,7 +133,7 @@ in
           };
         };
       };
-      default = { };
+      default = {};
       description = "Filter which libraries to enable (only used when enableAllLibraries = false)";
     };
   };

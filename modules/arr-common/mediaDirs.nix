@@ -1,21 +1,18 @@
-{ serviceName }:
-{
+{serviceName}: {
   config,
   lib,
   pkgs,
   ...
 }:
-with lib;
-let
+with lib; let
   cfg = config.nixflix.${serviceName};
-  inherit (import ./utils.nix { inherit lib pkgs serviceName; }) usesMediaDirs;
+  inherit (import ./utils.nix {inherit lib pkgs serviceName;}) usesMediaDirs;
   inherit (config.nixflix) globals;
-in
-{
+in {
   options.nixflix.${serviceName} = optionalAttrs usesMediaDirs {
     mediaDirs = mkOption {
       type = types.listOf types.path;
-      default = [ ];
+      default = [];
       defaultText = literalExpression ''[config.nixflix.mediaDir + "/<media-type>"]'';
       description = "List of media directories to create and manage";
     };
@@ -28,12 +25,13 @@ in
           inherit (globals.libraryOwner) user group;
           mode = "0775";
         };
-      }) cfg.mediaDirs
+      })
+      cfg.mediaDirs
     );
 
     systemd.services.${serviceName}.serviceConfig = {
-      SupplementaryGroups = [ globals.libraryOwner.group ];
-      ReadWritePaths = cfg.mediaDirs ++ [ config.nixflix.downloadsDir ];
+      SupplementaryGroups = [globals.libraryOwner.group];
+      ReadWritePaths = cfg.mediaDirs ++ [config.nixflix.downloadsDir];
     };
   };
 }

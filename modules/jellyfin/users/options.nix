@@ -1,27 +1,26 @@
-{ lib, ... }:
-with lib;
-let
-  secrets = import ../../../lib/secrets { inherit lib; };
+{lib, ...}:
+with lib; let
+  secrets = import ../../../lib/secrets {inherit lib;};
   configurationOpts = _: {
     options = {
       groupedFolders = mkOption {
         type = types.listOf types.str;
-        default = [ ];
+        default = [];
       };
 
       orderedViews = mkOption {
         type = types.listOf types.str;
-        default = [ ];
+        default = [];
       };
 
       latestItemsExcludes = mkOption {
         type = types.listOf types.str;
-        default = [ ];
+        default = [];
       };
 
       myMediaExcludes = mkOption {
         type = types.listOf types.str;
-        default = [ ];
+        default = [];
       };
 
       audioLanguagePreference = mkOption {
@@ -246,12 +245,12 @@ let
 
       blockedTags = mkOption {
         type = types.listOf types.str;
-        default = [ ];
+        default = [];
       };
 
       allowedTags = mkOption {
         type = types.listOf types.str;
-        default = [ ];
+        default = [];
       };
 
       blockUnratedItems = mkOption {
@@ -268,32 +267,32 @@ let
             "Other"
           ]
         );
-        default = [ ];
+        default = [];
       };
 
       enabledDevices = mkOption {
         type = types.listOf types.str;
-        default = [ ];
+        default = [];
       };
 
       enabledChannels = mkOption {
         type = types.listOf types.str;
-        default = [ ];
+        default = [];
       };
 
       blockedMediaFolders = mkOption {
         type = types.listOf types.str;
-        default = [ ];
+        default = [];
       };
 
       blockedChannels = mkOption {
         type = types.listOf types.str;
-        default = [ ];
+        default = [];
       };
 
       enableContentDeletionFromFolders = mkOption {
         type = types.listOf types.str;
-        default = [ ];
+        default = [];
       };
 
       accessSchedules = mkOption {
@@ -323,7 +322,7 @@ let
             };
           }
         );
-        default = [ ];
+        default = [];
       };
 
       syncPlayAccess = mkOption {
@@ -389,7 +388,7 @@ let
     options = {
       configuration = mkOption {
         description = "Configuration for this user";
-        default = { };
+        default = {};
         type = with types; submodule configurationOpts;
         example = {
           subtitleMode = "Always";
@@ -398,7 +397,7 @@ let
       };
       policy = mkOption {
         description = "Policy for this user";
-        default = { };
+        default = {};
         type = with types; submodule policyOpts;
         example = {
           isAdministrator = true;
@@ -449,8 +448,7 @@ let
       };
     };
   };
-in
-{
+in {
   # Based on: https://github.com/jellyfin/jellyfin/blob/master/MediaBrowser.Model/Configuration/UserConfiguration.cs
   options.nixflix.jellyfin.users = mkOption {
     description = ''
@@ -460,7 +458,7 @@ in
       This user will be created during the initial setup wizard and used for
       subsequent API operations.
     '';
-    default = { };
+    default = {};
     type = with types; attrsOf (submodule userOpts);
     example = {
       admin = {

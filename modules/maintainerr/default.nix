@@ -4,13 +4,11 @@
   pkgs,
   ...
 }:
-with lib;
-let
-  inherit (import ../../lib/mkVirtualHosts.nix { inherit lib config; }) mkVirtualHost;
+with lib; let
+  inherit (import ../../lib/mkVirtualHosts.nix {inherit lib config;}) mkVirtualHost;
   cfg = config.nixflix.maintainerr;
   hostname = "${cfg.subdomain}.${config.nixflix.reverseProxy.domain}";
-in
-{
+in {
   imports = [
     ./forceJellyfinIgnore.nix
     ./overlays
@@ -23,7 +21,7 @@ in
 
     package = mkOption {
       type = types.package;
-      default = pkgs.callPackage ../../pkgs/maintainerr { };
+      default = pkgs.callPackage ../../pkgs/maintainerr {};
       defaultText = literalExpression "pkgs.callPackage ../pkgs/maintainerr { }";
       description = "Maintainerr package to use.";
     };
@@ -90,10 +88,9 @@ in
       type = types.str;
       readOnly = true;
       default =
-        if config.nixflix.vpn.enable && cfg.vpn.enable then
-          config.vpnNamespaces.wg.namespaceAddress
-        else
-          "127.0.0.1";
+        if config.nixflix.vpn.enable && cfg.vpn.enable
+        then config.vpnNamespaces.wg.namespaceAddress
+        else "127.0.0.1";
       description = "Address at which this service is reachable (derived).";
     };
   };
@@ -113,14 +110,15 @@ in
         }
       ];
 
-      users.users.${cfg.user} = {
-        inherit (cfg) group;
-        isSystemUser = true;
-        home = cfg.dataDir;
-      }
-      // optionalAttrs (config.nixflix.globals.uids ? ${cfg.user}) {
-        uid = mkForce config.nixflix.globals.uids.${cfg.user};
-      };
+      users.users.${cfg.user} =
+        {
+          inherit (cfg) group;
+          isSystemUser = true;
+          home = cfg.dataDir;
+        }
+        // optionalAttrs (config.nixflix.globals.uids ? ${cfg.user}) {
+          uid = mkForce config.nixflix.globals.uids.${cfg.user};
+        };
 
       users.groups.${cfg.group} = optionalAttrs (config.nixflix.globals.gids ? ${cfg.group}) {
         gid = mkForce config.nixflix.globals.gids.media;
@@ -135,22 +133,27 @@ in
 
       systemd.services.maintainerr = {
         description = "Maintainerr media library maintenance";
-        after = [
-          "network-online.target"
-          "nixflix-setup-dirs.service"
-        ]
-        ++ config.nixflix.serviceDependencies;
-        wants = [ "network-online.target" ];
-        requires = [
-          "nixflix-setup-dirs.service"
-        ]
-        ++ config.nixflix.serviceDependencies;
-        wantedBy = [ "multi-user.target" ];
+        after =
+          [
+            "network-online.target"
+            "nixflix-setup-dirs.service"
+          ]
+          ++ config.nixflix.serviceDependencies;
+        wants = ["network-online.target"];
+        requires =
+          [
+            "nixflix-setup-dirs.service"
+          ]
+          ++ config.nixflix.serviceDependencies;
+        wantedBy = ["multi-user.target"];
 
         environment = {
           DATA_DIR = cfg.dataDir;
           UI_PORT = toString cfg.port;
-          UI_HOSTNAME = if config.nixflix.reverseProxy.enable then "127.0.0.1" else "0.0.0.0";
+          UI_HOSTNAME =
+            if config.nixflix.reverseProxy.enable
+            then "127.0.0.1"
+            else "0.0.0.0";
           NODE_ENV = "production";
         };
 
@@ -199,7 +202,7 @@ in
       };
 
       networking.firewall = mkIf cfg.openFirewall {
-        allowedTCPPorts = [ cfg.port ];
+        allowedTCPPorts = [cfg.port];
       };
     }
     (mkIf (config.nixflix.vpn.enable && cfg.vpn.enable) {

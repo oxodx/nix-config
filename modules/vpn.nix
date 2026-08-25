@@ -3,11 +3,9 @@
   lib,
   ...
 }:
-with lib;
-let
+with lib; let
   cfg = config.nixflix.vpn;
-in
-{
+in {
   options.nixflix.vpn = {
     enable = mkEnableOption ''
       WireGuard VPN. Configures Wireguard in a network namespace named `wg`.
@@ -53,8 +51,8 @@ in
 
     accessibleFrom = mkOption {
       type = types.listOf types.str;
-      default = [ "192.168.1.0/24" ];
-      example = [ "192.168.1.0/24" ];
+      default = ["192.168.1.0/24"];
+      example = ["192.168.1.0/24"];
       description = ''
         List of subnets or addresses in the default network namespace that
         should be able to reach services confined in the VPN namespace.
@@ -84,7 +82,7 @@ in
           };
         }
       );
-      default = [ ];
+      default = [];
       example = [
         {
           port = 60729;
@@ -96,7 +94,6 @@ in
         provided by the VPN provider (AirVPN, IVPN, etc.).
       '';
     };
-
   };
 
   config = mkIf cfg.enable {

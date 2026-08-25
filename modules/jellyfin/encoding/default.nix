@@ -4,17 +4,15 @@
   pkgs,
   ...
 }:
-with lib;
-let
+with lib; let
   inherit (config) nixflix;
   cfg = config.nixflix.jellyfin;
 
-  util = import ../util.nix { inherit lib; };
+  util = import ../util.nix {inherit lib;};
 
   encodingXmlContent = util.mkXmlContent "EncodingOptions" cfg.encoding;
-in
-{
-  imports = [ ./options.nix ];
+in {
+  imports = [./options.nix];
 
   config = mkIf (nixflix.enable && cfg.enable) {
     systemd.tmpfiles.settings."10-jellyfin" = mkIf (cfg.encoding.transcodingTempPath != "") {

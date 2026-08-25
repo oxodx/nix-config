@@ -1,10 +1,8 @@
-{ lib, ... }:
-let
-  secrets = import ../../../lib/secrets { inherit lib; };
+{lib, ...}: let
+  secrets = import ../../../lib/secrets {inherit lib;};
 
-  jellyfinPlugins = import ../../../lib/jellyfin-plugins.nix { inherit lib; };
-in
-{
+  jellyfinPlugins = import ../../../lib/jellyfin-plugins.nix {inherit lib;};
+in {
   options.nixflix.jellyfin.plugins."Open Subtitles" = lib.mkOption {
     type = jellyfinPlugins.mkPluginModule {
       packageDefault = jellyfinPlugins.fromRepo {
@@ -33,13 +31,13 @@ in
             };
           };
         };
-        default = { };
+        default = {};
         description = ''
           Open Subtitles plugin configuration payload as posted to the Jellyfin API.
           You can utilize this plugin by editing a library and modifying the options for subtitle downloads.
         '';
       };
     };
-    default = { };
+    default = {};
   };
 }

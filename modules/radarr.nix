@@ -2,26 +2,24 @@
   config,
   lib,
   ...
-}:
-let
+}: let
   inherit (config) nixflix;
   cfg = config.nixflix.radarr;
-in
-{
+in {
   imports = [
-    (import ./arr-common/mkArrServiceModule.nix { serviceName = "radarr"; })
+    (import ./arr-common/mkArrServiceModule.nix {serviceName = "radarr";})
   ];
 
   config.nixflix.radarr = {
     group = lib.mkDefault "media";
-    mediaDirs = lib.mkDefault [ "${nixflix.mediaDir}/movies" ];
+    mediaDirs = lib.mkDefault ["${nixflix.mediaDir}/movies"];
     config = {
       apiVersion = lib.mkDefault "v3";
       hostConfig = {
         port = lib.mkDefault 7878;
         branch = lib.mkDefault "master";
       };
-      rootFolders = lib.mkDefault (map (mediaDir: { path = mediaDir; }) cfg.mediaDirs);
+      rootFolders = lib.mkDefault (map (mediaDir: {path = mediaDir;}) cfg.mediaDirs);
     };
   };
 }

@@ -4,8 +4,7 @@
   pkgs,
   ...
 }:
-with lib;
-let
+with lib; let
   inherit (config) nixflix;
   cfg = nixflix.seerr;
   authUtil = import ../authUtil.nix {
@@ -16,16 +15,15 @@ let
       ;
   };
   baseUrl = "http://${cfg.connectionAddress}:${toString cfg.port}";
-in
-{
-  imports = [ ./options.nix ];
+in {
+  imports = [./options.nix];
 
   config = mkIf (nixflix.enable && cfg.enable) {
     systemd.services.seerr-jellyfin = {
       description = "Configure Jellyfin settings in Seerr";
-      after = [ "seerr-user-settings.service" ];
-      requires = [ "seerr-user-settings.service" ];
-      wantedBy = [ "multi-user.target" ];
+      after = ["seerr-user-settings.service"];
+      requires = ["seerr-user-settings.service"];
+      wantedBy = ["multi-user.target"];
 
       serviceConfig = {
         Type = "oneshot";

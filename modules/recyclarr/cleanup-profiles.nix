@@ -4,22 +4,18 @@
   pkgs,
   ...
 }:
-with lib;
-let
+with lib; let
   cfg = config.nixflix.recyclarr;
-  mkSecureCurl = import ../../lib/mk-secure-curl.nix { inherit lib pkgs; };
+  mkSecureCurl = import ../../lib/mk-secure-curl.nix {inherit lib pkgs;};
 
   managedProfilesJson = builtins.toJSON cfg.cleanupUnmanagedProfiles.managedProfiles;
 
-  buildInstances =
-    serviceType: instances:
+  buildInstances = serviceType: instances:
     mapAttrsToList (
-      instanceName: instanceConfig:
-      let
+      instanceName: instanceConfig: let
         apiKeyPath = instanceConfig.api_key._secret or instanceConfig.api_key;
         credentialName = "${instanceName}-api_key";
-      in
-      {
+      in {
         inherit
           serviceType
           instanceName
@@ -29,185 +25,187 @@ let
         apiVersion = instanceConfig.api_version or "v3";
         baseUrl = instanceConfig.base_url;
       }
-    ) instances;
+    )
+    instances;
 
   sonarrInstances = optionals (cfg.config ? sonarr) (buildInstances "sonarr" cfg.config.sonarr);
 
   radarrInstances = optionals (cfg.config ? radarr) (buildInstances "radarr" cfg.config.radarr);
 
   allInstances = flatten (sonarrInstances ++ radarrInstances);
-in
-{
+in {
   systemd.services.recyclarr-cleanup-profiles =
     mkIf (config.nixflix.enable && cfg.enable && cfg.cleanupUnmanagedProfiles.enable)
-      {
-        description = "Cleanup unmanaged quality profiles from Sonarr/Radarr";
-        after = [ "recyclarr.service" ];
-        wants = [ "recyclarr.service" ];
-        wantedBy = [ "multi-user.target" ];
+    {
+      description = "Cleanup unmanaged quality profiles from Sonarr/Radarr";
+      after = ["recyclarr.service"];
+      wants = ["recyclarr.service"];
+      wantedBy = ["multi-user.target"];
 
-        serviceConfig = {
-          Type = "oneshot";
-          User = cfg.user;
-          Group = cfg.group;
-          PrivateTmp = true;
-          NoNewPrivileges = true;
-          ProtectSystem = "strict";
-          ProtectHome = true;
-          PrivateDevices = true;
+      serviceConfig = {
+        Type = "oneshot";
+        User = cfg.user;
+        Group = cfg.group;
+        PrivateTmp = true;
+        NoNewPrivileges = true;
+        ProtectSystem = "strict";
+        ProtectHome = true;
+        PrivateDevices = true;
 
-          LoadCredential = map (i: "${i.credentialName}:${i.apiKeyPath}") allInstances;
+        LoadCredential = map (i: "${i.credentialName}:${i.apiKeyPath}") allInstances;
 
-          ExecStart = pkgs.writeShellScript "cleanup-quality-profiles.sh" ''
-            set -euo pipefail
+        ExecStart = pkgs.writeShellScript "cleanup-quality-profiles.sh" ''
+          set -euo pipefail
 
-            echo "Starting quality profile cleanup..."
+          echo "Starting quality profile cleanup..."
 
-            ${
-              if (length allInstances) == 0 then
-                ''
-                  echo "No instances found"
-                  exit 0
-                ''
-              else
-                ''
-                  MANAGED_PROFILES='${managedProfilesJson}'
-                  echo "Managed profiles: $MANAGED_PROFILES"
+          ${
+            if (length allInstances) == 0
+            then ''
+              echo "No instances found"
+              exit 0
+            ''
+            else
+              ''
+                MANAGED_PROFILES='${managedProfilesJson}'
+                echo "Managed profiles: $MANAGED_PROFILES"
 
-                ''
-                + lib.concatMapStringsSep "\n" (
-                  instance:
-                  let
-                    apiKeySecret = {
-                      _secret = "/run/credentials/recyclarr-cleanup-profiles.service/${instance.credentialName}";
-                    };
-                    mediaEndpoint = if instance.serviceType == "sonarr" then "series" else "movie";
-                  in
-                  ''
-                    echo "Processing ${instance.serviceType} instance: ${instance.instanceName}"
-                    echo "  Base URL: ${instance.baseUrl}"
-                    echo "  API Version: ${instance.apiVersion}"
+              ''
+              + lib.concatMapStringsSep "\n" (
+                instance: let
+                  apiKeySecret = {
+                    _secret = "/run/credentials/recyclarr-cleanup-profiles.service/${instance.credentialName}";
+                  };
+                  mediaEndpoint =
+                    if instance.serviceType == "sonarr"
+                    then "series"
+                    else "movie";
+                in ''
+                  echo "Processing ${instance.serviceType} instance: ${instance.instanceName}"
+                  echo "  Base URL: ${instance.baseUrl}"
+                  echo "  API Version: ${instance.apiVersion}"
 
-                    # Fetch all quality profiles from the service
-                    ALL_PROFILES=$(${
-                      mkSecureCurl apiKeySecret {
-                        url = "${instance.baseUrl}/api/${instance.apiVersion}/qualityprofile";
-                      }
-                    })
+                  # Fetch all quality profiles from the service
+                  ALL_PROFILES=$(${
+                    mkSecureCurl apiKeySecret {
+                      url = "${instance.baseUrl}/api/${instance.apiVersion}/qualityprofile";
+                    }
+                  })
 
-                    if [ -z "$ALL_PROFILES" ] || [ "$ALL_PROFILES" = "[]" ]; then
-                      echo "  No quality profiles found in ${instance.instanceName}"
+                  if [ -z "$ALL_PROFILES" ] || [ "$ALL_PROFILES" = "[]" ]; then
+                    echo "  No quality profiles found in ${instance.instanceName}"
+                  else
+                    # Find profiles to delete (those not in managed list)
+                    PROFILES_TO_DELETE=$(echo "$ALL_PROFILES" | ${pkgs.jq}/bin/jq -c --argjson managed "$MANAGED_PROFILES" '
+                      map(select(.name as $name | $managed | index($name) | not))
+                    ')
+
+                    PROFILE_COUNT=$(echo "$PROFILES_TO_DELETE" | ${pkgs.jq}/bin/jq 'length')
+
+                    if [ "$PROFILE_COUNT" -eq 0 ]; then
+                      echo "  No unmanaged profiles to delete"
                     else
-                      # Find profiles to delete (those not in managed list)
-                      PROFILES_TO_DELETE=$(echo "$ALL_PROFILES" | ${pkgs.jq}/bin/jq -c --argjson managed "$MANAGED_PROFILES" '
-                        map(select(.name as $name | $managed | index($name) | not))
-                      ')
+                      echo "  Found $PROFILE_COUNT unmanaged profile(s) to delete"
 
-                      PROFILE_COUNT=$(echo "$PROFILES_TO_DELETE" | ${pkgs.jq}/bin/jq 'length')
-
-                      if [ "$PROFILE_COUNT" -eq 0 ]; then
-                        echo "  No unmanaged profiles to delete"
-                      else
-                        echo "  Found $PROFILE_COUNT unmanaged profile(s) to delete"
-
-                        # Find the first managed profile that actually exists in this
-                        # instance — managedProfiles is a single list used for every
-                        # Sonarr/Radarr instance, so e.g. a radarr-only "[SQP] SQP-1 (1080p)"
-                        # must be skipped when cleaning up sonarr.
-                        DEFAULT_PROFILE_NAME=""
-                        DEFAULT_PROFILE_ID=""
-                        while IFS= read -r candidate; do
-                          [ -n "$candidate" ] || continue
-                          candidate_id=$(echo "$ALL_PROFILES" | ${pkgs.jq}/bin/jq -r --arg name "$candidate" '
-                            map(select(.name == $name)) | .[0].id // empty
-                          ')
-                          if [ -n "$candidate_id" ] && [ "$candidate_id" != "null" ]; then
-                            DEFAULT_PROFILE_NAME="$candidate"
-                            DEFAULT_PROFILE_ID="$candidate_id"
-                            break
-                          fi
-                        done < <(echo "$MANAGED_PROFILES" | ${pkgs.jq}/bin/jq -r '.[]')
-
-                        if [ -z "$DEFAULT_PROFILE_ID" ]; then
-                          echo "  ERROR: None of the managed profiles exist in ${instance.instanceName}; skipping cleanup"
-                        else
-                          echo "  Default profile for reassignment: $DEFAULT_PROFILE_NAME (ID: $DEFAULT_PROFILE_ID)"
-
-                          # Process each profile to delete
-                          while IFS= read -r profile; do
-                            PROFILE_ID=$(echo "$profile" | ${pkgs.jq}/bin/jq -r '.id')
-                            PROFILE_NAME=$(echo "$profile" | ${pkgs.jq}/bin/jq -r '.name')
-
-                            echo "  Processing unmanaged profile: $PROFILE_NAME (ID: $PROFILE_ID)"
-
-                            # Find all media items using this profile
-                            MEDIA_ITEMS=$(${
-                              mkSecureCurl apiKeySecret {
-                                url = "${instance.baseUrl}/api/${instance.apiVersion}/${mediaEndpoint}";
-                              }
-                            })
-                            ITEMS_WITH_PROFILE=$(echo "$MEDIA_ITEMS" | ${pkgs.jq}/bin/jq -c --arg profileId "$PROFILE_ID" '
-                              map(select(.qualityProfileId == ($profileId | tonumber)))
-                            ')
-
-                            ITEM_COUNT=$(echo "$ITEMS_WITH_PROFILE" | ${pkgs.jq}/bin/jq 'length')
-
-                            if [ "$ITEM_COUNT" -gt 0 ]; then
-                              echo "    Reassigning $ITEM_COUNT item(s) to default profile..."
-
-                              while IFS= read -r item; do
-                                ITEM_ID=$(echo "$item" | ${pkgs.jq}/bin/jq -r '.id')
-                                ITEM_TITLE=$(echo "$item" | ${pkgs.jq}/bin/jq -r '.title')
-
-                                # Update the item to use the default profile
-                                UPDATED_ITEM=$(echo "$item" | ${pkgs.jq}/bin/jq --arg profileId "$DEFAULT_PROFILE_ID" '
-                                  .qualityProfileId = ($profileId | tonumber)
-                                ')
-
-                                ${
-                                  mkSecureCurl apiKeySecret {
-                                    url = "${instance.baseUrl}/api/${instance.apiVersion}/${mediaEndpoint}/$ITEM_ID";
-                                    method = "PUT";
-                                    headers = {
-                                      "Content-Type" = "application/json";
-                                    };
-                                    data = "$UPDATED_ITEM";
-                                  }
-                                } > /dev/null
-
-                                echo "      Reassigned: $ITEM_TITLE"
-                              done < <(echo "$ITEMS_WITH_PROFILE" | ${pkgs.jq}/bin/jq -c '.[]')
-                            fi
-
-                            # Delete the quality profile
-                            DELETE_RESPONSE=$(${
-                              mkSecureCurl apiKeySecret {
-                                url = "${instance.baseUrl}/api/${instance.apiVersion}/qualityprofile/$PROFILE_ID";
-                                method = "DELETE";
-                                extraArgs = "-w \"\\n%{http_code}\"";
-                              }
-                            })
-
-                            HTTP_CODE=$(echo "$DELETE_RESPONSE" | tail -n1)
-
-                            if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "204" ]; then
-                              echo "    ✓ Deleted profile: $PROFILE_NAME"
-                            else
-                              RESPONSE_BODY=$(echo "$DELETE_RESPONSE" | head -n-1)
-                              echo "    ✗ Failed to delete profile: $PROFILE_NAME (HTTP $HTTP_CODE)"
-                              echo "      Response: $RESPONSE_BODY"
-                            fi
-
-                          done < <(echo "$PROFILES_TO_DELETE" | ${pkgs.jq}/bin/jq -c '.[]')
+                      # Find the first managed profile that actually exists in this
+                      # instance — managedProfiles is a single list used for every
+                      # Sonarr/Radarr instance, so e.g. a radarr-only "[SQP] SQP-1 (1080p)"
+                      # must be skipped when cleaning up sonarr.
+                      DEFAULT_PROFILE_NAME=""
+                      DEFAULT_PROFILE_ID=""
+                      while IFS= read -r candidate; do
+                        [ -n "$candidate" ] || continue
+                        candidate_id=$(echo "$ALL_PROFILES" | ${pkgs.jq}/bin/jq -r --arg name "$candidate" '
+                          map(select(.name == $name)) | .[0].id // empty
+                        ')
+                        if [ -n "$candidate_id" ] && [ "$candidate_id" != "null" ]; then
+                          DEFAULT_PROFILE_NAME="$candidate"
+                          DEFAULT_PROFILE_ID="$candidate_id"
+                          break
                         fi
+                      done < <(echo "$MANAGED_PROFILES" | ${pkgs.jq}/bin/jq -r '.[]')
+
+                      if [ -z "$DEFAULT_PROFILE_ID" ]; then
+                        echo "  ERROR: None of the managed profiles exist in ${instance.instanceName}; skipping cleanup"
+                      else
+                        echo "  Default profile for reassignment: $DEFAULT_PROFILE_NAME (ID: $DEFAULT_PROFILE_ID)"
+
+                        # Process each profile to delete
+                        while IFS= read -r profile; do
+                          PROFILE_ID=$(echo "$profile" | ${pkgs.jq}/bin/jq -r '.id')
+                          PROFILE_NAME=$(echo "$profile" | ${pkgs.jq}/bin/jq -r '.name')
+
+                          echo "  Processing unmanaged profile: $PROFILE_NAME (ID: $PROFILE_ID)"
+
+                          # Find all media items using this profile
+                          MEDIA_ITEMS=$(${
+                    mkSecureCurl apiKeySecret {
+                      url = "${instance.baseUrl}/api/${instance.apiVersion}/${mediaEndpoint}";
+                    }
+                  })
+                          ITEMS_WITH_PROFILE=$(echo "$MEDIA_ITEMS" | ${pkgs.jq}/bin/jq -c --arg profileId "$PROFILE_ID" '
+                            map(select(.qualityProfileId == ($profileId | tonumber)))
+                          ')
+
+                          ITEM_COUNT=$(echo "$ITEMS_WITH_PROFILE" | ${pkgs.jq}/bin/jq 'length')
+
+                          if [ "$ITEM_COUNT" -gt 0 ]; then
+                            echo "    Reassigning $ITEM_COUNT item(s) to default profile..."
+
+                            while IFS= read -r item; do
+                              ITEM_ID=$(echo "$item" | ${pkgs.jq}/bin/jq -r '.id')
+                              ITEM_TITLE=$(echo "$item" | ${pkgs.jq}/bin/jq -r '.title')
+
+                              # Update the item to use the default profile
+                              UPDATED_ITEM=$(echo "$item" | ${pkgs.jq}/bin/jq --arg profileId "$DEFAULT_PROFILE_ID" '
+                                .qualityProfileId = ($profileId | tonumber)
+                              ')
+
+                              ${
+                    mkSecureCurl apiKeySecret {
+                      url = "${instance.baseUrl}/api/${instance.apiVersion}/${mediaEndpoint}/$ITEM_ID";
+                      method = "PUT";
+                      headers = {
+                        "Content-Type" = "application/json";
+                      };
+                      data = "$UPDATED_ITEM";
+                    }
+                  } > /dev/null
+
+                              echo "      Reassigned: $ITEM_TITLE"
+                            done < <(echo "$ITEMS_WITH_PROFILE" | ${pkgs.jq}/bin/jq -c '.[]')
+                          fi
+
+                          # Delete the quality profile
+                          DELETE_RESPONSE=$(${
+                    mkSecureCurl apiKeySecret {
+                      url = "${instance.baseUrl}/api/${instance.apiVersion}/qualityprofile/$PROFILE_ID";
+                      method = "DELETE";
+                      extraArgs = "-w \"\\n%{http_code}\"";
+                    }
+                  })
+
+                          HTTP_CODE=$(echo "$DELETE_RESPONSE" | tail -n1)
+
+                          if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "204" ]; then
+                            echo "    ✓ Deleted profile: $PROFILE_NAME"
+                          else
+                            RESPONSE_BODY=$(echo "$DELETE_RESPONSE" | head -n-1)
+                            echo "    ✗ Failed to delete profile: $PROFILE_NAME (HTTP $HTTP_CODE)"
+                            echo "      Response: $RESPONSE_BODY"
+                          fi
+
+                        done < <(echo "$PROFILES_TO_DELETE" | ${pkgs.jq}/bin/jq -c '.[]')
                       fi
                     fi
-                  ''
-                ) allInstances
-            }
+                  fi
+                ''
+              )
+              allInstances
+          }
 
-            echo "Quality profile cleanup completed"
-          '';
-        };
+          echo "Quality profile cleanup completed"
+        '';
       };
+    };
 }

@@ -1,6 +1,5 @@
-{ lib }:
-with lib;
-let
+{lib}:
+with lib; let
   secretOrStrType = types.oneOf [
     types.str
     (types.submodule {
@@ -13,34 +12,32 @@ let
       };
     })
   ];
-in
-rec {
+in rec {
   isSecretRef = value: (builtins.isAttrs value) && (value ? _secret) && !(value ? __unfix__);
 
-  toShellValue =
-    value:
-    if (builtins.isAttrs value) && (value ? _secret) && !(value ? __unfix__) then
-      "$(cat ${escapeShellArg value._secret})"
-    else
-      "${escapeShellArg (toString value)}";
+  toShellValue = value:
+    if (builtins.isAttrs value) && (value ? _secret) && !(value ? __unfix__)
+    then "$(cat ${escapeShellArg value._secret})"
+    else "${escapeShellArg (toString value)}";
 
-  mkSecretOption =
-    {
-      nullable ? false,
-      type ? secretOrStrType,
-      default ? null,
-      defaultText ? null,
-      example ? null,
-      description,
-    }:
+  mkSecretOption = {
+    nullable ? false,
+    type ? secretOrStrType,
+    default ? null,
+    defaultText ? null,
+    example ? null,
+    description,
+  }:
     mkOption {
       inherit default defaultText;
-      type = if nullable then types.nullOr type else type;
+      type =
+        if nullable
+        then types.nullOr type
+        else type;
       example =
-        if example != null then
-          example
-        else
-          literalExpression ''{ _secret = "/run/secrets/secret-file"; }'';
+        if example != null
+        then example
+        else literalExpression ''{ _secret = "/run/secrets/secret-file"; }'';
       description = ''
         ${description}
 
@@ -51,91 +48,87 @@ rec {
       '';
     };
 
-  mkJqSecretArgs =
-    secretFields:
-    let
-      processedFields = lib.mapAttrs (
+  mkJqSecretArgs = secretFields: let
+    processedFields =
+      lib.mapAttrs (
         name: value:
-        if value == null then
-          {
+          if value == null
+          then {
             flag = "--arg ${name} \"\"";
             ref = "$" + name;
           }
-        else if isSecretRef value then
-          {
+          else if isSecretRef value
+          then {
             flag = "--rawfile ${name}Content ${lib.escapeShellArg (toString value._secret)}";
             ref = "($" + name + "Content | sub(\"\\n+$\"; \"\"))";
           }
-        else
-          {
+          else {
             flag = "--arg ${name} ${lib.escapeShellArg (toString value)}";
             ref = "$" + name;
           }
-      ) secretFields;
+      )
+      secretFields;
 
-      flags = lib.mapAttrsToList (_name: field: field.flag) processedFields;
-      refs = lib.mapAttrs (_name: field: field.ref) processedFields;
-    in
-    {
-      inherit refs;
-      flagsString = lib.concatStringsSep " " flags;
-    };
+    flags = lib.mapAttrsToList (_name: field: field.flag) processedFields;
+    refs = lib.mapAttrs (_name: field: field.ref) processedFields;
+  in {
+    inherit refs;
+    flagsString = lib.concatStringsSep " " flags;
+  };
 
   # Recursively replace every ._secret ref with null, leaving all other
   # values intact so builtins.toJSON produces safe JSON with no file paths.
-  stripSecretRefs =
-    value:
-    if isSecretRef value then
-      null
-    else if builtins.isAttrs value && !(value ? __unfix__) then
-      lib.mapAttrs (_: stripSecretRefs) value
-    else if builtins.isList value then
-      map stripSecretRefs value
-    else
-      value;
+  stripSecretRefs = value:
+    if isSecretRef value
+    then null
+    else if builtins.isAttrs value && !(value ? __unfix__)
+    then lib.mapAttrs (_: stripSecretRefs) value
+    else if builtins.isList value
+    then map stripSecretRefs value
+    else value;
 
   # Collect every ._secret ref in a nested structure as a list of
   # { path = ["key" 0 "sub" ...]; file = "/runtime/path"; } records.
-  collectSecretRefsRec =
-    path: value:
-    if isSecretRef value then
-      [
-        {
-          inherit path;
-          file = toString value._secret;
-        }
-      ]
-    else if builtins.isAttrs value && !(value ? __unfix__) then
-      lib.concatLists (lib.mapAttrsToList (k: v: collectSecretRefsRec (path ++ [ k ]) v) value)
-    else if builtins.isList value then
-      lib.concatLists (lib.imap0 (i: v: collectSecretRefsRec (path ++ [ i ]) v) value)
-    else
-      [ ];
+  collectSecretRefsRec = path: value:
+    if isSecretRef value
+    then [
+      {
+        inherit path;
+        file = toString value._secret;
+      }
+    ]
+    else if builtins.isAttrs value && !(value ? __unfix__)
+    then lib.concatLists (lib.mapAttrsToList (k: v: collectSecretRefsRec (path ++ [k]) v) value)
+    else if builtins.isList value
+    then lib.concatLists (lib.imap0 (i: v: collectSecretRefsRec (path ++ [i]) v) value)
+    else [];
 
   # Like mkJqSecretArgs but handles ._secret refs at any nesting depth.
   # Returns { flagsString, assignments, hasSecrets } where assignments is a
   # list of jq path-assignment strings ready to be joined with " | ".
-  mkNestedJqSecretArgs =
-    rawConfig:
-    let
-      allRefs = collectSecretRefsRec [ ] rawConfig;
-      indexedRefs = lib.imap0 (i: ref: ref // { varName = "nixflixSecret${toString i}"; }) allRefs;
-      flags = map (ref: "--rawfile ${ref.varName}Content ${lib.escapeShellArg ref.file}") indexedRefs;
-      assignments = map (
-        ref:
-        let
+  mkNestedJqSecretArgs = rawConfig: let
+    allRefs = collectSecretRefsRec [] rawConfig;
+    indexedRefs = lib.imap0 (i: ref: ref // {varName = "nixflixSecret${toString i}";}) allRefs;
+    flags = map (ref: "--rawfile ${ref.varName}Content ${lib.escapeShellArg ref.file}") indexedRefs;
+    assignments =
+      map (
+        ref: let
           jqPath =
             "."
             + lib.concatMapStringsSep "" (
-              k: if builtins.isInt k then "[${toString k}]" else ''["${k}"]''
-            ) ref.path;
+              k:
+                if builtins.isInt k
+                then "[${toString k}]"
+                else ''["${k}"]''
+            )
+            ref.path;
         in
-        "${jqPath} = ($" + ref.varName + ''Content | sub("\n+$"; ""))''
-      ) indexedRefs;
-    in
-    {
-      flagsString = lib.concatStringsSep " " flags;
-      inherit assignments;
-      hasSecrets = allRefs != [ ];
-    };
+          "${jqPath} = ($" + ref.varName + ''Content | sub("\n+$"; ""))''
+      )
+      indexedRefs;
+  in {
+    flagsString = lib.concatStringsSep " " flags;
+    inherit assignments;
+    hasSecrets = allRefs != [];
+  };
 }

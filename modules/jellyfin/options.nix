@@ -4,12 +4,10 @@
   pkgs,
   ...
 }:
-with lib;
-let
+with lib; let
   stateDir = "${config.nixflix.stateDir}/jellyfin";
-  secrets = import ../../lib/secrets { inherit lib; };
-in
-{
+  secrets = import ../../lib/secrets {inherit lib;};
+in {
   options.nixflix.jellyfin = {
     enable = mkOption {
       type = types.bool;

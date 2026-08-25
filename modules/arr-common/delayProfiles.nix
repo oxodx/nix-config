@@ -1,14 +1,13 @@
-{ serviceName }:
-{
+{serviceName}: {
   config,
   lib,
   pkgs,
   ...
 }:
-with lib;
-let
+with lib; let
   cfg = config.nixflix.${serviceName};
-  inherit (import ./utils.nix { inherit lib pkgs serviceName; })
+  inherit
+    (import ./utils.nix {inherit lib pkgs serviceName;})
     usesMediaDirs
     capitalizedName
     mkSecureCurl
@@ -24,11 +23,10 @@ let
     bypassIfAboveCustomFormatScore = false;
     minimumCustomFormatScore = 0;
     order = 2147483647;
-    tags = [ ];
+    tags = [];
     id = 1;
   };
-in
-{
+in {
   options.nixflix.${serviceName}.config = optionalAttrs usesMediaDirs {
     delayProfiles = mkOption {
       type = types.listOf (
@@ -88,13 +86,13 @@ in
             };
             tags = mkOption {
               type = types.listOf types.int;
-              default = [ ];
+              default = [];
               description = "List of tag IDs this delay profile applies to (empty = applies to all)";
             };
           };
         }
       );
-      default = [ defaultDelayProfile ];
+      default = [defaultDelayProfile];
       defaultText = literalExpression ''
         [
           {
@@ -122,69 +120,64 @@ in
   };
 
   config = mkIf (usesMediaDirs && config.nixflix.enable && cfg.enable && cfg.config.apiKey != null) {
-    systemd.services."${serviceName}-delayprofiles" =
-      let
-        userProfileIds = map (p: p.id) cfg.config.delayProfiles;
-        hasDefaultProfile = elem 1 userProfileIds;
-        mergedProfiles =
-          if hasDefaultProfile then
-            cfg.config.delayProfiles
-          else
-            [ defaultDelayProfile ] ++ cfg.config.delayProfiles;
-        sortedProfiles = sort (a: b: a.id < b.id) mergedProfiles;
-      in
-      {
-        description = "Configure ${serviceName} delay profiles via API";
-        after = [ "${serviceName}-config.service" ];
-        requires = [ "${serviceName}-config.service" ];
-        wantedBy = [ "multi-user.target" ];
+    systemd.services."${serviceName}-delayprofiles" = let
+      userProfileIds = map (p: p.id) cfg.config.delayProfiles;
+      hasDefaultProfile = elem 1 userProfileIds;
+      mergedProfiles =
+        if hasDefaultProfile
+        then cfg.config.delayProfiles
+        else [defaultDelayProfile] ++ cfg.config.delayProfiles;
+      sortedProfiles = sort (a: b: a.id < b.id) mergedProfiles;
+    in {
+      description = "Configure ${serviceName} delay profiles via API";
+      after = ["${serviceName}-config.service"];
+      requires = ["${serviceName}-config.service"];
+      wantedBy = ["multi-user.target"];
 
-        serviceConfig = {
-          Type = "oneshot";
-          RemainAfterExit = true;
-        };
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
 
-        script = ''
-          set -eu
+      script = ''
+        set -eu
 
-          BASE_URL="http://${cfg.config.hostConfig.bindAddress}:${builtins.toString cfg.config.hostConfig.port}${cfg.config.hostConfig.urlBase}/api/${cfg.config.apiVersion}"
+        BASE_URL="http://${cfg.config.hostConfig.bindAddress}:${builtins.toString cfg.config.hostConfig.port}${cfg.config.hostConfig.urlBase}/api/${cfg.config.apiVersion}"
 
-          echo "Fetching existing delay profiles..."
-          DELAY_PROFILES=$(${
-            mkSecureCurl cfg.config.apiKey {
-              url = "$BASE_URL/delayprofile";
-              extraArgs = "-Sf";
-            }
-          } 2>/dev/null)
+        echo "Fetching existing delay profiles..."
+        DELAY_PROFILES=$(${
+          mkSecureCurl cfg.config.apiKey {
+            url = "$BASE_URL/delayprofile";
+            extraArgs = "-Sf";
+          }
+        } 2>/dev/null)
 
-          CONFIGURED_IDS=$(cat <<'EOF'
-          ${builtins.toJSON (map (p: p.id) sortedProfiles)}
-          EOF
-          )
+        CONFIGURED_IDS=$(cat <<'EOF'
+        ${builtins.toJSON (map (p: p.id) sortedProfiles)}
+        EOF
+        )
 
-          echo "Removing delay profiles not in configuration..."
-          echo "$DELAY_PROFILES" | ${pkgs.jq}/bin/jq -r '.[] | @json' | while IFS= read -r profile; do
-            PROFILE_ID=$(echo "$profile" | ${pkgs.jq}/bin/jq -r '.id')
+        echo "Removing delay profiles not in configuration..."
+        echo "$DELAY_PROFILES" | ${pkgs.jq}/bin/jq -r '.[] | @json' | while IFS= read -r profile; do
+          PROFILE_ID=$(echo "$profile" | ${pkgs.jq}/bin/jq -r '.id')
 
-            if ! echo "$CONFIGURED_IDS" | ${pkgs.jq}/bin/jq -e --argjson id "$PROFILE_ID" 'index($id)' >/dev/null 2>&1; then
-              echo "Deleting delay profile not in config (ID: $PROFILE_ID)"
-              ${
-                mkSecureCurl cfg.config.apiKey {
-                  url = "$BASE_URL/delayprofile/$PROFILE_ID";
-                  method = "DELETE";
-                  extraArgs = "-Sf";
-                }
-              } >/dev/null 2>&1 || echo "Warning: Failed to delete delay profile $PROFILE_ID (may be in use)"
-            fi
-          done
+          if ! echo "$CONFIGURED_IDS" | ${pkgs.jq}/bin/jq -e --argjson id "$PROFILE_ID" 'index($id)' >/dev/null 2>&1; then
+            echo "Deleting delay profile not in config (ID: $PROFILE_ID)"
+            ${
+          mkSecureCurl cfg.config.apiKey {
+            url = "$BASE_URL/delayprofile/$PROFILE_ID";
+            method = "DELETE";
+            extraArgs = "-Sf";
+          }
+        } >/dev/null 2>&1 || echo "Warning: Failed to delete delay profile $PROFILE_ID (may be in use)"
+          fi
+        done
 
-          ${concatMapStringsSep "\n" (
-            profileConfig:
-            let
+        ${concatMapStringsSep "\n" (
+            profileConfig: let
               profileJson = builtins.toJSON profileConfig;
               profileId = toString profileConfig.id;
-            in
-            ''
+            in ''
               echo "Processing delay profile (ID: ${profileId})..."
 
               EXISTING_PROFILE=$(echo "$DELAY_PROFILES" | ${pkgs.jq}/bin/jq -r '.[] | select(.id == ${profileId}) | @json' || echo "")
@@ -192,37 +185,38 @@ in
               if [ -n "$EXISTING_PROFILE" ]; then
                 echo "Delay profile ${profileId} already exists, updating..."
                 ${
-                  mkSecureCurl cfg.config.apiKey {
-                    url = "$BASE_URL/delayprofile/${profileId}";
-                    method = "PUT";
-                    headers = {
-                      "Content-Type" = "application/json";
-                    };
-                    data = profileJson;
-                    extraArgs = "-Sf";
-                  }
-                } > /dev/null
+                mkSecureCurl cfg.config.apiKey {
+                  url = "$BASE_URL/delayprofile/${profileId}";
+                  method = "PUT";
+                  headers = {
+                    "Content-Type" = "application/json";
+                  };
+                  data = profileJson;
+                  extraArgs = "-Sf";
+                }
+              } > /dev/null
                 echo "Delay profile ${profileId} updated"
               else
                 echo "Delay profile ${profileId} does not exist, creating..."
                 ${
-                  mkSecureCurl cfg.config.apiKey {
-                    url = "$BASE_URL/delayprofile";
-                    method = "POST";
-                    headers = {
-                      "Content-Type" = "application/json";
-                    };
-                    data = profileJson;
-                    extraArgs = "-Sf";
-                  }
-                } > /dev/null
+                mkSecureCurl cfg.config.apiKey {
+                  url = "$BASE_URL/delayprofile";
+                  method = "POST";
+                  headers = {
+                    "Content-Type" = "application/json";
+                  };
+                  data = profileJson;
+                  extraArgs = "-Sf";
+                }
+              } > /dev/null
                 echo "Delay profile ${profileId} created"
               fi
             ''
-          ) sortedProfiles}
+          )
+          sortedProfiles}
 
-          echo "${capitalizedName} delay profiles configuration complete"
-        '';
-      };
+        echo "${capitalizedName} delay profiles configuration complete"
+      '';
+    };
   };
 }

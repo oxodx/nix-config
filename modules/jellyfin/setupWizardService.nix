@@ -4,14 +4,13 @@
   pkgs,
   ...
 }:
-with lib;
-let
-  secrets = import ../../lib/secrets { inherit lib; };
-  getFirstAdmin = import ../../lib/getFirstAdmin.nix { inherit lib; };
+with lib; let
+  secrets = import ../../lib/secrets {inherit lib;};
+  getFirstAdmin = import ../../lib/getFirstAdmin.nix {inherit lib;};
   inherit (config) nixflix;
   cfg = config.nixflix.jellyfin;
 
-  authUtil = import ./authUtil.nix { inherit lib pkgs cfg; };
+  authUtil = import ./authUtil.nix {inherit lib pkgs cfg;};
 
   firstAdmin = getFirstAdmin {
     inherit (cfg) users;
@@ -25,23 +24,21 @@ let
   };
 
   baseUrl =
-    if cfg.network.baseUrl == "" then
-      "http://${cfg.connectionAddress}:${toString cfg.network.internalHttpPort}"
-    else
-      "http://${cfg.connectionAddress}:${toString cfg.network.internalHttpPort}/${cfg.network.baseUrl}";
+    if cfg.network.baseUrl == ""
+    then "http://${cfg.connectionAddress}:${toString cfg.network.internalHttpPort}"
+    else "http://${cfg.connectionAddress}:${toString cfg.network.internalHttpPort}/${cfg.network.baseUrl}";
 
   waitForApiScript = import ./waitForApiScript.nix {
     inherit pkgs;
     jellyfinCfg = cfg;
   };
-in
-{
+in {
   config = mkIf (nixflix.enable && cfg.enable) {
     systemd.services.jellyfin-setup-wizard = {
       description = "Complete Jellyfin Setup Wizard";
-      after = [ "jellyfin-api-key.service" ];
-      requires = [ "jellyfin-api-key.service" ];
-      wantedBy = [ "multi-user.target" ];
+      after = ["jellyfin-api-key.service"];
+      requires = ["jellyfin-api-key.service"];
+      wantedBy = ["multi-user.target"];
 
       serviceConfig = {
         Type = "oneshot";

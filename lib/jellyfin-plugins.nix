@@ -1,5 +1,4 @@
-{ lib, ... }:
-let
+{lib, ...}: let
   repoPackageSourceType = lib.types.submodule {
     options = {
       version = lib.mkOption {
@@ -32,8 +31,7 @@ let
     };
   };
 
-  mkPackageOption =
-    default:
+  mkPackageOption = default:
     lib.mkOption {
       inherit default;
       type = lib.types.nullOr (
@@ -58,23 +56,22 @@ let
       '';
     };
 
-  mkPluginModule =
-    {
-      enableDefault ? false,
-      packageDefault ? null,
-      configOption ? null,
-    }:
+  mkPluginModule = {
+    enableDefault ? false,
+    packageDefault ? null,
+    configOption ? null,
+  }:
     lib.types.submodule (
-      { name, ... }:
-      {
+      {name, ...}: {
         options = {
           package = mkPackageOption packageDefault;
 
           config =
-            if configOption == null then
+            if configOption == null
+            then
               lib.mkOption {
                 type = lib.types.attrsOf lib.types.anything;
-                default = { };
+                default = {};
                 description = ''
                   Plugin configuration payload as seen in the Jellyfin UI/API. All
                   attributes under this option are POSTed to
@@ -86,8 +83,7 @@ let
                   }
                 '';
               }
-            else
-              configOption;
+            else configOption;
 
           apiName = lib.mkOption {
             type = lib.types.str;
@@ -121,17 +117,14 @@ let
         };
       }
     );
-in
-{
+in {
   inherit mkPluginModule;
 
-  fromRepo =
-    {
-      version,
-      hash,
-      repository ? null,
-    }:
-    {
-      inherit version hash repository;
-    };
+  fromRepo = {
+    version,
+    hash,
+    repository ? null,
+  }: {
+    inherit version hash repository;
+  };
 }

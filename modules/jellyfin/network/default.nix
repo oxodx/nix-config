@@ -4,19 +4,17 @@
   pkgs,
   ...
 }:
-with lib;
-let
+with lib; let
   inherit (config) nixflix;
-  inherit (import ../../../lib/mkVirtualHosts.nix { inherit lib config; }) mkVirtualHost;
+  inherit (import ../../../lib/mkVirtualHosts.nix {inherit lib config;}) mkVirtualHost;
   cfg = config.nixflix.jellyfin;
   hostname = "${cfg.subdomain}.${nixflix.reverseProxy.domain}";
 
-  util = import ../util.nix { inherit lib; };
+  util = import ../util.nix {inherit lib;};
 
   networkXmlContent = util.mkXmlContent "NetworkConfiguration" cfg.network;
-in
-{
-  imports = [ ./options.nix ];
+in {
+  imports = [./options.nix];
 
   config = mkIf (nixflix.enable && cfg.enable) (mkMerge [
     (mkVirtualHost {
@@ -24,10 +22,9 @@ in
       inherit (cfg.reverseProxy) expose;
       port = cfg.network.internalHttpPort;
       upstreamHost =
-        if config.nixflix.vpn.enable && cfg.vpn.enable then
-          config.vpnNamespaces.wg.namespaceAddress
-        else
-          "127.0.0.1";
+        if config.nixflix.vpn.enable && cfg.vpn.enable
+        then config.vpnNamespaces.wg.namespaceAddress
+        else "127.0.0.1";
       disableBuffering = true;
       websocketUpgrade = true;
     })
@@ -62,7 +59,6 @@ in
           7359
         ];
       };
-
     }
     (mkIf (config.nixflix.vpn.enable && cfg.vpn.enable) {
       systemd.services.jellyfin.vpnConfinement = {

@@ -1,6 +1,5 @@
-{ lib, ... }:
-with lib;
-{
+{lib, ...}:
+with lib; {
   options.nixflix.seerr.settings = {
     users = mkOption {
       type = types.submodule {
@@ -50,7 +49,7 @@ with lib;
                       };
                     };
                   };
-                  default = { };
+                  default = {};
                 };
                 tv = mkOption {
                   type = types.submodule {
@@ -67,16 +66,16 @@ with lib;
                       };
                     };
                   };
-                  default = { };
+                  default = {};
                 };
               };
             };
-            default = { };
+            default = {};
             description = "Default request quotas for new users";
           };
         };
       };
-      default = { };
+      default = {};
       defaultText = literalExpression ''
         {
           localLogin = true;

@@ -4,14 +4,12 @@
   pkgs,
   ...
 }:
-with lib;
-let
+with lib; let
   cfg = config.nixflix.maintainerr;
   maintainerrUrl = "http://${cfg.connectionAddress}:${toString cfg.port}";
   overlaySettingsJson = builtins.toJSON cfg.overlays.settings;
-in
-{
-  imports = [ ./options.nix ];
+in {
+  imports = [./options.nix];
 
   config = mkIf (config.nixflix.enable && cfg.enable) {
     systemd.services.maintainerr-overlays = {
@@ -24,7 +22,7 @@ in
         "maintainerr.service"
         "maintainerr-settings.service"
       ];
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = ["multi-user.target"];
 
       serviceConfig = {
         Type = "oneshot";

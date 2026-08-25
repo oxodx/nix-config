@@ -1,11 +1,12 @@
-{ config, lib, ... }:
-with lib;
-let
-  secrets = import ../../../lib/secrets { inherit lib; };
-in
 {
+  config,
+  lib,
+  ...
+}:
+with lib; let
+  secrets = import ../../../lib/secrets {inherit lib;};
+in {
   options.nixflix.jellyfin = {
-
     openFirewall = mkOption {
       type = types.bool;
       default = false;
@@ -47,10 +48,9 @@ in
       type = types.str;
       readOnly = true;
       default =
-        if config.nixflix.jellyfin.network.localNetworkAddresses == [ ] then
-          "127.0.0.1"
-        else
-          builtins.head config.nixflix.jellyfin.network.localNetworkAddresses;
+        if config.nixflix.jellyfin.network.localNetworkAddresses == []
+        then "127.0.0.1"
+        else builtins.head config.nixflix.jellyfin.network.localNetworkAddresses;
       description = "Address for connecting to this service.";
     };
 
@@ -144,19 +144,21 @@ in
 
       knownProxies = mkOption {
         type = types.listOf types.str;
-        default = if config.nixflix.reverseProxy.enable then [ "127.0.0.1" ] else [ ];
+        default =
+          if config.nixflix.reverseProxy.enable
+          then ["127.0.0.1"]
+          else [];
         description = "List of IP addresses or hostnames of known proxies used when connecting to your Jellyfin instance. This is required to make proper use of 'X-Forwarded-For' headers.";
       };
 
       localNetworkAddresses = mkOption {
         type = types.listOf types.str;
         default =
-          if config.nixflix.vpn.enable && config.nixflix.jellyfin.vpn.enable then
-            [ config.vpnNamespaces.wg.namespaceAddress ]
-          else if config.nixflix.reverseProxy.enable && !config.nixflix.jellyfin.vpn.enable then
-            [ "127.0.0.1" ]
-          else
-            [ ];
+          if config.nixflix.vpn.enable && config.nixflix.jellyfin.vpn.enable
+          then [config.vpnNamespaces.wg.namespaceAddress]
+          else if config.nixflix.reverseProxy.enable && !config.nixflix.jellyfin.vpn.enable
+          then ["127.0.0.1"]
+          else [];
         defaultText = literalExpression ''
           if (config.nixflix.reverseProxy.enable && !config.nixflix.jellyfin.vpn.enable)
           then [ "127.0.0.1" ]
@@ -167,7 +169,7 @@ in
 
       localNetworkSubnets = mkOption {
         type = types.listOf types.str;
-        default = [ ];
+        default = [];
         description = "IP addresses or IP/netmask entries for networks that will be considered on local network when enforcing bandwidth and remote access restrictions. If left blank, all RFC1918 addresses are considered local.";
       };
 
@@ -185,13 +187,13 @@ in
 
       publishedServerUriBySubnet = mkOption {
         type = types.listOf types.str;
-        default = [ ];
+        default = [];
         description = "List of published server URIs by subnet";
       };
 
       remoteIpFilter = mkOption {
         type = types.listOf types.str;
-        default = [ ];
+        default = [];
         description = "Remote IP filter list";
       };
 
@@ -203,7 +205,7 @@ in
 
       virtualInterfaceNames = mkOption {
         type = types.listOf types.str;
-        default = [ "veth" ];
+        default = ["veth"];
         description = "List of virtual interface names";
       };
     };

@@ -1,16 +1,13 @@
-{ serviceName }:
-{
+{serviceName}: {
   config,
   lib,
   pkgs,
   ...
 }:
-with lib;
-let
+with lib; let
   cfg = config.nixflix.${serviceName};
-  inherit (import ./utils.nix { inherit lib pkgs serviceName; }) capitalizedName;
-in
-{
+  inherit (import ./utils.nix {inherit lib pkgs serviceName;}) capitalizedName;
+in {
   config = mkIf (config.nixflix.enable && cfg.enable && config.nixflix.postgres.enable) {
     nixflix.${serviceName}.settings = {
       log.dbEnabled = true;
@@ -46,8 +43,8 @@ in
           "postgresql.service"
           "postgresql-setup.service"
         ];
-        before = [ "postgresql-ready.target" ];
-        requiredBy = [ "postgresql-ready.target" ];
+        before = ["postgresql-ready.target"];
+        requiredBy = ["postgresql-ready.target"];
 
         serviceConfig = {
           User = "postgres";
@@ -68,8 +65,8 @@ in
           "postgresql.service"
           "postgresql-setup.service"
         ];
-        before = [ "postgresql-ready.target" ];
-        requiredBy = [ "postgresql-ready.target" ];
+        before = ["postgresql-ready.target"];
+        requiredBy = ["postgresql-ready.target"];
 
         serviceConfig = {
           Type = "oneshot";
@@ -93,8 +90,8 @@ in
       };
 
       ${serviceName} = {
-        after = [ "postgresql-ready.target" ];
-        requires = [ "postgresql-ready.target" ];
+        after = ["postgresql-ready.target"];
+        requires = ["postgresql-ready.target"];
       };
     };
   };

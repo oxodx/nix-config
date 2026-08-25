@@ -1,8 +1,10 @@
-{ config, lib, ... }:
-let
-  cfg = config.nixflix.recyclarr;
-in
 {
+  config,
+  lib,
+  ...
+}: let
+  cfg = config.nixflix.recyclarr;
+in {
   assertions = [
     {
       assertion = config.nixflix.sonarr.enable -> config.nixflix.sonarr.config.apiKey != null;
@@ -22,10 +24,9 @@ in
     quality_profiles = lib.mkDefault [
       {
         trash_id =
-          if cfg.sonarrQuality == "4K" then
-            "dfa5eaae7894077ad6449169b6eb03e0" # WEB-2160p (Alternative)
-          else
-            "9d142234e45d6143785ac55f5a9e8dc9"; # WEB-1080p (Alternative)
+          if cfg.sonarrQuality == "4K"
+          then "dfa5eaae7894077ad6449169b6eb03e0" # WEB-2160p (Alternative)
+          else "9d142234e45d6143785ac55f5a9e8dc9"; # WEB-1080p (Alternative)
         reset_unmatched_scores.enabled = true;
       }
     ];

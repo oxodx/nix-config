@@ -3,11 +3,9 @@
   lib,
   ...
 }:
-with lib;
-let
+with lib; let
   cfg = config.nixflix;
-in
-{
+in {
   imports = [
     ./downloadarr
     ./flaresolverr.nix
@@ -31,7 +29,7 @@ in
 
     serviceDependencies = mkOption {
       type = types.listOf types.str;
-      default = [ ];
+      default = [];
       example = [
         "unlock-raid.service"
         "tailscale.service"
@@ -78,12 +76,11 @@ in
         internal = true;
         readOnly = true;
         default =
-          if cfg.nginx.enable then
-            cfg.nginx.domain
-          else if cfg.caddy.enable then
-            cfg.caddy.domain
-          else
-            "nixflix";
+          if cfg.nginx.enable
+          then cfg.nginx.domain
+          else if cfg.caddy.enable
+          then cfg.caddy.domain
+          else "nixflix";
         description = "The active reverse proxy domain (derived).";
       };
 
@@ -92,12 +89,11 @@ in
         internal = true;
         readOnly = true;
         default =
-          if cfg.nginx.enable then
-            cfg.nginx.addHostsEntries
-          else if cfg.caddy.enable then
-            cfg.caddy.addHostsEntries
-          else
-            false;
+          if cfg.nginx.enable
+          then cfg.nginx.addHostsEntries
+          else if cfg.caddy.enable
+          then cfg.caddy.addHostsEntries
+          else false;
         description = "Whether to add hosts entries (derived).";
       };
 
@@ -106,12 +102,11 @@ in
         internal = true;
         readOnly = true;
         default =
-          if cfg.nginx.enable then
-            cfg.nginx.forceSSL
-          else if cfg.caddy.enable then
-            cfg.caddy.tls.enable
-          else
-            false;
+          if cfg.nginx.enable
+          then cfg.nginx.forceSSL
+          else if cfg.caddy.enable
+          then cfg.caddy.tls.enable
+          else false;
         description = "Whether SSL is forced (derived).";
       };
 
@@ -120,7 +115,9 @@ in
         internal = true;
         readOnly = true;
         default =
-          if cfg.reverseProxy.enable && (cfg.nginx.forceSSL || cfg.caddy.tls.enable) then "https" else "http";
+          if cfg.reverseProxy.enable && (cfg.nginx.forceSSL || cfg.caddy.tls.enable)
+          then "https"
+          else "http";
         description = "The HTTP scheme to use for external URLs.";
       };
     };
@@ -217,8 +214,8 @@ in
 
     mediaUsers = mkOption {
       type = with types; listOf str;
-      default = [ ];
-      example = [ "user" ];
+      default = [];
+      example = ["user"];
       description = ''
         Extra users to add to the media group.
       '';

@@ -1,10 +1,9 @@
-{ lib, ... }:
-with lib;
-{
+{lib, ...}:
+with lib; {
   options.nixflix.globals = mkOption {
     type = types.attrs;
     description = "Global values to be used by nixflix services";
-    default = { };
+    default = {};
   };
 
   config.nixflix.globals = {

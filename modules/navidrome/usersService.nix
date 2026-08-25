@@ -4,10 +4,9 @@
   pkgs,
   ...
 }:
-with lib;
-let
-  secrets = import ../../lib/secrets { inherit lib; };
-  getFirstAdmin = import ../../lib/getFirstAdmin.nix { inherit lib; };
+with lib; let
+  secrets = import ../../lib/secrets {inherit lib;};
+  getFirstAdmin = import ../../lib/getFirstAdmin.nix {inherit lib;};
   inherit (config) nixflix;
   cfg = nixflix.navidrome;
 
@@ -17,17 +16,16 @@ let
       isAdmin = user: user.isAdmin;
     }).user;
 
-  jqLoginSecrets = secrets.mkJqSecretArgs { inherit (firstAdminUser) password; };
+  jqLoginSecrets = secrets.mkJqSecretArgs {inherit (firstAdminUser) password;};
 
   baseUrl = "http://${cfg.connectionAddress}:${toString cfg.settings.Port}";
-in
-{
+in {
   config = mkIf (nixflix.enable && cfg.enable) {
     systemd.services.navidrome-users-config = {
       description = "Configure Navidrome Users via API";
-      after = [ "navidrome-create-admin.service" ];
-      requires = [ "navidrome-create-admin.service" ];
-      wantedBy = [ "multi-user.target" ];
+      after = ["navidrome-create-admin.service"];
+      requires = ["navidrome-create-admin.service"];
+      wantedBy = ["multi-user.target"];
 
       serviceConfig = {
         Type = "oneshot";
@@ -106,13 +104,17 @@ in
 
         ${concatStringsSep "\n" (
           mapAttrsToList (
-            userName: userCfg:
-            let
-              jqUserSecrets = secrets.mkJqSecretArgs { inherit (userCfg) password; };
-              userEmail = if userCfg.email == null then "" else userCfg.email;
-              resolvedUserName = if userCfg.userName != null then userCfg.userName else userName;
-            in
-            ''
+            userName: userCfg: let
+              jqUserSecrets = secrets.mkJqSecretArgs {inherit (userCfg) password;};
+              userEmail =
+                if userCfg.email == null
+                then ""
+                else userCfg.email;
+              resolvedUserName =
+                if userCfg.userName != null
+                then userCfg.userName
+                else userName;
+            in ''
               echo "=========================================="
               echo "Processing user: ${userName}"
               echo "=========================================="
@@ -185,7 +187,8 @@ in
               fi
               echo ""
             ''
-          ) cfg.users
+          )
+          cfg.users
         )}
 
         echo "Navidrome user configuration completed successfully"

@@ -2,16 +2,14 @@
   lib,
   pkgs,
   cfg,
-}:
-let
-  secrets = import ../../lib/secrets { inherit lib; };
+}: let
+  secrets = import ../../lib/secrets {inherit lib;};
 
   tokenFile = "/run/jellyfin/auth-token";
   token = {
     _secret = tokenFile;
   };
-in
-{
+in {
   inherit token;
 
   authScript = pkgs.writeShellScript "jellyfin-auth" ''

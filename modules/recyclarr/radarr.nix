@@ -1,8 +1,10 @@
-{ config, lib, ... }:
-let
-  cfg = config.nixflix.recyclarr;
-in
 {
+  config,
+  lib,
+  ...
+}: let
+  cfg = config.nixflix.recyclarr;
+in {
   assertions = [
     {
       assertion = config.nixflix.radarr.enable -> config.nixflix.radarr.config.apiKey != null;
@@ -22,10 +24,9 @@ in
     quality_profiles = lib.mkDefault [
       {
         trash_id =
-          if cfg.radarrQuality == "4K" then
-            "5128baeb2b081b72126bc8482b2a86a0" # [SQP] SQP-1 (2160p)
-          else
-            "0896c29d74de619df168d23b98104b22"; # [SQP] SQP-1 (1080p)
+          if cfg.radarrQuality == "4K"
+          then "5128baeb2b081b72126bc8482b2a86a0" # [SQP] SQP-1 (2160p)
+          else "0896c29d74de619df168d23b98104b22"; # [SQP] SQP-1 (1080p)
         reset_unmatched_scores.enabled = true;
       }
     ];

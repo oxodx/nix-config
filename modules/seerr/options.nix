@@ -4,15 +4,13 @@
   pkgs,
   ...
 }:
-with lib;
-let
-  secrets = import ../../lib/secrets { inherit lib; };
-in
-{
+with lib; let
+  secrets = import ../../lib/secrets {inherit lib;};
+in {
   options.nixflix.seerr = {
     enable = mkEnableOption "Seerr media request manager";
 
-    package = mkPackageOption pkgs "seerr" { };
+    package = mkPackageOption pkgs "seerr" {};
 
     apiKey = secrets.mkSecretOption {
       description = ''
@@ -97,10 +95,9 @@ in
       type = types.str;
       readOnly = true;
       default =
-        if config.nixflix.vpn.enable && config.nixflix.seerr.vpn.enable then
-          config.vpnNamespaces.wg.namespaceAddress
-        else
-          "127.0.0.1";
+        if config.nixflix.vpn.enable && config.nixflix.seerr.vpn.enable
+        then config.vpnNamespaces.wg.namespaceAddress
+        else "127.0.0.1";
       description = "Address for connecting to this service.";
     };
   };

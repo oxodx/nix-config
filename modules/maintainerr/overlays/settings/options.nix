@@ -1,5 +1,4 @@
-{ lib, ... }:
-let
+{lib, ...}: let
   overlayTextModule = lib.types.submodule {
     options = {
       overlayText = lib.mkOption {
@@ -169,8 +168,7 @@ let
       };
     };
   };
-in
-{
+in {
   options.nixflix.maintainerr.overlays.settings = {
     enabled = lib.mkOption {
       type = lib.types.bool;
@@ -180,37 +178,37 @@ in
 
     posterOverlayText = lib.mkOption {
       type = overlayTextModule;
-      default = { };
+      default = {};
       description = "Text configuration for poster overlays.";
     };
 
     posterOverlayStyle = lib.mkOption {
       type = overlayStyleModule;
-      default = { };
+      default = {};
       description = "Style configuration for poster overlays.";
     };
 
     posterFrame = lib.mkOption {
       type = frameModule;
-      default = { };
+      default = {};
       description = "Frame configuration for poster overlays.";
     };
 
     titleCardOverlayText = lib.mkOption {
       type = overlayTextModule;
-      default = { };
+      default = {};
       description = "Text configuration for title card overlays.";
     };
 
     titleCardOverlayStyle = lib.mkOption {
       type = overlayStyleModule;
-      default = { };
+      default = {};
       description = "Style configuration for title card overlays.";
     };
 
     titleCardFrame = lib.mkOption {
       type = frameModule;
-      default = { };
+      default = {};
       description = "Frame configuration for title card overlays.";
     };
 

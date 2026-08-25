@@ -1,9 +1,6 @@
-{ lib, ... }:
-let
-
-  jellyfinPlugins = import ../../../lib/jellyfin-plugins.nix { inherit lib; };
-in
-{
+{lib, ...}: let
+  jellyfinPlugins = import ../../../lib/jellyfin-plugins.nix {inherit lib;};
+in {
   options.nixflix.jellyfin.plugins."Subtitle Extract" = lib.mkOption {
     type = jellyfinPlugins.mkPluginModule {
       packageDefault = jellyfinPlugins.fromRepo {
@@ -21,12 +18,12 @@ in
             };
             SelectedSubtitlesLibraries = lib.mkOption {
               type = lib.types.listOf lib.types.str;
-              default = [ ];
+              default = [];
               description = "List of libraries from which subtitles will be extracted.";
             };
             SelectedAttachmentsLibraries = lib.mkOption {
               type = lib.types.listOf lib.types.str;
-              default = [ ];
+              default = [];
               description = "List of libraries from which attachments will be extracted.";
             };
             AllSubtitleCodecs = lib.mkOption {
@@ -177,12 +174,12 @@ in
             };
           };
         };
-        default = { };
+        default = {};
         description = ''
           Plugin to automatically extract embedded subtitles.
         '';
       };
     };
-    default = { };
+    default = {};
   };
 }

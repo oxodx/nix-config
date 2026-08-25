@@ -1,9 +1,5 @@
-{
-  lib,
-  ...
-}:
-with lib;
-{
+{lib, ...}:
+with lib; {
   options.nixflix.jellyfin.metadata = {
     useFileCreationTimeForDateAdded = mkOption {
       type = types.bool;

@@ -1,8 +1,5 @@
-{ lib, ... }:
-let
-
-  enumFromAttrs =
-    enum_values:
+{lib, ...}: let
+  enumFromAttrs = enum_values:
     lib.types.coercedTo (lib.types.enum (lib.attrNames enum_values)) (name: enum_values.${name}) (
       lib.types.enum (lib.attrValues enum_values)
     );
@@ -220,22 +217,21 @@ let
 
       collection = lib.mkOption {
         type = collectionModule;
-        default = { };
+        default = {};
         description = "Collection display and lifecycle settings.";
       };
 
       rules = lib.mkOption {
         type = lib.types.listOf ruleModule;
-        default = [ ];
+        default = [];
         description = "Rules to evaluate. Rules within a section are ANDed; sections are ORed.";
       };
     };
   };
-in
-{
+in {
   options.nixflix.maintainerr.rules = lib.mkOption {
     type = lib.types.listOf ruleGroupModule;
-    default = [ ];
+    default = [];
     description = ''
       Rule groups to declaratively manage in Maintainerr.
       Rule groups present in Maintainerr but not listed here will be deleted.

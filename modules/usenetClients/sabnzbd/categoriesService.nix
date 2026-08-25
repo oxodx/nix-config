@@ -4,18 +4,16 @@
   pkgs,
   ...
 }:
-with lib;
-let
-  secrets = import ../../../lib/secrets { inherit lib; };
+with lib; let
+  secrets = import ../../../lib/secrets {inherit lib;};
   cfg = config.nixflix.usenetClients.sabnzbd;
-in
-{
-  config = mkIf (config.nixflix.enable && cfg.enable && cfg.settings.categories != [ ]) {
+in {
+  config = mkIf (config.nixflix.enable && cfg.enable && cfg.settings.categories != []) {
     systemd.services.sabnzbd-categories = {
       description = "Configure SABnzbd categories";
-      after = [ "sabnzbd.service" ];
-      requires = [ "sabnzbd.service" ];
-      wantedBy = [ "multi-user.target" ];
+      after = ["sabnzbd.service"];
+      requires = ["sabnzbd.service"];
+      wantedBy = ["multi-user.target"];
 
       path = with pkgs; [
         curl

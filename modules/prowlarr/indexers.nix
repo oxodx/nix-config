@@ -4,14 +4,12 @@
   pkgs,
   ...
 }:
-with lib;
-let
+with lib; let
   cfg = config.nixflix.prowlarr;
-  secrets = import ../../lib/secrets { inherit lib; };
+  secrets = import ../../lib/secrets {inherit lib;};
 
-  mkSecureCurl = import ../../lib/mk-secure-curl.nix { inherit lib pkgs; };
-in
-{
+  mkSecureCurl = import ../../lib/mk-secure-curl.nix {inherit lib pkgs;};
+in {
   options.nixflix.prowlarr.config.indexers = mkOption {
     type = types.listOf (
       types.submodule {
@@ -48,7 +46,7 @@ in
           };
           tags = mkOption {
             type = types.listOf types.str;
-            default = [ ];
+            default = [];
             description = ''
               Use tags to specify Indexer Proxies or which apps the indexer is synced to.
 
@@ -58,7 +56,7 @@ in
         };
       }
     );
-    default = [ ];
+    default = [];
     description = ''
       List of indexers to configure in Prowlarr. Prowlarr supports many indexers in addition to any indexer that uses the Newznab/Torznab standard using 'Generic Newznab' (for usenet) or 'Generic Torznab' (for torrents).
 
@@ -78,92 +76,92 @@ in
 
   config.systemd.services."prowlarr-indexers" =
     mkIf (config.nixflix.enable && cfg.enable && cfg.config.apiKey != null)
-      {
-        description = "Configure Prowlarr indexers via API";
-        after = [
-          "prowlarr.service"
-          "prowlarr-config.service"
-          "prowlarr-tags.service"
-        ];
-        requires = [
-          "prowlarr.service"
-          "prowlarr-config.service"
-          "prowlarr-tags.service"
-        ];
-        wantedBy = [ "multi-user.target" ];
+    {
+      description = "Configure Prowlarr indexers via API";
+      after = [
+        "prowlarr.service"
+        "prowlarr-config.service"
+        "prowlarr-tags.service"
+      ];
+      requires = [
+        "prowlarr.service"
+        "prowlarr-config.service"
+        "prowlarr-tags.service"
+      ];
+      wantedBy = ["multi-user.target"];
 
-        serviceConfig = {
-          Type = "oneshot";
-          RemainAfterExit = true;
-        };
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
 
-        script = ''
-          set -eu
+      script = ''
+        set -eu
 
-          BASE_URL="http://${cfg.connectionAddress}:${builtins.toString cfg.config.hostConfig.port}${cfg.config.hostConfig.urlBase}/api/${cfg.config.apiVersion}"
+        BASE_URL="http://${cfg.connectionAddress}:${builtins.toString cfg.config.hostConfig.port}${cfg.config.hostConfig.urlBase}/api/${cfg.config.apiVersion}"
 
-          # Fetch all indexer schemas
-          echo "Fetching indexer schemas..."
-          SCHEMAS=$(${
-            mkSecureCurl cfg.config.apiKey {
-              url = "$BASE_URL/indexer/schema";
-              extraArgs = "-S";
-            }
-          })
+        # Fetch all indexer schemas
+        echo "Fetching indexer schemas..."
+        SCHEMAS=$(${
+          mkSecureCurl cfg.config.apiKey {
+            url = "$BASE_URL/indexer/schema";
+            extraArgs = "-S";
+          }
+        })
 
-          # Fetch existing indexers
-          echo "Fetching existing indexers..."
-          INDEXERS=$(${
-            mkSecureCurl cfg.config.apiKey {
-              url = "$BASE_URL/indexer";
-              extraArgs = "-S";
-            }
-          })
+        # Fetch existing indexers
+        echo "Fetching existing indexers..."
+        INDEXERS=$(${
+          mkSecureCurl cfg.config.apiKey {
+            url = "$BASE_URL/indexer";
+            extraArgs = "-S";
+          }
+        })
 
-          # Fetch all tags for name-to-ID resolution
-          echo "Fetching tags..."
-          ALL_TAGS=$(${
-            mkSecureCurl cfg.config.apiKey {
-              url = "$BASE_URL/tag";
-              extraArgs = "-S";
-            }
-          })
+        # Fetch all tags for name-to-ID resolution
+        echo "Fetching tags..."
+        ALL_TAGS=$(${
+          mkSecureCurl cfg.config.apiKey {
+            url = "$BASE_URL/tag";
+            extraArgs = "-S";
+          }
+        })
 
-          # Build list of configured indexer names
-          CONFIGURED_NAMES=$(cat <<'EOF'
-          ${builtins.toJSON (map (i: i.name) cfg.config.indexers)}
-          EOF
-          )
+        # Build list of configured indexer names
+        CONFIGURED_NAMES=$(cat <<'EOF'
+        ${builtins.toJSON (map (i: i.name) cfg.config.indexers)}
+        EOF
+        )
 
-          # Delete indexers that are not in the configuration
-          echo "Removing indexers not in configuration..."
-          echo "$INDEXERS" | ${pkgs.jq}/bin/jq -r '.[] | @json' | while IFS= read -r indexer; do
-            INDEXER_NAME=$(echo "$indexer" | ${pkgs.jq}/bin/jq -r '.name')
-            INDEXER_ID=$(echo "$indexer" | ${pkgs.jq}/bin/jq -r '.id')
+        # Delete indexers that are not in the configuration
+        echo "Removing indexers not in configuration..."
+        echo "$INDEXERS" | ${pkgs.jq}/bin/jq -r '.[] | @json' | while IFS= read -r indexer; do
+          INDEXER_NAME=$(echo "$indexer" | ${pkgs.jq}/bin/jq -r '.name')
+          INDEXER_ID=$(echo "$indexer" | ${pkgs.jq}/bin/jq -r '.id')
 
-            if ! echo "$CONFIGURED_NAMES" | ${pkgs.jq}/bin/jq -e --arg name "$INDEXER_NAME" 'index($name)' >/dev/null 2>&1; then
-              echo "Deleting indexer not in config: $INDEXER_NAME (ID: $INDEXER_ID)"
-              ${
-                mkSecureCurl cfg.config.apiKey {
-                  url = "$BASE_URL/indexer/$INDEXER_ID";
-                  method = "DELETE";
-                  extraArgs = "-Sf";
-                }
-              } >/dev/null || echo "Warning: Failed to delete indexer $INDEXER_NAME"
-            fi
-          done
+          if ! echo "$CONFIGURED_NAMES" | ${pkgs.jq}/bin/jq -e --arg name "$INDEXER_NAME" 'index($name)' >/dev/null 2>&1; then
+            echo "Deleting indexer not in config: $INDEXER_NAME (ID: $INDEXER_ID)"
+            ${
+          mkSecureCurl cfg.config.apiKey {
+            url = "$BASE_URL/indexer/$INDEXER_ID";
+            method = "DELETE";
+            extraArgs = "-Sf";
+          }
+        } >/dev/null || echo "Warning: Failed to delete indexer $INDEXER_NAME"
+          fi
+        done
 
-          # Run each indexer in its own subshell and fold its exit status into RC, so a
-          # single failing indexer doesn't abort the rest of the batch; exit non-zero at
-          # the end if any failed, so Restart=on-failure can retry the stragglers.
-          RC=0
-          set +e
+        # Run each indexer in its own subshell and fold its exit status into RC, so a
+        # single failing indexer doesn't abort the rest of the batch; exit non-zero at
+        # the end if any failed, so Restart=on-failure can retry the stragglers.
+        RC=0
+        set +e
 
-          ${concatMapStringsSep "\n" (
-            indexerConfig:
-            let
+        ${concatMapStringsSep "\n" (
+            indexerConfig: let
               indexerName = indexerConfig.name;
-              inherit (indexerConfig)
+              inherit
+                (indexerConfig)
                 apiKey
                 apikey
                 username
@@ -179,20 +177,36 @@ in
                 "passkey"
                 "tags"
               ];
-              fieldOverrides = lib.filterAttrs (
-                name: value: value != null && !lib.hasPrefix "_" name
-              ) allOverrides;
+              fieldOverrides =
+                lib.filterAttrs (
+                  name: value: value != null && !lib.hasPrefix "_" name
+                )
+                allOverrides;
               fieldOverridesJson = builtins.toJSON fieldOverrides;
 
               jqSecrets = secrets.mkJqSecretArgs {
-                apiKey = if apiKey == null then "" else apiKey;
-                apikey = if apikey == null then "" else apikey;
-                username = if username == null then "" else username;
-                password = if password == null then "" else password;
-                passkey = if passkey == null then "" else passkey;
+                apiKey =
+                  if apiKey == null
+                  then ""
+                  else apiKey;
+                apikey =
+                  if apikey == null
+                  then ""
+                  else apikey;
+                username =
+                  if username == null
+                  then ""
+                  else username;
+                password =
+                  if password == null
+                  then ""
+                  else password;
+                passkey =
+                  if passkey == null
+                  then ""
+                  else passkey;
               };
-            in
-            ''
+            in ''
               (
               set -e
               echo "Processing indexer: ${indexerName}"
@@ -245,14 +259,14 @@ in
                 RESPONSE_FILE=$(mktemp)
                 HTTP_CODE=$(
                   ${mkSecureCurl cfg.config.apiKey {
-                    url = "$BASE_URL/indexer/$INDEXER_ID?forceSave=true";
-                    method = "PUT";
-                    headers = {
-                      "Content-Type" = "application/json";
-                    };
-                    data = "$UPDATED_INDEXER";
-                    extraArgs = "-S -o \"$RESPONSE_FILE\" -w \"%{http_code}\"";
-                  }}
+                url = "$BASE_URL/indexer/$INDEXER_ID?forceSave=true";
+                method = "PUT";
+                headers = {
+                  "Content-Type" = "application/json";
+                };
+                data = "$UPDATED_INDEXER";
+                extraArgs = "-S -o \"$RESPONSE_FILE\" -w \"%{http_code}\"";
+              }}
                 )
                 if [ "$HTTP_CODE" -ge 400 ]; then
                   echo "Error updating indexer ${indexerName} (HTTP $HTTP_CODE):"
@@ -293,14 +307,14 @@ in
                 RESPONSE_FILE=$(mktemp)
                 HTTP_CODE=$(
                   ${mkSecureCurl cfg.config.apiKey {
-                    url = "$BASE_URL/indexer?forceSave=true";
-                    method = "POST";
-                    headers = {
-                      "Content-Type" = "application/json";
-                    };
-                    data = "$NEW_INDEXER";
-                    extraArgs = "-S -o \"$RESPONSE_FILE\" -w \"%{http_code}\"";
-                  }}
+                url = "$BASE_URL/indexer?forceSave=true";
+                method = "POST";
+                headers = {
+                  "Content-Type" = "application/json";
+                };
+                data = "$NEW_INDEXER";
+                extraArgs = "-S -o \"$RESPONSE_FILE\" -w \"%{http_code}\"";
+              }}
                 )
                 if [ "$HTTP_CODE" -ge 400 ]; then
                   echo "Error creating indexer ${indexerName} (HTTP $HTTP_CODE):"
@@ -314,11 +328,12 @@ in
               )
               [ $? -eq 0 ] || RC=1
             ''
-          ) cfg.config.indexers}
-          set -e
+          )
+          cfg.config.indexers}
+        set -e
 
-          echo "Prowlarr indexers configuration complete"
-          exit "$RC"
-        '';
-      };
+        echo "Prowlarr indexers configuration complete"
+        exit "$RC"
+      '';
+    };
 }

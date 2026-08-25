@@ -1,17 +1,18 @@
-{ config, lib, ... }:
-let
+{
+  config,
+  lib,
+  ...
+}: let
   cfg = config.nixflix.jellyfin.plugins.subbuzz;
-  secrets = import ../../../lib/secrets { inherit lib; };
+  secrets = import ../../../lib/secrets {inherit lib;};
 
-  jellyfinPlugins = import ../../../lib/jellyfin-plugins.nix { inherit lib; };
+  jellyfinPlugins = import ../../../lib/jellyfin-plugins.nix {inherit lib;};
 
-  enumFromAttrs =
-    enum_values:
+  enumFromAttrs = enum_values:
     lib.types.coercedTo (lib.types.enum (lib.attrNames enum_values)) (name: enum_values.${name}) (
       lib.types.enum (lib.attrValues enum_values)
     );
-in
-{
+in {
   options.nixflix.jellyfin.plugins.subbuzz = lib.mkOption {
     type = jellyfinPlugins.mkPluginModule {
       packageDefault = jellyfinPlugins.fromRepo {
@@ -253,7 +254,7 @@ in
                   };
                 };
               };
-              default = { };
+              default = {};
               description = "Settings controlling subtitle character encoding detection and conversion.";
             };
             SubPostProcessing = lib.mkOption {
@@ -281,7 +282,7 @@ in
                   };
                 };
               };
-              default = { };
+              default = {};
               description = "Settings for post-processing subtitle files after download.";
             };
             Cache = lib.mkOption {
@@ -346,7 +347,7 @@ in
                   };
                 };
               };
-              default = { };
+              default = {};
               description = "Settings controlling subtitle and search result caching behaviour.";
             };
             SubdlApiKey = secrets.mkSecretOption {
@@ -370,11 +371,11 @@ in
             };
           };
         };
-        default = { };
+        default = {};
         description = "SubBuzz plugin configuration payload as posted to the Jellyfin API.";
       };
     };
-    default = { };
+    default = {};
   };
 
   config.nixflix.jellyfin = lib.mkIf cfg.enable {

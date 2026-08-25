@@ -4,21 +4,19 @@
   pkgs,
   ...
 }:
-with lib;
-let
-  inherit (import ../../../lib/mkVirtualHosts.nix { inherit lib config; }) mkVirtualHost;
+with lib; let
+  inherit (import ../../../lib/mkVirtualHosts.nix {inherit lib config;}) mkVirtualHost;
   cfg = config.nixflix.usenetClients.sabnzbd;
   hostname = "${cfg.subdomain}.${config.nixflix.reverseProxy.domain}";
 
-  settingsType = import ./settingsType.nix { inherit lib config; };
-  iniGenerator = import ./iniGenerator.nix { inherit lib; };
+  settingsType = import ./settingsType.nix {inherit lib config;};
+  iniGenerator = import ./iniGenerator.nix {inherit lib;};
 
   stateDir = "/var/lib/sabnzbd";
   configFile = "${stateDir}/sabnzbd.ini";
 
   templateIni = iniGenerator.generateSabnzbdIni cfg.settings;
-in
-{
+in {
   imports = [
     ./categoriesService.nix
   ];
@@ -30,7 +28,7 @@ in
       description = "Whether to enable SABnzbd usenet downloader";
     };
 
-    package = mkPackageOption pkgs "sabnzbd" { };
+    package = mkPackageOption pkgs "sabnzbd" {};
 
     user = mkOption {
       type = types.str;
@@ -74,7 +72,7 @@ in
 
     settings = mkOption {
       type = settingsType;
-      default = { };
+      default = {};
       description = "SABnzbd settings";
     };
 
@@ -104,10 +102,9 @@ in
       type = types.str;
       readOnly = true;
       default =
-        if config.nixflix.vpn.enable && cfg.vpn.enable then
-          config.vpnNamespaces.wg.namespaceAddress
-        else
-          "127.0.0.1";
+        if config.nixflix.vpn.enable && cfg.vpn.enable
+        then config.vpnNamespaces.wg.namespaceAddress
+        else "127.0.0.1";
       description = "Address for connecting to this service.";
     };
   };
@@ -140,25 +137,25 @@ in
 
       nixflix.usenetClients.sabnzbd.apiKeyPath = cfg.settings.misc.api_key._secret;
 
-      users.users.${cfg.user} = {
-        inherit (cfg) group;
-        home = stateDir;
-        isSystemUser = true;
-      }
-      // optionalAttrs (config.nixflix.globals.uids ? ${cfg.user}) {
-        uid = mkForce config.nixflix.globals.uids.${cfg.user};
-      };
+      users.users.${cfg.user} =
+        {
+          inherit (cfg) group;
+          home = stateDir;
+          isSystemUser = true;
+        }
+        // optionalAttrs (config.nixflix.globals.uids ? ${cfg.user}) {
+          uid = mkForce config.nixflix.globals.uids.${cfg.user};
+        };
 
-      users.groups.${cfg.group} = { };
-      systemd.tmpfiles.settings."10-sabnzbd" =
-        let
-          mkDir = dir: {
-            "${dir}".d = {
-              inherit (cfg) user group;
-              mode = "0775";
-            };
+      users.groups.${cfg.group} = {};
+      systemd.tmpfiles.settings."10-sabnzbd" = let
+        mkDir = dir: {
+          "${dir}".d = {
+            inherit (cfg) user group;
+            mode = "0775";
           };
-        in
+        };
+      in
         {
           "${stateDir}".d = {
             inherit (cfg) user group;
@@ -185,10 +182,10 @@ in
           "network-online.target"
           "nixflix-setup-dirs.service"
         ];
-        requires = [ "nixflix-setup-dirs.service" ];
-        wants = [ "network-online.target" ];
-        wantedBy = [ "multi-user.target" ];
-        restartTriggers = [ config.environment.etc."sabnzbd/sabnzbd.ini.template".text ];
+        requires = ["nixflix-setup-dirs.service"];
+        wants = ["network-online.target"];
+        wantedBy = ["multi-user.target"];
+        restartTriggers = [config.environment.etc."sabnzbd/sabnzbd.ini.template".text];
 
         serviceConfig = {
           Type = "simple";
@@ -235,9 +232,8 @@ in
       };
 
       networking.firewall = mkIf cfg.openFirewall {
-        allowedTCPPorts = [ cfg.settings.misc.port ];
+        allowedTCPPorts = [cfg.settings.misc.port];
       };
-
     }
     (mkIf (config.nixflix.vpn.enable && cfg.vpn.enable) {
       systemd.services.sabnzbd.vpnConfinement = {

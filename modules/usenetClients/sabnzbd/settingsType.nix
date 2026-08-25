@@ -1,14 +1,12 @@
 {
   lib,
   config,
-}:
-let
+}: let
   inherit (lib) types mkOption;
-  secrets = import ../../../lib/secrets { inherit lib; };
+  secrets = import ../../../lib/secrets {inherit lib;};
   cfg = config.nixflix.usenetClients.sabnzbd;
 
-  enumFromAttrs =
-    enum_values:
+  enumFromAttrs = enum_values:
     types.coercedTo (types.enum (lib.attrNames enum_values)) (name: enum_values.${name}) (
       types.enum (lib.attrValues enum_values)
     );
@@ -149,12 +147,11 @@ let
       host = mkOption {
         type = types.str;
         default =
-          if config.nixflix.vpn.enable && config.nixflix.usenetClients.sabnzbd.vpn.enable then
-            config.vpnNamespaces.wg.namespaceAddress
-          else if config.nixflix.reverseProxy.enable then
-            "127.0.0.1"
-          else
-            "0.0.0.0";
+          if config.nixflix.vpn.enable && config.nixflix.usenetClients.sabnzbd.vpn.enable
+          then config.vpnNamespaces.wg.namespaceAddress
+          else if config.nixflix.reverseProxy.enable
+          then "127.0.0.1"
+          else "0.0.0.0";
         defaultText = lib.literalExpression ''
           if config.nixflix.vpn.enable && config.nixflix.usenetClients.sabnzbd.vpn.enable
           then config.vpnNamespaces.wg.namespaceAddress
@@ -168,10 +165,9 @@ let
       host_whitelist = mkOption {
         type = types.str;
         default =
-          if config.nixflix.reverseProxy.enable then
-            "${cfg.subdomain}.${config.nixflix.reverseProxy.domain}"
-          else
-            "";
+          if config.nixflix.reverseProxy.enable
+          then "${cfg.subdomain}.${config.nixflix.reverseProxy.domain}"
+          else "";
         defaultText = lib.literalExpression ''if config.nixflix.reverseProxy.enable then "''${cfg.subdomain}.''${config.nixflix.reverseProxy.domain}" else ""'';
         description = ''
           Hostname verification whitelist. SABnzbd refuses connections from hostnames not in this list.
@@ -269,7 +265,10 @@ let
           "api+web (auth needed)" = 4;
           "api+web (locally no auth)" = 5;
         };
-        default = if config.nixflix.reverseProxy.enable then 4 else 0;
+        default =
+          if config.nixflix.reverseProxy.enable
+          then 4
+          else 0;
         defaultText = lib.literalExpression "if config.nixflix.reverseProxy.enable then 4 else 0";
         description = ''
           Controls access restrictions from non-local IP addresses. Defaults to
@@ -674,111 +673,111 @@ let
     };
   };
 in
-types.submodule {
-  freeformType = types.anything;
-  options = {
-    misc = mkOption {
-      type = miscType;
-      default = { };
-      description = "SABnzbd [misc] section settings";
-    };
+  types.submodule {
+    freeformType = types.anything;
+    options = {
+      misc = mkOption {
+        type = miscType;
+        default = {};
+        description = "SABnzbd [misc] section settings";
+      };
 
-    servers = mkOption {
-      type = types.listOf serverType;
-      default = [ ];
-      description = "List of usenet servers";
-    };
+      servers = mkOption {
+        type = types.listOf serverType;
+        default = [];
+        description = "List of usenet servers";
+      };
 
-    categories = mkOption {
-      type = types.listOf categoryType;
-      default =
-        lib.optional (config.nixflix.radarr.enable or false) {
-          name = "radarr";
-          dir = "radarr";
-          priority = 0;
-          pp = 3;
-          script = "None";
-        }
-        ++ lib.optional (config.nixflix.sonarr.enable or false) {
-          name = "sonarr";
-          dir = "sonarr";
-          priority = 0;
-          pp = 3;
-          script = "None";
-        }
-        ++ lib.optional (config.nixflix.sonarr-anime.enable or false) {
-          name = "sonarr-anime";
-          dir = "sonarr-anime";
-          priority = 0;
-          pp = 3;
-          script = "None";
-        }
-        ++ lib.optional (config.nixflix.lidarr.enable or false) {
-          name = "lidarr";
-          dir = "lidarr";
-          priority = 0;
-          pp = 3;
-          script = "None";
-        }
-        ++ lib.optional (config.nixflix.prowlarr.enable or false) {
-          name = "prowlarr";
-          dir = "prowlarr";
-          priority = 0;
-          pp = 3;
-          script = "None";
-        }
-        ++ [
-          {
-            name = "*";
-            priority = 0;
-            pp = 3;
-            script = "None";
-          }
-        ];
-      defaultText = lib.literalExpression ''
-        lib.optional (config.nixflix.radarr.enable or false) {
-          name = "radarr"; dir = "radarr"; priority = 0; pp = 3; script = "None";
-        }
-        ++ lib.optional (config.nixflix.sonarr.enable or false) {
-          name = "sonarr"; dir = "sonarr"; priority = 0; pp = 3; script = "None";
-        }
-        ++ lib.optional (config.nixflix.sonarr-anime.enable or false) {
-          name = "sonarr-anime"; dir = "sonarr-anime"; priority = 0; pp = 3; script = "None";
-        }
-        ++ lib.optional (config.nixflix.lidarr.enable or false) {
-          name = "lidarr"; dir = "lidarr"; priority = 0; pp = 3; script = "None";
-        }
-        ++ lib.optional (config.nixflix.prowlarr.enable or false) {
-          name = "prowlarr"; dir = "prowlarr"; priority = 0; pp = 3; script = "None";
-        }
-        ++ [
-          { name = "*"; priority = 0; pp = 3; script = "None"; }
-        ]
-      '';
-      example = lib.literalExpression ''
-        [
-          {
+      categories = mkOption {
+        type = types.listOf categoryType;
+        default =
+          lib.optional (config.nixflix.radarr.enable or false) {
             name = "radarr";
             dir = "radarr";
             priority = 0;
             pp = 3;
             script = "None";
           }
-          {
+          ++ lib.optional (config.nixflix.sonarr.enable or false) {
             name = "sonarr";
             dir = "sonarr";
             priority = 0;
             pp = 3;
             script = "None";
           }
-        ]
-      '';
-      description = ''
-        Download categories. By default, categories are automatically created based on enabled services,
-        using the service name as the category name (radarr, sonarr, sonarr-anime, lidarr, prowlarr).
+          ++ lib.optional (config.nixflix.sonarr-anime.enable or false) {
+            name = "sonarr-anime";
+            dir = "sonarr-anime";
+            priority = 0;
+            pp = 3;
+            script = "None";
+          }
+          ++ lib.optional (config.nixflix.lidarr.enable or false) {
+            name = "lidarr";
+            dir = "lidarr";
+            priority = 0;
+            pp = 3;
+            script = "None";
+          }
+          ++ lib.optional (config.nixflix.prowlarr.enable or false) {
+            name = "prowlarr";
+            dir = "prowlarr";
+            priority = 0;
+            pp = 3;
+            script = "None";
+          }
+          ++ [
+            {
+              name = "*";
+              priority = 0;
+              pp = 3;
+              script = "None";
+            }
+          ];
+        defaultText = lib.literalExpression ''
+          lib.optional (config.nixflix.radarr.enable or false) {
+            name = "radarr"; dir = "radarr"; priority = 0; pp = 3; script = "None";
+          }
+          ++ lib.optional (config.nixflix.sonarr.enable or false) {
+            name = "sonarr"; dir = "sonarr"; priority = 0; pp = 3; script = "None";
+          }
+          ++ lib.optional (config.nixflix.sonarr-anime.enable or false) {
+            name = "sonarr-anime"; dir = "sonarr-anime"; priority = 0; pp = 3; script = "None";
+          }
+          ++ lib.optional (config.nixflix.lidarr.enable or false) {
+            name = "lidarr"; dir = "lidarr"; priority = 0; pp = 3; script = "None";
+          }
+          ++ lib.optional (config.nixflix.prowlarr.enable or false) {
+            name = "prowlarr"; dir = "prowlarr"; priority = 0; pp = 3; script = "None";
+          }
+          ++ [
+            { name = "*"; priority = 0; pp = 3; script = "None"; }
+          ]
+        '';
+        example = lib.literalExpression ''
+          [
+            {
+              name = "radarr";
+              dir = "radarr";
+              priority = 0;
+              pp = 3;
+              script = "None";
+            }
+            {
+              name = "sonarr";
+              dir = "sonarr";
+              priority = 0;
+              pp = 3;
+              script = "None";
+            }
+          ]
+        '';
+        description = ''
+          Download categories. By default, categories are automatically created based on enabled services,
+          using the service name as the category name (radarr, sonarr, sonarr-anime, lidarr, prowlarr).
 
-        A catch-all "*" category is always included.
-      '';
+          A catch-all "*" category is always included.
+        '';
+      };
     };
-  };
-}
+  }

@@ -2,20 +2,18 @@
   config,
   lib,
   ...
-}:
-let
+}: let
   inherit (config) nixflix;
   cfg = config.nixflix.lidarr;
-in
-{
+in {
   imports = [
-    (import ../arr-common/mkArrServiceModule.nix { serviceName = "lidarr"; })
+    (import ../arr-common/mkArrServiceModule.nix {serviceName = "lidarr";})
     ./qualityProfiles.nix
   ];
 
   config.nixflix.lidarr = {
     group = lib.mkDefault "media";
-    mediaDirs = lib.mkDefault [ "${nixflix.mediaDir}/music" ];
+    mediaDirs = lib.mkDefault ["${nixflix.mediaDir}/music"];
     config = {
       apiVersion = lib.mkDefault "v1";
       hostConfig = {
@@ -29,9 +27,10 @@ in
           defaultMetadataProfileId = 1;
           defaultMonitorOption = "all";
           defaultNewItemMonitorOption = "all";
-          defaultTags = [ ];
+          defaultTags = [];
           name = "default";
-        }) cfg.mediaDirs
+        })
+        cfg.mediaDirs
       );
     };
   };

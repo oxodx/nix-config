@@ -3,16 +3,14 @@
   lib,
   pkgs,
   ...
-}:
-let
-  inherit (import ../../lib/mkVirtualHosts.nix { inherit lib config; }) mkVirtualHost;
+}: let
+  inherit (import ../../lib/mkVirtualHosts.nix {inherit lib config;}) mkVirtualHost;
   cfg = config.nixflix.navidrome;
 
-  secrets = import ../../lib/secrets { inherit lib; };
+  secrets = import ../../lib/secrets {inherit lib;};
 
   hostname = "${cfg.subdomain}.${config.nixflix.reverseProxy.domain}";
-in
-{
+in {
   imports = [
     ./setupService.nix
     ./usersService.nix
@@ -98,7 +96,7 @@ in
 
         settings = lib.mkOption {
           type = lib.types.submodule {
-            freeformType = (pkgs.formats.json { }).type;
+            freeformType = (pkgs.formats.json {}).type;
 
             options = {
               Port = lib.mkOption {
@@ -110,12 +108,11 @@ in
               Address = lib.mkOption {
                 type = lib.types.str;
                 default =
-                  if config.nixflix.vpn.enable && cfg.vpn.enable then
-                    config.vpnNamespaces.wg.namespaceAddress
-                  else if config.nixflix.reverseProxy.enable then
-                    "127.0.0.1"
-                  else
-                    "0.0.0.0";
+                  if config.nixflix.vpn.enable && cfg.vpn.enable
+                  then config.vpnNamespaces.wg.namespaceAddress
+                  else if config.nixflix.reverseProxy.enable
+                  then "127.0.0.1"
+                  else "0.0.0.0";
                 description = "Bind address for the WebUI";
               };
 
@@ -147,10 +144,9 @@ in
               BaseUrl = lib.mkOption {
                 type = lib.types.str;
                 default =
-                  if config.nixflix.reverseProxy.enable then
-                    "${config.nixflix.reverseProxy.httpScheme}://${hostname}"
-                  else
-                    "";
+                  if config.nixflix.reverseProxy.enable
+                  then "${config.nixflix.reverseProxy.httpScheme}://${hostname}"
+                  else "";
                 example = "http://${hostname}:${toString cfg.settings.Port}";
                 defaultText = lib.literalExpression ''
                   if cfg.reverseProxy.enable then
@@ -179,12 +175,11 @@ in
           type = lib.types.str;
           readOnly = true;
           default =
-            if config.nixflix.vpn.enable && cfg.vpn.enable then
-              config.vpnNamespaces.wg.namespaceAddress
-            else if cfg.settings.Address == "*" || cfg.settings.Address == "0.0.0.0" then
-              "127.0.0.1"
-            else
-              cfg.settings.Address;
+            if config.nixflix.vpn.enable && cfg.vpn.enable
+            then config.vpnNamespaces.wg.namespaceAddress
+            else if cfg.settings.Address == "*" || cfg.settings.Address == "0.0.0.0"
+            then "127.0.0.1"
+            else cfg.settings.Address;
           description = "Address at which this service is reachable (derived).";
         };
 
@@ -272,7 +267,7 @@ in
               uid = lib.mkForce config.nixflix.globals.uids.${cfg.user};
             };
 
-          groups.${cfg.group} = lib.mkForce { };
+          groups.${cfg.group} = lib.mkForce {};
         };
       }
     ]

@@ -2,12 +2,10 @@
   config,
   lib,
   ...
-}:
-let
-  secrets = import ../../../lib/secrets { inherit lib; };
+}: let
+  secrets = import ../../../lib/secrets {inherit lib;};
 
-  mkArrSubmodule =
-    name:
+  mkArrSubmodule = name:
     lib.types.submodule {
       options = {
         serverName = lib.mkOption {
@@ -26,9 +24,7 @@ let
         };
       };
     };
-
-in
-{
+in {
   options.nixflix.maintainerr.settings = {
     forceJellyfinToIgnoreEmptyMediaFolders = lib.mkOption {
       type = lib.types.bool;

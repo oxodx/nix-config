@@ -1,14 +1,13 @@
-{ serviceName }:
-{
+{serviceName}: {
   config,
   lib,
   pkgs,
   ...
 }:
-with lib;
-let
+with lib; let
   cfg = config.nixflix.${serviceName};
-  inherit (import ./utils.nix { inherit lib pkgs serviceName; })
+  inherit
+    (import ./utils.nix {inherit lib pkgs serviceName;})
     usesMediaDirs
     capitalizedName
     isSonarr
@@ -18,48 +17,44 @@ let
     ;
 
   fileDateValues =
-    if isSonarr then
-      [
-        "none"
-        "localAirDate"
-        "utcAirDate"
-      ]
-    else if isRadarr then
-      [
-        "none"
-        "cinemas"
-        "physical"
-        "digital"
-      ]
-    else if isLidarr then
-      [
-        "none"
-        "albumReleaseDate"
-      ]
-    else
-      [ "none" ];
+    if isSonarr
+    then [
+      "none"
+      "localAirDate"
+      "utcAirDate"
+    ]
+    else if isRadarr
+    then [
+      "none"
+      "cinemas"
+      "physical"
+      "digital"
+    ]
+    else if isLidarr
+    then [
+      "none"
+      "albumReleaseDate"
+    ]
+    else ["none"];
 
   autoUnmonitorField =
-    if isSonarr then
-      "autoUnmonitorPreviouslyDownloadedEpisodes"
-    else if isRadarr then
-      "autoUnmonitorPreviouslyDownloadedMovies"
-    else if isLidarr then
-      "autoUnmonitorPreviouslyDownloadedTracks"
-    else
-      "autoUnmonitorPreviouslyDownloaded";
+    if isSonarr
+    then "autoUnmonitorPreviouslyDownloadedEpisodes"
+    else if isRadarr
+    then "autoUnmonitorPreviouslyDownloadedMovies"
+    else if isLidarr
+    then "autoUnmonitorPreviouslyDownloadedTracks"
+    else "autoUnmonitorPreviouslyDownloaded";
 
   createEmptyFoldersField =
-    if isSonarr then
-      "createEmptySeriesFolders"
-    else if isRadarr then
-      "createEmptyMovieFolders"
-    else if isLidarr then
-      "createEmptyArtistFolders"
-    else
-      "createEmptyFolders";
-in
-{
+    if isSonarr
+    then "createEmptySeriesFolders"
+    else if isRadarr
+    then "createEmptyMovieFolders"
+    else if isLidarr
+    then "createEmptyArtistFolders"
+    else "createEmptyFolders";
+in {
   options.nixflix.${serviceName}.config.mediaManagement = optionalAttrs usesMediaDirs (
     {
       recycleBin = lib.mkOption {
@@ -232,102 +227,106 @@ in
     })
 
     (mkIf (cfg.config.apiKey != null) {
-      systemd.services."${serviceName}-mediamanagement" =
-        let
-          mm = cfg.config.mediaManagement;
-        in
-        {
-          description = "Configure ${capitalizedName} media management via API";
-          after = [ "${serviceName}-config.service" ];
-          requires = [ "${serviceName}-config.service" ];
-          wantedBy = [ "multi-user.target" ];
+      systemd.services."${serviceName}-mediamanagement" = let
+        mm = cfg.config.mediaManagement;
+      in {
+        description = "Configure ${capitalizedName} media management via API";
+        after = ["${serviceName}-config.service"];
+        requires = ["${serviceName}-config.service"];
+        wantedBy = ["multi-user.target"];
 
-          serviceConfig = {
-            Type = "oneshot";
-            RemainAfterExit = true;
-          };
-
-          script = ''
-            set -eu
-
-            BASE_URL="http://${cfg.config.hostConfig.bindAddress}:${builtins.toString cfg.config.hostConfig.port}${cfg.config.hostConfig.urlBase}/api/${cfg.config.apiVersion}"
-
-            echo "Fetching current media management configuration..."
-            CURRENT_CONFIG=$(${
-              mkSecureCurl cfg.config.apiKey {
-                url = "$BASE_URL/config/mediamanagement";
-                extraArgs = "-Sf";
-              }
-            } 2>/dev/null)
-
-            if [ -z "$CURRENT_CONFIG" ]; then
-              echo "Failed to fetch media management configuration"
-              exit 1
-            fi
-
-            CONFIG_ID=$(echo "$CURRENT_CONFIG" | ${pkgs.jq}/bin/jq -r '.id')
-
-            DESIRED=$(${pkgs.jq}/bin/jq -n \
-              --arg recycleBin ${escapeShellArg mm.recycleBin} \
-              --arg downloadPropersAndRepacks ${escapeShellArg mm.downloadPropersAndRepacks} \
-              --arg fileDate ${escapeShellArg mm.fileDate} \
-              --arg rescanAfterRefresh ${escapeShellArg mm.rescanAfterRefresh} \
-              --arg chmodFolder ${escapeShellArg mm.chmodFolder} \
-              --arg chownGroup ${escapeShellArg mm.chownGroup} \
-              --arg scriptImportPath ${escapeShellArg mm.scriptImportPath} \
-              --arg extraFileExtensions ${escapeShellArg mm.extraFileExtensions} \
-              ${
-                if isSonarr then "--arg episodeTitleRequired ${escapeShellArg mm.episodeTitleRequired}" else ""
-              } \
-              '{
-                ${autoUnmonitorField}: ${boolToString mm.${autoUnmonitorField}},
-                recycleBin: $recycleBin,
-                recycleBinCleanupDays: ${builtins.toString mm.recycleBinCleanupDays},
-                downloadPropersAndRepacks: $downloadPropersAndRepacks,
-                ${createEmptyFoldersField}: ${boolToString mm.${createEmptyFoldersField}},
-                deleteEmptyFolders: ${boolToString mm.deleteEmptyFolders},
-                fileDate: $fileDate,
-                rescanAfterRefresh: $rescanAfterRefresh,
-                setPermissionsLinux: ${boolToString mm.setPermissionsLinux},
-                chmodFolder: $chmodFolder,
-                chownGroup: $chownGroup,
-                ${if isSonarr then "episodeTitleRequired: $episodeTitleRequired," else ""}
-                skipFreeSpaceCheckWhenImporting: ${boolToString mm.skipFreeSpaceCheckWhenImporting},
-                minimumFreeSpaceWhenImporting: ${builtins.toString mm.minimumFreeSpaceWhenImporting},
-                copyUsingHardlinks: ${boolToString mm.copyUsingHardlinks},
-                useScriptImport: ${boolToString mm.useScriptImport},
-                scriptImportPath: $scriptImportPath,
-                importExtraFiles: ${boolToString mm.importExtraFiles},
-                extraFileExtensions: $extraFileExtensions,
-                enableMediaInfo: ${boolToString mm.enableMediaInfo}
-              }')
-
-            NEW_CONFIG=$(${pkgs.jq}/bin/jq -n \
-              --argjson current "$CURRENT_CONFIG" \
-              --argjson desired "$DESIRED" \
-              '$current * $desired')
-
-            echo "Updating ${capitalizedName} media management configuration..."
-            PUT_STATUS=$(${
-              mkSecureCurl cfg.config.apiKey {
-                url = "$BASE_URL/config/mediamanagement/$CONFIG_ID";
-                method = "PUT";
-                headers = {
-                  "Content-Type" = "application/json";
-                };
-                data = "$NEW_CONFIG";
-                extraArgs = ''-So /tmp/put_response -w "%{http_code}"'';
-              }
-            })
-            if [ "$PUT_STATUS" -ge 400 ]; then
-              echo "PUT failed (HTTP $PUT_STATUS):"
-              cat /tmp/put_response
-              exit 1
-            fi
-
-            echo "${capitalizedName} media management configuration complete"
-          '';
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
         };
+
+        script = ''
+          set -eu
+
+          BASE_URL="http://${cfg.config.hostConfig.bindAddress}:${builtins.toString cfg.config.hostConfig.port}${cfg.config.hostConfig.urlBase}/api/${cfg.config.apiVersion}"
+
+          echo "Fetching current media management configuration..."
+          CURRENT_CONFIG=$(${
+            mkSecureCurl cfg.config.apiKey {
+              url = "$BASE_URL/config/mediamanagement";
+              extraArgs = "-Sf";
+            }
+          } 2>/dev/null)
+
+          if [ -z "$CURRENT_CONFIG" ]; then
+            echo "Failed to fetch media management configuration"
+            exit 1
+          fi
+
+          CONFIG_ID=$(echo "$CURRENT_CONFIG" | ${pkgs.jq}/bin/jq -r '.id')
+
+          DESIRED=$(${pkgs.jq}/bin/jq -n \
+            --arg recycleBin ${escapeShellArg mm.recycleBin} \
+            --arg downloadPropersAndRepacks ${escapeShellArg mm.downloadPropersAndRepacks} \
+            --arg fileDate ${escapeShellArg mm.fileDate} \
+            --arg rescanAfterRefresh ${escapeShellArg mm.rescanAfterRefresh} \
+            --arg chmodFolder ${escapeShellArg mm.chmodFolder} \
+            --arg chownGroup ${escapeShellArg mm.chownGroup} \
+            --arg scriptImportPath ${escapeShellArg mm.scriptImportPath} \
+            --arg extraFileExtensions ${escapeShellArg mm.extraFileExtensions} \
+            ${
+            if isSonarr
+            then "--arg episodeTitleRequired ${escapeShellArg mm.episodeTitleRequired}"
+            else ""
+          } \
+            '{
+              ${autoUnmonitorField}: ${boolToString mm.${autoUnmonitorField}},
+              recycleBin: $recycleBin,
+              recycleBinCleanupDays: ${builtins.toString mm.recycleBinCleanupDays},
+              downloadPropersAndRepacks: $downloadPropersAndRepacks,
+              ${createEmptyFoldersField}: ${boolToString mm.${createEmptyFoldersField}},
+              deleteEmptyFolders: ${boolToString mm.deleteEmptyFolders},
+              fileDate: $fileDate,
+              rescanAfterRefresh: $rescanAfterRefresh,
+              setPermissionsLinux: ${boolToString mm.setPermissionsLinux},
+              chmodFolder: $chmodFolder,
+              chownGroup: $chownGroup,
+              ${
+            if isSonarr
+            then "episodeTitleRequired: $episodeTitleRequired,"
+            else ""
+          }
+              skipFreeSpaceCheckWhenImporting: ${boolToString mm.skipFreeSpaceCheckWhenImporting},
+              minimumFreeSpaceWhenImporting: ${builtins.toString mm.minimumFreeSpaceWhenImporting},
+              copyUsingHardlinks: ${boolToString mm.copyUsingHardlinks},
+              useScriptImport: ${boolToString mm.useScriptImport},
+              scriptImportPath: $scriptImportPath,
+              importExtraFiles: ${boolToString mm.importExtraFiles},
+              extraFileExtensions: $extraFileExtensions,
+              enableMediaInfo: ${boolToString mm.enableMediaInfo}
+            }')
+
+          NEW_CONFIG=$(${pkgs.jq}/bin/jq -n \
+            --argjson current "$CURRENT_CONFIG" \
+            --argjson desired "$DESIRED" \
+            '$current * $desired')
+
+          echo "Updating ${capitalizedName} media management configuration..."
+          PUT_STATUS=$(${
+            mkSecureCurl cfg.config.apiKey {
+              url = "$BASE_URL/config/mediamanagement/$CONFIG_ID";
+              method = "PUT";
+              headers = {
+                "Content-Type" = "application/json";
+              };
+              data = "$NEW_CONFIG";
+              extraArgs = ''-So /tmp/put_response -w "%{http_code}"'';
+            }
+          })
+          if [ "$PUT_STATUS" -ge 400 ]; then
+            echo "PUT failed (HTTP $PUT_STATUS):"
+            cat /tmp/put_response
+            exit 1
+          fi
+
+          echo "${capitalizedName} media management configuration complete"
+        '';
+      };
     })
   ]);
 }

@@ -4,13 +4,11 @@
   pkgs,
   ...
 }:
-with lib;
-let
+with lib; let
   cfg = config.nixflix.prowlarr;
-  secrets = import ../../lib/secrets { inherit lib; };
-  mkSecureCurl = import ../../lib/mk-secure-curl.nix { inherit lib pkgs; };
-in
-{
+  secrets = import ../../lib/secrets {inherit lib;};
+  mkSecureCurl = import ../../lib/mk-secure-curl.nix {inherit lib pkgs;};
+in {
   options.nixflix.prowlarr.config.applications = mkOption {
     type = types.listOf (
       types.submodule {
@@ -38,7 +36,7 @@ in
         };
       }
     );
-    default = [ ];
+    default = [];
     defaultText = literalExpression ''
       # Automatically configured for enabled arr services (Sonarr, Radarr, Lidarr)
       # Each enabled service gets an application entry with computed baseUrl and prowlarrUrl
@@ -53,79 +51,80 @@ in
 
   config.systemd.services."prowlarr-applications" =
     mkIf (config.nixflix.enable && cfg.enable && cfg.config.apiKey != null)
-      {
-        description = "Configure Prowlarr applications via API";
-        after = [
+    {
+      description = "Configure Prowlarr applications via API";
+      after =
+        [
           "prowlarr-config.service"
         ]
         ++ lib.optional config.nixflix.radarr.enable "radarr-config.service"
         ++ lib.optional config.nixflix.sonarr.enable "sonarr-config.service"
         ++ lib.optional config.nixflix.sonarr-anime.enable "sonarr-anime-config.service"
         ++ lib.optional config.nixflix.lidarr.enable "lidarr-config.service";
-        requires = [
+      requires =
+        [
           "prowlarr-config.service"
         ]
         ++ lib.optional config.nixflix.radarr.enable "radarr-config.service"
         ++ lib.optional config.nixflix.sonarr.enable "sonarr-config.service"
         ++ lib.optional config.nixflix.sonarr-anime.enable "sonarr-anime-config.service"
         ++ lib.optional config.nixflix.lidarr.enable "lidarr-config.service";
-        wantedBy = [ "multi-user.target" ];
+      wantedBy = ["multi-user.target"];
 
-        serviceConfig = {
-          Type = "oneshot";
-          RemainAfterExit = true;
-        };
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+      };
 
-        script = ''
-          set -eu
+      script = ''
+        set -eu
 
-          BASE_URL="http://${cfg.connectionAddress}:${builtins.toString cfg.config.hostConfig.port}${cfg.config.hostConfig.urlBase}/api/${cfg.config.apiVersion}"
+        BASE_URL="http://${cfg.connectionAddress}:${builtins.toString cfg.config.hostConfig.port}${cfg.config.hostConfig.urlBase}/api/${cfg.config.apiVersion}"
 
-          # Fetch all application schemas
-          echo "Fetching application schemas..."
-          SCHEMAS=$(${
-            mkSecureCurl cfg.config.apiKey {
-              url = "$BASE_URL/applications/schema";
-              extraArgs = "-S";
-            }
-          })
+        # Fetch all application schemas
+        echo "Fetching application schemas..."
+        SCHEMAS=$(${
+          mkSecureCurl cfg.config.apiKey {
+            url = "$BASE_URL/applications/schema";
+            extraArgs = "-S";
+          }
+        })
 
-          # Fetch existing applications
-          echo "Fetching existing applications..."
-          APPLICATIONS=$(${
-            mkSecureCurl cfg.config.apiKey {
-              url = "$BASE_URL/applications";
-              extraArgs = "-S";
-            }
-          })
+        # Fetch existing applications
+        echo "Fetching existing applications..."
+        APPLICATIONS=$(${
+          mkSecureCurl cfg.config.apiKey {
+            url = "$BASE_URL/applications";
+            extraArgs = "-S";
+          }
+        })
 
-          # Build list of configured application names
-          CONFIGURED_NAMES=$(cat <<'EOF'
-          ${builtins.toJSON (map (a: a.name) cfg.config.applications)}
-          EOF
-          )
+        # Build list of configured application names
+        CONFIGURED_NAMES=$(cat <<'EOF'
+        ${builtins.toJSON (map (a: a.name) cfg.config.applications)}
+        EOF
+        )
 
-          # Delete applications that are not in the configuration
-          echo "Removing applications not in configuration..."
-          echo "$APPLICATIONS" | ${pkgs.jq}/bin/jq -r '.[] | @json' | while IFS= read -r application; do
-            APPLICATION_NAME=$(echo "$application" | ${pkgs.jq}/bin/jq -r '.name')
-            APPLICATION_ID=$(echo "$application" | ${pkgs.jq}/bin/jq -r '.id')
+        # Delete applications that are not in the configuration
+        echo "Removing applications not in configuration..."
+        echo "$APPLICATIONS" | ${pkgs.jq}/bin/jq -r '.[] | @json' | while IFS= read -r application; do
+          APPLICATION_NAME=$(echo "$application" | ${pkgs.jq}/bin/jq -r '.name')
+          APPLICATION_ID=$(echo "$application" | ${pkgs.jq}/bin/jq -r '.id')
 
-            if ! echo "$CONFIGURED_NAMES" | ${pkgs.jq}/bin/jq -e --arg name "$APPLICATION_NAME" 'index($name)' >/dev/null; then
-              echo "Deleting application not in config: $APPLICATION_NAME (ID: $APPLICATION_ID)"
-              ${
-                mkSecureCurl cfg.config.apiKey {
-                  url = "$BASE_URL/applications/$APPLICATION_ID";
-                  method = "DELETE";
-                  extraArgs = "-Sf";
-                }
-              } >/dev/null || echo "Warning: Failed to delete application $APPLICATION_NAME"
-            fi
-          done
+          if ! echo "$CONFIGURED_NAMES" | ${pkgs.jq}/bin/jq -e --arg name "$APPLICATION_NAME" 'index($name)' >/dev/null; then
+            echo "Deleting application not in config: $APPLICATION_NAME (ID: $APPLICATION_ID)"
+            ${
+          mkSecureCurl cfg.config.apiKey {
+            url = "$BASE_URL/applications/$APPLICATION_ID";
+            method = "DELETE";
+            extraArgs = "-Sf";
+          }
+        } >/dev/null || echo "Warning: Failed to delete application $APPLICATION_NAME"
+          fi
+        done
 
-          ${concatMapStringsSep "\n" (
-            applicationConfig:
-            let
+        ${concatMapStringsSep "\n" (
+            applicationConfig: let
               applicationName = applicationConfig.name;
               inherit (applicationConfig) implementationName;
               inherit (applicationConfig) apiKey;
@@ -133,16 +132,17 @@ in
                 "implementationName"
                 "apiKey"
               ];
-              fieldOverrides = lib.filterAttrs (
-                name: value: value != null && !lib.hasPrefix "_" name
-              ) allOverrides;
+              fieldOverrides =
+                lib.filterAttrs (
+                  name: value: value != null && !lib.hasPrefix "_" name
+                )
+                allOverrides;
               fieldOverridesJson = builtins.toJSON fieldOverrides;
 
               jqSecrets = secrets.mkJqSecretArgs {
                 inherit apiKey;
               };
-            in
-            ''
+            in ''
               echo "Processing application: ${applicationName}"
 
               apply_field_overrides() {
@@ -178,16 +178,16 @@ in
                 RESPONSE_FILE=$(mktemp)
                 set +e
                 ${
-                  mkSecureCurl cfg.config.apiKey {
-                    url = "$BASE_URL/applications/$APPLICATION_ID";
-                    method = "PUT";
-                    headers = {
-                      "Content-Type" = "application/json";
-                    };
-                    data = "$UPDATED_APPLICATION";
-                    extraArgs = "-S --fail-with-body";
-                  }
-                } > "$RESPONSE_FILE" 2>&1
+                mkSecureCurl cfg.config.apiKey {
+                  url = "$BASE_URL/applications/$APPLICATION_ID";
+                  method = "PUT";
+                  headers = {
+                    "Content-Type" = "application/json";
+                  };
+                  data = "$UPDATED_APPLICATION";
+                  extraArgs = "-S --fail-with-body";
+                }
+              } > "$RESPONSE_FILE" 2>&1
                 CURL_EXIT=$?
                 set -e
                 if [ "$CURL_EXIT" -ne 0 ]; then
@@ -217,16 +217,16 @@ in
                 RESPONSE_FILE=$(mktemp)
                 set +e
                 ${
-                  mkSecureCurl cfg.config.apiKey {
-                    url = "$BASE_URL/applications";
-                    method = "POST";
-                    headers = {
-                      "Content-Type" = "application/json";
-                    };
-                    data = "$NEW_APPLICATION";
-                    extraArgs = "-S --fail-with-body";
-                  }
-                } > "$RESPONSE_FILE" 2>&1
+                mkSecureCurl cfg.config.apiKey {
+                  url = "$BASE_URL/applications";
+                  method = "POST";
+                  headers = {
+                    "Content-Type" = "application/json";
+                  };
+                  data = "$NEW_APPLICATION";
+                  extraArgs = "-S --fail-with-body";
+                }
+              } > "$RESPONSE_FILE" 2>&1
                 CURL_EXIT=$?
                 set -e
                 if [ "$CURL_EXIT" -ne 0 ]; then
@@ -243,9 +243,10 @@ in
                 echo "Application ${applicationName} created"
               fi
             ''
-          ) cfg.config.applications}
+          )
+          cfg.config.applications}
 
-          echo "Prowlarr applications configuration complete"
-        '';
-      };
+        echo "Prowlarr applications configuration complete"
+      '';
+    };
 }

@@ -3,9 +3,8 @@
   lib,
   ...
 }:
-with lib;
-let
-  secrets = import ../../../lib/secrets { inherit lib; };
+with lib; let
+  secrets = import ../../../lib/secrets {inherit lib;};
 
   sonarrServerModule = types.submodule {
     options = {
@@ -46,7 +45,7 @@ let
 
       activeDirectory = mkOption {
         type = types.str;
-        default = head (config.nixflix.sonarr.mediaDirs or [ "/tv" ]);
+        default = head (config.nixflix.sonarr.mediaDirs or ["/tv"]);
         defaultText = literalExpression ''head (config.nixflix.sonarr.mediaDirs or ["/tv"])'';
         description = "Root folder for TV shows";
       };
@@ -126,16 +125,15 @@ let
         port = config.nixflix.sonarr.config.hostConfig.port or 8989;
         inherit (config.nixflix.sonarr.config) apiKey;
         baseUrl = config.nixflix.sonarr.config.hostConfig.urlBase;
-        activeDirectory = head (config.nixflix.sonarr.mediaDirs or [ "/data/media/tv" ]);
-        activeAnimeDirectory = head (config.nixflix.sonarr.mediaDirs or [ "/data/media/tv" ]);
+        activeDirectory = head (config.nixflix.sonarr.mediaDirs or ["/data/media/tv"]);
+        activeAnimeDirectory = head (config.nixflix.sonarr.mediaDirs or ["/data/media/tv"]);
         seriesType = "standard";
         animeSeriesType = "standard";
         isDefault = true;
         externalUrl =
-          if config.nixflix.reverseProxy.enable then
-            "${config.nixflix.reverseProxy.httpScheme}://${config.nixflix.sonarr.subdomain}.${config.nixflix.reverseProxy.domain}${config.nixflix.sonarr.config.hostConfig.urlBase}"
-          else
-            "";
+          if config.nixflix.reverseProxy.enable
+          then "${config.nixflix.reverseProxy.httpScheme}://${config.nixflix.sonarr.subdomain}.${config.nixflix.reverseProxy.domain}${config.nixflix.sonarr.config.hostConfig.urlBase}"
+          else "";
       };
     })
     // (optionalAttrs (config.nixflix.sonarr-anime.enable or false) {
@@ -144,20 +142,18 @@ let
         port = config.nixflix.sonarr-anime.config.hostConfig.port or 8990;
         inherit (config.nixflix.sonarr-anime.config) apiKey;
         baseUrl = config.nixflix.sonarr-anime.config.hostConfig.urlBase;
-        activeDirectory = head (config.nixflix.sonarr-anime.mediaDirs or [ "/data/media/anime" ]);
-        activeAnimeDirectory = head (config.nixflix.sonarr-anime.mediaDirs or [ "/data/media/anime" ]);
+        activeDirectory = head (config.nixflix.sonarr-anime.mediaDirs or ["/data/media/anime"]);
+        activeAnimeDirectory = head (config.nixflix.sonarr-anime.mediaDirs or ["/data/media/anime"]);
         seriesType = "standard";
         animeSeriesType = "anime";
         isDefault = false;
         externalUrl =
-          if config.nixflix.reverseProxy.enable then
-            "${config.nixflix.reverseProxy.httpScheme}://${config.nixflix.sonarr-anime.subdomain}.${config.nixflix.reverseProxy.domain}${config.nixflix.sonarr-anime.config.hostConfig.urlBase}"
-          else
-            "";
+          if config.nixflix.reverseProxy.enable
+          then "${config.nixflix.reverseProxy.httpScheme}://${config.nixflix.sonarr-anime.subdomain}.${config.nixflix.reverseProxy.domain}${config.nixflix.sonarr-anime.config.hostConfig.urlBase}"
+          else "";
       };
     });
-in
-{
+in {
   options.nixflix.seerr.sonarr = mkOption {
     type = types.attrsOf sonarrServerModule;
     default = defaultInstances;

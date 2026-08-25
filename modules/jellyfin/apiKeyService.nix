@@ -4,9 +4,8 @@
   pkgs,
   ...
 }:
-with lib;
-let
-  secrets = import ../../lib/secrets { inherit lib; };
+with lib; let
+  secrets = import ../../lib/secrets {inherit lib;};
   inherit (config) nixflix;
   cfg = config.nixflix.jellyfin;
 
@@ -14,13 +13,12 @@ let
     inherit pkgs;
     jellyfinCfg = cfg;
   };
-in
-{
+in {
   config = mkIf (nixflix.enable && cfg.enable) {
     systemd.services.jellyfin-api-key = {
       description = "Inject Jellyfin API key into database";
-      after = [ "jellyfin.service" ];
-      wantedBy = [ "multi-user.target" ];
+      after = ["jellyfin.service"];
+      wantedBy = ["multi-user.target"];
 
       serviceConfig = {
         Type = "oneshot";

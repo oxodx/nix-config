@@ -4,19 +4,17 @@
   lib,
   ...
 }:
-with lib;
-let
-  secrets = import ../../lib/secrets { inherit lib; };
-  inherit (import ../../lib/mkVirtualHosts.nix { inherit lib config; }) mkVirtualHost;
+with lib; let
+  secrets = import ../../lib/secrets {inherit lib;};
+  inherit (import ../../lib/mkVirtualHosts.nix {inherit lib config;}) mkVirtualHost;
   cfg = config.nixflix.torrentClients.qbittorrent;
   service = config.services.qbittorrent;
 
   hostname = "${cfg.subdomain}.${config.nixflix.reverseProxy.domain}";
-  categoriesJson = builtins.toJSON (lib.mapAttrs (_name: path: { save_path = path; }) cfg.categories);
+  categoriesJson = builtins.toJSON (lib.mapAttrs (_name: path: {save_path = path;}) cfg.categories);
   categoriesFile = pkgs.writeText "categories.json" categoriesJson;
   configPath = "${service.profileDir}/qBittorrent/config";
-in
-{
+in {
   options.nixflix.torrentClients.qbittorrent = mkOption {
     type = types.submodule {
       freeformType = types.attrsOf types.anything;
@@ -52,19 +50,16 @@ in
 
         categories = lib.mkOption {
           type = lib.types.attrsOf lib.types.str;
-          default =
-            let
-              getCategory =
-                service:
-                lib.optionalString (config.nixflix.${service}.enable or false) "${cfg.downloadsDir}/${service}";
-            in
-            {
-              radarr = getCategory "radarr";
-              sonarr = getCategory "sonarr";
-              sonarr-anime = getCategory "sonarr-anime";
-              lidarr = getCategory "lidarr";
-              prowlarr = getCategory "prowlarr";
-            };
+          default = let
+            getCategory = service:
+              lib.optionalString (config.nixflix.${service}.enable or false) "${cfg.downloadsDir}/${service}";
+          in {
+            radarr = getCategory "radarr";
+            sonarr = getCategory "sonarr";
+            sonarr-anime = getCategory "sonarr-anime";
+            lidarr = getCategory "lidarr";
+            prowlarr = getCategory "prowlarr";
+          };
           defaultText = lib.literalExpression ''
             {
               radarr = lib.optionalString (config.nixflix.radarr.enable or false) "${cfg.downloadsDir}/radarr";
@@ -151,12 +146,11 @@ in
           Preferences.WebUI.Address = mkOption {
             type = types.str;
             default =
-              if config.nixflix.vpn.enable && cfg.vpn.enable then
-                config.vpnNamespaces.wg.namespaceAddress
-              else if config.nixflix.reverseProxy.enable then
-                "127.0.0.1"
-              else
-                "*";
+              if config.nixflix.vpn.enable && cfg.vpn.enable
+              then config.vpnNamespaces.wg.namespaceAddress
+              else if config.nixflix.reverseProxy.enable
+              then "127.0.0.1"
+              else "*";
             description = "Bind address for the WebUI";
           };
         };
@@ -165,15 +159,14 @@ in
           type = types.str;
           readOnly = true;
           default =
-            if cfg.serverConfig.Preferences.WebUI.Address == "*" then
-              "127.0.0.1"
-            else
-              cfg.serverConfig.Preferences.WebUI.Address;
+            if cfg.serverConfig.Preferences.WebUI.Address == "*"
+            then "127.0.0.1"
+            else cfg.serverConfig.Preferences.WebUI.Address;
           description = "Address for connecting to this service.";
         };
       };
     };
-    default = { };
+    default = {};
   };
 
   config = mkIf (config.nixflix.enable && cfg != null && cfg.enable) (mkMerge [
@@ -219,43 +212,44 @@ in
             uid = mkForce config.nixflix.globals.uids.${cfg.user};
           };
 
-        groups.${service.group} = mkForce { };
+        groups.${service.group} = mkForce {};
       };
 
       systemd.tmpfiles = {
-        settings."10-qbittorrent" = {
-          ${service.profileDir}.d = {
-            inherit (service) user group;
-            mode = "0755";
-          };
-          ${configPath}.d = {
-            inherit (service) user group;
-            mode = "0754";
-          };
-          ${cfg.downloadsDir}.d = {
-            inherit (service) user group;
-            mode = "0775";
-          };
-          ${cfg.serverConfig.BitTorrent.Session.DefaultSavePath}.d = {
-            inherit (service) user group;
-            mode = "0775";
-          };
-        }
-        // lib.mapAttrs' (
-          _name: path:
-          lib.nameValuePair path {
-            d = {
+        settings."10-qbittorrent" =
+          {
+            ${service.profileDir}.d = {
+              inherit (service) user group;
+              mode = "0755";
+            };
+            ${configPath}.d = {
+              inherit (service) user group;
+              mode = "0754";
+            };
+            ${cfg.downloadsDir}.d = {
+              inherit (service) user group;
+              mode = "0775";
+            };
+            ${cfg.serverConfig.BitTorrent.Session.DefaultSavePath}.d = {
               inherit (service) user group;
               mode = "0775";
             };
           }
-        ) (lib.filterAttrs (_name: path: path != "") cfg.categories);
+          // lib.mapAttrs' (
+            _name: path:
+              lib.nameValuePair path {
+                d = {
+                  inherit (service) user group;
+                  mode = "0775";
+                };
+              }
+          ) (lib.filterAttrs (_name: path: path != "") cfg.categories);
       };
 
       systemd.services.qbittorrent = {
-        after = [ "nixflix-setup-dirs.service" ] ++ config.nixflix.serviceDependencies;
-        requires = [ "nixflix-setup-dirs.service" ] ++ config.nixflix.serviceDependencies;
-        preStart = lib.mkIf (cfg.categories != { }) (
+        after = ["nixflix-setup-dirs.service"] ++ config.nixflix.serviceDependencies;
+        requires = ["nixflix-setup-dirs.service"] ++ config.nixflix.serviceDependencies;
+        preStart = lib.mkIf (cfg.categories != {}) (
           lib.mkAfter ''
             cp -f '${categoriesFile}' '${configPath}/categories.json'
             chmod 640 '${configPath}/categories.json'
@@ -263,7 +257,6 @@ in
           ''
         );
       };
-
     }
     (mkIf (config.nixflix.vpn.enable && cfg.vpn.enable) {
       systemd.services.qbittorrent.vpnConfinement = {

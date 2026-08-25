@@ -4,14 +4,13 @@
   pkgs,
   ...
 }:
-with lib;
-let
+with lib; let
   cfg = config.nixflix.jellyfin;
-  secrets = import ../../../lib/secrets { inherit lib; };
-  mkSecureCurl = import ../../../lib/mk-secure-curl.nix { inherit lib pkgs; };
+  secrets = import ../../../lib/secrets {inherit lib;};
+  mkSecureCurl = import ../../../lib/mk-secure-curl.nix {inherit lib pkgs;};
 
-  util = import ../util.nix { inherit lib; };
-  authUtil = import ../authUtil.nix { inherit lib pkgs cfg; };
+  util = import ../util.nix {inherit lib;};
+  authUtil = import ../authUtil.nix {inherit lib pkgs cfg;};
 
   buildUserPayload = userName: userCfg: {
     name = userName;
@@ -20,33 +19,33 @@ let
     policy = util.recursiveTransform userCfg.policy;
   };
 
-  userConfigFiles = mapAttrs (
-    userName: userCfg:
-    pkgs.writeText "jellyfin-user-${userName}.json" (
-      builtins.toJSON (util.recursiveTransform (buildUserPayload userName userCfg))
+  userConfigFiles =
+    mapAttrs (
+      userName: userCfg:
+        pkgs.writeText "jellyfin-user-${userName}.json" (
+          builtins.toJSON (util.recursiveTransform (buildUserPayload userName userCfg))
+        )
     )
-  ) cfg.users;
+    cfg.users;
 
   baseUrl =
-    if cfg.network.baseUrl == "" then
-      "http://${cfg.connectionAddress}:${toString cfg.network.internalHttpPort}"
-    else
-      "http://${cfg.connectionAddress}:${toString cfg.network.internalHttpPort}/${cfg.network.baseUrl}";
+    if cfg.network.baseUrl == ""
+    then "http://${cfg.connectionAddress}:${toString cfg.network.internalHttpPort}"
+    else "http://${cfg.connectionAddress}:${toString cfg.network.internalHttpPort}/${cfg.network.baseUrl}";
 
   waitForApiScript = import ../waitForApiScript.nix {
     inherit pkgs;
     jellyfinCfg = cfg;
   };
-in
-{
-  imports = [ ./options.nix ];
+in {
+  imports = [./options.nix];
 
   config = mkIf (config.nixflix.enable && cfg.enable) {
     systemd.services.jellyfin-users-config = {
       description = "Configure Jellyfin Users via API";
-      after = [ "jellyfin-plugins.service" ];
-      requires = [ "jellyfin-plugins.service" ];
-      wantedBy = [ "multi-user.target" ];
+      after = ["jellyfin-plugins.service"];
+      requires = ["jellyfin-plugins.service"];
+      wantedBy = ["multi-user.target"];
 
       serviceConfig = {
         Type = "oneshot";
@@ -84,13 +83,11 @@ in
 
         ${concatStringsSep "\n" (
           mapAttrsToList (
-            userName: userCfg:
-            let
+            userName: userCfg: let
               jqSecrets = secrets.mkJqSecretArgs {
                 inherit (userCfg) password;
               };
-            in
-            ''
+            in ''
               echo "=========================================="
               echo "Processing user: ${userName}"
               echo "=========================================="
@@ -109,17 +106,17 @@ in
                   '{Name: $name, Password: ${jqSecrets.refs.password}}')
 
                 RESPONSE=$(${
-                  mkSecureCurl authUtil.token {
-                    method = "POST";
-                    url = "$BASE_URL/Users/New";
-                    apiKeyHeader = "Authorization";
-                    headers = {
-                      "Content-Type" = "application/json";
-                    };
-                    extraArgs = "-w \"\\n%{http_code}\"";
-                    data = "$USER_CREATE_PAYLOAD";
-                  }
-                })
+                mkSecureCurl authUtil.token {
+                  method = "POST";
+                  url = "$BASE_URL/Users/New";
+                  apiKeyHeader = "Authorization";
+                  headers = {
+                    "Content-Type" = "application/json";
+                  };
+                  extraArgs = "-w \"\\n%{http_code}\"";
+                  data = "$USER_CREATE_PAYLOAD";
+                }
+              })
 
                 HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
                 BODY=$(echo "$RESPONSE" | sed '$d')
@@ -132,11 +129,11 @@ in
                 fi
 
                 USERS_JSON=$(${
-                  mkSecureCurl authUtil.token {
-                    url = "$BASE_URL/Users";
-                    apiKeyHeader = "Authorization";
-                  }
-                })
+                mkSecureCurl authUtil.token {
+                  url = "$BASE_URL/Users";
+                  apiKeyHeader = "Authorization";
+                }
+              })
                 USER_ID=$(echo "$USERS_JSON" | ${pkgs.jq}/bin/jq -r --arg name ${escapeShellArg userName} '.[] | select(.Name | ascii_downcase == ($name | ascii_downcase)) | .Id')
               fi
 
@@ -168,17 +165,17 @@ in
 
                 # Update user configuration and basic settings
                 UPDATE_RESPONSE=$(${
-                  mkSecureCurl authUtil.token {
-                    method = "POST";
-                    url = "$BASE_URL/Users/$USER_ID";
-                    apiKeyHeader = "Authorization";
-                    headers = {
-                      "Content-Type" = "application/json";
-                    };
-                    extraArgs = "-w \"\\n%{http_code}\"";
-                    data = "@${userConfigFiles.${userName}}";
-                  }
-                })
+                mkSecureCurl authUtil.token {
+                  method = "POST";
+                  url = "$BASE_URL/Users/$USER_ID";
+                  apiKeyHeader = "Authorization";
+                  headers = {
+                    "Content-Type" = "application/json";
+                  };
+                  extraArgs = "-w \"\\n%{http_code}\"";
+                  data = "@${userConfigFiles.${userName}}";
+                }
+              })
 
                 UPDATE_HTTP_CODE=$(echo "$UPDATE_RESPONSE" | tail -n1)
                 UPDATE_BODY=$(echo "$UPDATE_RESPONSE" | sed '$d')
@@ -196,11 +193,11 @@ in
 
                 # Fetch current policy from server
                 CURRENT_POLICY=$(${
-                  mkSecureCurl authUtil.token {
-                    url = "$BASE_URL/Users/$USER_ID";
-                    apiKeyHeader = "Authorization";
-                  }
-                })
+                mkSecureCurl authUtil.token {
+                  url = "$BASE_URL/Users/$USER_ID";
+                  apiKeyHeader = "Authorization";
+                }
+              })
 
                 # Get our desired policy settings
                 DESIRED_POLICY=$(${pkgs.coreutils}/bin/cat ${userConfigFiles.${userName}} | ${pkgs.jq}/bin/jq '.Policy')
@@ -209,17 +206,17 @@ in
                 POLICY_JSON=$(echo "$CURRENT_POLICY" | ${pkgs.jq}/bin/jq --argjson desired "$DESIRED_POLICY" '.Policy * $desired')
 
                 POLICY_RESPONSE=$(${
-                  mkSecureCurl authUtil.token {
-                    method = "POST";
-                    url = "$BASE_URL/Users/$USER_ID/Policy";
-                    apiKeyHeader = "Authorization";
-                    headers = {
-                      "Content-Type" = "application/json";
-                    };
-                    extraArgs = "-w \"\\n%{http_code}\"";
-                    data = "$POLICY_JSON";
-                  }
-                })
+                mkSecureCurl authUtil.token {
+                  method = "POST";
+                  url = "$BASE_URL/Users/$USER_ID/Policy";
+                  apiKeyHeader = "Authorization";
+                  headers = {
+                    "Content-Type" = "application/json";
+                  };
+                  extraArgs = "-w \"\\n%{http_code}\"";
+                  data = "$POLICY_JSON";
+                }
+              })
 
                 POLICY_HTTP_CODE=$(echo "$POLICY_RESPONSE" | tail -n1)
                 POLICY_BODY=$(echo "$POLICY_RESPONSE" | sed '$d')
@@ -235,18 +232,19 @@ in
                 echo ""
                 echo "Verifying update - fetching user again:"
                 VERIFY_RESPONSE=$(${
-                  mkSecureCurl authUtil.token {
-                    url = "$BASE_URL/Users/$USER_ID";
-                    apiKeyHeader = "Authorization";
-                  }
-                })
+                mkSecureCurl authUtil.token {
+                  url = "$BASE_URL/Users/$USER_ID";
+                  apiKeyHeader = "Authorization";
+                }
+              })
                 echo "$VERIFY_RESPONSE" | ${pkgs.jq}/bin/jq .
               else
                 echo "Skipping user ${userName} - no update needed"
               fi
               echo ""
             ''
-          ) cfg.users
+          )
+          cfg.users
         )}
 
         echo "User configuration completed successfully"

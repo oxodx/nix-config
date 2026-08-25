@@ -1,25 +1,23 @@
-{ serviceName }:
-{
+{serviceName}: {
   config,
   lib,
   pkgs,
   ...
 }:
-with lib;
-let
+with lib; let
   cfg = config.nixflix.${serviceName};
-  inherit (import ./utils.nix { inherit lib pkgs serviceName; })
+  inherit
+    (import ./utils.nix {inherit lib pkgs serviceName;})
     usesMediaDirs
     capitalizedName
     mkSecureCurl
     mkWaitForApiScript
     ;
-in
-{
+in {
   options.nixflix.${serviceName}.config = optionalAttrs usesMediaDirs {
     rootFolders = mkOption {
       type = types.listOf types.attrs;
-      default = [ ];
+      default = [];
       defaultText = literalExpression "map (mediaDir: {path = mediaDir;}) nixflix.${serviceName}.mediaDirs";
       description = ''
         List of root folders to create via the API /rootfolder endpoint.
@@ -34,90 +32,89 @@ in
 
   config =
     mkIf
-      (
-        usesMediaDirs
-        && config.nixflix.enable
-        && cfg.enable
-        && cfg.config.apiKey != null
-        && cfg.config.rootFolders != [ ]
-      )
-      {
-        systemd.services."${serviceName}-rootfolders" = {
-          description = "Configure ${serviceName} root folders via API";
-          after = [ "${serviceName}-config.service" ] ++ config.nixflix.serviceDependencies;
-          requires = [ "${serviceName}-config.service" ] ++ config.nixflix.serviceDependencies;
-          wantedBy = [ "multi-user.target" ];
+    (
+      usesMediaDirs
+      && config.nixflix.enable
+      && cfg.enable
+      && cfg.config.apiKey != null
+      && cfg.config.rootFolders != []
+    )
+    {
+      systemd.services."${serviceName}-rootfolders" = {
+        description = "Configure ${serviceName} root folders via API";
+        after = ["${serviceName}-config.service"] ++ config.nixflix.serviceDependencies;
+        requires = ["${serviceName}-config.service"] ++ config.nixflix.serviceDependencies;
+        wantedBy = ["multi-user.target"];
 
-          serviceConfig = {
-            Type = "oneshot";
-            RemainAfterExit = true;
-            ExecStartPre = mkWaitForApiScript serviceName cfg.config;
-          };
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+          ExecStartPre = mkWaitForApiScript serviceName cfg.config;
+        };
 
-          script = ''
-            set -eu
+        script = ''
+          set -eu
 
-            BASE_URL="http://${cfg.config.hostConfig.bindAddress}:${builtins.toString cfg.config.hostConfig.port}${cfg.config.hostConfig.urlBase}/api/${cfg.config.apiVersion}"
+          BASE_URL="http://${cfg.config.hostConfig.bindAddress}:${builtins.toString cfg.config.hostConfig.port}${cfg.config.hostConfig.urlBase}/api/${cfg.config.apiVersion}"
 
-            echo "Checking for root folders..."
-            ROOT_FOLDERS=$(${
-              mkSecureCurl cfg.config.apiKey {
-                url = "$BASE_URL/rootfolder";
-                extraArgs = "-Sf";
-              }
-            } 2>/dev/null)
+          echo "Checking for root folders..."
+          ROOT_FOLDERS=$(${
+            mkSecureCurl cfg.config.apiKey {
+              url = "$BASE_URL/rootfolder";
+              extraArgs = "-Sf";
+            }
+          } 2>/dev/null)
 
-            CONFIGURED_PATHS=$(cat <<'EOF'
-            ${builtins.toJSON (map (f: f.path) cfg.config.rootFolders)}
-            EOF
-            )
+          CONFIGURED_PATHS=$(cat <<'EOF'
+          ${builtins.toJSON (map (f: f.path) cfg.config.rootFolders)}
+          EOF
+          )
 
-            echo "Removing root folders not in configuration..."
-            echo "$ROOT_FOLDERS" | ${pkgs.jq}/bin/jq -r '.[] | @json' | while IFS= read -r folder; do
-              FOLDER_PATH=$(echo "$folder" | ${pkgs.jq}/bin/jq -r '.path')
-              FOLDER_ID=$(echo "$folder" | ${pkgs.jq}/bin/jq -r '.id')
+          echo "Removing root folders not in configuration..."
+          echo "$ROOT_FOLDERS" | ${pkgs.jq}/bin/jq -r '.[] | @json' | while IFS= read -r folder; do
+            FOLDER_PATH=$(echo "$folder" | ${pkgs.jq}/bin/jq -r '.path')
+            FOLDER_ID=$(echo "$folder" | ${pkgs.jq}/bin/jq -r '.id')
 
-              if ! echo "$CONFIGURED_PATHS" | ${pkgs.jq}/bin/jq -e --arg path "$FOLDER_PATH" 'index($path)' >/dev/null 2>&1; then
-                echo "Deleting root folder not in config: $FOLDER_PATH (ID: $FOLDER_ID)"
-                ${
-                  mkSecureCurl cfg.config.apiKey {
-                    url = "$BASE_URL/rootfolder/$FOLDER_ID";
-                    method = "DELETE";
-                    extraArgs = "-Sf";
-                  }
-                } >/dev/null 2>&1 || echo "Warning: Failed to delete root folder $FOLDER_PATH"
-              fi
-            done
+            if ! echo "$CONFIGURED_PATHS" | ${pkgs.jq}/bin/jq -e --arg path "$FOLDER_PATH" 'index($path)' >/dev/null 2>&1; then
+              echo "Deleting root folder not in config: $FOLDER_PATH (ID: $FOLDER_ID)"
+              ${
+            mkSecureCurl cfg.config.apiKey {
+              url = "$BASE_URL/rootfolder/$FOLDER_ID";
+              method = "DELETE";
+              extraArgs = "-Sf";
+            }
+          } >/dev/null 2>&1 || echo "Warning: Failed to delete root folder $FOLDER_PATH"
+            fi
+          done
 
-            ${concatMapStringsSep "\n" (
-              folderConfig:
-              let
+          ${concatMapStringsSep "\n" (
+              folderConfig: let
                 folderJson = builtins.toJSON folderConfig;
                 folderPath = folderConfig.path;
-              in
-              ''
+              in ''
                 if ! echo "$ROOT_FOLDERS" | ${pkgs.jq}/bin/jq -e --arg path ${escapeShellArg folderPath} '.[] | select(.path == $path)' >/dev/null 2>&1; then
                   echo "Creating root folder: ${folderPath}"
                   ${
-                    mkSecureCurl cfg.config.apiKey {
-                      url = "$BASE_URL/rootfolder";
-                      method = "POST";
-                      headers = {
-                        "Content-Type" = "application/json";
-                      };
-                      data = folderJson;
-                      extraArgs = "-Sf";
-                    }
-                  } > /dev/null
+                  mkSecureCurl cfg.config.apiKey {
+                    url = "$BASE_URL/rootfolder";
+                    method = "POST";
+                    headers = {
+                      "Content-Type" = "application/json";
+                    };
+                    data = folderJson;
+                    extraArgs = "-Sf";
+                  }
+                } > /dev/null
                   echo "Root folder created: ${folderPath}"
                 else
                   echo "Root folder already exists: ${folderPath}"
                 fi
               ''
-            ) cfg.config.rootFolders}
+            )
+            cfg.config.rootFolders}
 
-            echo "${capitalizedName} root folders configuration complete"
-          '';
-        };
+          echo "${capitalizedName} root folders configuration complete"
+        '';
       };
+    };
 }

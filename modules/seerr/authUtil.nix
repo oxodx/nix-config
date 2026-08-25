@@ -2,15 +2,12 @@
   lib,
   pkgs,
   cfg,
-}:
-let
-  secrets = import ../../lib/secrets { inherit lib; };
+}: let
+  secrets = import ../../lib/secrets {inherit lib;};
 
   cookieFile = "/run/seerr/auth-cookie";
   apiKeyHeaderFile = "/run/seerr/api-key-header";
-
-in
-{
+in {
   inherit cookieFile;
 
   curlAuthArgs = ''--header @"${apiKeyHeaderFile}"'';

@@ -4,14 +4,13 @@
   pkgs,
   ...
 }:
-with lib;
-let
+with lib; let
   inherit (config) nixflix;
   cfg = config.nixflix.jellyfin;
 
-  mkSecureCurl = import ../../../lib/mk-secure-curl.nix { inherit lib pkgs; };
-  authUtil = import ../authUtil.nix { inherit lib pkgs cfg; };
-  secrets = import ../../../lib/secrets/default.nix { inherit lib; };
+  mkSecureCurl = import ../../../lib/mk-secure-curl.nix {inherit lib pkgs;};
+  authUtil = import ../authUtil.nix {inherit lib pkgs cfg;};
+  secrets = import ../../../lib/secrets/default.nix {inherit lib;};
 
   waitForApiScript = import ../waitForApiScript.nix {
     inherit pkgs;
@@ -26,14 +25,15 @@ let
   };
 
   baseUrl =
-    if cfg.network.baseUrl == "" then
-      "http://${cfg.connectionAddress}:${toString cfg.network.internalHttpPort}"
-    else
-      "http://${cfg.connectionAddress}:${toString cfg.network.internalHttpPort}/${cfg.network.baseUrl}";
+    if cfg.network.baseUrl == ""
+    then "http://${cfg.connectionAddress}:${toString cfg.network.internalHttpPort}"
+    else "http://${cfg.connectionAddress}:${toString cfg.network.internalHttpPort}/${cfg.network.baseUrl}";
 
-  managedPlugins = filterAttrs (
-    _name: pluginCfg: pluginCfg.package != null
-  ) pluginResolution.resolvedEnabledPlugins;
+  managedPlugins =
+    filterAttrs (
+      _name: pluginCfg: pluginCfg.package != null
+    )
+    pluginResolution.resolvedEnabledPlugins;
 
   pluginDirName = pluginResolution.packagePluginDirName;
 
@@ -41,27 +41,27 @@ let
     mapAttrs (_name: pluginCfg: {
       dir = pluginDirName pluginCfg.package;
       path = toString pluginCfg.package;
-    }) managedPlugins
+    })
+    managedPlugins
   );
 
-  pluginsWithConfig = filterAttrs (_name: pluginCfg: pluginCfg.config != { }) managedPlugins;
+  pluginsWithConfig = filterAttrs (_name: pluginCfg: pluginCfg.config != {}) managedPlugins;
 
-  pluginConfigData = mapAttrs (
-    name: pluginCfg:
-    let
-      rawConfig = pluginCfg.config;
-      lookupName = pluginCfg.apiName or name;
-    in
-    {
-      plainFile = pkgs.writeText "jellyfin-plugin-config-${name}.json" (
-        builtins.toJSON (secrets.stripSecretRefs rawConfig)
-      );
-      jqSecrets = secrets.mkNestedJqSecretArgs rawConfig;
-      inherit lookupName;
-    }
-  ) pluginsWithConfig;
-in
-{
+  pluginConfigData =
+    mapAttrs (
+      name: pluginCfg: let
+        rawConfig = pluginCfg.config;
+        lookupName = pluginCfg.apiName or name;
+      in {
+        plainFile = pkgs.writeText "jellyfin-plugin-config-${name}.json" (
+          builtins.toJSON (secrets.stripSecretRefs rawConfig)
+        );
+        jqSecrets = secrets.mkNestedJqSecretArgs rawConfig;
+        inherit lookupName;
+      }
+    )
+    pluginsWithConfig;
+in {
   config = mkIf (nixflix.enable && cfg.enable) {
     systemd.tmpfiles.settings."10-jellyfin"."${cfg.dataDir}/plugins".d = {
       mode = "0755";
@@ -71,9 +71,9 @@ in
 
     systemd.services.jellyfin-plugins = {
       description = "Manage Jellyfin plugins";
-      after = [ "jellyfin-system-config.service" ] ++ config.nixflix.serviceDependencies;
-      requires = [ "jellyfin-system-config.service" ] ++ config.nixflix.serviceDependencies;
-      wantedBy = [ "multi-user.target" ];
+      after = ["jellyfin-system-config.service"] ++ config.nixflix.serviceDependencies;
+      requires = ["jellyfin-system-config.service"] ++ config.nixflix.serviceDependencies;
+      wantedBy = ["multi-user.target"];
 
       serviceConfig = {
         Type = "oneshot";
@@ -93,12 +93,12 @@ in
         fetch_installed_plugins() {
           echo "Fetching installed plugins from $BASE_URL/Plugins..."
           PLUGINS_RESPONSE=$(${
-            mkSecureCurl authUtil.token {
-              url = "$BASE_URL/Plugins";
-              apiKeyHeader = "Authorization";
-              extraArgs = "-w \"\\n%{http_code}\"";
-            }
-          })
+          mkSecureCurl authUtil.token {
+            url = "$BASE_URL/Plugins";
+            apiKeyHeader = "Authorization";
+            extraArgs = "-w \"\\n%{http_code}\"";
+          }
+        })
           PLUGINS_HTTP_CODE=$(echo "$PLUGINS_RESPONSE" | tail -n1)
           INSTALLED_JSON=$(echo "$PLUGINS_RESPONSE" | sed '$d')
 
@@ -157,22 +157,21 @@ in
           done < <(previous_dirs | sed '/^$/d' | sort -u)
 
           ${concatStringsSep "\n" (
-            mapAttrsToList (
-              pluginName: pluginCfg:
-              let
-                dirName = pluginDirName pluginCfg.package;
-              in
-              ''
-                echo "Syncing packaged plugin: ${pluginName}"
-                TARGET="$PLUGIN_DIR/${dirName}"
-                ${pkgs.coreutils}/bin/rm -rf "$TARGET"
-                ${pkgs.coreutils}/bin/mkdir -p "$TARGET"
-                ${pkgs.coreutils}/bin/cp -a '${pluginCfg.package}'/. "$TARGET/"
-                ${pkgs.coreutils}/bin/chown -R '${cfg.user}:${cfg.group}' "$TARGET"
-                ${pkgs.coreutils}/bin/chmod -R u+w "$TARGET"
-              ''
-            ) managedPlugins
-          )}
+          mapAttrsToList (
+            pluginName: pluginCfg: let
+              dirName = pluginDirName pluginCfg.package;
+            in ''
+              echo "Syncing packaged plugin: ${pluginName}"
+              TARGET="$PLUGIN_DIR/${dirName}"
+              ${pkgs.coreutils}/bin/rm -rf "$TARGET"
+              ${pkgs.coreutils}/bin/mkdir -p "$TARGET"
+              ${pkgs.coreutils}/bin/cp -a '${pluginCfg.package}'/. "$TARGET/"
+              ${pkgs.coreutils}/bin/chown -R '${cfg.user}:${cfg.group}' "$TARGET"
+              ${pkgs.coreutils}/bin/chmod -R u+w "$TARGET"
+            ''
+          )
+          managedPlugins
+        )}
 
           ${pkgs.coreutils}/bin/rm -f "$LEGACY_MANIFEST"
         }
@@ -200,70 +199,70 @@ in
         echo "State file updated: $STATE_FILE"
 
         ${
-          if pluginsWithConfig != { } then
-            ''
-              ensure_jellyfin_ready
-              source ${authUtil.authScript}
+          if pluginsWithConfig != {}
+          then ''
+            ensure_jellyfin_ready
+            source ${authUtil.authScript}
 
-              echo "Applying plugin configurations..."
-              fetch_installed_plugins
+            echo "Applying plugin configurations..."
+            fetch_installed_plugins
 
-              ${concatStringsSep "\n" (
-                mapAttrsToList (
-                  pluginName: configData:
-                  let
-                    secretUpdates = concatStringsSep " | " configData.jqSecrets.assignments;
-                    jqFilter =
-                      if configData.jqSecrets.hasSecrets then ". * $plain | ${secretUpdates}" else ". * $plain";
-                  in
-                  ''
-                    echo "Configuring plugin: ${pluginName}..."
-                    PLUGIN_ID=$(echo "$INSTALLED_JSON" | ${pkgs.jq}/bin/jq -r \
-                      --arg name "${configData.lookupName}" '.[] | select(.Name == $name) | .Id // empty')
+            ${concatStringsSep "\n" (
+              mapAttrsToList (
+                pluginName: configData: let
+                  secretUpdates = concatStringsSep " | " configData.jqSecrets.assignments;
+                  jqFilter =
+                    if configData.jqSecrets.hasSecrets
+                    then ". * $plain | ${secretUpdates}"
+                    else ". * $plain";
+                in ''
+                  echo "Configuring plugin: ${pluginName}..."
+                  PLUGIN_ID=$(echo "$INSTALLED_JSON" | ${pkgs.jq}/bin/jq -r \
+                    --arg name "${configData.lookupName}" '.[] | select(.Name == $name) | .Id // empty')
 
-                    if [ -z "$PLUGIN_ID" ]; then
-                      echo "Warning: Plugin ${pluginName} not found in installed plugins, skipping configuration" >&2
-                    else
-                      CURRENT_CONFIG=$(${
-                        mkSecureCurl authUtil.token {
-                          url = "$BASE_URL/Plugins/$PLUGIN_ID/Configuration";
-                          apiKeyHeader = "Authorization";
-                        }
-                      })
+                  if [ -z "$PLUGIN_ID" ]; then
+                    echo "Warning: Plugin ${pluginName} not found in installed plugins, skipping configuration" >&2
+                  else
+                    CURRENT_CONFIG=$(${
+                    mkSecureCurl authUtil.token {
+                      url = "$BASE_URL/Plugins/$PLUGIN_ID/Configuration";
+                      apiKeyHeader = "Authorization";
+                    }
+                  })
 
-                      DESIRED_PLAIN=$(${pkgs.coreutils}/bin/cat ${configData.plainFile})
-                      MERGED_CONFIG=$(echo "$CURRENT_CONFIG" | \
-                        ${pkgs.jq}/bin/jq ${configData.jqSecrets.flagsString} \
-                        --argjson plain "$DESIRED_PLAIN" \
-                        '${jqFilter}')
+                    DESIRED_PLAIN=$(${pkgs.coreutils}/bin/cat ${configData.plainFile})
+                    MERGED_CONFIG=$(echo "$CURRENT_CONFIG" | \
+                      ${pkgs.jq}/bin/jq ${configData.jqSecrets.flagsString} \
+                      --argjson plain "$DESIRED_PLAIN" \
+                      '${jqFilter}')
 
-                      CONFIG_RESPONSE=$(${
-                        mkSecureCurl authUtil.token {
-                          method = "POST";
-                          url = "$BASE_URL/Plugins/$PLUGIN_ID/Configuration";
-                          apiKeyHeader = "Authorization";
-                          headers = {
-                            "Content-Type" = "application/json";
-                          };
-                          data = "$MERGED_CONFIG";
-                          extraArgs = "-w \"\\n%{http_code}\"";
-                        }
-                      })
-                      CONFIG_HTTP_CODE=$(echo "$CONFIG_RESPONSE" | tail -n1)
+                    CONFIG_RESPONSE=$(${
+                    mkSecureCurl authUtil.token {
+                      method = "POST";
+                      url = "$BASE_URL/Plugins/$PLUGIN_ID/Configuration";
+                      apiKeyHeader = "Authorization";
+                      headers = {
+                        "Content-Type" = "application/json";
+                      };
+                      data = "$MERGED_CONFIG";
+                      extraArgs = "-w \"\\n%{http_code}\"";
+                    }
+                  })
+                    CONFIG_HTTP_CODE=$(echo "$CONFIG_RESPONSE" | tail -n1)
 
-                      if [ "$CONFIG_HTTP_CODE" -lt 200 ] || [ "$CONFIG_HTTP_CODE" -ge 300 ]; then
-                        echo "Failed to configure plugin ${pluginName} (HTTP $CONFIG_HTTP_CODE)" >&2
-                        exit 1
-                      fi
-
-                      echo "Successfully configured plugin: ${pluginName}"
+                    if [ "$CONFIG_HTTP_CODE" -lt 200 ] || [ "$CONFIG_HTTP_CODE" -ge 300 ]; then
+                      echo "Failed to configure plugin ${pluginName} (HTTP $CONFIG_HTTP_CODE)" >&2
+                      exit 1
                     fi
-                  ''
-                ) pluginConfigData
-              )}
-            ''
-          else
-            ""
+
+                    echo "Successfully configured plugin: ${pluginName}"
+                  fi
+                ''
+              )
+              pluginConfigData
+            )}
+          ''
+          else ""
         }
 
         echo "Plugin management completed successfully"

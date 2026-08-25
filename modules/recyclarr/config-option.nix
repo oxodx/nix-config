@@ -1,7 +1,6 @@
-{ lib, ... }:
-with lib;
-let
-  secrets = import ../../lib/secrets { inherit lib; };
+{lib, ...}:
+with lib; let
+  secrets = import ../../lib/secrets {inherit lib;};
 
   radarrMediaNamingType = types.submodule {
     options = {
@@ -33,7 +32,7 @@ let
             };
           }
         );
-        default = { };
+        default = {};
         description = "Movie file naming configuration.";
       };
     };
@@ -87,14 +86,13 @@ let
             };
           }
         );
-        default = { };
+        default = {};
         description = "Episode file naming configuration.";
       };
     };
   };
 
-  mkInstanceType =
-    instanceType:
+  mkInstanceType = instanceType:
     types.submodule {
       options = {
         base_url = mkOption {
@@ -123,18 +121,17 @@ let
               options = {
                 type = mkOption {
                   type = types.enum (
-                    if instanceType == "radarr" then
-                      [
-                        "movie"
-                        "anime"
-                        "sqp-streaming"
-                        "sqp-uhd"
-                      ]
-                    else
-                      [
-                        "series"
-                        "anime"
-                      ]
+                    if instanceType == "radarr"
+                    then [
+                      "movie"
+                      "anime"
+                      "sqp-streaming"
+                      "sqp-uhd"
+                    ]
+                    else [
+                      "series"
+                      "anime"
+                    ]
                   );
                   description = "Identifies which quality size settings to parse and upload.";
                 };
@@ -167,7 +164,7 @@ let
                           };
 
                           max = mkOption {
-                            type = types.nullOr (types.either types.numbers.nonnegative (types.enum [ "unlimited" ]));
+                            type = types.nullOr (types.either types.numbers.nonnegative (types.enum ["unlimited"]));
                             default = null;
                             description = ''
                               Maximum size in MB per minute of runtime, or `"unlimited"`.
@@ -175,7 +172,7 @@ let
                           };
 
                           preferred = mkOption {
-                            type = types.nullOr (types.either types.numbers.nonnegative (types.enum [ "unlimited" ]));
+                            type = types.nullOr (types.either types.numbers.nonnegative (types.enum ["unlimited"]));
                             default = null;
                             description = ''
                               Preferred size in MB per minute of runtime, or `"unlimited"`.
@@ -223,9 +220,11 @@ let
 
         media_naming = mkOption {
           type = types.nullOr (
-            if instanceType == "radarr" then radarrMediaNamingType else sonarrMediaNamingType
+            if instanceType == "radarr"
+            then radarrMediaNamingType
+            else sonarrMediaNamingType
           );
-          default = { };
+          default = {};
           description = ''
             Media naming configuration.
 
@@ -378,7 +377,7 @@ let
               };
             }
           );
-          default = [ ];
+          default = [];
           description = ''
             An array of quality profiles that Recyclarr should create or modify.
 
@@ -395,9 +394,9 @@ let
               options = {
                 trash_ids = mkOption {
                   type = types.listOf types.str;
-                  default = [ ];
+                  default = [];
                   description = "Trash IDs of the custom formats to synchronize.";
-                  example = [ "85c61753df5da1fb2aab6f2a47426b09" ];
+                  example = ["85c61753df5da1fb2aab6f2a47426b09"];
                 };
 
                 assign_scores_to = mkOption {
@@ -422,13 +421,13 @@ let
                       };
                     }
                   );
-                  default = [ ];
+                  default = [];
                   description = "Quality profiles to receive scores from these custom formats.";
                 };
               };
             }
           );
-          default = [ ];
+          default = [];
           description = "Sets of custom formats with optional quality profile assignments for score application.";
         };
 
@@ -494,7 +493,7 @@ let
                       };
                     }
                   );
-                  default = [ ];
+                  default = [];
                   description = "Groups to explicitly synchronize. Use this to customize default group behavior or opt in to non-default groups.";
                 };
               };
@@ -534,7 +533,7 @@ let
               };
             }
           );
-          default = [ ];
+          default = [];
           description = ''
             A sequence of include directives to merge into this instance. Each entry must
             set exactly one of `template` or `config`.
@@ -542,8 +541,7 @@ let
         };
       };
     };
-in
-{
+in {
   options.nixflix.recyclarr.config = mkOption {
     type = types.nullOr (
       types.submodule {

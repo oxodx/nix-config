@@ -3,9 +3,8 @@
   lib,
   ...
 }:
-with lib;
-let
-  secrets = import ../../../lib/secrets { inherit lib; };
+with lib; let
+  secrets = import ../../../lib/secrets {inherit lib;};
 
   radarrServerModule = types.submodule {
     options = {
@@ -46,7 +45,7 @@ let
 
       activeDirectory = mkOption {
         type = types.str;
-        default = head (config.nixflix.radarr.mediaDirs or [ "/movies" ]);
+        default = head (config.nixflix.radarr.mediaDirs or ["/movies"]);
         defaultText = literalExpression ''head (config.nixflix.radarr.mediaDirs or ["/movies"])'';
         description = "Root folder for movies";
       };
@@ -99,17 +98,15 @@ let
       port = config.nixflix.radarr.config.hostConfig.port or 7878;
       inherit (config.nixflix.radarr.config) apiKey;
       baseUrl = config.nixflix.radarr.config.hostConfig.urlBase;
-      activeDirectory = head (config.nixflix.radarr.mediaDirs or [ "/data/media/movies" ]);
+      activeDirectory = head (config.nixflix.radarr.mediaDirs or ["/data/media/movies"]);
       isDefault = true;
       externalUrl =
-        if config.nixflix.reverseProxy.enable then
-          "${config.nixflix.reverseProxy.httpScheme}://${config.nixflix.radarr.subdomain}.${config.nixflix.reverseProxy.domain}${config.nixflix.radarr.config.hostConfig.urlBase}"
-        else
-          "";
+        if config.nixflix.reverseProxy.enable
+        then "${config.nixflix.reverseProxy.httpScheme}://${config.nixflix.radarr.subdomain}.${config.nixflix.reverseProxy.domain}${config.nixflix.radarr.config.hostConfig.urlBase}"
+        else "";
     };
   };
-in
-{
+in {
   options.nixflix.seerr.radarr = mkOption {
     type = types.attrsOf radarrServerModule;
     default = defaultInstance;

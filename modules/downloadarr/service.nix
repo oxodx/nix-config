@@ -4,15 +4,14 @@
   pkgs,
   ...
 }:
-with lib;
-let
-  secrets = import ../../lib/secrets { inherit lib; };
-  mkSecureCurl = import ../../lib/mk-secure-curl.nix { inherit lib pkgs; };
+with lib; let
+  secrets = import ../../lib/secrets {inherit lib;};
+  mkSecureCurl = import ../../lib/mk-secure-curl.nix {inherit lib pkgs;};
   cfg = config.nixflix.downloadarr;
 
   allClients = filter (c: c.enable) (
     builtins.attrValues (
-      builtins.removeAttrs cfg [
+      removeAttrs cfg [
         "extraClients"
         "enable"
       ]
@@ -22,8 +21,7 @@ let
 
   clientDependencies = unique (concatMap (c: c.dependencies) allClients);
 
-  categoryFieldFor =
-    serviceName:
+  categoryFieldFor = serviceName:
     {
       radarr = "movieCategory";
       sonarr = "tvCategory";
@@ -31,7 +29,9 @@ let
       lidarr = "musicCategory";
       prowlarr = "category";
     }
-    .${serviceName};
+    .${
+      serviceName
+    };
 
   arrServices = [
     "radarr"
@@ -41,110 +41,106 @@ let
     "prowlarr"
   ];
 
-  transformClient =
-    serviceName: client:
-    let
-      stripped = builtins.removeAttrs client [
-        "categories"
-        "dependencies"
-      ];
-      categoryField = categoryFieldFor serviceName;
-      categoryValue = client.categories.${serviceName};
-    in
-    stripped // { ${categoryField} = categoryValue; };
+  transformClient = serviceName: client: let
+    stripped = removeAttrs client [
+      "categories"
+      "dependencies"
+    ];
+    categoryField = categoryFieldFor serviceName;
+    categoryValue = client.categories.${serviceName};
+  in
+    stripped // {${categoryField} = categoryValue;};
 
-  mkDownloadClientsService =
-    serviceName:
-    let
-      serviceConfig = config.nixflix.${serviceName}.config;
-      capitalizedName =
-        toUpper (builtins.substring 0 1 serviceName) + builtins.substring 1 (-1) serviceName;
+  mkDownloadClientsService = serviceName: let
+    serviceConfig = config.nixflix.${serviceName}.config;
+    capitalizedName =
+      toUpper (builtins.substring 0 1 serviceName) + builtins.substring 1 (-1) serviceName;
 
-      clients = map (transformClient serviceName) allClients;
-    in
-    {
-      "${serviceName}-downloadclients" = {
-        description = "Configure ${serviceName} download clients via API";
-        after = [
+    clients = map (transformClient serviceName) allClients;
+  in {
+    "${serviceName}-downloadclients" = {
+      description = "Configure ${serviceName} download clients via API";
+      after =
+        [
           "${serviceName}.service"
           "${serviceName}-config.service"
         ]
         ++ clientDependencies;
-        requires = [
+      requires =
+        [
           "${serviceName}.service"
           "${serviceName}-config.service"
         ]
         ++ clientDependencies;
-        wantedBy = [ "multi-user.target" ];
+      wantedBy = ["multi-user.target"];
 
-        serviceConfig = {
-          Type = "oneshot";
-          RemainAfterExit = true;
-          ExecStartPre =
-            "${pkgs.curl}/bin/curl --retry 30 --retry-delay 2 --retry-connrefused -so /dev/null"
-            + " http://${
-               config.nixflix.${serviceName}.connectionAddress
-             }:${builtins.toString serviceConfig.hostConfig.port}${serviceConfig.hostConfig.urlBase}/api/${serviceConfig.apiVersion}/system/status";
-        };
-
-        script = ''
-          set -eu
-
-          BASE_URL="http://${
+      serviceConfig = {
+        Type = "oneshot";
+        RemainAfterExit = true;
+        ExecStartPre =
+          "${pkgs.curl}/bin/curl --retry 30 --retry-delay 2 --retry-connrefused -so /dev/null"
+          + " http://${
             config.nixflix.${serviceName}.connectionAddress
-          }:${builtins.toString serviceConfig.hostConfig.port}${serviceConfig.hostConfig.urlBase}/api/${serviceConfig.apiVersion}"
+          }:${toString serviceConfig.hostConfig.port}${serviceConfig.hostConfig.urlBase}/api/${serviceConfig.apiVersion}/system/status";
+      };
 
-          # Fetch all download client schemas
-          echo "Fetching download client schemas..."
-          SCHEMAS=$(${
-            mkSecureCurl serviceConfig.apiKey {
-              url = "$BASE_URL/downloadclient/schema";
-              extraArgs = "-S";
-            }
-          })
+      script = ''
+        set -eu
 
-          # Fetch existing download clients
-          echo "Fetching existing download clients..."
-          DOWNLOAD_CLIENTS=$(${
-            mkSecureCurl serviceConfig.apiKey {
-              url = "$BASE_URL/downloadclient";
-              extraArgs = "-S";
-            }
-          })
+        BASE_URL="http://${
+          config.nixflix.${serviceName}.connectionAddress
+        }:${toString serviceConfig.hostConfig.port}${serviceConfig.hostConfig.urlBase}/api/${serviceConfig.apiVersion}"
 
-          # Build list of configured download client names
-          CONFIGURED_NAMES=$(cat <<'EOF'
-          ${builtins.toJSON (map (d: d.name) clients)}
-          EOF
-          )
+        # Fetch all download client schemas
+        echo "Fetching download client schemas..."
+        SCHEMAS=$(${
+          mkSecureCurl serviceConfig.apiKey {
+            url = "$BASE_URL/downloadclient/schema";
+            extraArgs = "-S";
+          }
+        })
 
-          # Delete download clients that are not in the configuration
-          echo "Removing download clients not in configuration..."
-          echo "$DOWNLOAD_CLIENTS" | ${pkgs.jq}/bin/jq -r '.[] | @json' | while IFS= read -r downloadClient; do
-            CLIENT_NAME=$(echo "$downloadClient" | ${pkgs.jq}/bin/jq -r '.name')
-            CLIENT_ID=$(echo "$downloadClient" | ${pkgs.jq}/bin/jq -r '.id')
+        # Fetch existing download clients
+        echo "Fetching existing download clients..."
+        DOWNLOAD_CLIENTS=$(${
+          mkSecureCurl serviceConfig.apiKey {
+            url = "$BASE_URL/downloadclient";
+            extraArgs = "-S";
+          }
+        })
 
-            if ! echo "$CONFIGURED_NAMES" | ${pkgs.jq}/bin/jq -e --arg name "$CLIENT_NAME" 'index($name)' >/dev/null 2>&1; then
-              echo "Deleting download client not in config: $CLIENT_NAME (ID: $CLIENT_ID)"
-              ${
-                mkSecureCurl serviceConfig.apiKey {
-                  url = "$BASE_URL/downloadclient/$CLIENT_ID";
-                  method = "DELETE";
-                  extraArgs = "-Sf";
-                }
-              } >/dev/null || echo "Warning: Failed to delete download client $CLIENT_NAME"
-            fi
-          done
+        # Build list of configured download client names
+        CONFIGURED_NAMES=$(cat <<'EOF'
+        ${builtins.toJSON (map (d: d.name) clients)}
+        EOF
+        )
 
-          ${concatMapStringsSep "\n" (
-            clientConfig:
-            let
+        # Delete download clients that are not in the configuration
+        echo "Removing download clients not in configuration..."
+        echo "$DOWNLOAD_CLIENTS" | ${pkgs.jq}/bin/jq -r '.[] | @json' | while IFS= read -r downloadClient; do
+          CLIENT_NAME=$(echo "$downloadClient" | ${pkgs.jq}/bin/jq -r '.name')
+          CLIENT_ID=$(echo "$downloadClient" | ${pkgs.jq}/bin/jq -r '.id')
+
+          if ! echo "$CONFIGURED_NAMES" | ${pkgs.jq}/bin/jq -e --arg name "$CLIENT_NAME" 'index($name)' >/dev/null 2>&1; then
+            echo "Deleting download client not in config: $CLIENT_NAME (ID: $CLIENT_ID)"
+            ${
+          mkSecureCurl serviceConfig.apiKey {
+            url = "$BASE_URL/downloadclient/$CLIENT_ID";
+            method = "DELETE";
+            extraArgs = "-Sf";
+          }
+        } >/dev/null || echo "Warning: Failed to delete download client $CLIENT_NAME"
+          fi
+        done
+
+        ${concatMapStringsSep "\n" (
+            clientConfig: let
               clientName = clientConfig.name;
               inherit (clientConfig) implementationName;
               apiKey = clientConfig.apiKey or null;
               username = clientConfig.username or null;
               password = clientConfig.password or null;
-              allOverrides = builtins.removeAttrs clientConfig [
+              allOverrides = removeAttrs clientConfig [
                 "implementationName"
                 "apiKey"
                 "username"
@@ -154,12 +150,20 @@ let
               fieldOverridesJson = builtins.toJSON fieldOverrides;
 
               jqSecrets = secrets.mkJqSecretArgs {
-                apiKey = if apiKey == null then "" else apiKey;
-                username = if username == null then "" else username;
-                password = if password == null then "" else password;
+                apiKey =
+                  if apiKey == null
+                  then ""
+                  else apiKey;
+                username =
+                  if username == null
+                  then ""
+                  else username;
+                password =
+                  if password == null
+                  then ""
+                  else password;
               };
-            in
-            ''
+            in ''
               echo "Processing download client: ${clientName}"
 
               apply_field_overrides() {
@@ -200,16 +204,16 @@ let
 
                 for _retry_attempt in $(seq 1 5); do
                   if ${
-                    mkSecureCurl serviceConfig.apiKey {
-                      url = "$BASE_URL/downloadclient/$CLIENT_ID";
-                      method = "PUT";
-                      headers = {
-                        "Content-Type" = "application/json";
-                      };
-                      data = "$UPDATED_CLIENT";
-                      extraArgs = "-Sf";
-                    }
-                  } >/dev/null; then
+                mkSecureCurl serviceConfig.apiKey {
+                  url = "$BASE_URL/downloadclient/$CLIENT_ID";
+                  method = "PUT";
+                  headers = {
+                    "Content-Type" = "application/json";
+                  };
+                  data = "$UPDATED_CLIENT";
+                  extraArgs = "-Sf";
+                }
+              } >/dev/null; then
                     break
                   fi
                   if [ "$_retry_attempt" -eq 5 ]; then
@@ -235,16 +239,16 @@ let
 
                 for _retry_attempt in $(seq 1 5); do
                   if ${
-                    mkSecureCurl serviceConfig.apiKey {
-                      url = "$BASE_URL/downloadclient";
-                      method = "POST";
-                      headers = {
-                        "Content-Type" = "application/json";
-                      };
-                      data = "$NEW_CLIENT";
-                      extraArgs = "-Sf";
-                    }
-                  } >/dev/null; then
+                mkSecureCurl serviceConfig.apiKey {
+                  url = "$BASE_URL/downloadclient";
+                  method = "POST";
+                  headers = {
+                    "Content-Type" = "application/json";
+                  };
+                  data = "$NEW_CLIENT";
+                  extraArgs = "-Sf";
+                }
+              } >/dev/null; then
                     break
                   fi
                   if [ "$_retry_attempt" -eq 5 ]; then
@@ -258,23 +262,25 @@ let
                 echo "Download client ${clientName} created"
               fi
             ''
-          ) clients}
+          )
+          clients}
 
-          echo "${capitalizedName} download clients configuration complete"
-        '';
-      };
+        echo "${capitalizedName} download clients configuration complete"
+      '';
     };
+  };
 
-  enabledArrServices = filter (
-    serviceName:
-    config.nixflix.enable
-    && allClients != [ ]
-    && (config.nixflix.${serviceName}.enable or false)
-    && (config.nixflix.${serviceName}.config.apiKey or null) != null
-  ) arrServices;
-in
-{
-  config = mkIf (config.nixflix.enable && cfg.enable && allClients != [ ]) {
+  enabledArrServices =
+    filter (
+      serviceName:
+        config.nixflix.enable
+        && allClients != []
+        && (config.nixflix.${serviceName}.enable or false)
+        && (config.nixflix.${serviceName}.config.apiKey or null) != null
+    )
+    arrServices;
+in {
+  config = mkIf (config.nixflix.enable && cfg.enable && allClients != []) {
     systemd.services = mkMerge (map mkDownloadClientsService enabledArrServices);
   };
 }

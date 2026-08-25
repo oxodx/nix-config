@@ -1,5 +1,4 @@
-{ lib, ... }:
-{
+{lib, ...}: {
   options.nixflix.maintainerr.overlays.templates = lib.mkOption {
     type = lib.types.listOf (
       lib.types.submodule {
@@ -38,7 +37,7 @@
 
           elements = lib.mkOption {
             type = lib.types.listOf lib.types.anything;
-            default = [ ];
+            default = [];
             description = ''
               Canvas elements (shapes and variables) making up the overlay.
               Each element is a free-form attribute set matching the Maintainerr element schema.
@@ -71,7 +70,7 @@
         };
       }
     );
-    default = [ ];
+    default = [];
     description = ''
       Overlay templates to declaratively manage in Maintainerr.
       Templates present in Maintainerr but not listed here will be deleted,

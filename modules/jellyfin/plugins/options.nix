@@ -1,9 +1,7 @@
-{ lib, ... }:
-with lib;
-let
-  jellyfinPlugins = import ../../../lib/jellyfin-plugins.nix { inherit lib; };
-in
-{
+{lib, ...}:
+with lib; let
+  jellyfinPlugins = import ../../../lib/jellyfin-plugins.nix {inherit lib;};
+in {
   options.nixflix.jellyfin.plugins = mkOption {
     description = ''
       Jellyfin plugins to manage declaratively.
@@ -21,9 +19,9 @@ in
       avoid interrupting active streams.
     '';
     type = types.submodule {
-      freeformType = types.attrsOf (jellyfinPlugins.mkPluginModule { enableDefault = true; });
+      freeformType = types.attrsOf (jellyfinPlugins.mkPluginModule {enableDefault = true;});
     };
-    default = { };
+    default = {};
     example = literalExpression ''
       {
         "Bookshelf" = {

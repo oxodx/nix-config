@@ -3,11 +3,9 @@
   lib,
   ...
 }:
-with lib;
-let
+with lib; let
   cfg = config.nixflix.postgres;
-in
-{
+in {
   options.nixflix.postgres = {
     enable = mkOption {
       type = types.bool;
@@ -33,7 +31,7 @@ in
         "postgresql.service"
         "postgresql-setup.service"
       ];
-      wantedBy = [ "multi-user.target" ];
+      wantedBy = ["multi-user.target"];
     };
   };
 }

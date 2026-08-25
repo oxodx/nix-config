@@ -4,10 +4,9 @@
   pkgs,
   ...
 }:
-with lib;
-let
-  secrets = import ../../lib/secrets { inherit lib; };
-  getFirstAdmin = import ../../lib/getFirstAdmin.nix { inherit lib; };
+with lib; let
+  secrets = import ../../lib/secrets {inherit lib;};
+  getFirstAdmin = import ../../lib/getFirstAdmin.nix {inherit lib;};
   inherit (config) nixflix;
   cfg = nixflix.navidrome;
 
@@ -22,14 +21,13 @@ let
   };
 
   baseUrl = "http://${cfg.connectionAddress}:${toString cfg.settings.Port}";
-in
-{
+in {
   config = mkIf (nixflix.enable && cfg.enable) {
     systemd.services.navidrome-create-admin = {
       description = "Create first Navidrome admin user";
-      after = [ "navidrome.service" ];
-      requires = [ "navidrome.service" ];
-      wantedBy = [ "multi-user.target" ];
+      after = ["navidrome.service"];
+      requires = ["navidrome.service"];
+      wantedBy = ["multi-user.target"];
 
       serviceConfig = {
         Type = "oneshot";

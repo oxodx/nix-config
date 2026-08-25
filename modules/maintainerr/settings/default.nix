@@ -4,73 +4,64 @@
   pkgs,
   ...
 }:
-with lib;
-let
+with lib; let
   cfg = config.nixflix.maintainerr;
-  secrets = import ../../../lib/secrets { inherit lib; };
+  secrets = import ../../../lib/secrets {inherit lib;};
 
   maintainerrUrl = "http://${cfg.connectionAddress}:${toString cfg.port}";
   jobsJson = builtins.toJSON cfg.settings.jobs;
 
-  mkArrServerScript =
-    type: server:
-    let
-      apiKeyVal = secrets.toShellValue server.apiKey;
-    in
-    ''
-      echo "  Configuring ${server.serverName}..."
-      ARR_API_KEY=${apiKeyVal}
-      EXISTING_ID=$(echo "$ARR_CURRENT" \
-        | ${pkgs.jq}/bin/jq -r --arg name "${server.serverName}" \
-            '[ .[] | select(.serverName == $name) | .id ] | .[0] // empty')
-      if [ -n "$EXISTING_ID" ]; then
-        ${pkgs.curl}/bin/curl -s -X PUT \
-          -H "Content-Type: application/json" \
-          --data-binary "$(${pkgs.jq}/bin/jq -n \
-            --arg url "${server.url}" \
-            --arg serverName "${server.serverName}" \
-            --arg apiKey "$ARR_API_KEY" \
-            --argjson id "$EXISTING_ID" \
-            '{url: $url, serverName: $serverName, apiKey: $apiKey, id: $id}')" \
-          "${maintainerrUrl}/api/settings/${type}/$EXISTING_ID" \
-          | ${pkgs.jq}/bin/jq -e '.status == "OK"' > /dev/null
-      else
-        ${pkgs.curl}/bin/curl -s -X POST \
-          -H "Content-Type: application/json" \
-          --data-binary "$(${pkgs.jq}/bin/jq -n \
-            --arg url "${server.url}" \
-            --arg serverName "${server.serverName}" \
-            --arg apiKey "$ARR_API_KEY" \
-            '{url: $url, serverName: $serverName, apiKey: $apiKey}')" \
-          "${maintainerrUrl}/api/settings/${type}" \
-          | ${pkgs.jq}/bin/jq -e '.status == "OK"' > /dev/null
-      fi
-    '';
+  mkArrServerScript = type: server: let
+    apiKeyVal = secrets.toShellValue server.apiKey;
+  in ''
+    echo "  Configuring ${server.serverName}..."
+    ARR_API_KEY=${apiKeyVal}
+    EXISTING_ID=$(echo "$ARR_CURRENT" \
+      | ${pkgs.jq}/bin/jq -r --arg name "${server.serverName}" \
+          '[ .[] | select(.serverName == $name) | .id ] | .[0] // empty')
+    if [ -n "$EXISTING_ID" ]; then
+      ${pkgs.curl}/bin/curl -s -X PUT \
+        -H "Content-Type: application/json" \
+        --data-binary "$(${pkgs.jq}/bin/jq -n \
+          --arg url "${server.url}" \
+          --arg serverName "${server.serverName}" \
+          --arg apiKey "$ARR_API_KEY" \
+          --argjson id "$EXISTING_ID" \
+          '{url: $url, serverName: $serverName, apiKey: $apiKey, id: $id}')" \
+        "${maintainerrUrl}/api/settings/${type}/$EXISTING_ID" \
+        | ${pkgs.jq}/bin/jq -e '.status == "OK"' > /dev/null
+    else
+      ${pkgs.curl}/bin/curl -s -X POST \
+        -H "Content-Type: application/json" \
+        --data-binary "$(${pkgs.jq}/bin/jq -n \
+          --arg url "${server.url}" \
+          --arg serverName "${server.serverName}" \
+          --arg apiKey "$ARR_API_KEY" \
+          '{url: $url, serverName: $serverName, apiKey: $apiKey}')" \
+        "${maintainerrUrl}/api/settings/${type}" \
+        | ${pkgs.jq}/bin/jq -e '.status == "OK"' > /dev/null
+    fi
+  '';
 
-  mkArrTypeScript =
-    type: servers:
-    let
-      declaredNames = builtins.toJSON (map (s: s.serverName) servers);
-    in
-    ''
-      echo "Syncing ${type} servers..."
-      ARR_CURRENT=$(${pkgs.curl}/bin/curl -s "${maintainerrUrl}/api/settings/${type}")
+  mkArrTypeScript = type: servers: let
+    declaredNames = builtins.toJSON (map (s: s.serverName) servers);
+  in ''
+    echo "Syncing ${type} servers..."
+    ARR_CURRENT=$(${pkgs.curl}/bin/curl -s "${maintainerrUrl}/api/settings/${type}")
 
-      TO_DELETE=$(echo "$ARR_CURRENT" | ${pkgs.jq}/bin/jq -r \
-        --argjson declared '${declaredNames}' \
-        '.[] | select(.serverName as $n | ($declared | index($n)) == null) | .id')
-      for ID in $TO_DELETE; do
-        echo "  Deleting undeclared ${type} (id=$ID)..."
-        ${pkgs.curl}/bin/curl -s -X DELETE \
-          "${maintainerrUrl}/api/settings/${type}/$ID" > /dev/null
-      done
+    TO_DELETE=$(echo "$ARR_CURRENT" | ${pkgs.jq}/bin/jq -r \
+      --argjson declared '${declaredNames}' \
+      '.[] | select(.serverName as $n | ($declared | index($n)) == null) | .id')
+    for ID in $TO_DELETE; do
+      echo "  Deleting undeclared ${type} (id=$ID)..."
+      ${pkgs.curl}/bin/curl -s -X DELETE \
+        "${maintainerrUrl}/api/settings/${type}/$ID" > /dev/null
+    done
 
-      ${concatMapStrings (mkArrServerScript type) servers}
-    '';
-
-in
-{
-  imports = [ ./options.nix ];
+    ${concatMapStrings (mkArrServerScript type) servers}
+  '';
+in {
+  imports = [./options.nix];
 
   config = mkIf (config.nixflix.enable && cfg.enable) {
     assertions = [
@@ -82,23 +73,25 @@ in
 
     systemd.services.maintainerr-settings = {
       description = "Configure Maintainerr settings via API";
-      after = [
-        "maintainerr.service"
-      ]
-      ++ optional config.nixflix.jellyfin.enable "jellyfin-api-key.service"
-      ++ optional config.nixflix.radarr.enable "radarr-config.service"
-      ++ optional config.nixflix.sonarr.enable "sonarr-config.service"
-      ++ optional config.nixflix.sonarr-anime.enable "sonarr-anime-config.service"
-      ++ optional config.nixflix.seerr.enable "seerr-setup.service";
-      requires = [
-        "maintainerr.service"
-      ]
-      ++ optional config.nixflix.jellyfin.enable "jellyfin-api-key.service"
-      ++ optional config.nixflix.radarr.enable "radarr-config.service"
-      ++ optional config.nixflix.sonarr.enable "sonarr-config.service"
-      ++ optional config.nixflix.sonarr-anime.enable "sonarr-anime-config.service"
-      ++ optional config.nixflix.seerr.enable "seerr-setup.service";
-      wantedBy = [ "multi-user.target" ];
+      after =
+        [
+          "maintainerr.service"
+        ]
+        ++ optional config.nixflix.jellyfin.enable "jellyfin-api-key.service"
+        ++ optional config.nixflix.radarr.enable "radarr-config.service"
+        ++ optional config.nixflix.sonarr.enable "sonarr-config.service"
+        ++ optional config.nixflix.sonarr-anime.enable "sonarr-anime-config.service"
+        ++ optional config.nixflix.seerr.enable "seerr-setup.service";
+      requires =
+        [
+          "maintainerr.service"
+        ]
+        ++ optional config.nixflix.jellyfin.enable "jellyfin-api-key.service"
+        ++ optional config.nixflix.radarr.enable "radarr-config.service"
+        ++ optional config.nixflix.sonarr.enable "sonarr-config.service"
+        ++ optional config.nixflix.sonarr-anime.enable "sonarr-anime-config.service"
+        ++ optional config.nixflix.seerr.enable "seerr-setup.service";
+      wantedBy = ["multi-user.target"];
 
       serviceConfig = {
         Type = "oneshot";

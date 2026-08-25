@@ -4,12 +4,11 @@
   pkgs,
   ...
 }:
-with lib;
-let
+with lib; let
   inherit (config) nixflix;
   cfg = config.nixflix.jellyfin;
 
-  jellyfinPlugins = import ../../../lib/jellyfin-plugins.nix { inherit lib; };
+  jellyfinPlugins = import ../../../lib/jellyfin-plugins.nix {inherit lib;};
 
   pluginResolution = import ./resolvePlugins.nix {
     inherit lib pkgs;
@@ -27,8 +26,7 @@ let
   packagePluginDirNames = mapAttrsToList (_name: pluginCfg: packagePluginDirName pluginCfg.package) (
     filterAttrs (_name: pluginCfg: pluginCfg.package != null) enabledPlugins
   );
-in
-{
+in {
   imports = [
     ./options.nix
     ./openSubtitles.nix
