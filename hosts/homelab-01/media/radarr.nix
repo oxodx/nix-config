@@ -14,7 +14,7 @@
   stateDir = "${vars.dirs.state}/radarr";
   libDir = "${vars.dirs.media}/library";
   openFirewall = true;
-  port = 8989;
+  port = 7878;
 in {
   systemd.tmpfiles.rules = [
     "d '${stateDir}' 			0700 ${vUser} root - -"
