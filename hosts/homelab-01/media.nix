@@ -173,12 +173,8 @@
                 "Embedded Image Extractor"
                 "Screen Grabber"
               ];
-              metadataFetchers = ["TheMovieDb"
-                "The Open Movie Database"];
-              metadataFetcherOrder = [
-                "TheMovieDb"
-                "The Open Movie Database"
-              ];
+              metadataFetchers = ["TheMovieDb" "The Open Movie Database"];
+              metadataFetcherOrder = ["TheMovieDb" "The Open Movie Database"];
             }
           ];
         };
@@ -188,16 +184,8 @@
           typeOptions = [
             {
               type = "Series";
-              imageFetchers = [
-                "AniDB"
-                "AniSearch"
-                "TheMovieDb"
-              ];
-              imageFetcherOrder = [
-                "AniDB"
-                "AniSearch"
-                "TheMovieDb"
-              ];
+              imageFetchers = ["AniDB" "AniSearch" "TheMovieDb"];
+              imageFetcherOrder = ["AniDB" "AniSearch" "TheMovieDb"];
               metadataFetchers = [
                 "AniDB"
                 "AniSearch"
@@ -213,24 +201,10 @@
             }
             {
               type = "Season";
-              imageFetchers = [
-                "AniDB"
-                "AniSearch"
-                "TheMovieDb"
-              ];
-              imageFetcherOrder = [
-                "AniDB"
-                "AniSearch"
-                "TheMovieDb"
-              ];
-              metadataFetchers = [
-                "AniDB"
-                "TheMovieDb"
-              ];
-              metadataFetcherOrder = [
-                "AniDB"
-                "TheMovieDb"
-              ];
+              imageFetchers = ["AniDB" "AniSearch" "TheMovieDb"];
+              imageFetcherOrder = ["AniDB" "AniSearch" "TheMovieDb"];
+              metadataFetchers = ["AniDB" "TheMovieDb"];
+              metadataFetcherOrder = ["AniDB" "TheMovieDb"];
             }
             {
               type = "Episode";
@@ -277,14 +251,8 @@
                 "Embedded Image Extractor"
                 "Screen Grabber"
               ];
-              metadataFetchers = [
-                "TheMovieDb"
-                "The Open Movie Database"
-              ];
-              metadataFetcherOrder = [
-                "TheMovieDb"
-                "The Open Movie Database"
-              ];
+              metadataFetchers = ["TheMovieDb" "The Open Movie Database"];
+              metadataFetcherOrder = ["TheMovieDb" "The Open Movie Database"];
             }
           ];
         };
