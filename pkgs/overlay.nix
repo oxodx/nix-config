@@ -3,7 +3,7 @@ final: _prev: let
   names = builtins.attrNames dir;
 
   dirPkgs = builtins.listToAttrs (
-    builtins.map
+    map
     (name: {
       inherit name;
       value = final.callPackage (./. + "/${name}") {};
@@ -17,7 +17,7 @@ final: _prev: let
   );
 
   filePkgs = builtins.listToAttrs (
-    builtins.map
+    map
     (name: {
       name = builtins.substring 0 (builtins.stringLength name - 4) name;
       value = final.callPackage (./. + "/${name}") {};
