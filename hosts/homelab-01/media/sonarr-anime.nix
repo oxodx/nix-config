@@ -5,6 +5,7 @@ in {
     sonarr-anime = {
       enable = true;
       openFirewall = true;
+      vpn.enable = true;
       mediaDirs = ["/mnt/media/library/anime"];
       config = {
         apiKey._secret = vars.secrets.sonarr-anime.apiKey;

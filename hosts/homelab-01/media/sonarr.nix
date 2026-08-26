@@ -5,6 +5,7 @@ in {
     sonarr = {
       enable = true;
       openFirewall = true;
+      vpn.enable = true;
       mediaDirs = ["/mnt/media/library/shows"];
       config = {
         apiKey._secret = vars.secrets.sonarr.apiKey;

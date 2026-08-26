@@ -5,6 +5,7 @@ in {
     radarr = {
       enable = true;
       openFirewall = true;
+      vpn.enable = true;
       mediaDirs = ["/mnt/media/library/movies"];
       config = {
         apiKey._secret = vars.secrets.radarr.apiKey;
