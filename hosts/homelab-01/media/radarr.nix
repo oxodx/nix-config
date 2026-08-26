@@ -8,7 +8,10 @@ in {
       mediaDirs = ["/mnt/media/library/movies"];
       config = {
         apiKey._secret = vars.secrets.radarr.apiKey;
-        hostConfig.password._secret = vars.secrets.radarr.password;
+        hostConfig = {
+          username = "oxod";
+          password._secret = vars.secrets.radarr.password;
+        };
         delayProfiles = [
           {
             enableUsenet = true;
