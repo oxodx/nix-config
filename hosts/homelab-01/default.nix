@@ -1,4 +1,4 @@
-{mylib, ...}: {
+{ mylib, ... }: {
   imports = mylib.scanPaths ./.;
 
   environment.variables.NH_FLAKE = "/home/oxod/dev/nix-config";
@@ -28,6 +28,10 @@
   ];
 
   security.tpm2.enable = true;
+
+  system.activationScripts.fix-private-permissions = ''
+    chmod 751 /var/lib/private
+  '';
 
   system.stateVersion = "26.05";
 }
