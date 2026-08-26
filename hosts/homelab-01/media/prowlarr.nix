@@ -1,6 +1,7 @@
 let
   vars = import ./_variables.nix;
-in {
+in
+{
   nixflix = {
     prowlarr = {
       enable = true;
@@ -8,6 +9,7 @@ in {
       vpn.enable = true;
       config = {
         apiKey._secret = vars.secrets.prowlarr.apiKey;
+        hostConfig.username = "oxod";
         hostConfig.password._secret = vars.secrets.prowlarr.password;
       };
     };
