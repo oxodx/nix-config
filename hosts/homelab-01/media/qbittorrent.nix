@@ -24,13 +24,16 @@
           RatioAction = 0;
         };
       };
-      Preferences.WebUI = {
-        Username = "oxod";
-        LocalHostAuth = false;
-        HostHeaderValidation = false;
-        AuthSubnetWhitelistEnabled = true;
-        AuthSubnetWhitelist = "192.168.1.0/24, 192.168.15.0/24";
-        CSRFProtection = false;
+      Preferences = {
+        WebUI = {
+          Username = "oxod";
+          LocalHostAuth = false;
+          HostHeaderValidation = false;
+          AuthSubnetWhitelistEnabled = true;
+          AuthSubnetWhitelist = "192.168.1.0/24, 192.168.15.0/24";
+          CSRFProtection = false;
+        };
+        Connection.Interface = "wg0";
       };
       General.Locale = "en";
     };
