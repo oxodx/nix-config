@@ -8,7 +8,10 @@ in {
       mediaDirs = ["/mnt/media/library/anime"];
       config = {
         apiKey._secret = vars.secrets.sonarr-anime.apiKey;
-        hostConfig.password._secret = vars.secrets.sonarr-anime.password;
+        hostConfig = {
+          username = "oxod";
+          password._secret = vars.secrets.sonarr-anime.password;
+        };
         delayProfiles = [
           {
             enableUsenet = true;
