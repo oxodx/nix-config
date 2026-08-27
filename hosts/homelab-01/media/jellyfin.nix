@@ -208,6 +208,9 @@ in {
       };
 
       system.pluginRepositories = {
+        "IAmParadox" = {
+          url = "https://www.iamparadox.dev/jellyfin/plugins/manifest.json";
+        };
         "Intro Skipper" = {
           url = "https://raw.githubusercontent.com/intro-skipper/manifest/d56c137ae182c04a894dd700c25b04c8d2eba855/10.11/manifest.json";
           hash = "sha256-ENwn7Ei3WU2REcxnFNwzF6NGFUcnH2kJ4E5TKbpcDII=";
@@ -215,6 +218,8 @@ in {
       };
 
       plugins = {
+        "File Transformation".enable = true;
+
         subbuzz = {
           enable = true;
 
