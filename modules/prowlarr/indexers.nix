@@ -10,6 +10,17 @@ with lib; let
 
   mkSecureCurl = import ../../lib/mk-secure-curl.nix {inherit lib pkgs;};
 in {
+  options.nixflix.prowlarr.declarativeIndexers = mkEnableOption ''
+    Manage Prowlarr indexers declaratively via Nix configuration.
+
+    When enabled, indexers defined in `nixflix.prowlarr.config.indexers`
+    are synced to Prowlarr on every rebuild. Any indexers not in the
+    configuration are removed (drift cleanup).
+
+    When disabled, indexers are managed exclusively via the Prowlarr
+    web UI and are not tracked in your Nix configuration.
+  '';
+
   options.nixflix.prowlarr.config.indexers = mkOption {
     type = types.listOf (
       types.submodule {
@@ -75,7 +86,7 @@ in {
   };
 
   config.systemd.services."prowlarr-indexers" =
-    mkIf (config.nixflix.enable && cfg.enable && cfg.config.apiKey != null)
+    mkIf (config.nixflix.enable && cfg.enable && cfg.declarativeIndexers && cfg.config.apiKey != null)
     {
       description = "Configure Prowlarr indexers via API";
       after = [
