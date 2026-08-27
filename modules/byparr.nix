@@ -23,34 +23,21 @@ in
   };
 
   config = lib.mkIf (config.nixflix.enable && cfg.enable) {
-    virtualisation.docker.enable = true;
-
-    virtualisation.oci-containers = {
-      backend = "docker";
-      containers.byparr = {
-        image = "ghcr.io/thephaseless/byparr:latest";
-        autoStart = true;
-        ports = [ "127.0.0.1:${toString cfg.port}:8191" ];
-        volumes = [ "/var/lib/byparr:/config" ];
-        environment = {
-          LOG_LEVEL = "info";
-          TZ = config.time.timeZone or "UTC";
-        };
+    virtualisation.oci-containers.containers.byparr = {
+      image = "ghcr.io/thephaseless/byparr:latest";
+      autoStart = true;
+      ports = [ "127.0.0.1:${toString cfg.port}:8191" ];
+      volumes = [ "/var/lib/byparr:/config" ];
+      environment = {
+        LOG_LEVEL = "info";
+        TZ = config.time.timeZone or "UTC";
       };
     };
 
-    systemd.services.docker-byparr = {
+    systemd.services.podman-byparr = {
       vpnConfinement = {
         enable = true;
         vpnNamespace = "wg";
-      };
-    };
-
-    systemd.tmpfiles.settings."10-byparr" = {
-      "/var/lib/byparr".d = {
-        mode = "0755";
-        user = "root";
-        group = "root";
       };
     };
 
@@ -61,5 +48,13 @@ in
         protocol = "tcp";
       }
     ];
+
+    systemd.tmpfiles.settings."10-byparr" = {
+      "/var/lib/byparr".d = {
+        mode = "0755";
+        user = "root";
+        group = "root";
+      };
+    };
   };
 }

@@ -76,12 +76,12 @@ in
           "prowlarr-config.service"
           "prowlarr-tags.service"
         ]
-        ++ optional config.nixflix.byparr.enable "docker-byparr.service";
+        ++ optional config.nixflix.byparr.enable "podman-byparr.service";
         requires = [
           "prowlarr-config.service"
           "prowlarr-tags.service"
         ]
-        ++ optional config.nixflix.byparr.enable "docker-byparr.service";
+        ++ optional config.nixflix.byparr.enable "podman-byparr.service";
         wantedBy = [ "multi-user.target" ];
 
         serviceConfig = {
