@@ -5,11 +5,13 @@
   config,
   ...
 }:
-with lib; let
+with lib;
+let
   cfg = config.nixflix.prowlarr;
 
-  mkSecureCurl = import ../../lib/mkSecureCurl.nix {inherit lib pkgs;};
-in {
+  mkSecureCurl = import ../../lib/mkSecureCurl.nix { inherit lib pkgs; };
+in
+{
   options.nixflix.prowlarr.config.indexerProxies = mkOption {
     type = types.listOf (
       types.submodule {
@@ -29,20 +31,20 @@ in {
           };
           tags = mkOption {
             type = types.listOf types.str;
-            default = [];
+            default = [ ];
             description = "Applies to indexers with at least one matching tag";
           };
         };
       }
     );
-    default = [];
+    default = [ ];
     description = ''
       List of indexer proxies to configure in Prowlarr.
 
       Any additional attributes beyond name, username, and password
       will be applied as field values to the indexer schema.
 
-      FlareSolverr is automatically configured with a `flaresolverr` tag when `nixflix.flaresolverr.enable` is `true`;
+      Byparr is automatically configured with a `byparr` tag when `nixflix.byparr.enable` is `true`;
 
       You can run the following command to get the field names for a particular indexer:
 
@@ -59,96 +61,95 @@ in {
   };
 
   config.nixflix.prowlarr.config.indexerProxies =
-    optional (config.nixflix.enable && cfg.enable && config.nixflix.flaresolverr.enable)
-    {
-      name = "FlareSolverr";
-      host = "http://127.0.0.1:${toString config.nixflix.flaresolverr.port}";
-      tags = ["flaresolverr"];
-    };
+    optional (config.nixflix.enable && cfg.enable && config.nixflix.byparr.enable)
+      {
+        name = "FlareSolverr";
+        host = "http://127.0.0.1:${toString config.nixflix.byparr.port}";
+        tags = [ "byparr" ];
+      };
 
   config.systemd.services."prowlarr-indexer-proxies" =
     mkIf (config.nixflix.enable && cfg.enable && cfg.declarativeIndexers && cfg.config.apiKey != null)
-    {
-      description = "Configure Prowlarr indexer proxies via API";
-      after =
-        [
+      {
+        description = "Configure Prowlarr indexer proxies via API";
+        after = [
           "prowlarr-config.service"
           "prowlarr-tags.service"
         ]
-        ++ optional config.nixflix.flaresolverr.enable "flaresolverr.service";
-      requires =
-        [
+        ++ optional config.nixflix.byparr.enable "virtualisation-containers-byparr.service";
+        requires = [
           "prowlarr-config.service"
           "prowlarr-tags.service"
         ]
-        ++ optional config.nixflix.flaresolverr.enable "flaresolverr.service";
-      wantedBy = ["multi-user.target"];
+        ++ optional config.nixflix.byparr.enable "virtualisation-containers-byparr.service";
+        wantedBy = [ "multi-user.target" ];
 
-      serviceConfig = {
-        Type = "oneshot";
-        RemainAfterExit = true;
-        Restart = "on-failure";
-        RestartSec = 30;
-      };
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+          Restart = "on-failure";
+          RestartSec = 30;
+        };
 
-      script = ''
-        set -eu
+        script = ''
+          set -eu
 
-        BASE_URL="http://${cfg.connectionAddress}:${builtins.toString cfg.config.hostConfig.port}${cfg.config.hostConfig.urlBase}/api/${cfg.config.apiVersion}"
+          BASE_URL="http://${cfg.connectionAddress}:${builtins.toString cfg.config.hostConfig.port}${cfg.config.hostConfig.urlBase}/api/${cfg.config.apiVersion}"
 
-        # Fetch all indexer schemas
-        echo "Fetching indexer proxy schemas..."
-        SCHEMAS=$(${
-          mkSecureCurl cfg.config.apiKey {
-            url = "$BASE_URL/indexerProxy/schema";
-            extraArgs = "-S";
-          }
-        })
+          # Fetch all indexer schemas
+          echo "Fetching indexer proxy schemas..."
+          SCHEMAS=$(${
+            mkSecureCurl cfg.config.apiKey {
+              url = "$BASE_URL/indexerProxy/schema";
+              extraArgs = "-S";
+            }
+          })
 
-        # Fetch existing indexers
-        echo "Fetching existing indexer proxies..."
-        INDEXERS=$(${
-          mkSecureCurl cfg.config.apiKey {
-            url = "$BASE_URL/indexerProxy";
-            extraArgs = "-S";
-          }
-        })
+          # Fetch existing indexers
+          echo "Fetching existing indexer proxies..."
+          INDEXERS=$(${
+            mkSecureCurl cfg.config.apiKey {
+              url = "$BASE_URL/indexerProxy";
+              extraArgs = "-S";
+            }
+          })
 
-        # Fetch all tags for name-to-ID resolution
-        echo "Fetching tags..."
-        ALL_TAGS=$(${
-          mkSecureCurl cfg.config.apiKey {
-            url = "$BASE_URL/tag";
-            extraArgs = "-S";
-          }
-        })
+          # Fetch all tags for name-to-ID resolution
+          echo "Fetching tags..."
+          ALL_TAGS=$(${
+            mkSecureCurl cfg.config.apiKey {
+              url = "$BASE_URL/tag";
+              extraArgs = "-S";
+            }
+          })
 
-        # Build list of configured indexer proxy names
-        CONFIGURED_NAMES=$(cat <<'EOF'
-        ${builtins.toJSON (map (i: i.name) cfg.config.indexerProxies)}
-        EOF
-        )
+          # Build list of configured indexer proxy names
+          CONFIGURED_NAMES=$(cat <<'EOF'
+          ${builtins.toJSON (map (i: i.name) cfg.config.indexerProxies)}
+          EOF
+          )
 
-        # Delete indexers that are not in the configuration
-        echo "Removing indexer proxies not in configuration..."
-        echo "$INDEXERS" | ${pkgs.jq}/bin/jq -r '.[] | @json' | while IFS= read -r indexer; do
-          INDEXER_NAME=$(echo "$indexer" | ${pkgs.jq}/bin/jq -r '.name')
-          INDEXER_ID=$(echo "$indexer" | ${pkgs.jq}/bin/jq -r '.id')
+          # Delete indexers that are not in the configuration
+          echo "Removing indexer proxies not in configuration..."
+          echo "$INDEXERS" | ${pkgs.jq}/bin/jq -r '.[] | @json' | while IFS= read -r indexer; do
+            INDEXER_NAME=$(echo "$indexer" | ${pkgs.jq}/bin/jq -r '.name')
+            INDEXER_ID=$(echo "$indexer" | ${pkgs.jq}/bin/jq -r '.id')
 
-          if ! echo "$CONFIGURED_NAMES" | ${pkgs.jq}/bin/jq -e --arg name "$INDEXER_NAME" 'index($name)' >/dev/null 2>&1; then
-            echo "Deleting indexer proxy not in config: $INDEXER_NAME (ID: $INDEXER_ID)"
-            ${
-          mkSecureCurl cfg.config.apiKey {
-            url = "$BASE_URL/indexerProxy/$INDEXER_ID";
-            method = "DELETE";
-            extraArgs = "-Sf";
-          }
-        } >/dev/null || echo "Warning: Failed to delete indexer proxy $INDEXER_NAME"
-          fi
-        done
+            if ! echo "$CONFIGURED_NAMES" | ${pkgs.jq}/bin/jq -e --arg name "$INDEXER_NAME" 'index($name)' >/dev/null 2>&1; then
+              echo "Deleting indexer proxy not in config: $INDEXER_NAME (ID: $INDEXER_ID)"
+              ${
+                mkSecureCurl cfg.config.apiKey {
+                  url = "$BASE_URL/indexerProxy/$INDEXER_ID";
+                  method = "DELETE";
+                  extraArgs = "-Sf";
+                }
+              } >/dev/null || echo "Warning: Failed to delete indexer proxy $INDEXER_NAME"
+            fi
+          done
 
-        ${concatMapStringsSep "\n" (
-            indexerConfig: let
+          ${concatMapStringsSep "\n" (
+            indexerConfig:
+            let
               indexerName = indexerConfig.name;
               inherit (indexerConfig) username password;
               allOverrides = builtins.removeAttrs indexerConfig [
@@ -156,24 +157,17 @@ in {
                 "password"
                 "tags"
               ];
-              fieldOverrides =
-                lib.filterAttrs (
-                  name: value: value != null && !lib.hasPrefix "_" name
-                )
-                allOverrides;
+              fieldOverrides = lib.filterAttrs (
+                name: value: value != null && !lib.hasPrefix "_" name
+              ) allOverrides;
               fieldOverridesJson = builtins.toJSON fieldOverrides;
 
               jqSecrets = mylib.secrets.mkJqSecretArgs {
-                username =
-                  if username == null
-                  then ""
-                  else username;
-                password =
-                  if password == null
-                  then ""
-                  else password;
+                username = if username == null then "" else username;
+                password = if password == null then "" else password;
               };
-            in ''
+            in
+            ''
               echo "Processing indexer proxy: ${indexerName}"
 
               apply_field_overrides() {
@@ -219,16 +213,16 @@ in {
                 UPDATED_INDEXER=$(echo "$UPDATED_INDEXER" | ${pkgs.jq}/bin/jq --argjson tags "$TAG_IDS" '.tags = $tags')
 
                 ${
-                mkSecureCurl cfg.config.apiKey {
-                  url = "$BASE_URL/indexerProxy/$INDEXER_ID?forceSave=true";
-                  method = "PUT";
-                  headers = {
-                    "Content-Type" = "application/json";
-                  };
-                  data = "$UPDATED_INDEXER";
-                  extraArgs = "-Sf";
-                }
-              } >/dev/null
+                  mkSecureCurl cfg.config.apiKey {
+                    url = "$BASE_URL/indexerProxy/$INDEXER_ID?forceSave=true";
+                    method = "PUT";
+                    headers = {
+                      "Content-Type" = "application/json";
+                    };
+                    data = "$UPDATED_INDEXER";
+                    extraArgs = "-Sf";
+                  }
+                } >/dev/null
 
                 echo "Indexer proxy ${indexerName} updated"
               else
@@ -248,24 +242,23 @@ in {
                 NEW_INDEXER=$(echo "$NEW_INDEXER" | ${pkgs.jq}/bin/jq --argjson tags "$TAG_IDS" '.tags = $tags')
 
                 ${
-                mkSecureCurl cfg.config.apiKey {
-                  url = "$BASE_URL/indexerProxy?forceSave=true";
-                  method = "POST";
-                  headers = {
-                    "Content-Type" = "application/json";
-                  };
-                  data = "$NEW_INDEXER";
-                  extraArgs = "-Sf";
-                }
-              } >/dev/null
+                  mkSecureCurl cfg.config.apiKey {
+                    url = "$BASE_URL/indexerProxy?forceSave=true";
+                    method = "POST";
+                    headers = {
+                      "Content-Type" = "application/json";
+                    };
+                    data = "$NEW_INDEXER";
+                    extraArgs = "-Sf";
+                  }
+                } >/dev/null
 
                 echo "Indexer proxy ${indexerName} created"
               fi
             ''
-          )
-          cfg.config.indexerProxies}
+          ) cfg.config.indexerProxies}
 
-        echo "Prowlarr indexer proxies configuration complete"
-      '';
-    };
+          echo "Prowlarr indexer proxies configuration complete"
+        '';
+      };
 }

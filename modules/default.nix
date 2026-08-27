@@ -4,14 +4,16 @@
   pkgs,
   ...
 }:
-with lib; let
+with lib;
+let
   inherit (config.nixflix) globals;
   cfg = config.nixflix;
-in {
+in
+{
   imports = [
     ./caddy
     ./downloadarr
-    ./flaresolverr.nix
+    ./byparr.nix
     ./globals.nix
     ./jellyfin
     ./lidarr
@@ -63,8 +65,8 @@ in {
 
     systemd.services.nixflix-setup-dirs = {
       description = "Create tmp files";
-      after = ["systemd-tmpfiles-setup.service"];
-      requires = ["systemd-tmpfiles-setup.service"];
+      after = [ "systemd-tmpfiles-setup.service" ];
+      requires = [ "systemd-tmpfiles-setup.service" ];
 
       serviceConfig = {
         Type = "oneshot";

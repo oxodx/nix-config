@@ -47,7 +47,7 @@ in
       removeFailedDownloads = true;
     };
 
-    flaresolverr.enable = true;
+    byparr.enable = true;
 
     nginx.enable = false;
     postgres.enable = true;
