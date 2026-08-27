@@ -219,6 +219,7 @@ in {
 
       plugins = {
         "File Transformation".enable = true;
+        "Media Bar".enable = true;
 
         subbuzz = {
           enable = true;
