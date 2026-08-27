@@ -25,5 +25,9 @@ rec {
       apiKey = "/root/secrets/prowlarr/api_key";
       password = "/root/secrets/prowlarr/password";
     };
+    lidarr = {
+      apiKey = "/root/secrets/lidarr/api_key";
+      password = "/root/secrets/lidarr/password";
+    };
   };
 }
