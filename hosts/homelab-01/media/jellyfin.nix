@@ -3,11 +3,9 @@
   mylib,
   config,
   ...
-}:
-let
+}: let
   vars = import ./_variables.nix;
-in
-{
+in {
   nixflix = {
     jellyfin = {
       enable = true;
@@ -16,20 +14,18 @@ in
       network.enableRemoteAccess = true;
 
       branding = {
-        customCss =
-          let
-            url = "https://cdn.jsdelivr.net/gh/lscambo13/ElegantFin";
-          in
-          if config.nixflix.theme.enable then
-            ''
-              @import url("${url}@main/Theme/ElegantFin-jellyfin-theme-build-latest-minified.css");
-              @import url("${url}@main/Theme/assets/add-ons/media-bar-plugin-support-latest-min.css");
-            ''
-          else
-            "";
+        customCss = let
+          url = "https://cdn.jsdelivr.net/gh/lscambo13/ElegantFin";
+        in
+          if config.nixflix.theme.enable
+          then ''
+            @import url("${url}@main/Theme/ElegantFin-jellyfin-theme-build-latest-minified.css");
+            @import url("${url}@main/Theme/assets/add-ons/media-bar-plugin-support-latest-min.css");
+          ''
+          else "";
         loginDisclaimer = "";
         splashscreenEnabled = false;
-        splashscreenLocation = [ ];
+        splashscreenLocation = [];
       };
 
       users = {
@@ -40,25 +36,25 @@ in
         };
       };
 
-      libraries =
-        let
-          subtitleSettings = {
-            subtitleDownloadLanguages = [
-              "eng"
-              "nl"
-            ];
-            requirePerfectSubtitleMatch = true;
-          };
-        in
-        {
-          Shows = subtitleSettings // {
+      libraries = let
+        subtitleSettings = {
+          subtitleDownloadLanguages = [
+            "eng"
+            "nl"
+          ];
+          requirePerfectSubtitleMatch = true;
+        };
+      in {
+        Shows =
+          subtitleSettings
+          // {
             collectionType = "tvshows";
-            paths = [ "/mnt/media/library/shows" ];
+            paths = ["/mnt/media/library/shows"];
             typeOptions = [
               {
                 type = "Series";
-                imageFetchers = [ "TheMovieDb" ];
-                imageFetcherOrder = [ "TheMovieDb" ];
+                imageFetchers = ["TheMovieDb"];
+                imageFetcherOrder = ["TheMovieDb"];
                 metadataFetchers = [
                   "TheMovieDb"
                   "The Open Movie Database"
@@ -70,10 +66,10 @@ in
               }
               {
                 type = "Season";
-                imageFetchers = [ "TheMovieDb" ];
-                imageFetcherOrder = [ "TheMovieDb" ];
-                metadataFetchers = [ "TheMovieDb" ];
-                metadataFetcherOrder = [ "TheMovieDb" ];
+                imageFetchers = ["TheMovieDb"];
+                imageFetcherOrder = ["TheMovieDb"];
+                metadataFetchers = ["TheMovieDb"];
+                metadataFetcherOrder = ["TheMovieDb"];
               }
               {
                 type = "Episode";
@@ -100,9 +96,11 @@ in
               }
             ];
           };
-          Anime = subtitleSettings // {
+        Anime =
+          subtitleSettings
+          // {
             collectionType = "tvshows";
-            paths = [ "/mnt/media/library/anime" ];
+            paths = ["/mnt/media/library/anime"];
             typeOptions = [
               {
                 type = "Series";
@@ -177,9 +175,11 @@ in
               }
             ];
           };
-          Movies = subtitleSettings // {
+        Movies =
+          subtitleSettings
+          // {
             collectionType = "movies";
-            paths = [ "/mnt/media/library/movies" ];
+            paths = ["/mnt/media/library/movies"];
             typeOptions = [
               {
                 type = "Movie";
@@ -206,11 +206,11 @@ in
               }
             ];
           };
-          Music = {
-            collectionType = "music";
-            paths = [ "/mnt/media/library/music" ];
-          };
+        Music = {
+          collectionType = "music";
+          paths = ["/mnt/media/library/music"];
         };
+      };
 
       system.pluginRepositories = {
         "IAmParadox" = {
@@ -224,6 +224,21 @@ in
       };
 
       plugins = {
+        "File Transformation" = {
+          enable = true;
+          package = mylib.media.jellyfinPlugins.fromRepo {
+            version = "2.5.11.0";
+            hash = "sha256-RecLxMWjsrVc/nF3GxXNOcKs0pWOERib+r9UEz+D5+4=";
+          };
+        };
+        "Media Bar" = {
+          enable = true;
+          package = mylib.media.jellyfinPlugins.fromRepo {
+            version = "2.4.13.0";
+            hash = "sha256-L7qwjhv7wRarUB2rx+iubIyzhHI2rDMYm2xUsrO1jck=";
+          };
+        };
+
         subbuzz = {
           enable = true;
 
@@ -357,7 +372,7 @@ in
         enableIntelLowPowerH264HwEncoder = true;
         enableIntelLowPowerHevcHwEncoder = true;
         enableSubtitleExtraction = true;
-        allowOnDemandMetadataBasedKeyframeExtractionForExtensions = [ "mkv" ];
+        allowOnDemandMetadataBasedKeyframeExtractionForExtensions = ["mkv"];
       };
 
       metadata.useFileCreationTimeForDateAdded = false;
