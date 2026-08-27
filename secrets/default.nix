@@ -1,5 +1,5 @@
 let
-  server = "age1fqkz7r00szqmnj72uuycsvxmd2p3hkqr05nncuhjfzmc2x0fnytsjw8028";
+  server = "age1zrcqwqlzr47kdcjw9eg636jdk9tny48pxcxgyj954e668wp6jp8qjfayfg";
   laptop = "age13dq6y4q8vdr4sp7nqp5gmh2luvk05cpp02s6x88nw3cl8znc7slq6a2dq8";
 in {
   "secrets/mullvad.conf.age".publicKeys = [
