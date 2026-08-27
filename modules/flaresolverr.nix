@@ -43,23 +43,30 @@ in
         LOG_LEVEL = cfg.logLevel;
       };
       autoStart = true;
+      extraOptions = [
+        "--pull=newer"
+      ];
     };
 
     systemd.services.podman-flaresolverr = {
       after = [ "network-online.target" ];
       wants = [ "network-online.target" ];
+      vpnConfinement = {
+        enable = true;
+        vpnNamespace = "wg";
+      };
+      serviceConfig = {
+        Restart = "on-failure";
+        RestartSec = 5;
+      };
     };
 
-    systemd.services.flaresolverr.serviceConfig.ExecStartPost =
-      pkgs.writeShellScript "wait-for-flaresolverr" ''
-        for i in $(seq 1 30); do
-          if ${pkgs.curl}/bin/curl -sf http://127.0.0.1:${toString cfg.port}/ >/dev/null 2>&1; then
-            exit 0
-          fi
-          sleep 1
-        done
-        echo "FlareSolverr did not become ready within 30s"
-        exit 1
-      '';
+    vpnNamespaces.wg.portMappings = [
+      {
+        from = cfg.port;
+        to = cfg.port;
+        protocol = "tcp";
+      }
+    ];
   };
 }

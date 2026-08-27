@@ -70,33 +70,42 @@ in
 
           # Fetch library list
           echo "Fetching library list from Jellyfin..."
-          LIBRARIES_RESPONSE=$(${pkgs.curl}/bin/curl -sf \
+          LIBRARIES_RESPONSE=$(${pkgs.curl}/bin/curl -s \
             ${authUtil.curlAuthArgs} \
-            "$BASE_URL/api/v1/settings/jellyfin/library?sync=true")
+            "$BASE_URL/api/v1/settings/jellyfin/library?sync=true" \
+            -w "\n%{http_code}" 2>/dev/null || true)
+
+          LIBRARIES_HTTP_CODE=$(echo "$LIBRARIES_RESPONSE" | tail -n1)
+          LIBRARIES_BODY=$(echo "$LIBRARIES_RESPONSE" | sed '$d')
+
+          if [ "$LIBRARIES_HTTP_CODE" != "200" ]; then
+            echo "Failed to fetch libraries (HTTP $LIBRARIES_HTTP_CODE) - retry after logging in"
+            exit 0
+          fi
 
           echo "Available libraries:"
-          echo "$LIBRARIES_RESPONSE" | ${pkgs.jq}/bin/jq -r '.[] | "\(.id) - \(.name) (\(.type))"'
+          echo "$LIBRARIES_BODY" | ${pkgs.jq}/bin/jq -r '.[] | "\(.id) - \(.name) (\(.type))"'
 
           # Apply filters and get IDs to enable
           ${
             if cfg.jellyfin.enableAllLibraries then
               ''
                 # Enable all libraries
-                LIBRARY_IDS=$(echo "$LIBRARIES_RESPONSE" | ${pkgs.jq}/bin/jq -r '.[].id' | paste -sd,)
+                LIBRARY_IDS=$(echo "$LIBRARIES_BODY" | ${pkgs.jq}/bin/jq -r '.[].id' | paste -sd,)
               ''
             else
               ''
                 # Apply filters to select libraries
-                LIBRARY_IDS=$(echo "$LIBRARIES_RESPONSE" | ${pkgs.jq}/bin/jq -r \
+                LIBRARY_IDS=$(echo "$LIBRARIES_BODY" | ${pkgs.jq}/bin/jq -r \
                   '.[] | ${libraryFilterExpr} | .id' | paste -sd,)
               ''
           }
 
           if [ -n "$LIBRARY_IDS" ]; then
             echo "Enabling libraries: $LIBRARY_IDS"
-            ${pkgs.curl}/bin/curl -sf \
+            ${pkgs.curl}/bin/curl -s \
               ${authUtil.curlAuthArgs} \
-              "$BASE_URL/api/v1/settings/jellyfin/library?enable=$LIBRARY_IDS" >/dev/null
+              "$BASE_URL/api/v1/settings/jellyfin/library?enable=$LIBRARY_IDS" >/dev/null 2>&1 || true
             echo "Libraries enabled successfully"
           else
             echo "Warning: No libraries matched the filter criteria"
