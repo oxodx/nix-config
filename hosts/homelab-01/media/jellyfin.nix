@@ -14,9 +14,14 @@ in {
       network.enableRemoteAccess = true;
 
       branding = {
-        customCss =
+        customCss = let
+          url = "https://cdn.jsdelivr.net/gh/lscambo13/ElegantFin";
+        in
           if config.nixflix.theme.enable
-          then ''@import url("https://cdn.jsdelivr.net/gh/lscambo13/ElegantFin@main/Theme/ElegantFin-jellyfin-theme-build-latest-minified.css");''
+          then ''
+            @import url("${url}@main/Theme/ElegantFin-jellyfin-theme-build-latest-minified.css");
+            @import url("${url}@main/Theme/assets/add-ons/media-bar-plugin-support-latest-min.css");
+          ''
           else "";
         loginDisclaimer = "";
         splashscreenEnabled = false;
@@ -210,6 +215,7 @@ in {
       system.pluginRepositories = {
         "IAmParadox" = {
           url = "https://www.iamparadox.dev/jellyfin/plugins/manifest.json";
+          hash = "sha256-GOv3v4I7qeZzVfv2jNdHo5ASs6ALKi6rmsmbrIVa6Ms=";
         };
         "Intro Skipper" = {
           url = "https://raw.githubusercontent.com/intro-skipper/manifest/d56c137ae182c04a894dd700c25b04c8d2eba855/10.11/manifest.json";
