@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 let
@@ -21,43 +20,19 @@ in
       default = 8191;
       description = "Port for FlareSolverr to listen on.";
     };
-
-    logLevel = lib.mkOption {
-      type = lib.types.enum [
-        "info"
-        "debug"
-        "warn"
-        "error"
-      ];
-      default = "info";
-      description = "FlareSolverr log level.";
-    };
   };
 
   config = lib.mkIf (config.nixflix.enable && cfg.enable) {
-    virtualisation.oci-containers.containers.flaresolverr = {
-      image = "ghcr.io/flaresolverr/flaresolverr:latest";
-      ports = [ "${toString cfg.port}:8191" ];
-      volumes = [ "/var/lib/flaresolverr:/data" ];
-      environment = {
-        LOG_LEVEL = cfg.logLevel;
-      };
-      autoStart = true;
-      extraOptions = [
-        "--pull=newer"
-      ];
+    services.flaresolverr = {
+      enable = true;
+      inherit (cfg) port;
+      openFirewall = true;
     };
 
-    systemd.services.podman-flaresolverr = {
-      after = [ "network-online.target" ];
-      wants = [ "network-online.target" ];
+    systemd.services.flaresolverr = {
       vpnConfinement = {
         enable = true;
         vpnNamespace = "wg";
-      };
-      serviceConfig = {
-        Restart = "on-failure";
-        RestartSec = 5;
       };
     };
 
