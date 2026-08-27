@@ -5,7 +5,8 @@
   config,
   ...
 }:
-with lib; let
+with lib;
+let
   inherit (config) nixflix;
   cfg = nixflix.seerr;
   authUtil = import ../authUtil.nix {
@@ -13,184 +14,188 @@ with lib; let
       lib
       pkgs
       cfg
+      mylib
       ;
   };
   baseUrl = "http://${cfg.connectionAddress}:${toString cfg.port}";
 
-  sanitizeName = name: builtins.replaceStrings [" " "-"] ["_" "_"] name;
+  sanitizeName = name: builtins.replaceStrings [ " " "-" ] [ "_" "_" ] name;
 
-  mkRadarrConfigScript = radarrName: radarrCfg: let
-    jqRadarrSecrets = mylib.secrets.mkJqSecretArgs {
-      apiKey._secret = "/run/credentials/seerr-radarr.service/radarr-${sanitizeName radarrName}-apikey";
-    };
-  in ''
-    echo "Configuring Radarr instance: ${radarrName}"
+  mkRadarrConfigScript =
+    radarrName: radarrCfg:
+    let
+      jqRadarrSecrets = mylib.secrets.mkJqSecretArgs {
+        apiKey._secret = "/run/credentials/seerr-radarr.service/radarr-${sanitizeName radarrName}-apikey";
+      };
+    in
+    ''
+      echo "Configuring Radarr instance: ${radarrName}"
 
-    # Test connection and get profiles
-    TEST_PAYLOAD=$(${pkgs.jq}/bin/jq -n \
-      ${jqRadarrSecrets.flagsString} \
-      --arg hostname "${radarrCfg.hostname}" \
-      --arg port "${toString radarrCfg.port}" \
-      --arg useSsl "${boolToString radarrCfg.useSsl}" \
-      --arg baseUrl "${radarrCfg.baseUrl}" \
-      '{
-        hostname: $hostname,
-        port: ($port | tonumber),
-        apiKey: ${jqRadarrSecrets.refs.apiKey},
-        useSsl: ($useSsl == "true"),
-        baseUrl: $baseUrl
-      }')
+      # Test connection and get profiles
+      TEST_PAYLOAD=$(${pkgs.jq}/bin/jq -n \
+        ${jqRadarrSecrets.flagsString} \
+        --arg hostname "${radarrCfg.hostname}" \
+        --arg port "${toString radarrCfg.port}" \
+        --arg useSsl "${boolToString radarrCfg.useSsl}" \
+        --arg baseUrl "${radarrCfg.baseUrl}" \
+        '{
+          hostname: $hostname,
+          port: ($port | tonumber),
+          apiKey: ${jqRadarrSecrets.refs.apiKey},
+          useSsl: ($useSsl == "true"),
+          baseUrl: $baseUrl
+        }')
 
-    echo "Testing Radarr connection..."
-    TEST_RESPONSE=$(${pkgs.curl}/bin/curl -s -X POST \
-      --max-time 30 \
-      ${authUtil.curlAuthArgs} \
-      -H "Content-Type: application/json" \
-      -d "$TEST_PAYLOAD" \
-      -w "\n%{http_code}" \
-      "$BASE_URL/api/v1/settings/radarr/test")
-
-    TEST_HTTP_CODE=$(echo "$TEST_RESPONSE" | tail -n1)
-    TEST_BODY=$(echo "$TEST_RESPONSE" | sed '$d')
-
-    if [ "$TEST_HTTP_CODE" != "200" ]; then
-      echo "Radarr connection test failed (HTTP $TEST_HTTP_CODE)" >&2
-      echo "$TEST_BODY" >&2
-      exit 1
-    fi
-
-    echo "Radarr connection successful"
-
-    # Auto-detect profile ID from profile name
-    ${
-      if radarrCfg.activeProfileName != null
-      then ''
-        PROFILE_ID=$(echo "$TEST_BODY" | ${pkgs.jq}/bin/jq -r \
-          --arg name ${escapeShellArg radarrCfg.activeProfileName} '.profiles[] | select(.name == $name) | .id')
-        PROFILE_NAME="${radarrCfg.activeProfileName}"
-      ''
-      else ''
-        # Use first available profile
-        PROFILE_ID=$(echo "$TEST_BODY" | ${pkgs.jq}/bin/jq -r '.profiles[0].id')
-        PROFILE_NAME=$(echo "$TEST_BODY" | ${pkgs.jq}/bin/jq -r '.profiles[0].name')
-      ''
-    }
-
-    if [ -z "$PROFILE_ID" ] || [ "$PROFILE_ID" = "null" ]; then
-      echo "Could not find quality profile${
-      if radarrCfg.activeProfileName != null
-      then " '${radarrCfg.activeProfileName}'"
-      else ""
-    }" >&2
-      echo "Available profiles:" >&2
-      echo "$TEST_BODY" | ${pkgs.jq}/bin/jq -r '.profiles[] | "  - \(.name)"' >&2
-      exit 1
-    fi
-
-    echo "Using quality profile: $PROFILE_NAME (ID: $PROFILE_ID)"
-
-    # Check if server already exists
-    EXISTING_SERVERS=$(${pkgs.curl}/bin/curl -s \
-      --max-time 30 \
-      ${authUtil.curlAuthArgs} \
-      "$BASE_URL/api/v1/settings/radarr")
-
-    EXISTING_ID=$(echo "$EXISTING_SERVERS" | ${pkgs.jq}/bin/jq -r \
-      --arg name ${escapeShellArg radarrName} '.[] | select(.name == $name) | .id')
-
-    # Build server configuration
-    SERVER_CONFIG=$(${pkgs.jq}/bin/jq -n \
-      ${jqRadarrSecrets.flagsString} \
-      --arg name "${radarrName}" \
-      --arg hostname "${radarrCfg.hostname}" \
-      --arg port "${toString radarrCfg.port}" \
-      --arg useSsl "${boolToString radarrCfg.useSsl}" \
-      --arg baseUrl "${radarrCfg.baseUrl}" \
-      --arg profileId "$PROFILE_ID" \
-      --arg profileName "$PROFILE_NAME" \
-      --arg directory "${radarrCfg.activeDirectory}" \
-      --arg is4k "${boolToString radarrCfg.is4k}" \
-      --arg minimumAvailability "${radarrCfg.minimumAvailability}" \
-      --arg isDefault "${boolToString radarrCfg.isDefault}" \
-      --arg externalUrl "${radarrCfg.externalUrl}" \
-      --arg syncEnabled "${boolToString radarrCfg.syncEnabled}" \
-      --arg preventSearch "${boolToString radarrCfg.preventSearch}" \
-      '{
-        name: $name,
-        hostname: $hostname,
-        port: ($port | tonumber),
-        apiKey: ${jqRadarrSecrets.refs.apiKey},
-        useSsl: ($useSsl == "true"),
-        baseUrl: $baseUrl,
-        activeProfileId: ($profileId | tonumber),
-        activeProfileName: $profileName,
-        activeDirectory: $directory,
-        is4k: ($is4k == "true"),
-        minimumAvailability: $minimumAvailability,
-        isDefault: ($isDefault == "true"),
-        externalUrl: $externalUrl,
-        syncEnabled: ($syncEnabled == "true"),
-        preventSearch: ($preventSearch == "true")
-      }')
-
-    if [ -n "$EXISTING_ID" ] && [ "$EXISTING_ID" != "null" ]; then
-      echo "Updating existing Radarr instance (ID: $EXISTING_ID)..."
-      UPDATE_RESPONSE=$(${pkgs.curl}/bin/curl -s -X PUT \
+      echo "Testing Radarr connection..."
+      TEST_RESPONSE=$(${pkgs.curl}/bin/curl -s -X POST \
         --max-time 30 \
         ${authUtil.curlAuthArgs} \
         -H "Content-Type: application/json" \
-        -d "$SERVER_CONFIG" \
+        -d "$TEST_PAYLOAD" \
         -w "\n%{http_code}" \
-        "$BASE_URL/api/v1/settings/radarr/$EXISTING_ID")
+        "$BASE_URL/api/v1/settings/radarr/test")
 
-      UPDATE_HTTP_CODE=$(echo "$UPDATE_RESPONSE" | tail -n1)
-      if [ "$UPDATE_HTTP_CODE" != "200" ] && [ "$UPDATE_HTTP_CODE" != "201" ]; then
-        echo "Failed to update Radarr instance (HTTP $UPDATE_HTTP_CODE)" >&2
-        echo "$UPDATE_RESPONSE" | head -n-1 >&2
+      TEST_HTTP_CODE=$(echo "$TEST_RESPONSE" | tail -n1)
+      TEST_BODY=$(echo "$TEST_RESPONSE" | sed '$d')
+
+      if [ "$TEST_HTTP_CODE" != "200" ]; then
+        echo "Radarr connection test failed (HTTP $TEST_HTTP_CODE)" >&2
+        echo "$TEST_BODY" >&2
         exit 1
       fi
-      echo "Radarr instance updated"
-    else
-      echo "Creating new Radarr instance..."
-      CREATE_RESPONSE=$(${pkgs.curl}/bin/curl -s -X POST \
+
+      echo "Radarr connection successful"
+
+      # Auto-detect profile ID from profile name
+      ${
+        if radarrCfg.activeProfileName != null then
+          ''
+            PROFILE_ID=$(echo "$TEST_BODY" | ${pkgs.jq}/bin/jq -r \
+              --arg name ${escapeShellArg radarrCfg.activeProfileName} '.profiles[] | select(.name == $name) | .id')
+            PROFILE_NAME="${radarrCfg.activeProfileName}"
+          ''
+        else
+          ''
+            # Use first available profile
+            PROFILE_ID=$(echo "$TEST_BODY" | ${pkgs.jq}/bin/jq -r '.profiles[0].id')
+            PROFILE_NAME=$(echo "$TEST_BODY" | ${pkgs.jq}/bin/jq -r '.profiles[0].name')
+          ''
+      }
+
+      if [ -z "$PROFILE_ID" ] || [ "$PROFILE_ID" = "null" ]; then
+        echo "Could not find quality profile${
+          if radarrCfg.activeProfileName != null then " '${radarrCfg.activeProfileName}'" else ""
+        }" >&2
+        echo "Available profiles:" >&2
+        echo "$TEST_BODY" | ${pkgs.jq}/bin/jq -r '.profiles[] | "  - \(.name)"' >&2
+        exit 1
+      fi
+
+      echo "Using quality profile: $PROFILE_NAME (ID: $PROFILE_ID)"
+
+      # Check if server already exists
+      EXISTING_SERVERS=$(${pkgs.curl}/bin/curl -s \
         --max-time 30 \
         ${authUtil.curlAuthArgs} \
-        -H "Content-Type: application/json" \
-        -d "$SERVER_CONFIG" \
-        -w "\n%{http_code}" \
         "$BASE_URL/api/v1/settings/radarr")
 
-      CREATE_HTTP_CODE=$(echo "$CREATE_RESPONSE" | tail -n1)
-      if [ "$CREATE_HTTP_CODE" != "200" ] && [ "$CREATE_HTTP_CODE" != "201" ]; then
-        echo "Failed to create Radarr instance (HTTP $CREATE_HTTP_CODE)" >&2
-        echo "$CREATE_RESPONSE" | head -n-1 >&2
-        exit 1
-      fi
-      echo "Radarr instance created"
-    fi
-  '';
-in {
-  imports = [./options.nix];
+      EXISTING_ID=$(echo "$EXISTING_SERVERS" | ${pkgs.jq}/bin/jq -r \
+        --arg name ${escapeShellArg radarrName} '.[] | select(.name == $name) | .id')
 
-  config = mkIf (nixflix.enable && cfg.enable && cfg.radarr != {}) {
+      # Build server configuration
+      SERVER_CONFIG=$(${pkgs.jq}/bin/jq -n \
+        ${jqRadarrSecrets.flagsString} \
+        --arg name "${radarrName}" \
+        --arg hostname "${radarrCfg.hostname}" \
+        --arg port "${toString radarrCfg.port}" \
+        --arg useSsl "${boolToString radarrCfg.useSsl}" \
+        --arg baseUrl "${radarrCfg.baseUrl}" \
+        --arg profileId "$PROFILE_ID" \
+        --arg profileName "$PROFILE_NAME" \
+        --arg directory "${radarrCfg.activeDirectory}" \
+        --arg is4k "${boolToString radarrCfg.is4k}" \
+        --arg minimumAvailability "${radarrCfg.minimumAvailability}" \
+        --arg isDefault "${boolToString radarrCfg.isDefault}" \
+        --arg externalUrl "${radarrCfg.externalUrl}" \
+        --arg syncEnabled "${boolToString radarrCfg.syncEnabled}" \
+        --arg preventSearch "${boolToString radarrCfg.preventSearch}" \
+        '{
+          name: $name,
+          hostname: $hostname,
+          port: ($port | tonumber),
+          apiKey: ${jqRadarrSecrets.refs.apiKey},
+          useSsl: ($useSsl == "true"),
+          baseUrl: $baseUrl,
+          activeProfileId: ($profileId | tonumber),
+          activeProfileName: $profileName,
+          activeDirectory: $directory,
+          is4k: ($is4k == "true"),
+          minimumAvailability: $minimumAvailability,
+          isDefault: ($isDefault == "true"),
+          externalUrl: $externalUrl,
+          syncEnabled: ($syncEnabled == "true"),
+          preventSearch: ($preventSearch == "true")
+        }')
+
+      if [ -n "$EXISTING_ID" ] && [ "$EXISTING_ID" != "null" ]; then
+        echo "Updating existing Radarr instance (ID: $EXISTING_ID)..."
+        UPDATE_RESPONSE=$(${pkgs.curl}/bin/curl -s -X PUT \
+          --max-time 30 \
+          ${authUtil.curlAuthArgs} \
+          -H "Content-Type: application/json" \
+          -d "$SERVER_CONFIG" \
+          -w "\n%{http_code}" \
+          "$BASE_URL/api/v1/settings/radarr/$EXISTING_ID")
+
+        UPDATE_HTTP_CODE=$(echo "$UPDATE_RESPONSE" | tail -n1)
+        if [ "$UPDATE_HTTP_CODE" != "200" ] && [ "$UPDATE_HTTP_CODE" != "201" ]; then
+          echo "Failed to update Radarr instance (HTTP $UPDATE_HTTP_CODE)" >&2
+          echo "$UPDATE_RESPONSE" | head -n-1 >&2
+          exit 1
+        fi
+        echo "Radarr instance updated"
+      else
+        echo "Creating new Radarr instance..."
+        CREATE_RESPONSE=$(${pkgs.curl}/bin/curl -s -X POST \
+          --max-time 30 \
+          ${authUtil.curlAuthArgs} \
+          -H "Content-Type: application/json" \
+          -d "$SERVER_CONFIG" \
+          -w "\n%{http_code}" \
+          "$BASE_URL/api/v1/settings/radarr")
+
+        CREATE_HTTP_CODE=$(echo "$CREATE_RESPONSE" | tail -n1)
+        if [ "$CREATE_HTTP_CODE" != "200" ] && [ "$CREATE_HTTP_CODE" != "201" ]; then
+          echo "Failed to create Radarr instance (HTTP $CREATE_HTTP_CODE)" >&2
+          echo "$CREATE_RESPONSE" | head -n-1 >&2
+          exit 1
+        fi
+        echo "Radarr instance created"
+      fi
+    '';
+in
+{
+  imports = [ ./options.nix ];
+
+  config = mkIf (nixflix.enable && cfg.enable && cfg.radarr != { }) {
     systemd.services.seerr-radarr = {
       description = "Configure Seerr Radarr integration";
-      after = ["seerr-libraries.service"] ++ optional nixflix.radarr.enable "radarr-config.service";
-      requires = ["seerr-libraries.service"] ++ optional nixflix.radarr.enable "radarr-config.service";
-      wantedBy = ["multi-user.target"];
+      after = [ "seerr-libraries.service" ] ++ optional nixflix.radarr.enable "radarr-config.service";
+      requires = [ "seerr-libraries.service" ] ++ optional nixflix.radarr.enable "radarr-config.service";
+      wantedBy = [ "multi-user.target" ];
 
       serviceConfig = {
         Type = "oneshot";
         RemainAfterExit = true;
-        LoadCredential =
-          mapAttrsToList (
-            name: r: "radarr-${sanitizeName name}-apikey:${
-              if mylib.secrets.isSecretRef r.apiKey
-              then r.apiKey._secret
-              else pkgs.writeText "radarr-${sanitizeName name}-inline-key" r.apiKey
-            }"
-          )
-          cfg.radarr;
+        LoadCredential = mapAttrsToList (
+          name: r:
+          "radarr-${sanitizeName name}-apikey:${
+            if mylib.secrets.isSecretRef r.apiKey then
+              r.apiKey._secret
+            else
+              pkgs.writeText "radarr-${sanitizeName name}-inline-key" r.apiKey
+          }"
+        ) cfg.radarr;
       };
 
       script = ''

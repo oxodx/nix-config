@@ -6,8 +6,6 @@
   jellyfinVersion,
   pluginRepositories,
 }: let
-  buildJellyfinPlugin = import ../../../lib/media/buildJellyfinPlugin.nix {inherit pkgs;};
-
   normalizeTargetAbi = targetAbi: lib.removeSuffix ".0" targetAbi;
 
   versionSeries = version: lib.concatStringsSep "." (lib.take 2 (lib.splitVersion version));
@@ -193,7 +191,8 @@
       pluginCfg =
         pluginCfg
         // {
-          package = buildJellyfinPlugin {
+          package = mylib.media.buildJellyfinPlugin {
+            inherit pkgs;
             pname = lib.strings.sanitizeDerivationName pluginName;
             version = resolvedVersion;
             src = pkgs.fetchzip {

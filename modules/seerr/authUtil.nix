@@ -1,11 +1,14 @@
 {
+  lib,
   cfg,
   pkgs,
   mylib,
-}: let
+}:
+let
   cookieFile = "/run/seerr/auth-cookie";
   apiKeyHeaderFile = "/run/seerr/api-key-header";
-in {
+in
+{
   inherit cookieFile;
 
   curlAuthArgs = ''--header @"${apiKeyHeaderFile}"'';

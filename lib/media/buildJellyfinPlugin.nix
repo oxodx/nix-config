@@ -1,13 +1,14 @@
-{pkgs}: {
+{
+  pkgs,
   pname,
   version,
   src,
   ...
-} @ args:
+}@args:
 pkgs.stdenvNoCC.mkDerivation (
   {
     inherit pname version src;
-    nativeBuildInputs = [pkgs.unzip];
+    nativeBuildInputs = [ pkgs.unzip ];
     dontUnpack = true;
 
     dontFixup = true;
@@ -34,6 +35,7 @@ pkgs.stdenvNoCC.mkDerivation (
     '';
   }
   // removeAttrs args [
+    "pkgs"
     "pname"
     "version"
     "src"

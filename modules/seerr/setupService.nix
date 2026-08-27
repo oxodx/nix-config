@@ -5,7 +5,8 @@
   config,
   ...
 }:
-with lib; let
+with lib;
+let
   inherit (config) nixflix;
   cfg = nixflix.seerr;
 
@@ -14,27 +15,27 @@ with lib; let
       lib
       pkgs
       cfg
+      mylib
       ;
   };
   baseUrl = "http://${cfg.connectionAddress}:${toString cfg.port}";
   jqSetupSecrets = mylib.secrets.mkJqSecretArgs {
     password = cfg.jellyfin.adminPassword;
   };
-in {
+in
+{
   config = mkIf (nixflix.enable && cfg.enable) {
     systemd.services.seerr-setup = {
       description = "Complete Seerr initial setup with Jellyfin";
-      after =
-        [
-          "seerr.service"
-        ]
-        ++ optional nixflix.jellyfin.enable "jellyfin-setup-wizard.service";
-      requires =
-        [
-          "seerr.service"
-        ]
-        ++ optional nixflix.jellyfin.enable "jellyfin-setup-wizard.service";
-      wantedBy = ["multi-user.target"];
+      after = [
+        "seerr.service"
+      ]
+      ++ optional nixflix.jellyfin.enable "jellyfin-setup-wizard.service";
+      requires = [
+        "seerr.service"
+      ]
+      ++ optional nixflix.jellyfin.enable "jellyfin-setup-wizard.service";
+      wantedBy = [ "multi-user.target" ];
 
       serviceConfig = {
         Type = "oneshot";
@@ -122,33 +123,39 @@ in {
 
         # Apply library filters and get IDs to enable
         ${
-          if cfg.jellyfin.enableAllLibraries
-          then ''
-            # Enable all libraries
-            LIBRARY_IDS=$(echo "$LIBRARIES_RESPONSE" | ${pkgs.jq}/bin/jq -r '.[].id' | paste -sd,)
-          ''
-          else let
-            # Build jq filter for library selection
-            typeFilter =
-              if cfg.jellyfin.libraryFilter.types == []
-              then "true"
-              else let
-                typeList = map (t: ''"${t}"'') cfg.jellyfin.libraryFilter.types;
-              in "[.type] | inside([${concatStringsSep "," typeList}])";
+          if cfg.jellyfin.enableAllLibraries then
+            ''
+              # Enable all libraries
+              LIBRARY_IDS=$(echo "$LIBRARIES_RESPONSE" | ${pkgs.jq}/bin/jq -r '.[].id' | paste -sd,)
+            ''
+          else
+            let
+              # Build jq filter for library selection
+              typeFilter =
+                if cfg.jellyfin.libraryFilter.types == [ ] then
+                  "true"
+                else
+                  let
+                    typeList = map (t: ''"${t}"'') cfg.jellyfin.libraryFilter.types;
+                  in
+                  "[.type] | inside([${concatStringsSep "," typeList}])";
 
-            nameFilter =
-              if cfg.jellyfin.libraryFilter.names == []
-              then "true"
-              else let
-                nameList = map (n: ''"${n}"'') cfg.jellyfin.libraryFilter.names;
-              in "[.name] | inside([${concatStringsSep "," nameList}])";
+              nameFilter =
+                if cfg.jellyfin.libraryFilter.names == [ ] then
+                  "true"
+                else
+                  let
+                    nameList = map (n: ''"${n}"'') cfg.jellyfin.libraryFilter.names;
+                  in
+                  "[.name] | inside([${concatStringsSep "," nameList}])";
 
-            libraryFilterExpr = "select(${typeFilter} and ${nameFilter})";
-          in ''
-            # Apply filters to select libraries
-            LIBRARY_IDS=$(echo "$LIBRARIES_RESPONSE" | ${pkgs.jq}/bin/jq -r \
-              '.[] | ${libraryFilterExpr} | .id' | paste -sd,)
-          ''
+              libraryFilterExpr = "select(${typeFilter} and ${nameFilter})";
+            in
+            ''
+              # Apply filters to select libraries
+              LIBRARY_IDS=$(echo "$LIBRARIES_RESPONSE" | ${pkgs.jq}/bin/jq -r \
+                '.[] | ${libraryFilterExpr} | .id' | paste -sd,)
+            ''
         }
 
         if [ -n "$LIBRARY_IDS" ]; then
