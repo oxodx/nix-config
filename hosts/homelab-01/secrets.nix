@@ -9,9 +9,7 @@
   sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
 
   sops.secrets = {
-    "vpn/mullvad.conf" = {
-      base64 = true;
-    };
+    "vpn/mullvad.conf" = { };
     "jellyfin/api_key" = { };
     "jellyfin/passwords/oxod" = { };
     "sonarr/api_key" = { };
