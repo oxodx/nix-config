@@ -1,12 +1,12 @@
 {
-  config,
   lib,
   pkgs,
+  mylib,
+  config,
   ...
 }:
 with lib; let
   cfg = config.nixflix.prowlarr;
-  secrets = import ../../lib/secrets {inherit lib;};
   mkSecureCurl = import ../../lib/mkSecureCurl.nix {inherit lib pkgs;};
 in {
   options.nixflix.prowlarr.config.applications = mkOption {
@@ -30,7 +30,7 @@ in {
             ];
             description = "Type of application to configure (matches schema implementationName)";
           };
-          apiKey = secrets.mkSecretOption {
+          apiKey = mylib.secrets.mkSecretOption {
             description = "Path to file containing the API key for the application";
           };
         };
@@ -128,7 +128,7 @@ in {
               applicationName = applicationConfig.name;
               inherit (applicationConfig) implementationName;
               inherit (applicationConfig) apiKey;
-              allOverrides = builtins.removeAttrs applicationConfig [
+              allOverrides = removeAttrs applicationConfig [
                 "implementationName"
                 "apiKey"
               ];
@@ -139,7 +139,7 @@ in {
                 allOverrides;
               fieldOverridesJson = builtins.toJSON fieldOverrides;
 
-              jqSecrets = secrets.mkJqSecretArgs {
+              jqSecrets = mylib.secrets.mkJqSecretArgs {
                 inherit apiKey;
               };
             in ''

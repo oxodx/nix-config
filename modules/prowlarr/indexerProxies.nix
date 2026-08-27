@@ -1,12 +1,12 @@
 {
-  config,
   lib,
   pkgs,
+  mylib,
+  config,
   ...
 }:
 with lib; let
   cfg = config.nixflix.prowlarr;
-  secrets = import ../../lib/secrets {inherit lib;};
 
   mkSecureCurl = import ../../lib/mkSecureCurl.nix {inherit lib pkgs;};
 in {
@@ -19,11 +19,11 @@ in {
             type = types.str;
             description = "Name of the Prowlarr indexer proxy Schema";
           };
-          username = secrets.mkSecretOption {
+          username = mylib.secrets.mkSecretOption {
             description = "Username for the indexer proxy.";
             nullable = true;
           };
-          password = secrets.mkSecretOption {
+          password = mylib.secrets.mkSecretOption {
             description = "Password for the indexer proxy.";
             nullable = true;
           };
@@ -163,7 +163,7 @@ in {
                 allOverrides;
               fieldOverridesJson = builtins.toJSON fieldOverrides;
 
-              jqSecrets = secrets.mkJqSecretArgs {
+              jqSecrets = mylib.secrets.mkJqSecretArgs {
                 username =
                   if username == null
                   then ""

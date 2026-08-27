@@ -1,11 +1,11 @@
 {
-  config,
   lib,
   pkgs,
+  mylib,
+  config,
   ...
 }:
 with lib; let
-  secrets = import ../../lib/secrets {inherit lib;};
   inherit (config) nixflix;
   cfg = nixflix.seerr;
 
@@ -17,7 +17,7 @@ with lib; let
       ;
   };
   baseUrl = "http://${cfg.connectionAddress}:${toString cfg.port}";
-  jqSetupSecrets = secrets.mkJqSecretArgs {
+  jqSetupSecrets = mylib.secrets.mkJqSecretArgs {
     password = cfg.jellyfin.adminPassword;
   };
 in {

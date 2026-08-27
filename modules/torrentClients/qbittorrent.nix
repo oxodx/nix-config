@@ -1,11 +1,11 @@
 {
-  pkgs,
-  config,
   lib,
+  pkgs,
+  mylib,
+  config,
   ...
 }:
 with lib; let
-  secrets = import ../../lib/secrets {inherit lib;};
   inherit (import ../../lib/mkVirtualHosts.nix {inherit lib config;}) mkVirtualHost;
   cfg = config.nixflix.torrentClients.qbittorrent;
   service = config.services.qbittorrent;
@@ -82,7 +82,7 @@ in {
           description = "the port passed to qbittorrent via `--webui-port`";
         };
 
-        password = secrets.mkSecretOption {
+        password = mylib.secrets.mkSecretOption {
           nullable = true;
           description = ''
             The password for qbittorrent. This is for the other services to integrate with qBittorrent.

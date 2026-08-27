@@ -1,9 +1,9 @@
 {
   lib,
+  mylib,
   config,
 }: let
   inherit (lib) types mkOption;
-  secrets = import ../../../lib/secrets {inherit lib;};
   cfg = config.nixflix.usenetClients.sabnzbd;
 
   enumFromAttrs = enum_values:
@@ -36,10 +36,10 @@
         example = 443;
         description = "Port of the server.";
       };
-      username = secrets.mkSecretOption {
+      username = mylib.secrets.mkSecretOption {
         description = "Username for server authentication.";
       };
-      password = secrets.mkSecretOption {
+      password = mylib.secrets.mkSecretOption {
         description = "Password for server authentication.";
       };
       connections = mkOption {
@@ -175,7 +175,7 @@
         '';
       };
 
-      api_key = secrets.mkSecretOption {
+      api_key = mylib.secrets.mkSecretOption {
         description = ''
           API key for SABnzbd. Can be created with the following:
 
@@ -185,7 +185,7 @@
         '';
       };
 
-      nzb_key = secrets.mkSecretOption {
+      nzb_key = mylib.secrets.mkSecretOption {
         description = "NZB key for adding downloads via URL.";
       };
 
@@ -325,7 +325,7 @@
         description = "Username for SMTP authentication.";
       };
 
-      email_pwd = secrets.mkSecretOption {
+      email_pwd = mylib.secrets.mkSecretOption {
         default = "";
         description = "Password for SMTP authentication.";
       };

@@ -1,7 +1,9 @@
-{lib, ...}:
+{
+  lib,
+  mylib,
+  ...
+}:
 with lib; let
-  secrets = import ../../lib/secrets {inherit lib;};
-
   radarrMediaNamingType = types.submodule {
     options = {
       folder = mkOption {
@@ -101,7 +103,7 @@ with lib; let
           example = "http://127.0.0.1:8989";
         };
 
-        api_key = secrets.mkSecretOption {
+        api_key = mylib.secrets.mkSecretOption {
           description = "The API key that Recyclarr should use to synchronize settings to your instance.";
         };
 

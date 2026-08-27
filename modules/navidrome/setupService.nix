@@ -16,7 +16,7 @@ with lib; let
       isAdmin = user: user.isAdmin;
     }).user;
 
-  jqAdminSecrets = secrets.mkJqSecretArgs {
+  jqAdminSecrets = mylib.secrets.mkJqSecretArgs {
     inherit (firstAdminUser) password;
   };
 

@@ -1,18 +1,17 @@
 {
-  config,
   lib,
   pkgs,
+  mylib,
+  config,
   ...
 }:
-with lib; let
-  secrets = import ../../lib/secrets {inherit lib;};
-in {
+with lib; {
   options.nixflix.seerr = {
     enable = mkEnableOption "Seerr media request manager";
 
     package = mkPackageOption pkgs "seerr" {};
 
-    apiKey = secrets.mkSecretOption {
+    apiKey = mylib.secrets.mkSecretOption {
       description = ''
         API key for Seerr. Can be created with:
 

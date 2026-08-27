@@ -1,11 +1,11 @@
 {
-  config,
   lib,
   pkgs,
+  mylib,
+  config,
   ...
 }:
 with lib; let
-  secrets = import ../../lib/secrets {inherit lib;};
   getFirstAdmin = import ../../lib/getFirstAdmin.nix {inherit lib;};
   inherit (config) nixflix;
   cfg = nixflix.navidrome;
@@ -16,7 +16,7 @@ with lib; let
       isAdmin = user: user.isAdmin;
     }).user;
 
-  jqLoginSecrets = secrets.mkJqSecretArgs {inherit (firstAdminUser) password;};
+  jqLoginSecrets = mylib.secrets.mkJqSecretArgs {inherit (firstAdminUser) password;};
 
   baseUrl = "http://${cfg.connectionAddress}:${toString cfg.settings.Port}";
 in {
@@ -105,7 +105,7 @@ in {
         ${concatStringsSep "\n" (
           mapAttrsToList (
             userName: userCfg: let
-              jqUserSecrets = secrets.mkJqSecretArgs {inherit (userCfg) password;};
+              jqUserSecrets = mylib.secrets.mkJqSecretArgs {inherit (userCfg) password;};
               userEmail =
                 if userCfg.email == null
                 then ""

@@ -1,11 +1,11 @@
 {
-  config,
   lib,
   pkgs,
+  mylib,
+  config,
   ...
 }:
 with lib; let
-  secrets = import ../../../lib/secrets {inherit lib;};
   inherit (config) nixflix;
   cfg = nixflix.seerr;
   authUtil = import ../authUtil.nix {
@@ -20,7 +20,7 @@ with lib; let
   sanitizeName = name: builtins.replaceStrings [" " "-"] ["_" "_"] name;
 
   mkRadarrConfigScript = radarrName: radarrCfg: let
-    jqRadarrSecrets = secrets.mkJqSecretArgs {
+    jqRadarrSecrets = mylib.secrets.mkJqSecretArgs {
       apiKey._secret = "/run/credentials/seerr-radarr.service/radarr-${sanitizeName radarrName}-apikey";
     };
   in ''
@@ -185,7 +185,7 @@ in {
         LoadCredential =
           mapAttrsToList (
             name: r: "radarr-${sanitizeName name}-apikey:${
-              if secrets.isSecretRef r.apiKey
+              if mylib.secrets.isSecretRef r.apiKey
               then r.apiKey._secret
               else pkgs.writeText "radarr-${sanitizeName name}-inline-key" r.apiKey
             }"

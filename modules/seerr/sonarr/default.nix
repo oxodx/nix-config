@@ -1,11 +1,11 @@
 {
-  config,
   lib,
   pkgs,
+  mylib,
+  config,
   ...
 }:
 with lib; let
-  secrets = import ../../../lib/secrets {inherit lib;};
   inherit (config) nixflix;
   cfg = nixflix.seerr;
   authUtil = import ../authUtil.nix {
@@ -20,7 +20,7 @@ with lib; let
   sanitizeName = name: builtins.replaceStrings [" " "-"] ["_" "_"] name;
 
   mkSonarrConfigScript = sonarrName: sonarrCfg: let
-    jqSonarrSecrets = secrets.mkJqSecretArgs {
+    jqSonarrSecrets = mylib.secrets.mkJqSecretArgs {
       apiKey._secret = "/run/credentials/seerr-sonarr.service/sonarr-${sanitizeName sonarrName}-apikey";
     };
   in ''
@@ -229,7 +229,7 @@ in {
         LoadCredential =
           mapAttrsToList (
             name: s: "sonarr-${sanitizeName name}-apikey:${
-              if secrets.isSecretRef s.apiKey
+              if mylib.secrets.isSecretRef s.apiKey
               then s.apiKey._secret
               else pkgs.writeText "sonarr-${sanitizeName name}-inline-key" s.apiKey
             }"

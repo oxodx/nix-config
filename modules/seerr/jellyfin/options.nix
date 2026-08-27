@@ -1,10 +1,10 @@
 {
-  config,
   lib,
+  mylib,
+  config,
   ...
 }:
 with lib; let
-  secrets = import ../../../lib/secrets {inherit lib;};
   jellyfinCfg = config.nixflix.jellyfin;
   adminUsers = filterAttrs (_: user: user.policy.isAdministrator) jellyfinCfg.users;
   sortedAdminNames = sort (a: b: a < b) (attrNames adminUsers);
@@ -31,7 +31,7 @@ in {
       '';
     };
 
-    adminPassword = secrets.mkSecretOption {
+    adminPassword = mylib.secrets.mkSecretOption {
       default =
         if hasLocalAdmin
         then firstAdminUser.password

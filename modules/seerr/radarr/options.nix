@@ -1,11 +1,10 @@
 {
-  config,
   lib,
+  mylib,
+  config,
   ...
 }:
 with lib; let
-  secrets = import ../../../lib/secrets {inherit lib;};
-
   radarrServerModule = types.submodule {
     options = {
       hostname = mkOption {
@@ -20,7 +19,7 @@ with lib; let
         description = "Radarr port";
       };
 
-      apiKey = secrets.mkSecretOption {
+      apiKey = mylib.secrets.mkSecretOption {
         description = "Radarr API key.";
       };
 

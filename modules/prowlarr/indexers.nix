@@ -1,12 +1,12 @@
 {
-  config,
   lib,
   pkgs,
+  mylib,
+  config,
   ...
 }:
 with lib; let
   cfg = config.nixflix.prowlarr;
-  secrets = import ../../lib/secrets {inherit lib;};
 
   mkSecureCurl = import ../../lib/mkSecureCurl.nix {inherit lib pkgs;};
 in {
@@ -30,23 +30,23 @@ in {
             type = types.str;
             description = "Name of the Prowlarr Indexer Schema";
           };
-          apiKey = secrets.mkSecretOption {
+          apiKey = mylib.secrets.mkSecretOption {
             description = "API key for the indexer. Applied to schema fields named `apikey` or `apiKey`.";
             nullable = true;
           };
-          apikey = secrets.mkSecretOption {
+          apikey = mylib.secrets.mkSecretOption {
             description = "API key for the indexer (lowercase variant). Applied to schema fields named `apikey` or `apiKey`.";
             nullable = true;
           };
-          username = secrets.mkSecretOption {
+          username = mylib.secrets.mkSecretOption {
             description = "Username for the indexer.";
             nullable = true;
           };
-          password = secrets.mkSecretOption {
+          password = mylib.secrets.mkSecretOption {
             description = "Password for the indexer.";
             nullable = true;
           };
-          passkey = secrets.mkSecretOption {
+          passkey = mylib.secrets.mkSecretOption {
             description = "Passkey for the indexer.";
             nullable = true;
           };
@@ -195,7 +195,7 @@ in {
                 allOverrides;
               fieldOverridesJson = builtins.toJSON fieldOverrides;
 
-              jqSecrets = secrets.mkJqSecretArgs {
+              jqSecrets = mylib.secrets.mkJqSecretArgs {
                 apiKey =
                   if apiKey == null
                   then ""

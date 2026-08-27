@@ -1,11 +1,11 @@
 {
-  config,
   lib,
   pkgs,
+  mylib,
+  config,
   ...
 }:
 with lib; let
-  secrets = import ../../lib/secrets {inherit lib;};
   inherit (import ../../lib/mkVirtualHosts.nix {inherit lib config;}) mkVirtualHost;
   cfg = config.nixflix.seerr;
   hostname = "${cfg.subdomain}.${config.nixflix.reverseProxy.domain}";
@@ -135,7 +135,7 @@ in {
 
           script = ''
             mkdir -p /run/seerr
-            echo "API_KEY=${secrets.toShellValue cfg.apiKey}" > /run/seerr/env
+            echo "API_KEY=${mylib.secrets.toShellValue cfg.apiKey}" > /run/seerr/env
             chown ${cfg.user}:${cfg.group} /run/seerr/env
             chmod 0400 /run/seerr/env
           '';

@@ -1,11 +1,11 @@
 {
-  config,
   lib,
   pkgs,
+  mylib,
+  config,
   ...
 }:
 with lib; let
-  secrets = import ../../../lib/secrets {inherit lib;};
   cfg = config.nixflix.usenetClients.sabnzbd;
 in {
   config = mkIf (config.nixflix.enable && cfg.enable && cfg.settings.categories != []) {
@@ -35,7 +35,7 @@ in {
         api_call() {
           local mode="$1"
           shift
-          local url="$BASE_URL/api?mode=$mode&apikey=${secrets.toShellValue cfg.settings.misc.api_key}"
+          local url="$BASE_URL/api?mode=$mode&apikey=${mylib.secrets.toShellValue cfg.settings.misc.api_key}"
           for param in "$@"; do
             url="$url&$param"
           done

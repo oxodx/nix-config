@@ -1,7 +1,10 @@
-{lib}:
+{
+  lib,
+  mylib,
+  ...
+}:
 with lib; let
-  secrets = import ../../../lib/secrets {inherit lib;};
-  inherit (secrets) isSecretRef;
+  inherit (mylib.secrets) isSecretRef;
 
   toIniValue = value:
     if isSecretRef value
