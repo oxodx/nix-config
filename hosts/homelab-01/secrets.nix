@@ -1,10 +1,11 @@
 {
+  self,
   config,
   lib,
   ...
 }:
 {
-  sops.defaultSopsFile = ../../secrets/homelab-01.yaml;
+  sops.defaultSopsFile = self + "/secrets/homelab-01.yaml";
   sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
 
   sops.secrets = {
