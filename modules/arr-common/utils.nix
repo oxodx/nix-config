@@ -12,6 +12,6 @@ in {
   isSonarr = serviceBase == "sonarr";
   isRadarr = serviceBase == "radarr";
   isLidarr = serviceBase == "lidarr";
-  mkSecureCurl = import ../../lib/mk-secure-curl.nix {inherit lib pkgs;};
+  mkSecureCurl = import ../../lib/mkSecureCurl.nix {inherit lib pkgs;};
   mkWaitForApiScript = import ./mkWaitForApiScript.nix {inherit lib pkgs;};
 }

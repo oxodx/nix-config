@@ -7,7 +7,7 @@
 with lib; let
   cfg = config.nixflix.prowlarr;
 
-  mkSecureCurl = import ../../lib/mk-secure-curl.nix {inherit lib pkgs;};
+  mkSecureCurl = import ../../lib/mkSecureCurl.nix {inherit lib pkgs;};
 
   allTagNames = lib.unique (
     lib.concatMap (i: i.tags) cfg.config.indexers ++ lib.concatMap (p: p.tags) cfg.config.indexerProxies

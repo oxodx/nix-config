@@ -1,5 +1,5 @@
 {lib, ...}: let
-  jellyfinPlugins = import ../../../lib/jellyfin-plugins.nix {inherit lib;};
+  jellyfinPlugins = import ../../../lib/jellyfinPlugins.nix {inherit lib;};
 in {
   options.nixflix.jellyfin.plugins."Subtitle Extract" = lib.mkOption {
     type = jellyfinPlugins.mkPluginModule {

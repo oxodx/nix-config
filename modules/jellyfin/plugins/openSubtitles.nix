@@ -1,7 +1,7 @@
 {lib, ...}: let
   secrets = import ../../../lib/secrets {inherit lib;};
 
-  jellyfinPlugins = import ../../../lib/jellyfin-plugins.nix {inherit lib;};
+  jellyfinPlugins = import ../../../lib/jellyfinPlugins.nix {inherit lib;};
 in {
   options.nixflix.jellyfin.plugins."Open Subtitles" = lib.mkOption {
     type = jellyfinPlugins.mkPluginModule {

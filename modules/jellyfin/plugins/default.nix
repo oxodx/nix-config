@@ -8,7 +8,7 @@ with lib; let
   inherit (config) nixflix;
   cfg = config.nixflix.jellyfin;
 
-  jellyfinPlugins = import ../../../lib/jellyfin-plugins.nix {inherit lib;};
+  jellyfinPlugins = import ../../../lib/jellyfinPlugins.nix {inherit lib;};
 
   pluginResolution = import ./resolvePlugins.nix {
     inherit lib pkgs;

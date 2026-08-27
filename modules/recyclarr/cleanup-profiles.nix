@@ -6,7 +6,7 @@
 }:
 with lib; let
   cfg = config.nixflix.recyclarr;
-  mkSecureCurl = import ../../lib/mk-secure-curl.nix {inherit lib pkgs;};
+  mkSecureCurl = import ../../lib/mkSecureCurl.nix {inherit lib pkgs;};
 
   managedProfilesJson = builtins.toJSON cfg.cleanupUnmanagedProfiles.managedProfiles;
 

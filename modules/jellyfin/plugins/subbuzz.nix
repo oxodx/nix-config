@@ -6,7 +6,7 @@
   cfg = config.nixflix.jellyfin.plugins.subbuzz;
   secrets = import ../../../lib/secrets {inherit lib;};
 
-  jellyfinPlugins = import ../../../lib/jellyfin-plugins.nix {inherit lib;};
+  jellyfinPlugins = import ../../../lib/jellyfinPlugins.nix {inherit lib;};
 
   enumFromAttrs = enum_values:
     lib.types.coercedTo (lib.types.enum (lib.attrNames enum_values)) (name: enum_values.${name}) (

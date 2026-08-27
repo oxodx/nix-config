@@ -7,7 +7,7 @@
 with lib; let
   cfg = config.nixflix.prowlarr;
   secrets = import ../../lib/secrets {inherit lib;};
-  mkSecureCurl = import ../../lib/mk-secure-curl.nix {inherit lib pkgs;};
+  mkSecureCurl = import ../../lib/mkSecureCurl.nix {inherit lib pkgs;};
 in {
   options.nixflix.prowlarr.config.applications = mkOption {
     type = types.listOf (

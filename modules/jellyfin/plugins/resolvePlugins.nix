@@ -5,8 +5,8 @@
   pluginRepositories,
   plugins,
 }: let
-  buildJellyfinPlugin = import ../../../lib/build-jellyfin-plugin.nix {inherit pkgs;};
-  jellyfinPlugins = import ../../../lib/jellyfin-plugins.nix {inherit lib;};
+  buildJellyfinPlugin = import ../../../lib/buildJellyfinPlugin.nix {inherit pkgs;};
+  jellyfinPlugins = import ../../../lib/jellyfinPlugins.nix {inherit lib;};
 
   normalizeTargetAbi = targetAbi: lib.removeSuffix ".0" targetAbi;
 

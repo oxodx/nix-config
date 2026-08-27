@@ -9,7 +9,7 @@ with lib; let
   cfg = config.nixflix.jellyfin;
 
   util = import ../util.nix {inherit lib;};
-  mkSecureCurl = import ../../../lib/mk-secure-curl.nix {inherit lib pkgs;};
+  mkSecureCurl = import ../../../lib/mkSecureCurl.nix {inherit lib pkgs;};
   authUtil = import ../authUtil.nix {inherit lib pkgs cfg;};
 
   pathsToPathInfos = paths: map (path: {Path = path;}) paths;

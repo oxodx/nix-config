@@ -33,6 +33,7 @@
           AuthSubnetWhitelist = "192.168.1.0/24, 192.168.15.0/24";
           CSRFProtection = false;
         };
+        "Speed Limits".GlobalUploadLimit = 1;
         Connection.Interface = "wg0";
       };
       General.Locale = "en";

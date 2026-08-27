@@ -6,7 +6,7 @@
   ...
 }: let
   vars = import ./_variables.nix;
-  jellyfinPlugins = import (mylib.relativeToRoot "lib/jellyfin-plugins.nix") {inherit lib;};
+  jellyfinPlugins = import (mylib.relativeToRoot "lib/jellyfinPlugins.nix") {inherit lib;};
 in {
   nixflix = {
     jellyfin = {

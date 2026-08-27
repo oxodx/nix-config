@@ -6,7 +6,7 @@
 }:
 with lib; let
   cfg = config.nixflix.lidarr;
-  mkSecureCurl = import ../../lib/mk-secure-curl.nix {inherit lib pkgs;};
+  mkSecureCurl = import ../../lib/mkSecureCurl.nix {inherit lib pkgs;};
   mkWaitForApiScript = import ../arr-common/mkWaitForApiScript.nix {inherit lib pkgs;};
 
   defaultQualityProfile = {

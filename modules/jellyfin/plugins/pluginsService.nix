@@ -8,7 +8,7 @@ with lib; let
   inherit (config) nixflix;
   cfg = config.nixflix.jellyfin;
 
-  mkSecureCurl = import ../../../lib/mk-secure-curl.nix {inherit lib pkgs;};
+  mkSecureCurl = import ../../../lib/mkSecureCurl.nix {inherit lib pkgs;};
   authUtil = import ../authUtil.nix {inherit lib pkgs cfg;};
   secrets = import ../../../lib/secrets/default.nix {inherit lib;};
 

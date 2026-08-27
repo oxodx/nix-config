@@ -6,7 +6,7 @@
 }:
 with lib; let
   secrets = import ../../lib/secrets {inherit lib;};
-  mkSecureCurl = import ../../lib/mk-secure-curl.nix {inherit lib pkgs;};
+  mkSecureCurl = import ../../lib/mkSecureCurl.nix {inherit lib pkgs;};
   cfg = config.nixflix.downloadarr;
 
   allClients = filter (c: c.enable) (

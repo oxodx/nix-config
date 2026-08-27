@@ -1,6 +1,6 @@
 {lib, ...}:
 with lib; let
-  jellyfinPlugins = import ../../../lib/jellyfin-plugins.nix {inherit lib;};
+  jellyfinPlugins = import ../../../lib/jellyfinPlugins.nix {inherit lib;};
 in {
   options.nixflix.jellyfin.plugins = mkOption {
     description = ''
