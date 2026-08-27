@@ -1,10 +1,4 @@
 {
-  lib,
-  pkgs,
-  mylib,
-  config,
-  ...
-}: {
   nixflix.torrentClients.qbittorrent = {
     enable = true;
     vpn.enable = true;

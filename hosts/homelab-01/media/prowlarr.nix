@@ -1,7 +1,6 @@
 let
   vars = import ./_variables.nix;
-in
-{
+in {
   nixflix = {
     prowlarr = {
       enable = true;
