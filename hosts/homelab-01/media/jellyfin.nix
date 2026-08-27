@@ -234,7 +234,7 @@ in {
           enable = true;
           package = mylib.media.jellyfinPlugins.fromRepo {
             version = "2.4.11.0";
-            hash = "sha256-RecLxMWjsrVc/nF3GxXNOcKs0pWOERib+r9UEz+D5+4=";
+            hash = "sha256-9SD+jKEUGVfNAsIEyXgcszadh0LOM6wKql87kIt4gKY=";
           };
         };
         "Media Bar" = {
