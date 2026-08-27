@@ -1,12 +1,12 @@
 {
-  config,
   lib,
   pkgs,
+  mylib,
+  config,
   ...
 }:
 with lib; let
   stateDir = "${config.nixflix.stateDir}/jellyfin";
-  secrets = import ../../lib/secrets {inherit lib;};
 in {
   options.nixflix.jellyfin = {
     enable = mkOption {
@@ -15,7 +15,7 @@ in {
       description = "Whether to enable Jellyfin media server";
     };
 
-    apiKey = secrets.mkSecretOption {
+    apiKey = mylib.secrets.mkSecretOption {
       description = ''
         API key to inject into Jellyfin's database. Used by nixflix management services to authenticate to Jellyfin.
 

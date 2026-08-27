@@ -1,12 +1,12 @@
 {
   lib,
   pkgs,
+  mylib,
+  plugins,
   jellyfinVersion,
   pluginRepositories,
-  plugins,
 }: let
-  buildJellyfinPlugin = import ../../../lib/buildJellyfinPlugin.nix {inherit pkgs;};
-  jellyfinPlugins = import ../../../lib/jellyfinPlugins.nix {inherit lib;};
+  buildJellyfinPlugin = import ../../../lib/media/buildJellyfinPlugin.nix {inherit pkgs;};
 
   normalizeTargetAbi = targetAbi: lib.removeSuffix ".0" targetAbi;
 
@@ -144,7 +144,7 @@
     else if selectedCompatibleMatches == []
     then throw "nixflix.jellyfin.plugins.\"${pluginName}\": version '${pluginVersion}' did not have a compatible release for Jellyfin ${jellyfinVersion}"
     else if repositoryName == null && lib.length selectedCompatibleMatches > 1
-    then throw "nixflix.jellyfin.plugins.\"${pluginName}\": version '${pluginVersion}' matched multiple repositories (${matchingRepositoriesSummary}) for Jellyfin ${jellyfinVersion}. Set `package = nixflix.lib.jellyfinPlugins.fromRepo { repository = \"...\"; ...; }` to disambiguate."
+    then throw "nixflix.jellyfin.plugins.\"${pluginName}\": version '${pluginVersion}' matched multiple repositories (${matchingRepositoriesSummary}) for Jellyfin ${jellyfinVersion}. Set `package = mylib.media.jellyfinPlugins.fromRepo { repository = \"...\"; ...; }` to disambiguate."
     else if lib.length selectedCompatibleMatches == 1
     then {match = lib.head selectedCompatibleMatches;}
     else if lib.length selectedMatches > 1
@@ -168,7 +168,7 @@
       inherit pluginCfg;
     }
     else let
-      sourceSpec = jellyfinPlugins.fromRepo pluginCfg.package;
+      sourceSpec = mylib.media.jellyfinPlugins.fromRepo pluginCfg.package;
       resolution = findPluginSource pluginName sourceSpec;
       resolvedVersion = resolution.match.version;
       pluginDirName = repoPluginDirName pluginName resolvedVersion;

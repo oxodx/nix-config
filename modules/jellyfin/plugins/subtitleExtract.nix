@@ -1,9 +1,11 @@
-{lib, ...}: let
-  jellyfinPlugins = import ../../../lib/jellyfinPlugins.nix {inherit lib;};
-in {
+{
+  lib,
+  mylib,
+  ...
+}: {
   options.nixflix.jellyfin.plugins."Subtitle Extract" = lib.mkOption {
-    type = jellyfinPlugins.mkPluginModule {
-      packageDefault = jellyfinPlugins.fromRepo {
+    type = mylib.media.jellyfinPlugins.mkPluginModule {
+      packageDefault = mylib.media.jellyfinPlugins.fromRepo {
         version = "7.0.0.0";
         hash = "sha256-vnSYKFf0L6Bk6jOegxs/Rk+2n5oEAQpxTbLqxNpYh2o=";
       };

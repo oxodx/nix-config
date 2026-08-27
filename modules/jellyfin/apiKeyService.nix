@@ -1,11 +1,11 @@
 {
-  config,
   lib,
   pkgs,
+  mylib,
+  config,
   ...
 }:
 with lib; let
-  secrets = import ../../lib/secrets {inherit lib;};
   inherit (config) nixflix;
   cfg = config.nixflix.jellyfin;
 
@@ -38,7 +38,7 @@ in {
         set -eu
 
         DB="${cfg.dataDir}/data/jellyfin.db"
-        API_KEY=${secrets.toShellValue cfg.apiKey}
+        API_KEY=${mylib.secrets.toShellValue cfg.apiKey}
 
         # Validate format: prevent SQL injection
         if ! [[ "$API_KEY" =~ ^[A-Za-z0-9_-]+$ ]]; then

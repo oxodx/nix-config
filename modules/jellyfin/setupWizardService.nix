@@ -1,11 +1,11 @@
 {
-  config,
   lib,
   pkgs,
+  mylib,
+  config,
   ...
 }:
 with lib; let
-  secrets = import ../../lib/secrets {inherit lib;};
   getFirstAdmin = import ../../lib/getFirstAdmin.nix {inherit lib;};
   inherit (config) nixflix;
   cfg = config.nixflix.jellyfin;
@@ -19,7 +19,7 @@ with lib; let
   firstAdminName = firstAdmin.name;
   firstAdminUser = firstAdmin.user;
 
-  jqUserSecrets = secrets.mkJqSecretArgs {
+  jqUserSecrets = mylib.secrets.mkJqSecretArgs {
     inherit (firstAdminUser) password;
   };
 

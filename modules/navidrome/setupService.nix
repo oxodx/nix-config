@@ -1,11 +1,11 @@
 {
-  config,
   lib,
   pkgs,
+  mylib,
+  config,
   ...
 }:
 with lib; let
-  secrets = import ../../lib/secrets {inherit lib;};
   getFirstAdmin = import ../../lib/getFirstAdmin.nix {inherit lib;};
   inherit (config) nixflix;
   cfg = nixflix.navidrome;

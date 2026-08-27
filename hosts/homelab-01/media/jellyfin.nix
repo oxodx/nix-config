@@ -6,7 +6,6 @@
   ...
 }: let
   vars = import ./_variables.nix;
-  jellyfinPlugins = import (mylib.relativeToRoot "lib/jellyfinPlugins.nix") {inherit lib;};
 in {
   nixflix = {
     jellyfin = {
@@ -233,7 +232,7 @@ in {
         };
 
         "Intro Skipper" = {
-          package = jellyfinPlugins.fromRepo {
+          package = mylib.media.jellyfinPlugins.fromRepo {
             version = "1.10.11.17";
             hash = "sha256-cfEnLqKeEGpQSth3NPjDnxCkgv2pePfgCXfVIOrYSiQ=";
           };

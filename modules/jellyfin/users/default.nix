@@ -1,12 +1,12 @@
 {
-  config,
   lib,
   pkgs,
+  mylib,
+  config,
   ...
 }:
 with lib; let
   cfg = config.nixflix.jellyfin;
-  secrets = import ../../../lib/secrets {inherit lib;};
   mkSecureCurl = import ../../../lib/mkSecureCurl.nix {inherit lib pkgs;};
 
   util = import ../util.nix {inherit lib;};
@@ -84,7 +84,7 @@ in {
         ${concatStringsSep "\n" (
           mapAttrsToList (
             userName: userCfg: let
-              jqSecrets = secrets.mkJqSecretArgs {
+              jqSecrets = mylib.secrets.mkJqSecretArgs {
                 inherit (userCfg) password;
               };
             in ''

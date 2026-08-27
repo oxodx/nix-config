@@ -45,11 +45,11 @@
         into Jellyfin's plugin directory.
 
         For repository-managed plugins, use
-        `nixflix.lib.jellyfinPlugins.fromRepo { version = ...; hash = ...; }`
+        `mylib.media.jellyfinPlugins.fromRepo { version = ...; hash = ...; }`
         to resolve a deterministic package from the pinned plugin manifests.
       '';
       example = lib.literalExpression ''
-        nixflix.lib.jellyfinPlugins.fromRepo {
+        mylib.media.jellyfinPlugins.fromRepo {
           version = "13.0.0.0";
           hash = "sha256-16jaQRh1rIFE27nSSEWNF7UjVsPJDaRf24Ews0BZGas=";
         }

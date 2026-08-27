@@ -1,11 +1,11 @@
 {
-  config,
   lib,
   pkgs,
+  mylib,
+  config,
   ...
 }:
 with lib; let
-  secrets = import ../../lib/secrets {inherit lib;};
   mkSecureCurl = import ../../lib/mkSecureCurl.nix {inherit lib pkgs;};
   cfg = config.nixflix.downloadarr;
 
@@ -149,7 +149,7 @@ with lib; let
               fieldOverrides = filterAttrs (name: value: value != null && !hasPrefix "_" name) allOverrides;
               fieldOverridesJson = builtins.toJSON fieldOverrides;
 
-              jqSecrets = secrets.mkJqSecretArgs {
+              jqSecrets = mylib.secrets.mkJqSecretArgs {
                 apiKey =
                   if apiKey == null
                   then ""

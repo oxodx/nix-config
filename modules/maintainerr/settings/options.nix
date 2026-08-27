@@ -1,10 +1,9 @@
 {
-  config,
   lib,
+  mylib,
+  config,
   ...
 }: let
-  secrets = import ../../../lib/secrets {inherit lib;};
-
   mkArrSubmodule = name:
     lib.types.submodule {
       options = {
@@ -19,7 +18,7 @@
           example = "http://localhost:7878";
         };
 
-        apiKey = secrets.mkSecretOption {
+        apiKey = mylib.secrets.mkSecretOption {
           description = "API Key for ${name} server";
         };
       };
@@ -41,12 +40,12 @@ in {
     jellyfin = {
       jellyfin_url = lib.mkOption {
         type = lib.types.str;
-        default = "http://${config.nixflix.jellyfin.connectionAddress}:${builtins.toString config.nixflix.jellyfin.network.internalHttpPort}";
+        default = "http://${config.nixflix.jellyfin.connectionAddress}:${toString config.nixflix.jellyfin.network.internalHttpPort}";
         defaultText = lib.literalExpression ''"http://''${config.nixflix.jellyfin.connectionAddress}:''${config.nixflix.jellyfin.port}"'';
         description = "URL to access Jellyfin";
       };
 
-      jellyfin_api_key = secrets.mkSecretOption {
+      jellyfin_api_key = mylib.secrets.mkSecretOption {
         default = config.nixflix.jellyfin.apiKey;
         description = "API Key for Jellyfin";
       };
@@ -60,7 +59,7 @@ in {
         description = "URL to access Seerr.";
       };
 
-      api_key = secrets.mkSecretOption {
+      api_key = mylib.secrets.mkSecretOption {
         default = config.nixflix.seerr.apiKey;
         description = "API Key for Seerr.";
       };

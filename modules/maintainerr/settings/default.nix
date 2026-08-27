@@ -1,18 +1,18 @@
 {
-  config,
   lib,
   pkgs,
+  mylib,
+  config,
   ...
 }:
 with lib; let
   cfg = config.nixflix.maintainerr;
-  secrets = import ../../../lib/secrets {inherit lib;};
 
   maintainerrUrl = "http://${cfg.connectionAddress}:${toString cfg.port}";
   jobsJson = builtins.toJSON cfg.settings.jobs;
 
   mkArrServerScript = type: server: let
-    apiKeyVal = secrets.toShellValue server.apiKey;
+    apiKeyVal = mylib.secrets.toShellValue server.apiKey;
   in ''
     echo "  Configuring ${server.serverName}..."
     ARR_API_KEY=${apiKeyVal}
@@ -125,8 +125,8 @@ in {
                 | ${pkgs.jq}/bin/jq -e '.status == "OK"' > /dev/null
             fi
 
-            JELLYFIN_URL=${secrets.toShellValue cfg.settings.jellyfin.jellyfin_url}
-            JELLYFIN_API_KEY=${secrets.toShellValue cfg.settings.jellyfin.jellyfin_api_key}
+            JELLYFIN_URL=${mylib.secrets.toShellValue cfg.settings.jellyfin.jellyfin_url}
+            JELLYFIN_API_KEY=${mylib.secrets.toShellValue cfg.settings.jellyfin.jellyfin_api_key}
 
             echo "Testing Jellyfin connection..."
             JELLYFIN_USER_ID=$(${pkgs.curl}/bin/curl -s -X POST \
@@ -151,8 +151,8 @@ in {
 
           ''
           + optionalString config.nixflix.seerr.enable ''
-            SEERR_URL=${secrets.toShellValue cfg.settings.seerr.url}
-            SEERR_API_KEY=${secrets.toShellValue cfg.settings.seerr.api_key}
+            SEERR_URL=${mylib.secrets.toShellValue cfg.settings.seerr.url}
+            SEERR_API_KEY=${mylib.secrets.toShellValue cfg.settings.seerr.api_key}
 
             echo "Testing Seerr connection..."
             ${pkgs.curl}/bin/curl -s -X POST \

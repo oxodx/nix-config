@@ -1,11 +1,11 @@
-{lib, ...}: let
-  secrets = import ../../../lib/secrets {inherit lib;};
-
-  jellyfinPlugins = import ../../../lib/jellyfinPlugins.nix {inherit lib;};
-in {
+{
+  lib,
+  mylib,
+  ...
+}: {
   options.nixflix.jellyfin.plugins."Open Subtitles" = lib.mkOption {
-    type = jellyfinPlugins.mkPluginModule {
-      packageDefault = jellyfinPlugins.fromRepo {
+    type = mylib.media.jellyfinPlugins.mkPluginModule {
+      packageDefault = mylib.media.jellyfinPlugins.fromRepo {
         version = "24.0.0.0";
         hash = "sha256-b6sgmgBlvhUAhFuq0p/EjB3604NGBkpS4NP33n1hfKc=";
       };
@@ -24,7 +24,7 @@ in {
               default = "";
               description = "Username from OpenSubtitles.com";
             };
-            Password = secrets.mkSecretOption {
+            Password = mylib.secrets.mkSecretOption {
               nullable = false;
               default = "";
               description = "Password for OpenSubtitles.com";

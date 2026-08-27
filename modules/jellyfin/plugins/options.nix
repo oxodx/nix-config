@@ -1,7 +1,9 @@
-{lib, ...}:
-with lib; let
-  jellyfinPlugins = import ../../../lib/jellyfinPlugins.nix {inherit lib;};
-in {
+{
+  lib,
+  mylib,
+  ...
+}:
+with lib; {
   options.nixflix.jellyfin.plugins = mkOption {
     description = ''
       Jellyfin plugins to manage declaratively.
@@ -12,20 +14,20 @@ in {
 
       Plugins are installed from `package`. This can either be a normal Nix
       derivation, or a repository lookup created with
-      `nixflix.lib.jellyfinPlugins.fromRepo`.
+      `mylib.media.jellyfinPlugins.fromRepo`.
 
       Plugin changes (installs, removals, version updates) cause Jellyfin to
       restart automatically. Plan plugin changes for maintenance windows to
       avoid interrupting active streams.
     '';
     type = types.submodule {
-      freeformType = types.attrsOf (jellyfinPlugins.mkPluginModule {enableDefault = true;});
+      freeformType = types.attrsOf (mylib.media.jellyfinPlugins.mkPluginModule {enableDefault = true;});
     };
     default = {};
     example = literalExpression ''
       {
         "Bookshelf" = {
-          package = nixflix.lib.jellyfinPlugins.fromRepo {
+          package = mylib.media.jellyfinPlugins.fromRepo {
             version = "13.0.0.0";
             hash = "sha256-16jaQRh1rIFE27nSSEWNF7UjVsPJDaRf24Ews0BZGas=";
           };

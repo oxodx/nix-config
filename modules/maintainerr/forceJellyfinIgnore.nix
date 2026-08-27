@@ -1,17 +1,17 @@
 {
-  config,
   lib,
   pkgs,
+  mylib,
+  config,
   ...
 }:
 with lib; let
   cfg = config.nixflix.maintainerr;
-  secrets = import ../../lib/secrets {inherit lib;};
 
   maintainerrUrl = "http://${cfg.connectionAddress}:${toString cfg.port}";
 
   mkSonarrSeriesScript = server: let
-    apiKeyVal = secrets.toShellValue server.apiKey;
+    apiKeyVal = mylib.secrets.toShellValue server.apiKey;
   in ''
     echo "  Fetching series from ${server.serverName}..."
     SONARR_API_KEY=${apiKeyVal}
@@ -137,8 +137,8 @@ in {
             ''
               set -euo pipefail
 
-              JELLYFIN_URL=${secrets.toShellValue cfg.settings.jellyfin.jellyfin_url}
-              JELLYFIN_API_KEY=${secrets.toShellValue cfg.settings.jellyfin.jellyfin_api_key}
+              JELLYFIN_URL=${mylib.secrets.toShellValue cfg.settings.jellyfin.jellyfin_url}
+              JELLYFIN_API_KEY=${mylib.secrets.toShellValue cfg.settings.jellyfin.jellyfin_api_key}
 
               IGNORE_PATHS_FILE=$(mktemp)
               SONARR_PATHS_FILE=$(mktemp)

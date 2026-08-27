@@ -1,17 +1,16 @@
 {
-  config,
   lib,
   pkgs,
+  mylib,
+  config,
   ...
 }:
 with lib; let
   inherit (config) nixflix;
   cfg = config.nixflix.jellyfin;
 
-  jellyfinPlugins = import ../../../lib/jellyfinPlugins.nix {inherit lib;};
-
   pluginResolution = import ./resolvePlugins.nix {
-    inherit lib pkgs;
+    inherit lib pkgs mylib;
     jellyfinVersion = cfg.package.version;
     inherit (cfg.system) pluginRepositories;
     inherit (cfg) plugins;
@@ -41,7 +40,7 @@ in {
     nixflix.jellyfin = {
       plugins.AniDB = mkIf config.nixflix.sonarr-anime.enable {
         package = mkDefault (
-          jellyfinPlugins.fromRepo {
+          mylib.media.jellyfinPlugins.fromRepo {
             version = "11.0.0.0";
             hash = "sha256-Rtvxq6NxQSrRyhYdsyWXY+SoDPW4S0471gmiLTUjaSk=";
           }
@@ -65,7 +64,7 @@ in {
     assertions = [
       {
         assertion = all (pluginCfg: pluginCfg.package != null) (attrValues configuredEnabledPlugins);
-        message = "nixflix.jellyfin.plugins: enabled plugins must define `package`. Use `nixflix.lib.jellyfinPlugins.fromRepo` for repository-backed plugins.";
+        message = "nixflix.jellyfin.plugins: enabled plugins must define `package`. Use `mylib.media.jellyfinPlugins.fromRepo` for repository-backed plugins.";
       }
       {
         assertion = length packagePluginDirNames == length (unique packagePluginDirNames);

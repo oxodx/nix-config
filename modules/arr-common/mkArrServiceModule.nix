@@ -1,12 +1,12 @@
 {serviceName}: {
-  config,
   lib,
   pkgs,
+  mylib,
+  config,
   ...
 }:
 with lib; let
   cfg = config.nixflix.${serviceName};
-  secrets = import ../../lib/secrets {inherit lib;};
   inherit (import ../../lib/mkVirtualHosts.nix {inherit lib config;}) mkVirtualHost;
   inherit (config.nixflix) globals;
   inherit
@@ -19,7 +19,7 @@ with lib; let
     ;
   hostname = "${cfg.subdomain}.${config.nixflix.reverseProxy.domain}";
   apiKeyEnvVar = toUpper serviceBase + "__AUTH__APIKEY";
-  apiKeyIsSecretRef = cfg.config.apiKey != null && secrets.isSecretRef cfg.config.apiKey;
+  apiKeyIsSecretRef = cfg.config.apiKey != null && mylib.secrets.isSecretRef cfg.config.apiKey;
   credentialPath = "/run/credentials/${serviceName}.service/apiKey";
   waitConfig =
     cfg.config
@@ -224,7 +224,7 @@ in {
         description = "Current version of the API of the service";
       };
 
-      apiKey = secrets.mkSecretOption {
+      apiKey = mylib.secrets.mkSecretOption {
         nullable = true;
         default = null;
         description = ''

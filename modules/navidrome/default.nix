@@ -1,13 +1,12 @@
 {
-  config,
   lib,
   pkgs,
+  mylib,
+  config,
   ...
 }: let
   inherit (import ../../lib/mkVirtualHosts.nix {inherit lib config;}) mkVirtualHost;
   cfg = config.nixflix.navidrome;
-
-  secrets = import ../../lib/secrets {inherit lib;};
 
   hostname = "${cfg.subdomain}.${config.nixflix.reverseProxy.domain}";
 in {
@@ -85,7 +84,7 @@ in {
                   default = false;
                 };
 
-                password = secrets.mkSecretOption {
+                password = mylib.secrets.mkSecretOption {
                   default = null;
                   description = "User's password.";
                 };

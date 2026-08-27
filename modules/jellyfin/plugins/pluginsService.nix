@@ -1,7 +1,8 @@
 {
-  config,
   lib,
   pkgs,
+  mylib,
+  config,
   ...
 }:
 with lib; let
@@ -10,7 +11,6 @@ with lib; let
 
   mkSecureCurl = import ../../../lib/mkSecureCurl.nix {inherit lib pkgs;};
   authUtil = import ../authUtil.nix {inherit lib pkgs cfg;};
-  secrets = import ../../../lib/secrets/default.nix {inherit lib;};
 
   waitForApiScript = import ../waitForApiScript.nix {
     inherit pkgs;
@@ -18,7 +18,7 @@ with lib; let
   };
 
   pluginResolution = import ./resolvePlugins.nix {
-    inherit lib pkgs;
+    inherit lib pkgs mylib;
     jellyfinVersion = cfg.package.version;
     inherit (cfg.system) pluginRepositories;
     inherit (cfg) plugins;
@@ -54,9 +54,9 @@ with lib; let
         lookupName = pluginCfg.apiName or name;
       in {
         plainFile = pkgs.writeText "jellyfin-plugin-config-${name}.json" (
-          builtins.toJSON (secrets.stripSecretRefs rawConfig)
+          builtins.toJSON (mylib.secrets.stripSecretRefs rawConfig)
         );
-        jqSecrets = secrets.mkNestedJqSecretArgs rawConfig;
+        jqSecrets = mylib.secrets.mkNestedJqSecretArgs rawConfig;
         inherit lookupName;
       }
     )

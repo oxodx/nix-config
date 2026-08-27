@@ -1,12 +1,10 @@
 {
-  config,
   lib,
+  mylib,
+  config,
   ...
 }: let
   cfg = config.nixflix.jellyfin.plugins.subbuzz;
-  secrets = import ../../../lib/secrets {inherit lib;};
-
-  jellyfinPlugins = import ../../../lib/jellyfinPlugins.nix {inherit lib;};
 
   enumFromAttrs = enum_values:
     lib.types.coercedTo (lib.types.enum (lib.attrNames enum_values)) (name: enum_values.${name}) (
@@ -14,8 +12,8 @@
     );
 in {
   options.nixflix.jellyfin.plugins.subbuzz = lib.mkOption {
-    type = jellyfinPlugins.mkPluginModule {
-      packageDefault = jellyfinPlugins.fromRepo {
+    type = mylib.media.jellyfinPlugins.mkPluginModule {
+      packageDefault = mylib.media.jellyfinPlugins.fromRepo {
         version = "1.4.1.0";
         hash = "sha256-MtHFChAU2ZAtWROSbqxKW8fle8UeAhUt1jIEvw/VZjs=";
       };
@@ -93,19 +91,19 @@ in {
               default = "";
               description = "Username for authenticating with OpenSubtitles.";
             };
-            OpenSubPassword = secrets.mkSecretOption {
+            OpenSubPassword = mylib.secrets.mkSecretOption {
               nullable = false;
               default = "";
               description = "Password for authenticating with OpenSubtitles.";
             };
-            OpenSubApiKey = secrets.mkSecretOption {
+            OpenSubApiKey = mylib.secrets.mkSecretOption {
               nullable = false;
               default = "";
               description = ''
                 [API Key](https://www.opensubtitles.com/en/consumers) for the OpenSubtitles service.
               '';
             };
-            OpenSubToken = secrets.mkSecretOption {
+            OpenSubToken = mylib.secrets.mkSecretOption {
               nullable = false;
               default = "";
               description = "Session token for the OpenSubtitles service. Can be found on the [OpenSubtitles.com profile](https://www.opensubtitles.com/en/users/profile) page.";
@@ -350,12 +348,12 @@ in {
               default = {};
               description = "Settings controlling subtitle and search result caching behaviour.";
             };
-            SubdlApiKey = secrets.mkSecretOption {
+            SubdlApiKey = mylib.secrets.mkSecretOption {
               nullable = false;
               default = "";
               description = "Provide your [API Key](https://subdl.com/panel/api) for doing API requests, if left empty provider will be disabled.";
             };
-            SubSourceApiKey = secrets.mkSecretOption {
+            SubSourceApiKey = mylib.secrets.mkSecretOption {
               nullable = false;
               default = "";
               description = "Provide your [API Key](https://subsource.net/dashboard/profile) for doing API requests, if left empty provider will be disabled.";

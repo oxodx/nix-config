@@ -10,15 +10,14 @@
   silent ? true,
   apiKeyHeader ? "X-Api-Key",
 }: let
-  secrets = import ./secrets {inherit lib;};
-
   baseArgs = lib.optionalString silent "-s";
   methodArg = lib.optionalString (method != "GET") "-X ${method}";
+  isSecretRef = value: (builtins.isAttrs value) && (value ? _secret) && !(value ? __unfix__);
 
   apiKeyHeaderArg =
     if apiKeyValue == null
     then ""
-    else if secrets.isSecretRef apiKeyValue
+    else if isSecretRef apiKeyValue
     then ''--header "${apiKeyHeader}: $(${pkgs.coreutils}/bin/cat ${lib.escapeShellArg (toString apiKeyValue._secret)} | ${pkgs.coreutils}/bin/tr -d '\n')"''
     else ''--header "${apiKeyHeader}: ${lib.escapeShellArg (toString apiKeyValue)}"'';
 

@@ -1,11 +1,10 @@
 {
-  config,
   lib,
+  mylib,
+  config,
   ...
 }:
 with lib; let
-  secrets = import ../../lib/secrets {inherit lib;};
-
   categoriesOption = mkOption {
     type = types.submodule {
       options = {
@@ -158,7 +157,7 @@ with lib; let
     };
 
     extraOptions = {
-      apiKey = secrets.mkSecretOption {
+      apiKey = mylib.secrets.mkSecretOption {
         description = "API key for the download client.";
         default = config.nixflix.usenetClients.sabnzbd.settings.misc.api_key;
         defaultText = literalExpression "config.nixflix.usenetClients.sabnzbd.settings.misc.api_key";
@@ -193,14 +192,14 @@ with lib; let
     };
 
     extraOptions = {
-      username = secrets.mkSecretOption {
+      username = mylib.secrets.mkSecretOption {
         nullable = true;
         description = "Username key for the download client.";
         default = config.services.qbittorrent.serverConfig.Preferences.WebUI.Username or null;
         defaultText = literalExpression "config.services.qbittorrent.serverConfig.Preferences.WebUI.Username";
       };
 
-      password = secrets.mkSecretOption {
+      password = mylib.secrets.mkSecretOption {
         nullable = true;
         description = "Password for the download client.";
         default = config.nixflix.torrentClients.qbittorrent.password or null;
@@ -226,11 +225,11 @@ with lib; let
     };
 
     extraOptions = {
-      username = secrets.mkSecretOption {
+      username = mylib.secrets.mkSecretOption {
         description = "Username key for the download client.";
       };
 
-      password = secrets.mkSecretOption {
+      password = mylib.secrets.mkSecretOption {
         description = "Password for the download client.";
       };
     };
@@ -249,11 +248,11 @@ with lib; let
     };
 
     extraOptions = {
-      username = secrets.mkSecretOption {
+      username = mylib.secrets.mkSecretOption {
         description = "Username key for the download client.";
       };
 
-      password = secrets.mkSecretOption {
+      password = mylib.secrets.mkSecretOption {
         description = "Password for the download client.";
       };
     };
@@ -273,7 +272,7 @@ with lib; let
     };
 
     extraOptions = {
-      password = secrets.mkSecretOption {
+      password = mylib.secrets.mkSecretOption {
         description = "Password for the download client.";
       };
     };

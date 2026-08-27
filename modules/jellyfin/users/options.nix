@@ -1,6 +1,9 @@
-{lib, ...}:
+{
+  lib,
+  mylib,
+  ...
+}:
 with lib; let
-  secrets = import ../../../lib/secrets {inherit lib;};
   configurationOpts = _: {
     options = {
       groupedFolders = mkOption {
@@ -434,7 +437,7 @@ with lib; let
         example = true;
         default = false;
       };
-      password = secrets.mkSecretOption {
+      password = mylib.secrets.mkSecretOption {
         default = null;
         description = "User's password.";
       };

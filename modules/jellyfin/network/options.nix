@@ -1,11 +1,10 @@
 {
-  config,
   lib,
+  mylib,
+  config,
   ...
 }:
-with lib; let
-  secrets = import ../../../lib/secrets {inherit lib;};
-in {
+with lib; {
   options.nixflix.jellyfin = {
     openFirewall = mkOption {
       type = types.bool;
@@ -68,7 +67,7 @@ in {
         description = "Base URL for Jellyfin (URL prefix) http://localhost:8096/<baseUrl>";
       };
 
-      certificatePassword = secrets.mkSecretOption {
+      certificatePassword = mylib.secrets.mkSecretOption {
         default = "";
         description = "Certificate password.";
       };
