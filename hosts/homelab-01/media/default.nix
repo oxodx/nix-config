@@ -1,14 +1,10 @@
 {
-  lib,
   pkgs,
   mylib,
-  config,
   ...
-}:
-let
+}: let
   vars = import ./_variables.nix;
-in
-{
+in {
   imports = mylib.scanPaths ./.;
 
   hardware.graphics = {
@@ -29,17 +25,14 @@ in
     stateDir = "/var/lib";
     mediaDir = "/mnt/media";
     downloadsDir = "/mnt/media/downloads";
-    mediaUsers = [ "oxod" ];
+    mediaUsers = ["oxod"];
 
-    theme = {
-      enable = true;
-      name = "overseerr";
-    };
+    theme.enable = true;
 
     vpn = {
       enable = true;
       wgConfFile = vars.secrets.vpn;
-      accessibleFrom = [ "192.168.1.0/24" ];
+      accessibleFrom = ["192.168.1.0/24"];
     };
 
     downloadarr.qbittorrent = {

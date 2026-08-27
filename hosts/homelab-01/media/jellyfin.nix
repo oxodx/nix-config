@@ -16,7 +16,7 @@ in {
       branding = {
         customCss =
           if config.nixflix.theme.enable
-          then ''@import url("https://theme-park.dev/css/base/jellyfin/${config.nixflix.theme.name}.css");''
+          then ''@import url("https://cdn.jsdelivr.net/gh/lscambo13/ElegantFin@main/Theme/ElegantFin-jellyfin-theme-build-latest-minified.css");''
           else "";
         loginDisclaimer = "";
         splashscreenEnabled = false;
