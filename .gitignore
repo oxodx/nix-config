@@ -1,3 +1,4 @@
 /**/.qmlls.ini
 /.direnv/
 /**/qmldir
+*.age.tmp
