@@ -16,8 +16,8 @@
     quickshell.url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
     quickshell.inputs.nixpkgs.follows = "nixpkgs";
 
-    sops-nix.url = "github:Mic92/sops-nix";
-    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+    agenix.url = "github:ryantm/agenix";
+    agenix.inputs.nixpkgs.follows = "nixpkgs";
 
     matugen.url = "github:iniox/matugen";
     matugen.inputs.nixpkgs.follows = "nixpkgs";
@@ -38,48 +38,42 @@
     systems.url = "github:nix-systems/default-linux";
   };
 
-  outputs =
-    {
-      self,
-      nixpkgs,
-      systems,
-      ...
-    }@inputs:
-    let
-      inherit (nixpkgs) lib;
-      mylib = import ./lib { inherit lib; };
+  outputs = {
+    self,
+    nixpkgs,
+    systems,
+    ...
+  } @ inputs: let
+    inherit (nixpkgs) lib;
+    mylib = import ./lib {inherit lib;};
 
-      forAllSystems = lib.genAttrs (import systems);
-      pkgsFor =
-        system:
-        import nixpkgs {
-          inherit system;
-          config.allowUnfree = true;
+    forAllSystems = lib.genAttrs (import systems);
+    pkgsFor = system:
+      import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+      };
+  in {
+    nixosConfigurations = import ./hosts {inherit self mylib inputs;};
+
+    devShells = forAllSystems (
+      system: let
+        pkgs = pkgsFor system;
+      in {
+        default = pkgs.mkShell {
+          packages = with pkgs; [
+            git
+            nil
+            nixd
+            alejandra
+            lua-language-server
+          ];
+          name = "dots";
+          env.DIRENV_LOG_FORMAT = "";
         };
-    in
-    {
-      nixosConfigurations = import ./hosts { inherit self mylib inputs; };
+      }
+    );
 
-      devShells = forAllSystems (
-        system:
-        let
-          pkgs = pkgsFor system;
-        in
-        {
-          default = pkgs.mkShell {
-            packages = with pkgs; [
-              git
-              nil
-              nixd
-              alejandra
-              lua-language-server
-            ];
-            name = "dots";
-            env.DIRENV_LOG_FORMAT = "";
-          };
-        }
-      );
-
-      formatter = forAllSystems (system: (pkgsFor system).alejandra);
-    };
+    formatter = forAllSystems (system: (pkgsFor system).alejandra);
+  };
 }
