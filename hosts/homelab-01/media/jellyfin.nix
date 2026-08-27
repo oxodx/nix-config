@@ -244,6 +244,13 @@ in {
             hash = "sha256-L7qwjhv7wRarUB2rx+iubIyzhHI2rDMYm2xUsrO1jck=";
           };
         };
+        "Home Screen Sections" = {
+          enable = true;
+          package = mylib.media.jellyfinPlugins.fromRepo {
+            version = "2.5.11.0";
+            hash = "sha256-L7qwjhv7wRarUB2rx+iubIyzhHI2rDMYm2xUsrO1jck=";
+          };
+        };
 
         subbuzz = {
           enable = true;
