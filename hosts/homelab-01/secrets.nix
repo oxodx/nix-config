@@ -4,6 +4,8 @@
   lib,
   ...
 }: {
+  age.identityPaths = ["/etc/ssh/ssh_host_ed25519_key"];
+
   age.secrets = {
     "mullvad.conf" = {
       file = self + "/secrets/mullvad.conf.age";
