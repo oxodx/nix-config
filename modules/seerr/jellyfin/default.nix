@@ -68,9 +68,8 @@ in
 
         SETTINGS_HTTP_CODE=$(echo "$SETTINGS_RESPONSE" | tail -n1)
         if [ "$SETTINGS_HTTP_CODE" != "200" ] && [ "$SETTINGS_HTTP_CODE" != "201" ] && [ "$SETTINGS_HTTP_CODE" != "204" ]; then
-          echo "Failed to configure user settings (HTTP $SETTINGS_HTTP_CODE)" >&2
-          echo "$SETTINGS_RESPONSE" | head -n-1 >&2
-          exit 1
+          echo "Failed to configure user settings (HTTP $SETTINGS_HTTP_CODE) - retry after logging in"
+          exit 0
         fi
 
         echo "User settings configured successfully"

@@ -59,9 +59,8 @@ let
       TEST_BODY=$(echo "$TEST_RESPONSE" | sed '$d')
 
       if [ "$TEST_HTTP_CODE" != "200" ]; then
-        echo "Sonarr connection test failed (HTTP $TEST_HTTP_CODE)" >&2
-        echo "$TEST_BODY" >&2
-        exit 1
+        echo "Sonarr connection test failed (HTTP $TEST_HTTP_CODE) - retry after logging in" >&2
+        exit 0
       fi
 
       echo "Sonarr connection successful"
@@ -181,9 +180,8 @@ let
 
         UPDATE_HTTP_CODE=$(echo "$UPDATE_RESPONSE" | tail -n1)
         if [ "$UPDATE_HTTP_CODE" != "200" ] && [ "$UPDATE_HTTP_CODE" != "201" ]; then
-          echo "Failed to update Sonarr instance (HTTP $UPDATE_HTTP_CODE)" >&2
-          echo "$UPDATE_RESPONSE" | head -n-1 >&2
-          exit 1
+          echo "Failed to update Sonarr instance (HTTP $UPDATE_HTTP_CODE) - retry after logging in" >&2
+          exit 0
         fi
         echo "Sonarr instance updated"
       else
@@ -197,9 +195,8 @@ let
 
         CREATE_HTTP_CODE=$(echo "$CREATE_RESPONSE" | tail -n1)
         if [ "$CREATE_HTTP_CODE" != "200" ] && [ "$CREATE_HTTP_CODE" != "201" ]; then
-          echo "Failed to create Sonarr instance (HTTP $CREATE_HTTP_CODE)" >&2
-          echo "$CREATE_RESPONSE" | head -n-1 >&2
-          exit 1
+          echo "Failed to create Sonarr instance (HTTP $CREATE_HTTP_CODE) - retry after logging in" >&2
+          exit 0
         fi
         echo "Sonarr instance created"
       fi
