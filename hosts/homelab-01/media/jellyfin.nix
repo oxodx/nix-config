@@ -220,6 +220,10 @@ in
           url = "https://raw.githubusercontent.com/intro-skipper/manifest/d56c137ae182c04a894dd700c25b04c8d2eba855/10.11/manifest.json";
           hash = "sha256-ENwn7Ei3WU2REcxnFNwzF6NGFUcnH2kJ4E5TKbpcDII=";
         };
+        JellyBridge = {
+          url = "https://raw.githubusercontent.com/kinggeorges12/JellyBridge/refs/heads/main/manifest.json";
+          hash = "sha256-EYWbJQCD9VFKsDSeBI+qK4qWi1XlpiCmjGrAPL3ifa8=";
+        };
       };
 
       plugins = {
@@ -267,27 +271,11 @@ in
           config.ExtractionDuringLibraryScan = true;
         };
 
-        "Custom Tabs" = {
+        JellyBridge = {
           enable = true;
           package = mylib.media.jellyfinPlugins.fromRepo {
-            version = "0.2.10.0";
-            hash = "sha256-r459uNriZO8LxGv6LnIhdi9jJo3sOpKYrYtcvgTR028=";
-          };
-          config = {
-            Tabs = [
-              {
-                Title = "Requests";
-                ContentHtml = ''
-                  <div style="padding: 1em;">
-                    <h2>Media Requests</h2>
-                    <p>Request movies and TV shows through Jellyseerr.</p>
-                    <a href="http://localhost:5055" target="_blank" class="emby-button raised">
-                      Open Jellyseerr
-                    </a>
-                  </div>
-                '';
-              }
-            ];
+            version = "3.3.11.0";
+            hash = "sha256-IghsfWB1Us/OxeURjaHVDBjOKvgfYSQGoOmiu0jaPdQ=";
           };
         };
 
