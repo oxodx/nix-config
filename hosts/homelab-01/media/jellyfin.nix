@@ -251,13 +251,6 @@ in
             hash = "sha256-Q+uGZ+naUPe7JO4KKkVdy7bviDKZtvUAqTFboSDVsNE=";
           };
         };
-        "Custom Tabs" = {
-          enable = true;
-          package = mylib.media.jellyfinPlugins.fromRepo {
-            version = "0.2.10.0";
-            hash = "sha256-r459uNriZO8LxGv6LnIhdi9jJo3sOpKYrYtcvgTR028=";
-          };
-        };
 
         subbuzz = {
           enable = true;
@@ -272,6 +265,30 @@ in
         "Subtitle Extract" = {
           enable = true;
           config.ExtractionDuringLibraryScan = true;
+        };
+
+        "Custom Tabs" = {
+          enable = true;
+          package = mylib.media.jellyfinPlugins.fromRepo {
+            version = "0.2.10.0";
+            hash = "sha256-r459uNriZO8LxGv6LnIhdi9jJo3sOpKYrYtcvgTR028=";
+          };
+          config = {
+            Tabs = [
+              {
+                Title = "Requests";
+                ContentHtml = ''
+                  <div style="padding: 1em;">
+                    <h2>Media Requests</h2>
+                    <p>Request movies and TV shows through Jellyseerr.</p>
+                    <a href="http://localhost:5055" target="_blank" class="emby-button raised">
+                      Open Jellyseerr
+                    </a>
+                  </div>
+                '';
+              }
+            ];
+          };
         };
 
         "Intro Skipper" = {
