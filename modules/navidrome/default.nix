@@ -230,7 +230,7 @@ in {
         ];
       }
       {
-        services.navidrome = builtins.removeAttrs cfg [
+        services.navidrome = removeAttrs cfg [
           "connectionAddress"
           "reverseProxy"
           "subdomain"
@@ -239,6 +239,11 @@ in {
         ];
 
         systemd = {
+          services.navidrome = {
+            after = config.nixflix.serviceDependencies;
+            requires = config.nixflix.serviceDependencies;
+          };
+
           tmpfiles.settings.navidromeDirs = {
             "${cfg.settings.DataFolder}"."d" = lib.mkForce {
               mode = "755";
