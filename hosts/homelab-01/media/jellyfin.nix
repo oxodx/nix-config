@@ -3,9 +3,11 @@
   mylib,
   config,
   ...
-}: let
+}:
+let
   vars = import ./_variables.nix;
-in {
+in
+{
   nixflix = {
     jellyfin = {
       enable = true;
@@ -14,17 +16,19 @@ in {
       network.enableRemoteAccess = true;
 
       branding = {
-        customCss = let
-          url = "https://cdn.jsdelivr.net/gh/lscambo13/ElegantFin";
-        in
-          if config.nixflix.theme.enable
-          then ''
-            @import url("${url}@main/Theme/ElegantFin-jellyfin-theme-build-latest-minified.css");
-          ''
-          else "";
+        customCss =
+          let
+            url = "https://cdn.jsdelivr.net/gh/lscambo13/ElegantFin";
+          in
+          if config.nixflix.theme.enable then
+            ''
+              @import url("${url}@main/Theme/ElegantFin-jellyfin-theme-build-latest-minified.css");
+            ''
+          else
+            "";
         loginDisclaimer = "";
         splashscreenEnabled = false;
-        splashscreenLocation = [];
+        splashscreenLocation = [ ];
       };
 
       users = {
@@ -35,25 +39,25 @@ in {
         };
       };
 
-      libraries = let
-        subtitleSettings = {
-          subtitleDownloadLanguages = [
-            "eng"
-            "nl"
-          ];
-          requirePerfectSubtitleMatch = true;
-        };
-      in {
-        Shows =
-          subtitleSettings
-          // {
+      libraries =
+        let
+          subtitleSettings = {
+            subtitleDownloadLanguages = [
+              "eng"
+              "nl"
+            ];
+            requirePerfectSubtitleMatch = true;
+          };
+        in
+        {
+          Shows = subtitleSettings // {
             collectionType = "tvshows";
-            paths = ["/mnt/media/library/shows"];
+            paths = [ "/mnt/media/library/shows" ];
             typeOptions = [
               {
                 type = "Series";
-                imageFetchers = ["TheMovieDb"];
-                imageFetcherOrder = ["TheMovieDb"];
+                imageFetchers = [ "TheMovieDb" ];
+                imageFetcherOrder = [ "TheMovieDb" ];
                 metadataFetchers = [
                   "TheMovieDb"
                   "The Open Movie Database"
@@ -65,10 +69,10 @@ in {
               }
               {
                 type = "Season";
-                imageFetchers = ["TheMovieDb"];
-                imageFetcherOrder = ["TheMovieDb"];
-                metadataFetchers = ["TheMovieDb"];
-                metadataFetcherOrder = ["TheMovieDb"];
+                imageFetchers = [ "TheMovieDb" ];
+                imageFetcherOrder = [ "TheMovieDb" ];
+                metadataFetchers = [ "TheMovieDb" ];
+                metadataFetcherOrder = [ "TheMovieDb" ];
               }
               {
                 type = "Episode";
@@ -95,11 +99,9 @@ in {
               }
             ];
           };
-        Anime =
-          subtitleSettings
-          // {
+          Anime = subtitleSettings // {
             collectionType = "tvshows";
-            paths = ["/mnt/media/library/anime"];
+            paths = [ "/mnt/media/library/anime" ];
             typeOptions = [
               {
                 type = "Series";
@@ -174,11 +176,9 @@ in {
               }
             ];
           };
-        Movies =
-          subtitleSettings
-          // {
+          Movies = subtitleSettings // {
             collectionType = "movies";
-            paths = ["/mnt/media/library/movies"];
+            paths = [ "/mnt/media/library/movies" ];
             typeOptions = [
               {
                 type = "Movie";
@@ -205,11 +205,11 @@ in {
               }
             ];
           };
-        Music = {
-          collectionType = "music";
-          paths = ["/mnt/media/library/music"];
+          Music = {
+            collectionType = "music";
+            paths = [ "/mnt/media/library/music" ];
+          };
         };
-      };
 
       system.pluginRepositories = {
         "IAmParadox" = {
@@ -254,8 +254,8 @@ in {
         "Custom Tabs" = {
           enable = true;
           package = mylib.media.jellyfinPlugins.fromRepo {
-            version = "2.5.11.0";
-            hash = "sha256-Q+uGZ+naUPe7JO4KKkVdy7bviDKZtvUAqTFboSDVsNE=";
+            version = "0.2.10.0";
+            hash = "sha256-r459uNriZO8LxGv6LnIhdi9jJo3sOpKYrYtcvgTR028=";
           };
         };
 
@@ -392,7 +392,7 @@ in {
         enableIntelLowPowerH264HwEncoder = true;
         enableIntelLowPowerHevcHwEncoder = true;
         enableSubtitleExtraction = true;
-        allowOnDemandMetadataBasedKeyframeExtractionForExtensions = ["mkv"];
+        allowOnDemandMetadataBasedKeyframeExtractionForExtensions = [ "mkv" ];
       };
 
       metadata.useFileCreationTimeForDateAdded = false;
