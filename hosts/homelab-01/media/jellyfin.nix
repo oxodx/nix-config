@@ -277,13 +277,6 @@ in
             version = "3.3.11.0";
             hash = "sha256-IghsfWB1Us/OxeURjaHVDBjOKvgfYSQGoOmiu0jaPdQ=";
           };
-          config = {
-            JellyseerrUrl = "http://localhost:5055";
-            JellyseerrApiKey._secret = vars.secrets.seerr.apiKey;
-            LibraryDirectory = "/mnt/media/jellybridge";
-            EnableSync = false;
-            SyncInterval = 1.0;
-          };
         };
 
         "Intro Skipper" = {
