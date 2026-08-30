@@ -119,13 +119,13 @@ in {
           ++ optional (cfg.radarrQuality == "1080p") "[SQP] SQP-1 (1080p)"
           ++ optional (cfg.sonarrQuality == "4K") "WEB-2160p (Alternative)"
           ++ optional (cfg.sonarrQuality == "1080p") "WEB-1080p (Alternative)"
-          ++ optional config.nixflix.sonarr-anime.enable "[Anime] Remux-1080p";
+          ++ optional config.nixflix.sonarr-anime.enable "[Anime] WEB-1080p";
         defaultText = literalExpression ''
           optional (cfg.radarrQuality == "4K") "[SQP] SQP-1 (2160p)"
           ++ optional (cfg.radarrQuality == "1080p") "[SQP] SQP-1 (1080p)"
           ++ optional (cfg.sonarrQuality == "4K") "WEB-2160p (Alternative)"
           ++ optional (cfg.sonarrQuality == "1080p") "WEB-1080p (Alternative)"
-          ++ optional config.nixflix.sonarr-anime.enable "[Anime] Remux-1080p";
+          ++ optional config.nixflix.sonarr-anime.enable "[Anime] WEB-1080p";
         '';
         example = ["My Custom Profile"];
         description = ''
