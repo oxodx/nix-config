@@ -7,8 +7,7 @@ let
     server
     laptop
   ];
-in
-{
+in {
   "./mullvad.conf.age".publicKeys = systems;
   "./jellyfin-api-key.age".publicKeys = systems;
   "./jellyfin-password-oxod.age".publicKeys = systems;
