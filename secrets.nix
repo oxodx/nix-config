@@ -9,8 +9,7 @@ let
     laptop
     disaster
   ];
-in
-{
+in {
   "secrets/mullvad.conf.age".publicKeys = systems;
   "secrets/jellyfin-api-key.age".publicKeys = systems;
   "secrets/jellyfin-password-oxod.age".publicKeys = systems;
