@@ -5,6 +5,6 @@ SECRETS_DIR=/home/oxod/dev/nix-config/secrets
 for f in "$SECRETS_DIR"/*.age; do
   name=$(basename "$f")
   echo "Re-encrypting $name..."
-  sudo $AGE -d -i /root/.config/age/keys.txt "$f" | $AGE -R "$SECRETS_DIR/recipients.txt" -o "$f"
+  sudo $AGE -d -i /root/.config/age/keys.txt "$f" | $AGE -R "$SECRETS_DIR/recipients.txt" -o "$f.tmp" && mv "$f.tmp" "$f"
 done
 echo "Done!"
