@@ -1,12 +1,10 @@
 # This file is only used by the agenix CLI for rekeying.
 # It defines the public keys used to encrypt secrets.
 let
-  server = "age1fqkz7r00szqmnj72uuycsvxmd2p3hkqr05nncuhjfzmc2x0fnytsjw8028";
-  laptop = "age1clkxk3teydq0f250s6xua4mhcx7jddp0rw65dvxeent7smurtqtq3e6yuv";
-  systems = [
-    server
-    laptop
-  ];
+  homelab-01 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAS1HiLGivx51vMROMeQ0Kua/+n8vaqPNx3LPCIffGjC root@homelab-01";
+  laptop = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKzn1ueT+hOMYIjgQg1ln9aPTm9GLMwKc6OENw2qhsqG root@laptop";
+  disaster = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINkrWyQbDI7/PAqRn+y3uK2K+ZMNgzkCxdirXUpU3LJm oxod@disaster";
+  systems = [homelab-01 laptop disaster];
 in {
   "./mullvad.conf.age".publicKeys = systems;
   "./jellyfin-api-key.age".publicKeys = systems;
