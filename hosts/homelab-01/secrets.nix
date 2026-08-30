@@ -1,5 +1,5 @@
-{self, ...}: {
-  age.identityPaths = ["/root/.config/age/keys.txt"];
+{ self, ... }: {
+  age.identityPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
 
   age.secrets = {
     "mullvad.conf" = {
