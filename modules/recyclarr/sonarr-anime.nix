@@ -21,7 +21,7 @@
 
     quality_profiles = lib.mkDefault [
       {
-        trash_id = "20e0fc959f1f1704bed501f23bdae76f"; # [Anime] Remux-1080p
+        trash_id = "9518d624192a6e01753793e6ec004e55"; # [Anime] WEB-1080p
         reset_unmatched_scores.enabled = true;
       }
     ];
