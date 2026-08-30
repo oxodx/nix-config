@@ -1,5 +1,5 @@
-{mylib, ...}: {
-  imports = mylib.scanPaths ./.;
+{ mylib, inputs, ... }: {
+  imports = mylib.scanPaths ./. ++ [ inputs.agenix.nixosModules.default ];
 
   environment.variables.NH_FLAKE = "/home/oxod/dev/nix-config";
 
