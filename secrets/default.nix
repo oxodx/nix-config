@@ -1,7 +1,13 @@
+{ inputs, ... }:
 let
   server = "age1zrcqwqlzr47kdcjw9eg636jdk9tny48pxcxgyj954e668wp6jp8qjfayfg";
-  laptop = "age13dq6y4q8vdr4sp7nqp5gmh2luvk05cpp02s6x88nw3cl8znc7slq6a2dq8";
-in {
+  laptop = "age1clkxk3teydq0f250s6xua4mhcx7jddp0rw65dvxeent7smurtqtq3e6yuv";
+in
+{
+  imports = [ inputs.agenix.nixosModules.default ];
+
+  age.identityPaths = [ "/root/.config/age/keys.txt" ];
+
   "secrets/mullvad.conf.age".publicKeys = [
     server
     laptop

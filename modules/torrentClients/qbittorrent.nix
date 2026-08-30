@@ -194,7 +194,7 @@ in {
         }
       ];
 
-      services.qbittorrent = builtins.removeAttrs cfg [
+      services.qbittorrent = removeAttrs cfg [
         "categories"
         "connectionAddress"
         "downloadsDir"

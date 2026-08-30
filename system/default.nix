@@ -1,12 +1,14 @@
-let
-  desktop = [
-    ./core
-    ./hardware
-    ./nix
-    ./network
-    ./programs
-    ./services
-  ];
+{mylib, ...}: let
+  desktop =
+    [
+      ./core
+      ./hardware
+      ./nix
+      ./network
+      ./programs
+      ./services
+    ]
+    ++ map mylib.relativeToRoot ["secrets"];
 
   laptop =
     desktop

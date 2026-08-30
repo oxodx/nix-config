@@ -1,9 +1,4 @@
-{
-  self,
-  config,
-  lib,
-  ...
-}: {
+{self, ...}: {
   age.identityPaths = ["/root/.config/age/keys.txt"];
 
   age.secrets = {
