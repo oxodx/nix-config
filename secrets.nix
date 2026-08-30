@@ -4,21 +4,26 @@ let
   homelab-01 = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAS1HiLGivx51vMROMeQ0Kua/+n8vaqPNx3LPCIffGjC root@homelab-01";
   laptop = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKzn1ueT+hOMYIjgQg1ln9aPTm9GLMwKc6OENw2qhsqG root@laptop";
   disaster = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINkrWyQbDI7/PAqRn+y3uK2K+ZMNgzkCxdirXUpU3LJm oxod@disaster";
-  systems = [homelab-01 laptop disaster];
-in {
-  "./mullvad.conf.age".publicKeys = systems;
-  "./jellyfin-api-key.age".publicKeys = systems;
-  "./jellyfin-password-oxod.age".publicKeys = systems;
-  "./prowlarr-api-key.age".publicKeys = systems;
-  "./prowlarr-password.age".publicKeys = systems;
-  "./sonarr-api-key.age".publicKeys = systems;
-  "./sonarr-password.age".publicKeys = systems;
-  "./sonarr-anime-api-key.age".publicKeys = systems;
-  "./sonarr-anime-password.age".publicKeys = systems;
-  "./radarr-api-key.age".publicKeys = systems;
-  "./radarr-password.age".publicKeys = systems;
-  "./lidarr-api-key.age".publicKeys = systems;
-  "./lidarr-password.age".publicKeys = systems;
-  "./qbittorrent-password.age".publicKeys = systems;
-  "./seerr-api-key.age".publicKeys = systems;
+  systems = [
+    homelab-01
+    laptop
+    disaster
+  ];
+in
+{
+  "secrets/mullvad.conf.age".publicKeys = systems;
+  "secrets/jellyfin-api-key.age".publicKeys = systems;
+  "secrets/jellyfin-password-oxod.age".publicKeys = systems;
+  "secrets/prowlarr-api-key.age".publicKeys = systems;
+  "secrets/prowlarr-password.age".publicKeys = systems;
+  "secrets/sonarr-api-key.age".publicKeys = systems;
+  "secrets/sonarr-password.age".publicKeys = systems;
+  "secrets/sonarr-anime-api-key.age".publicKeys = systems;
+  "secrets/sonarr-anime-password.age".publicKeys = systems;
+  "secrets/radarr-api-key.age".publicKeys = systems;
+  "secrets/radarr-password.age".publicKeys = systems;
+  "secrets/lidarr-api-key.age".publicKeys = systems;
+  "secrets/lidarr-password.age".publicKeys = systems;
+  "secrets/qbittorrent-password.age".publicKeys = systems;
+  "secrets/seerr-api-key.age".publicKeys = systems;
 }
