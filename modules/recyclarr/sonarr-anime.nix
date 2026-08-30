@@ -21,8 +21,29 @@
 
     quality_profiles = lib.mkDefault [
       {
-        trash_id = "9518d624192a6e01753793e6ec004e55"; # [Anime] WEB-1080p
+        trash_id = "20e0fc959f1f1704bed501f23bdae76f"; # [Anime] Remux-1080p
         reset_unmatched_scores.enabled = true;
+        qualities = [
+          {name = "Remux-1080p";}
+          {name = "Bluray-1080p";}
+          {
+            name = "WEB 1080p";
+            qualities = [
+              "WEBDL-1080p"
+              "WEBRip-1080p"
+            ];
+          }
+          {name = "Bluray-720p";}
+          {
+            name = "WEB 720p";
+            qualities = [
+              "WEBDL-720p"
+              "WEBRip-720p"
+            ];
+          }
+          {name = "HDTV-1080p";}
+          {name = "HDTV-720p";}
+        ];
       }
     ];
   };
