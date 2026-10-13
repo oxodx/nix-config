@@ -12,6 +12,7 @@ import qs.bar.mpris as Mpris
 import qs.bar.connections as Connections
 import qs.bar.power as Power
 import qs.notifications as Notifs
+import qs.launcher as Launcher
 
 BarContainment {
   id: root
@@ -25,6 +26,18 @@ BarContainment {
 
     slantRight: true
 
+    Rectangle {
+      anchors {
+        left: parent.left
+        right: parent.right
+        rightMargin: 20
+        bottom: parent.bottom
+      }
+      height: 2
+      color: Appearance.colors.m3tertiary
+      opacity: 0.7
+    }
+
     RowLayout {
       id: leftSection
       anchors {
@@ -37,7 +50,22 @@ BarContainment {
       spacing: 7
 
       FullwidthMouseArea {
+        id: launcherButton
         hoverEnabled: true
+        acceptedButtons: Qt.LeftButton
+        onPressed: Launcher.Controller.toggle()
+
+        SkewedPanel {
+          anchors.fill: parent
+          anchors.margins: 3
+          slantLeft: true
+          slantRight: true
+          slant: 7
+          fillColor: launcherButton.containsMouse ? Appearance.colors.widgetActive : "transparent"
+          outlineColor: launcherButton.containsMouse ? Appearance.colors.m3tertiary : "transparent"
+
+          Behavior on fillColor { ColorAnimation { duration: 140 } }
+        }
 
         MaterialIcon {
           anchors.centerIn: parent
@@ -83,6 +111,19 @@ BarContainment {
     slantRight: true
     fillColor: "#dc11131a"
 
+    Rectangle {
+      anchors {
+        left: parent.left
+        right: parent.right
+        leftMargin: 22
+        rightMargin: 22
+        bottom: parent.bottom
+      }
+      height: 2
+      color: Appearance.colors.m3tertiary
+      opacity: Mpris.MprisController.activePlayer ? 0.9 : 0.35
+    }
+
     Mpris.Players {
       bar: root
       anchors.fill: parent
@@ -100,6 +141,18 @@ BarContainment {
 
     slantLeft: true
 
+    Rectangle {
+      anchors {
+        left: parent.left
+        right: parent.right
+        leftMargin: 20
+        bottom: parent.bottom
+      }
+      height: 2
+      color: Appearance.colors.m3tertiary
+      opacity: 0.7
+    }
+
     RowLayout {
       id: rightSection
       anchors {
@@ -116,6 +169,12 @@ BarContainment {
         Layout.fillHeight: true
       }
 
+      Rectangle {
+        Layout.preferredWidth: 1
+        Layout.preferredHeight: 26
+        color: Appearance.colors.widgetOutlineSeparate
+      }
+
       SysTray.SysTray {
         bar: root
         Layout.fillHeight: true
@@ -124,6 +183,12 @@ BarContainment {
       Connections.Connections {
         bar: root
         Layout.fillHeight: true
+      }
+
+      Rectangle {
+        Layout.preferredWidth: 1
+        Layout.preferredHeight: 26
+        color: Appearance.colors.widgetOutlineSeparate
       }
 
       Power.Power {

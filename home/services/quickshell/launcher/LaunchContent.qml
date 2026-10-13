@@ -10,12 +10,14 @@ import qs.components
 Item {
   id: root
   signal dismissed
-  height: 7 + searchContainer.implicitHeight + list.topMargin * 2 + list.delegateHeight * 10
+  readonly property int visibleRows: 11
+  readonly property real listHeight: Math.min(list.contentHeight, list.delegateHeight * visibleRows)
+  height: content.height
   width: 560
 
   SkewedSurface {
     id: content
-    height: 7 + searchContainer.implicitHeight + list.topMargin + list.bottomMargin + Math.min(list.contentHeight, list.delegateHeight * 10)
+    height: 18 + searchContainer.implicitHeight + 8 + list.topMargin + list.bottomMargin + root.listHeight + 14
     Behavior on height {
       NumberAnimation {
         duration: 200

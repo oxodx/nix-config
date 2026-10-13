@@ -72,14 +72,15 @@ FullwidthMouseArea {
           }
         }
 
-        StyledRect {
+        SkewedPanel {
           anchors.centerIn: parent
           height: 30
           width: parent.width
-          radius: 2
-          border.color: wsItem.active ? Appearance.colors.widgetOutlineSeparate : "transparent"
-          border.width: 1
-          color: Appearance.interpolateColors(wsItem.animActive, "transparent", Appearance.colors.widgetActive)
+          slantLeft: true
+          slantRight: true
+          slant: 6
+          outlineColor: wsItem.active ? Appearance.colors.m3tertiary : "transparent"
+          fillColor: Appearance.interpolateColors(wsItem.animActive, "transparent", Appearance.colors.widgetActive)
 
           StyledText {
             anchors.centerIn: parent
