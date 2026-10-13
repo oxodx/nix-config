@@ -4,14 +4,13 @@ import QtQuick.Controls
 import Quickshell
 import Quickshell.Services.Notifications
 import qs
+import qs.components
 
-Rectangle {
+Item {
   id: root
   required property Notification notif
   required property var backer
 
-  color: notif.urgency == NotificationUrgency.Critical ? "#30ff2030" : "#30c0ffff"
-  radius: 5
   implicitWidth: 450
   implicitHeight: c.implicitHeight
 
@@ -21,13 +20,24 @@ Rectangle {
     }
   }
 
-  Rectangle {
+  SkewedSurface {
+    anchors.fill: parent
+    slantLeft: true
+    slantRight: true
+    slant: 18
+    fillColor: notif.urgency == NotificationUrgency.Critical ? "#ed341b29" : "#ed171a22"
+    outlineColor: notif.urgency == NotificationUrgency.Critical ? "#80ff747b" : Appearance.colors.widgetOutlineSeparate
+    shadowOffset: 5
+  }
+
+  SkewedPanel {
     id: border
     anchors.fill: parent
-    color: "transparent"
-    border.width: 2
-    border.color: Appearance.colors.widgetOutline
-    radius: root.radius
+    slantLeft: true
+    slantRight: true
+    slant: 18
+    outlineWidth: 1
+    outlineColor: notif.urgency == NotificationUrgency.Critical ? "#80ff747b" : Appearance.colors.widgetOutline
   }
 
   ColumnLayout {
@@ -50,12 +60,27 @@ Rectangle {
           Layout.preferredHeight: 30
         }
 
-        Label {
-          visible: text != ""
-          text: notif.summary
-          font.pointSize: 20
-          elide: Text.ElideRight
-          Layout.maximumWidth: root.implicitWidth - 100 // QTBUG-127649
+        ColumnLayout {
+          Layout.fillWidth: true
+          spacing: 0
+
+          StyledText {
+            Layout.fillWidth: true
+            visible: text !== ""
+            text: notif.summary
+            font.pointSize: Appearance.font.size.normal
+            font.weight: Font.Bold
+            elide: Text.ElideRight
+          }
+
+          StyledText {
+            Layout.fillWidth: true
+            visible: text !== ""
+            text: notif.appName ?? ""
+            color: Appearance.colors.m3tertiary
+            font.pointSize: Appearance.font.size.smaller
+            elide: Text.ElideRight
+          }
         }
 
         Item {
@@ -136,14 +161,14 @@ Rectangle {
 
     ColumnLayout {
       Layout.fillWidth: true
-      Layout.margins: root.border.width
+      Layout.margins: 1
       spacing: 0
       visible: notif.actions.length != 0
 
       Rectangle {
-        height: border.border.width
+        height: 1
         Layout.fillWidth: true
-        color: border.border.color
+        color: border.outlineColor
         antialiasing: true
       }
 
@@ -169,7 +194,7 @@ Rectangle {
               }
 
               visible: index != 0
-              implicitWidth: root.border.width
+              implicitWidth: 1
               color: Appearance.colors.widgetOutline
               antialiasing: true
             }

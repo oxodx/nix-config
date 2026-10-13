@@ -30,7 +30,7 @@ PanelWindow {
     anchors.fill: parent
 
     stack.y: root.bar.height + 8
-    stack.x: 10
+    stack.x: 0
   }
 
   visible: display.stack.children.length != 0

@@ -14,8 +14,18 @@ Loader {
   }
 
   sourceComponent: Item {
-    implicitWidth: timeText.implicitWidth + Appearance.padding.large * 2
+    implicitWidth: timeText.implicitWidth + Appearance.padding.large * 3
     implicitHeight: timeText.implicitHeight + Appearance.padding.large * 2
+
+    SkewedSurface {
+      anchors.fill: parent
+      slantLeft: true
+      slantRight: true
+      slant: 18
+      fillColor: "#b8171a22"
+      outlineColor: Appearance.colors.widgetOutlineSeparate
+      shadowOffset: 4
+    }
 
     StyledText {
       id: timeText

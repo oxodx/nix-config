@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import Quickshell
 import qs
+import qs.components
 
 Item {
   id: root
@@ -45,15 +46,19 @@ Item {
       height: parent.height
       y: root.state.fadeOutMul * (height / 2 + childrenRect.height)
 
-      Rectangle {
+      SkewedSurface {
         id: sep
         anchors.horizontalCenter: parent.horizontalCenter
         y: parent.height / 2 + textBox.height
 
-        implicitHeight: 6
+        implicitHeight: 8
         implicitWidth: 800
-        radius: height / 2
-        color: Appearance.colors.widget
+        slantLeft: true
+        slantRight: true
+        slant: 18
+        fillColor: Appearance.colors.m3tertiary
+        outlineColor: Appearance.colors.widgetOutlineSeparate
+        shadowOffset: 4
       }
 
       ColumnLayout {
@@ -92,6 +97,18 @@ Item {
           implicitHeight: textBox.height * focusAnim
           implicitWidth: sep.implicitWidth
           clip: true
+
+          SkewedSurface {
+            anchors.fill: textBox
+            anchors.leftMargin: -24
+            anchors.rightMargin: -24
+            slantLeft: true
+            slantRight: true
+            slant: 14
+            fillColor: "#b8171a22"
+            outlineColor: root.state.failed ? "#80ff747b" : Appearance.colors.widgetOutlineSeparate
+            shadowOffset: 4
+          }
 
           TextInput {
             id: textBox

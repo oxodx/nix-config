@@ -38,7 +38,7 @@ Singleton {
     PanelWindow {
       id: launcherWindow
       color: "transparent"
-      implicitWidth: 450
+      implicitWidth: 560
       implicitHeight: content.height
       WlrLayershell.namespace: "shell:launcher"
       WlrLayershell.layer: WlrLayer.Overlay

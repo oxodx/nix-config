@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import Quickshell
 import qs
+import qs.components
 
 Scope {
   id: root
@@ -182,11 +183,14 @@ Scope {
             root.shownItem.parent = popupContent;
         }
 
-        background: Rectangle {
-          color: root.shownItem?.customBackground ? "transparent" : "#f220232d"
-          border.color: root.shownItem?.customBackground ? "transparent" : "#40ffffff"
-          border.width: 1
-          radius: root.shownItem?.customBackground ? 0 : 8
+        background: SkewedSurface {
+          slantLeft: !root.shownItem?.customBackground
+          slantRight: !root.shownItem?.customBackground
+          slant: 12
+          fillColor: root.shownItem?.customBackground ? "transparent" : "#f220232d"
+          outlineColor: root.shownItem?.customBackground ? "transparent" : Appearance.colors.widgetOutlineSeparate
+          shadowColor: root.shownItem?.customBackground ? "transparent" : "#50000000"
+          shadowOffset: 3
         }
 
         contentItem: Item {

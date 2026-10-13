@@ -70,9 +70,7 @@ BarContainment {
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: parent.top
     height: 56
-    width: Mpris.MprisController.activePlayer
-      ? Math.min(900, Math.max(600, parent.width - leftIsland.width - rightIsland.width - 48))
-      : 360
+    width: Mpris.MprisController.activePlayer ? Math.min(900, Math.max(600, parent.width - leftIsland.width - rightIsland.width - 48)) : 360
 
     Behavior on width {
       NumberAnimation {

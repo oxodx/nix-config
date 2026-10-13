@@ -1,5 +1,6 @@
 import QtQuick
 import qs
+import qs.components
 
 Item {
   id: root
@@ -29,12 +30,14 @@ Item {
 
     Component.onCompleted: clicked.connect(root.clicked)
 
-    Rectangle {
+    SkewedSurface {
       anchors.fill: parent
-      radius: 5
-      color: Appearance.interpolateColors(hoverColorInterp * 0.001, Appearance.colors.widget, Appearance.colors.widgetActive)
-      border.width: 1
-      border.color: Appearance.colors.widgetOutline
+      slantLeft: true
+      slantRight: true
+      slant: 12
+      fillColor: Appearance.interpolateColors(hoverColorInterp * 0.001, Appearance.colors.widget, Appearance.colors.widgetActive)
+      outlineColor: Appearance.colors.widgetOutline
+      shadowOffset: 4
 
       property int hoverColorInterp: mouseArea.containsMouse || mouseArea.pressed ? 1000 : 0
       Behavior on hoverColorInterp {

@@ -9,8 +9,9 @@ the last 32 results are cached in memory only. Tracks without synced lyrics
 or position support show the artist instead. Left-click toggles playback;
 right-click opens the dashboard.
 
-The sidebar has Dashboard and Notifications tabs. Its dashboard scrolls on
-short screens and includes media controls and a live volume slider.
+The launcher combines fuzzy desktop-app search with an explicit command mode:
+prefix a query with `>` to run it through the user's shell. Search results show
+application descriptions and remain fully keyboard navigable.
 
 Scroll over the bar's volume pill to adjust output in 5% steps (capped at
 100%); click to mute. The media card includes a playback timeline with
@@ -24,23 +25,22 @@ their popups when it is disabled.
 ```text
 shell.qml                 # composition root only
 components/               # reusable visual primitives
-  PanelCard.qml           # rounded dashboard surface
-  SkewPanel.qml           # angled bar/OSD surface
-  StatusPill.qml          # compact interactive status control
-modules/
-  bar/
-    TopBar.qml            # panel window and island composition
-    widgets/              # launcher, audio and date controls
-  notifications/         # popup notification presentation
-  osd/                    # volume, microphone and brightness OSD
-  sidebar/                # dashboard, calendar and notification centre
-bar/                      # focused status widgets and system-tray adapters
-utils/                    # singleton state and external-service adapters
+  SkewedPanel.qml         # low-level parallelogram geometry
+  SkewedSurface.qml       # shared surface, outline and shadow composition
+  SkewedImage.qml         # artwork clipped to the shared geometry
+  ProgressBar.qml         # common angular value indicator
+bar/                      # top bar, shared popups and status adapters
+launcher/                 # fuzzy app search and command runner
+notifications/            # daemon, popup stack and notification history
+lock/                     # session lock and authentication state
+osd/                      # volume, microphone and brightness OSD
+background/               # wallpaper and desktop clock
 ```
 
-State belongs in `utils/`, complete shell surfaces belong in `modules/`, and
-small reusable visual building blocks belong in `components/`. Bar status
-adapters remain deliberately small and contain no window-management code.
+Complete shell surfaces stay in their feature directories, state is kept in
+singleton controllers, and reusable visual building blocks live in
+`components/`. Everything is composed by one `ShellRoot`; unlike upstream
+Skwd, no feature launches a second Quickshell process.
 
 ## IPC
 
