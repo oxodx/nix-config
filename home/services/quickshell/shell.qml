@@ -1,3 +1,5 @@
+//@ pragma Env QS_NO_RELOAD_POPUP=1
+//@ pragma Env QT_QUICK_FLICKABLE_WHEEL_DECELERATION=10000
 import QtQuick
 import Quickshell
 import Quickshell.Io
@@ -13,6 +15,8 @@ import qs.screenshot as Screenshot
 
 ShellRoot {
   id: root
+
+  Background {}
 
   Component.onCompleted: [Lock.Controller.init(), Launcher.Controller.init()]
 
@@ -71,28 +75,6 @@ ShellRoot {
 
       Osd.Osd {
         screen: modelData
-      }
-
-      PanelWindow {
-        id: window
-
-        screen: modelData
-
-        exclusionMode: ExclusionMode.Ignore
-        WlrLayershell.layer: WlrLayer.Background
-        WlrLayershell.namespace: "shell:background"
-
-        anchors {
-          top: true
-          bottom: true
-          left: true
-          right: true
-        }
-
-        BackgroundImage {
-          anchors.fill: parent
-          screen: window.screen
-        }
       }
     }
   }

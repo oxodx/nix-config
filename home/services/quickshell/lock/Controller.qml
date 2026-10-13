@@ -7,10 +7,10 @@ import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Services.Pam
 import qs
-import qs.background
 
 Singleton {
   id: root
+
   function init() {
   }
 
@@ -93,14 +93,6 @@ Singleton {
         anchors.fill: parent
         color: "gray"
         visible: backgroundImage.visible
-      }
-
-      BackgroundImage {
-        id: backgroundImage
-        anchors.fill: parent
-        screen: lockSurface.screen
-        visible: root.lockSlide == 1.0
-        asynchronous: true
       }
 
       LockContent {
