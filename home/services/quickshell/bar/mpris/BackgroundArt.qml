@@ -7,6 +7,7 @@ import QtQuick.Effects
 import QtQuick.Layouts
 import qs
 import qs.bar
+import qs.components
 
 BarWidgetInner {
   id: root
@@ -19,6 +20,8 @@ BarWidgetInner {
   property real blurSamples: 41
 
   property bool reverse: false
+  property bool skewed: false
+  property real skew: 18
 
   function setArt(art: string, reverse: bool, immediate: bool) {
     this.reverse = reverse;
@@ -148,23 +151,26 @@ BarWidgetInner {
     id: overlayItem
     visible: true
     anchors.fill: parent
-    radius: root.radius
+    radius: 0
     color: "transparent"
 
     Rectangle {
       anchors.fill: parent
-      radius: root.radius
+      radius: 0
       color: "transparent"
       border.color: Appearance.colors.widgetOutlineSeparate
       border.width: 1
     }
   }
 
-  Rectangle {
+  SkewedPanel {
     id: rootMask
     width: root.width
     height: root.height
-    radius: root.radius
+    slantLeft: root.skewed
+    slantRight: root.skewed
+    slant: root.skew
+    fillColor: "white"
     visible: false
     layer.enabled: true
   }

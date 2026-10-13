@@ -16,6 +16,8 @@ FullwidthMouseArea {
   fillWindowWidth: true
 
   required property var bar
+  property bool skewed: false
+  property real edgeInset: 0
   implicitWidth: row.implicitWidth + 10
 
   PersistentProperties {
@@ -71,6 +73,7 @@ FullwidthMouseArea {
       id: bkg
       anchors.fill: parent
       overlay.color: "#b012141b"
+      skewed: root.skewed
 
       function updateArt(reverse: bool) {
         this.setArt(MprisController.activeTrack.artUrl, reverse, false);
@@ -93,7 +96,10 @@ FullwidthMouseArea {
 
       anchors {
         fill: parent
-        margins: 5
+        leftMargin: root.edgeInset + 5
+        rightMargin: root.edgeInset + 5
+        topMargin: 5
+        bottomMargin: 5
       }
 
       Item {

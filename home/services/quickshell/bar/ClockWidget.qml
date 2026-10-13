@@ -9,7 +9,7 @@ BarWidgetInner {
   required property var bar
 
   implicitHeight: layout.implicitHeight
-  implicitWidth: layout.implicitWidth + 16
+  implicitWidth: layout.implicitWidth + 24
 
   SystemClock {
     id: clock
@@ -30,7 +30,7 @@ BarWidgetInner {
       Text {
         Layout.alignment: Qt.AlignHCenter
         text: Qt.formatDateTime(clock.date, "hh:mm")
-        font.pixelSize: 13
+        font.pixelSize: 15
         font.weight: Font.DemiBold
         color: "white"
       }
@@ -38,7 +38,7 @@ BarWidgetInner {
       Text {
         Layout.alignment: Qt.AlignHCenter
         text: Qt.formatDateTime(clock.date, "ddd, MMM d")
-        font.pixelSize: 9
+        font.pixelSize: 10
         color: "#a8ffffff"
       }
     }

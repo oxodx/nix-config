@@ -11,7 +11,7 @@ FullwidthMouseArea {
   required property var bar
   property int wsCount: 10
 
-  implicitWidth: row.implicitWidth + 8
+  implicitWidth: row.implicitWidth + 12
 
   fillWindowWidth: true
   acceptedButtons: Qt.NoButton
@@ -42,7 +42,7 @@ FullwidthMouseArea {
 
   RowLayout {
     id: row
-    spacing: 3
+    spacing: 5
     anchors {
       fill: parent
       topMargin: 0
@@ -57,7 +57,7 @@ FullwidthMouseArea {
         onPressed: NiriState.focusWorkspace(root.bar.screen.name, workspaceIndex)
 
         Layout.fillHeight: true
-        implicitWidth: active ? 30 : 24
+        implicitWidth: active ? 38 : 30
 
         fillWindowWidth: false
 
@@ -74,9 +74,9 @@ FullwidthMouseArea {
 
         StyledRect {
           anchors.centerIn: parent
-          height: 24
+          height: 30
           width: parent.width
-          radius: 7
+          radius: 2
           border.color: wsItem.active ? Appearance.colors.widgetOutlineSeparate : "transparent"
           border.width: 1
           color: Appearance.interpolateColors(wsItem.animActive, "transparent", Appearance.colors.widgetActive)
@@ -85,7 +85,7 @@ FullwidthMouseArea {
             anchors.centerIn: parent
             text: wsItem.workspaceIndex
             color: wsItem.active ? "white" : "#b8ffffff"
-            font.pointSize: Appearance.font.size.small
+            font.pointSize: Appearance.font.size.smaller
             font.weight: wsItem.active ? Font.DemiBold : Font.Normal
           }
         }

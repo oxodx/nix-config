@@ -16,7 +16,7 @@ PanelWindow {
     top: true
   }
 
-  property real baseHeight: 56
+  property real baseHeight: 64
   property real topMargin: 0
   implicitHeight: baseHeight
   exclusiveZone: baseHeight
@@ -57,15 +57,16 @@ PanelWindow {
     id: barRect
 
     y: root.topMargin - Lock.Controller.lockSlide * (barRect.height + root.topMargin)
-    height: parent.height
+    height: 56
 
     anchors {
       left: parent.left
       right: parent.right
-      margins: 0
+      leftMargin: 0
+      rightMargin: 0
     }
 
-    color: Appearance.colors.bar
+    color: "transparent"
     radius: 0
     border.color: Appearance.colors.barOutline
     border.width: 0
@@ -75,10 +76,8 @@ PanelWindow {
 
       anchors {
         fill: parent
-        leftMargin: 10
-        rightMargin: 10
-        topMargin: 4
-        bottomMargin: 4
+        leftMargin: 0
+        rightMargin: 0
       }
     }
   }
