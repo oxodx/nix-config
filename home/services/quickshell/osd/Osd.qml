@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Layouts
 import Quickshell
 import Quickshell.Wayland
 import qs
@@ -12,13 +13,13 @@ PanelWindow {
   readonly property bool focusedScreen: screen.name === NiriState.focusedOutput || NiriState.focusedOutput === ""
 
   visible: showing && focusedScreen
-  implicitWidth: 310
-  implicitHeight: 66
+  implicitWidth: 340
+  implicitHeight: 72
   color: "transparent"
   exclusionMode: ExclusionMode.Ignore
 
   anchors.bottom: true
-  margins.bottom: 64
+  margins.bottom: 48
 
   WlrLayershell.layer: WlrLayer.Overlay
   WlrLayershell.namespace: "shell:osd"
@@ -26,7 +27,7 @@ PanelWindow {
 
   Connections {
     target: Controller
-    function onRequested() {
+    function onRequested(): void {
       if (!root.focusedScreen)
         return;
       root.showing = true;
@@ -40,71 +41,86 @@ PanelWindow {
     onTriggered: root.showing = false
   }
 
-  StyledRect {
+  Item {
     anchors.fill: parent
     opacity: root.showing ? 1 : 0
     scale: root.showing ? 1 : 0.94
-    color: "#ed171a22"
-    radius: 14
-    border.width: 1
-    border.color: "#38ffffff"
 
     Behavior on opacity { NumberAnimation { duration: 140 } }
-    Behavior on scale { NumberAnimation { duration: 160; easing.type: Easing.OutCubic } }
+    Behavior on scale { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
 
-    Row {
+    SkewedSurface {
+      anchors.fill: parent
+      slantLeft: true
+      slantRight: true
+      slant: 22
+      fillColor: "#ed171a22"
+      outlineColor: Appearance.colors.widgetOutlineSeparate
+      shadowColor: "#60000000"
+      shadowOffset: 5
+    }
+
+    RowLayout {
       anchors {
         fill: parent
-        leftMargin: 16
-        rightMargin: 22
+        leftMargin: 30
+        rightMargin: 30
+        topMargin: 10
+        bottomMargin: 10
       }
-      spacing: 14
+      spacing: 13
 
-      StyledText {
-        width: 25
-        height: parent.height
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-        font.pointSize: 15
-        color: Controller.muted ? "#ff747b" : "#f4f6fb"
-        text: Controller.kind === "brightness" ? "☀" : Controller.kind === "microphone" ? (Controller.muted ? "×" : "●") : (Controller.muted || Controller.value === 0 ? "×" : "♪")
+      MaterialIcon {
+        Layout.preferredWidth: 28
+        Layout.alignment: Qt.AlignVCenter
+        text: Controller.kind === "brightness"
+          ? "brightness_6"
+          : Controller.kind === "microphone"
+            ? (Controller.muted ? "mic_off" : "mic")
+            : (Controller.muted || Controller.value === 0 ? "volume_off" : "volume_up")
+        fill: 1
+        font.pointSize: Appearance.font.size.extraLarge
+        color: Controller.muted ? "#ff747b" : Appearance.colors.m3tertiary
       }
 
-      Item {
-        width: 180
-        height: parent.height
+      ColumnLayout {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        spacing: 4
 
-        StyledRect {
-          anchors.verticalCenter: parent.verticalCenter
-          width: parent.width
-          height: 8
-          radius: 4
-          color: "#30ffffff"
+        RowLayout {
+          Layout.fillWidth: true
 
-          StyledRect {
-            width: parent.width * Controller.value
-            height: parent.height
-            radius: parent.radius
-            color: Controller.muted ? "#ff747b" : "#88c0ff"
+          StyledText {
+            Layout.fillWidth: true
+            text: Controller.kind === "brightness" ? "BRIGHTNESS" : Controller.kind === "microphone" ? "MICROPHONE" : "VOLUME"
+            color: Appearance.colors.m3onSurfaceVariant
+            font.pointSize: Appearance.font.size.smaller
+            font.weight: Font.DemiBold
+          }
 
-            Behavior on width {
-              NumberAnimation { duration: 100; easing.type: Easing.OutCubic }
-            }
+          StyledText {
+            text: Controller.muted ? "OFF" : `${Math.round(Controller.value * 100)}%`
+            color: Controller.muted ? "#ff747b" : "#f4f6fb"
+            font.pointSize: Appearance.font.size.smaller
+            font.weight: Font.Bold
+          }
+        }
+
+        ProgressBar {
+          Layout.fillWidth: true
+          Layout.preferredHeight: 6
+          value: Controller.value
+          thickness: 6
+          cornerRadius: 0
+          fillColor: Controller.muted ? "#ff747b" : Appearance.colors.m3tertiary
+          trackColor: "#30ffffff"
+
+          Behavior on value {
+            NumberAnimation { duration: 120; easing.type: Easing.OutCubic }
           }
         }
       }
-
-      StyledText {
-        width: 38
-        height: parent.height
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-        color: "#f4f6fb"
-        font.pointSize: 9
-        font.weight: Font.DemiBold
-        text: Controller.muted ? "OFF" : `${Math.round(Controller.value * 100)}%`
-      }
     }
   }
-
 }
