@@ -32,7 +32,7 @@ in {
       st = "status";
     };
     commit = {
-      gpgSign = "true";
+      gpgSign = "false";
     };
     core = {
       editor = "nvim";
