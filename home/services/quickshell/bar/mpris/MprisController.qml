@@ -37,6 +37,7 @@ Singleton {
     return current;
   }
   readonly property string currentLyric: currentLyricIndex >= 0 ? syncedLyrics[currentLyricIndex].text : ""
+  readonly property string previousLyric: currentLyricIndex > 0 ? syncedLyrics[currentLyricIndex - 1].text : ""
   readonly property string nextLyric: currentLyricIndex + 1 < syncedLyrics.length ? syncedLyrics[currentLyricIndex + 1].text : ""
   readonly property string firstPlainLyric: plainLyrics.split("\n").map(line => line.trim()).find(line => line !== "") ?? ""
 

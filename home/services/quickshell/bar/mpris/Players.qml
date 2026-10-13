@@ -118,21 +118,13 @@ FullwidthMouseArea {
       color: "#16000000"
       radius: 0
 
-      StyledText {
+      AnimatedLyrics {
         anchors {
           fill: parent
           leftMargin: 10
           rightMargin: 10
         }
-        text: MprisController.lyricsLoading
-          ? "Finding lyrics…"
-          : MprisController.currentLyric || MprisController.firstPlainLyric || MprisController.lyricsError || "Right-click for media controls"
-        color: MprisController.currentLyric ? "white" : "#a8ffffff"
-        font.pointSize: 8
-        font.weight: MprisController.currentLyric ? Font.DemiBold : Font.Normal
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-        elide: Text.ElideRight
+        compact: true
       }
     }
 

@@ -175,38 +175,13 @@ Item {
       fillColor: "#2811131a"
       outlineColor: Appearance.colors.widgetOutline
 
-      ColumnLayout {
+      AnimatedLyrics {
         anchors {
           fill: parent
           leftMargin: 18
           rightMargin: 18
           topMargin: 8
           bottomMargin: 8
-        }
-        spacing: 2
-
-        StyledText {
-          Layout.fillWidth: true
-          Layout.fillHeight: true
-          text: MprisController.lyricsLoading
-            ? "Finding lyrics…"
-            : MprisController.currentLyric || MprisController.firstPlainLyric || MprisController.lyricsError || "No lyrics available"
-          color: MprisController.currentLyric ? "white" : Appearance.colors.m3onSurfaceVariant
-          font.weight: MprisController.currentLyric ? Font.DemiBold : Font.Normal
-          horizontalAlignment: Text.AlignHCenter
-          verticalAlignment: Text.AlignVCenter
-          wrapMode: Text.Wrap
-          maximumLineCount: 2
-          elide: Text.ElideRight
-        }
-
-        StyledText {
-          Layout.fillWidth: true
-          visible: text !== ""
-          text: MprisController.nextLyric
-          color: "#70ffffff"
-          horizontalAlignment: Text.AlignHCenter
-          elide: Text.ElideRight
         }
       }
     }
