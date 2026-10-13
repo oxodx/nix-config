@@ -21,7 +21,7 @@ BarContainment {
     id: leftIsland
     anchors.left: parent.left
     anchors.top: parent.top
-    height: 56
+    height: 60
     width: leftSection.implicitWidth + 34
 
     slantRight: true
@@ -97,15 +97,8 @@ BarContainment {
     id: centerIsland
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: parent.top
-    height: 56
+    height: 60
     width: Mpris.MprisController.activePlayer ? Math.min(900, Math.max(600, parent.width - leftIsland.width - rightIsland.width - 48)) : 360
-
-    Behavior on width {
-      NumberAnimation {
-        duration: Appearance.anim.durations.normal
-        easing.type: Easing.OutCubic
-      }
-    }
 
     slantLeft: true
     slantRight: true
@@ -122,6 +115,7 @@ BarContainment {
       height: 2
       color: Appearance.colors.m3tertiary
       opacity: Mpris.MprisController.activePlayer ? 0.9 : 0.35
+      visible: !Mpris.MprisController.activePlayer
     }
 
     Mpris.Players {
@@ -136,7 +130,7 @@ BarContainment {
     id: rightIsland
     anchors.right: parent.right
     anchors.top: parent.top
-    height: 56
+    height: 60
     width: rightSection.implicitWidth + 34
 
     slantLeft: true

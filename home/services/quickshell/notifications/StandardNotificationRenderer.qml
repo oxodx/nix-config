@@ -11,8 +11,10 @@ Item {
   required property Notification notif
   required property var backer
 
-  implicitWidth: 450
-  implicitHeight: c.implicitHeight
+  width: 450
+  height: c.implicitHeight
+  implicitWidth: width
+  implicitHeight: height
 
   HoverHandler {
     onHoveredChanged: {
@@ -46,18 +48,34 @@ Item {
     spacing: 0
 
     ColumnLayout {
-      Layout.margins: 10
+      Layout.leftMargin: 24
+      Layout.rightMargin: 24
+      Layout.topMargin: 12
+      Layout.bottomMargin: 12
 
       RowLayout {
-        Image {
-          visible: source != ""
-          source: notif.appIcon ? Quickshell.iconPath(notif.appIcon) : ""
-          fillMode: Image.PreserveAspectFit
-          antialiasing: true
-          sourceSize.width: 30
-          sourceSize.height: 30
+        Item {
           Layout.preferredWidth: 30
           Layout.preferredHeight: 30
+
+          Image {
+            id: appIcon
+            anchors.fill: parent
+            visible: status === Image.Ready
+            source: notif.appIcon ? Quickshell.iconPath(notif.appIcon) : ""
+            fillMode: Image.PreserveAspectFit
+            antialiasing: true
+            sourceSize.width: 30
+            sourceSize.height: 30
+          }
+
+          MaterialIcon {
+            anchors.centerIn: parent
+            visible: appIcon.status !== Image.Ready
+            text: notif.urgency == NotificationUrgency.Critical ? "priority_high" : "notifications"
+            fill: 1
+            color: notif.urgency == NotificationUrgency.Critical ? "#ff747b" : Appearance.colors.m3tertiary
+          }
         }
 
         ColumnLayout {
@@ -67,18 +85,19 @@ Item {
           StyledText {
             Layout.fillWidth: true
             visible: text !== ""
-            text: notif.summary
-            font.pointSize: Appearance.font.size.normal
-            font.weight: Font.Bold
+            text: notif.appName ?? ""
+            color: Appearance.colors.m3tertiary
+            font.pointSize: Appearance.font.size.smaller
+            font.weight: Font.DemiBold
             elide: Text.ElideRight
           }
 
           StyledText {
             Layout.fillWidth: true
             visible: text !== ""
-            text: notif.appName ?? ""
-            color: Appearance.colors.m3tertiary
-            font.pointSize: Appearance.font.size.smaller
+            text: notif.summary
+            font.pointSize: Appearance.font.size.normal
+            font.weight: Font.Bold
             elide: Text.ElideRight
           }
         }
@@ -124,11 +143,12 @@ Item {
 
         Image {
           id: notifImage
-          readonly property int size: visible ? 14 * 8 : 0
+          readonly property bool isArtwork: notif.image && !String(notif.image).startsWith("image://icon/")
+          readonly property int size: visible ? 72 : 0
           y: bodyLabel.y + bodyLabel.topPadding
 
-          visible: source != ""
-          source: notif.image
+          visible: isArtwork && status === Image.Ready
+          source: isArtwork ? notif.image : ""
           fillMode: Image.PreserveAspectFit
           cache: false
           antialiasing: true
@@ -141,9 +161,10 @@ Item {
 
         Label {
           id: bodyLabel
-          width: root.implicitWidth - 20
+          width: root.width - 48
           text: notif.body
           wrapMode: Text.Wrap
+          color: Appearance.colors.m3onSurface
 
           onLineLaidOut: line => {
             if (!notifImage.visible)
@@ -161,7 +182,9 @@ Item {
 
     ColumnLayout {
       Layout.fillWidth: true
-      Layout.margins: 1
+      Layout.leftMargin: 18
+      Layout.rightMargin: 18
+      Layout.bottomMargin: 6
       spacing: 0
       visible: notif.actions.length != 0
 

@@ -19,7 +19,7 @@ PanelWindow {
   }
 
   property var bar: null
-  readonly property bool isFocused: screen?.name == NiriState.focusedOutput
+  readonly property bool isFocused: screen?.name == NiriState.focusedOutput || NiriState.focusedOutput === ""
   //property var fullscreen: Hyprland.monitorFor(root.screen)?.activeWorkspace?.hasFullscreen ?? false
 
   property Component notifComponent: DaemonNotification {}
@@ -30,7 +30,7 @@ PanelWindow {
     anchors.fill: parent
 
     stack.y: root.bar.height + 8
-    stack.x: 0
+    stack.x: 10
   }
 
   visible: display.stack.children.length != 0

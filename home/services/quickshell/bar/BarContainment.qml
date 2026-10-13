@@ -16,7 +16,7 @@ PanelWindow {
     top: true
   }
 
-  property real baseHeight: 64
+  property real baseHeight: 68
   property real topMargin: 0
   implicitHeight: baseHeight
   exclusiveZone: baseHeight
@@ -29,7 +29,10 @@ PanelWindow {
   color: "transparent"
 
   WlrLayershell.namespace: "shell:bar"
-  focusable: tooltip.activeItem != null
+  // Popup windows handle their own input. Reconfiguring keyboard interactivity
+  // every time a tooltip appears makes some compositors visibly reposition the
+  // layer, so the bar itself must remain non-focusable.
+  focusable: false
 
   readonly property Tooltip tooltip: tooltip
   Tooltip {
@@ -39,25 +42,11 @@ PanelWindow {
 
   readonly property real tooltipXOffset: 0
 
-  function boundedY(targetY: real, height: real): real {
-    return Math.max(barRect.anchors.topMargin + height, Math.min(barRect.height + barRect.anchors.topMargin - height, targetY));
-  }
-
-  readonly property bool isFullscreenWorkspace: false
-  property real compactState: isFullscreenWorkspace ? 0 : 1
-  Behavior on compactState {
-    NumberAnimation {
-      duration: 600
-      easing.type: Easing.BezierSpline
-      easing.bezierCurve: [0.0, 0.75, 0.15, 1.0, 1.0, 1.0]
-    }
-  }
-
   StyledRect {
     id: barRect
 
-    y: root.topMargin - Lock.Controller.lockSlide * (barRect.height + root.topMargin)
-    height: 56
+    y: Math.round(root.topMargin - Lock.Controller.lockSlide * (barRect.height + root.topMargin))
+    height: 60
 
     anchors {
       left: parent.left
