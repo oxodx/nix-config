@@ -19,7 +19,7 @@ T.Slider {
     width: control.availableWidth
     height: implicitHeight
 
-    radius: 5
+    radius: 0
     color: control.grooveColor
     border.width: 0
 
@@ -30,7 +30,7 @@ T.Slider {
       }
 
       width: control.handle.x + (control.handle.width / 2) - parent.x
-      radius: parent.radius
+      radius: 0
       color: control.barColor
     }
   }
@@ -40,6 +40,7 @@ T.Slider {
     y: control.topPadding + control.availableHeight / 2 - height / 2
     implicitWidth: 16
     implicitHeight: 16
-    radius: 8
+    radius: 0
+    rotation: 45
   }
 }

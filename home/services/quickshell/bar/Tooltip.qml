@@ -183,10 +183,10 @@ Scope {
         }
 
         background: Rectangle {
-          color: "#f220232d"
-          border.color: "#40ffffff"
+          color: root.shownItem?.customBackground ? "transparent" : "#f220232d"
+          border.color: root.shownItem?.customBackground ? "transparent" : "#40ffffff"
           border.width: 1
-          radius: 8
+          radius: root.shownItem?.customBackground ? 0 : 8
         }
 
         contentItem: Item {

@@ -16,28 +16,14 @@ import qs.notifications as Notifs
 BarContainment {
   id: root
 
-  Item {
+  SkewedSurface {
     id: leftIsland
     anchors.left: parent.left
     anchors.top: parent.top
     height: 56
     width: leftSection.implicitWidth + 34
 
-    SkewedPanel {
-      anchors.fill: parent
-      anchors.topMargin: 4
-      slantRight: true
-      slant: 18
-      fillColor: "#50000000"
-    }
-
-    SkewedPanel {
-      anchors.fill: parent
-      slantRight: true
-      slant: 18
-      fillColor: "#e61c1b24"
-      outlineColor: Appearance.colors.widgetOutlineSeparate
-    }
+    slantRight: true
 
     RowLayout {
       id: leftSection
@@ -79,30 +65,25 @@ BarContainment {
     }
   }
 
-  Item {
+  SkewedSurface {
     id: centerIsland
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: parent.top
     height: 56
-    width: Math.min(780, Math.max(320, parent.width - leftIsland.width - rightIsland.width - 80))
+    width: Mpris.MprisController.activePlayer
+      ? Math.min(900, Math.max(600, parent.width - leftIsland.width - rightIsland.width - 48))
+      : 360
 
-    SkewedPanel {
-      anchors.fill: parent
-      anchors.topMargin: 4
-      slantLeft: true
-      slantRight: true
-      slant: 18
-      fillColor: "#50000000"
+    Behavior on width {
+      NumberAnimation {
+        duration: Appearance.anim.durations.normal
+        easing.type: Easing.OutCubic
+      }
     }
 
-    SkewedPanel {
-      anchors.fill: parent
-      slantLeft: true
-      slantRight: true
-      slant: 18
-      fillColor: "#dc11131a"
-      outlineColor: Appearance.colors.widgetOutlineSeparate
-    }
+    slantLeft: true
+    slantRight: true
+    fillColor: "#dc11131a"
 
     Mpris.Players {
       bar: root
@@ -112,28 +93,14 @@ BarContainment {
     }
   }
 
-  Item {
+  SkewedSurface {
     id: rightIsland
     anchors.right: parent.right
     anchors.top: parent.top
     height: 56
     width: rightSection.implicitWidth + 34
 
-    SkewedPanel {
-      anchors.fill: parent
-      anchors.topMargin: 4
-      slantLeft: true
-      slant: 18
-      fillColor: "#50000000"
-    }
-
-    SkewedPanel {
-      anchors.fill: parent
-      slantLeft: true
-      slant: 18
-      fillColor: "#e61c1b24"
-      outlineColor: Appearance.colors.widgetOutlineSeparate
-    }
+    slantLeft: true
 
     RowLayout {
       id: rightSection

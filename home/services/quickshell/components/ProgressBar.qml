@@ -1,4 +1,5 @@
 import QtQuick
+import qs
 
 Item {
   id: root
@@ -6,8 +7,16 @@ Item {
   property real from: 0.0
   property real to: 1.0
   property real value: 0.0
+  property color fillColor: Appearance.colors.m3tertiary
+  property color trackColor: Qt.alpha(Appearance.colors.m3tertiary, 0.22)
+  property real thickness: 3
+  property real cornerRadius: 0
 
-  implicitHeight: 7
+  readonly property real progress: root.to === root.from
+    ? 0
+    : Math.max(0, Math.min(1, (root.value - root.from) / (root.to - root.from)))
+
+  implicitHeight: thickness
   implicitWidth: 200
 
   StyledRect {
@@ -19,9 +28,9 @@ Item {
       bottom: groove.bottom
     }
 
-    radius: 5
-    color: "#80ceffff"
-    width: root.width * ((root.value - root.from) / (root.to - root.from))
+    radius: root.cornerRadius
+    color: root.fillColor
+    width: root.width * root.progress
   }
 
   StyledRect {
@@ -33,9 +42,8 @@ Item {
       verticalCenter: parent.verticalCenter
     }
 
-    height: 7
-    border.color: "#20eeffff"
-    border.width: 1
-    radius: 5
+    height: root.thickness
+    color: root.trackColor
+    radius: root.cornerRadius
   }
 }

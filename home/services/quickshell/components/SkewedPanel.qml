@@ -21,9 +21,21 @@ Shape {
 
     startX: root.slantLeft ? root.slant : 0
     startY: 0
-    PathLine { x: root.width; y: 0 }
-    PathLine { x: root.slantRight ? root.width - root.slant : root.width; y: root.height }
-    PathLine { x: 0; y: root.height }
-    PathLine { x: root.slantLeft ? root.slant : 0; y: 0 }
+    PathLine {
+      x: root.width
+      y: 0
+    }
+    PathLine {
+      x: root.slantRight ? root.width - root.slant : root.width
+      y: root.height
+    }
+    PathLine {
+      x: 0
+      y: root.height
+    }
+    PathLine {
+      x: root.slantLeft ? root.slant : 0
+      y: 0
+    }
   }
 }

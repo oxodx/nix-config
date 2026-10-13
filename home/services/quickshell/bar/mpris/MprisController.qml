@@ -260,16 +260,16 @@ Singleton {
     }
   }
 
-  property bool canChangeVolume: this.activePlayer && this.activePlayer.volumeSupported && this.activePlayer.canControl
+  property bool canChangeVolume: !!(this.activePlayer?.volumeSupported && this.activePlayer?.canControl)
 
-  property bool loopSupported: this.activePlayer && this.activePlayer.loopSupported && this.activePlayer.canControl
+  property bool loopSupported: !!(this.activePlayer?.loopSupported && this.activePlayer?.canControl)
   property var loopState: this.activePlayer?.loopState ?? MprisLoopState.None
   function setLoopState(loopState: var) {
     if (this.loopSupported)
       this.activePlayer.loopState = loopState;
   }
 
-  property bool shuffleSupported: this.activePlayer && this.activePlayer.shuffleSupported && this.activePlayer.canControl
+  property bool shuffleSupported: !!(this.activePlayer?.shuffleSupported && this.activePlayer?.canControl)
   property bool hasShuffle: this.activePlayer?.shuffle ?? false
   function setShuffle(shuffle: bool) {
     if (this.shuffleSupported)

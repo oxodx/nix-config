@@ -9,6 +9,7 @@ Item {
   property list<QtObject> grabWindows
   property bool hoverable: isMenu
   property bool animateSize: true
+  property bool customBackground: false
   property bool show: false
   property bool preloadBackground: root.visible
 
