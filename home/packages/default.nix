@@ -1,0 +1,95 @@
+{
+  pkgs,
+  inputs,
+  ...
+}: {
+  imports = [
+    ./browsers
+    ./media
+    ./gtk.nix
+  ];
+
+  users.users.oxod.packages = with pkgs;
+    [
+      signal-desktop
+      telegram-desktop
+      vesktop
+      halloy
+      pciutils
+      nixos-icons
+      ffmpegthumbnailer
+      imagemagick
+      bun
+      file-roller
+      gnome-control-center
+      nautilus
+      (papers.override {supportNautilus = true;})
+      pwvucontrol
+      (celluloid.override {youtubeSupport = true;})
+      loupe
+      packet
+      fractal
+      gnome-text-editor
+      gnome-calculator
+      amberol
+      inkscape
+      scrcpy
+      android-tools
+      awww
+      openvpn
+      fprintd
+      kdePackages.qt6ct
+      libsForQt5.qt5ct
+      kdePackages.breeze
+      kdePackages.breeze.qt5
+      neovim
+      wget
+      git
+      fastfetch
+      nnn
+      zip
+      xz
+      unzip
+      p7zip
+      ripgrep
+      jq
+      yq-go
+      eza
+      fzf
+      mtr
+      iperf3
+      dnsutils
+      ldns
+      aria2
+      socat
+      nmap
+      ipcalc
+      cowsay
+      file
+      which
+      tree
+      gnused
+      gnutar
+      gawk
+      zstd
+      gnupg
+      nix-output-monitor
+      hugo
+      glow
+      btop
+      iotop
+      iftop
+      strace
+      ltrace
+      lsof
+      sysstat
+      lm_sensors
+      ethtool
+      usbutils
+      vscode
+      bash
+    ]
+    ++ (with inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}; [
+      chatgpt
+    ]);
+}

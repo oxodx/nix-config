@@ -1,0 +1,24 @@
+{
+  imports = [
+    ./atuin.nix
+    ./autojump.nix
+    ./bat.nix
+    ./bottom.nix
+    ./commandNotFound.nix
+    ./fum.nix
+    ./fzf.nix
+    ./gh.nix
+    ./git.nix
+    ./glow.nix
+    ./lazygit.nix
+    ./nixYourShell.nix
+    ./nix.nix
+    ./payRespects.nix
+    ./skim.nix
+    ./ssh.nix
+    ./television.nix
+    ./tui.nix
+    ./xdg.nix
+    ./zoxide.nix
+  ];
+}
