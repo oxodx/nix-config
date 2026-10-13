@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import qs
 import qs.bar.systray as SysTray
 import qs.bar.audio as Audio
 import qs.bar.mpris as Mpris
@@ -12,6 +13,7 @@ import qs.notifications as Notifs
 
 BarContainment {
   id: root
+
   RowLayout {
     id: leftSection
     anchors.left: parent.left
@@ -19,6 +21,14 @@ BarContainment {
     height: 34
     width: implicitWidth
     spacing: 6
+
+    OsIcon {
+      id: osIcon
+
+      Layout.fillHeight: true
+      Layout.preferredWidth: height
+      Layout.alignment: Qt.AlignVCenter
+    }
 
     Notifs.NotificationWidget {
       bar: root
@@ -30,7 +40,6 @@ BarContainment {
       bar: root
       Layout.fillHeight: true
     }
-
   }
 
   Mpris.Players {
