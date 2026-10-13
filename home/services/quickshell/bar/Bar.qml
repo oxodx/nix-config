@@ -4,6 +4,8 @@ import QtQuick
 import QtQuick.Layouts
 import Quickshell
 import qs
+import qs.utils
+import qs.components
 import qs.bar.systray as SysTray
 import qs.bar.audio as Audio
 import qs.bar.mpris as Mpris
@@ -22,8 +24,14 @@ BarContainment {
     width: implicitWidth
     spacing: 6
 
-    OsIcon {
-      id: osIcon
+    // OS Icon
+    FullwidthMouseArea {
+      MaterialIcon {
+        anchors.centerIn: parent
+        text: Icons.osIcon
+        font.family: "Symbols Nerd Font Mono"
+        color: Appearance.colors.m3tertiary
+      }
 
       Layout.fillHeight: true
       Layout.preferredWidth: height
