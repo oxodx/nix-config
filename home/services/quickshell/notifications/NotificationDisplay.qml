@@ -77,10 +77,7 @@ Item {
     layer.effect: Shaders.MaskedOverlay {
       overlayItem: overlaySource
       overlaySize: Qt.size(overlaySource.width, overlaySource.height)
-      overlayPos: Qt.point(
-        stack.x + (stack.topNotification?.x ?? 0) + (stack.topNotification?.displayContainer.x ?? 0),
-        stack.y + (stack.topNotification?.y ?? 0) + (stack.topNotification?.displayContainer.y ?? 0)
-      )
+      overlayPos: Qt.point(stack.x + (stack.topNotification?.x ?? 0) + (stack.topNotification?.displayContainer.x ?? 0), stack.y + (stack.topNotification?.y ?? 0) + (stack.topNotification?.displayContainer.y ?? 0))
     }
 
     ShaderEffectSource {

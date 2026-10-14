@@ -49,7 +49,9 @@ Singleton {
     id: brightnessProcess
     property bool increase: true
     command: ["brightnessctl", "-m", "set", increase ? "+10%" : "10%-"]
-    stdout: StdioCollector { id: brightnessOutput }
+    stdout: StdioCollector {
+      id: brightnessOutput
+    }
     onExited: code => {
       if (code !== 0)
         return;
@@ -68,7 +70,11 @@ Singleton {
 
   IpcHandler {
     target: "osd"
-    function brightnessUp(): void { root.changeBrightness(true); }
-    function brightnessDown(): void { root.changeBrightness(false); }
+    function brightnessUp(): void {
+      root.changeBrightness(true);
+    }
+    function brightnessDown(): void {
+      root.changeBrightness(false);
+    }
   }
 }

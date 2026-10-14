@@ -114,9 +114,12 @@ Item {
         cacheBuffer: 0 // works around QTBUG-131106
         //reuseItems: true
         model: ScriptModel {
-          values: search.text.startsWith(">")
-            ? [{ kind: "command", command: search.text.slice(1).trim() }]
-            : DesktopEntries.applications.values.map(object => {
+          values: search.text.startsWith(">") ? [
+            {
+              kind: "command",
+              command: search.text.slice(1).trim()
+            }
+          ] : DesktopEntries.applications.values.map(object => {
             const stxt = search.text.toLowerCase();
             const ntxt = object.name.toLowerCase();
             let si = 0;
@@ -192,7 +195,10 @@ Item {
               return s;
 
             return a.object.name.localeCompare(b.object.name);
-          }).map(entry => ({ kind: "app", object: entry.object }))
+          }).map(entry => ({
+                kind: "app",
+                object: entry.object
+              }))
 
           onValuesChanged: list.currentIndex = 0
         }
@@ -294,7 +300,7 @@ Item {
             anchors {
               verticalCenter: parent.verticalCenter
               left: parent.left
-            leftMargin: 12
+              leftMargin: 12
             }
             spacing: 12
 

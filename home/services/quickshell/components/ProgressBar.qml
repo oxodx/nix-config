@@ -12,9 +12,7 @@ Item {
   property real thickness: 3
   property real cornerRadius: 0
 
-  readonly property real progress: root.to === root.from
-    ? 0
-    : Math.max(0, Math.min(1, (root.value - root.from) / (root.to - root.from)))
+  readonly property real progress: root.to === root.from ? 0 : Math.max(0, Math.min(1, (root.value - root.from) / (root.to - root.from)))
 
   implicitHeight: thickness
   implicitWidth: 200

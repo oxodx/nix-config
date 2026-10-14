@@ -46,8 +46,17 @@ PanelWindow {
     opacity: root.showing ? 1 : 0
     scale: root.showing ? 1 : 0.94
 
-    Behavior on opacity { NumberAnimation { duration: 140 } }
-    Behavior on scale { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
+    Behavior on opacity {
+      NumberAnimation {
+        duration: 140
+      }
+    }
+    Behavior on scale {
+      NumberAnimation {
+        duration: 180
+        easing.type: Easing.OutCubic
+      }
+    }
 
     SkewedSurface {
       anchors.fill: parent
@@ -73,11 +82,7 @@ PanelWindow {
       MaterialIcon {
         Layout.preferredWidth: 28
         Layout.alignment: Qt.AlignVCenter
-        text: Controller.kind === "brightness"
-          ? "brightness_6"
-          : Controller.kind === "microphone"
-            ? (Controller.muted ? "mic_off" : "mic")
-            : (Controller.muted || Controller.value === 0 ? "volume_off" : "volume_up")
+        text: Controller.kind === "brightness" ? "brightness_6" : Controller.kind === "microphone" ? (Controller.muted ? "mic_off" : "mic") : (Controller.muted || Controller.value === 0 ? "volume_off" : "volume_up")
         fill: 1
         font.pointSize: Appearance.font.size.extraLarge
         color: Controller.muted ? "#ff747b" : Appearance.colors.m3tertiary
@@ -117,7 +122,10 @@ PanelWindow {
           trackColor: "#30ffffff"
 
           Behavior on value {
-            NumberAnimation { duration: 120; easing.type: Easing.OutCubic }
+            NumberAnimation {
+              duration: 120
+              easing.type: Easing.OutCubic
+            }
           }
         }
       }
