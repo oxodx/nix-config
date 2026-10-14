@@ -64,7 +64,11 @@ BarContainment {
           fillColor: launcherButton.containsMouse ? Appearance.colors.widgetActive : "transparent"
           outlineColor: launcherButton.containsMouse ? Appearance.colors.m3tertiary : "transparent"
 
-          Behavior on fillColor { ColorAnimation { duration: 140 } }
+          Behavior on fillColor {
+            ColorAnimation {
+              duration: 140
+            }
+          }
         }
 
         MaterialIcon {

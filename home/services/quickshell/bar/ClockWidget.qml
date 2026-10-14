@@ -3,10 +3,13 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import Quickshell
 import qs
+import qs.bar
+import qs.bar.dashboard as Dashboard
 
 BarWidgetInner {
   id: root
   required property var bar
+  property bool dashboardOpen: false
 
   implicitHeight: layout.implicitHeight
   implicitWidth: layout.implicitWidth + 24
@@ -20,7 +23,9 @@ BarWidgetInner {
     id: button
     anchors.fill: parent
     fillWindowWidth: true
-    acceptedButtons: Qt.NoButton
+    acceptedButtons: Qt.LeftButton
+    showPressed: root.dashboardOpen
+    onPressed: root.dashboardOpen = !root.dashboardOpen
 
     ColumnLayout {
       id: layout
@@ -48,13 +53,33 @@ BarWidgetInner {
     id: tooltip
     tooltip: bar.tooltip
     owner: root
-    show: button.containsMouse
+    show: button.containsMouse && !root.dashboardOpen
 
     Loader {
       active: tooltip.visible
       sourceComponent: Label {
         text: Qt.formatDateTime(clock.date, "hh:mm:ss\ndddd, MMMM d, yyyy")
       }
+    }
+  }
+
+  property TooltipItem dashboard: TooltipItem {
+    tooltip: root.bar.tooltip
+    owner: root
+    isMenu: true
+    customBackground: true
+    animateSize: false
+    show: root.dashboardOpen
+    onClose: root.dashboardOpen = false
+
+    contentItem {
+      implicitWidth: 520
+      implicitHeight: 390
+    }
+
+    Dashboard.Dashboard {
+      anchors.fill: parent
+      onRequestClose: root.dashboardOpen = false
     }
   }
 }

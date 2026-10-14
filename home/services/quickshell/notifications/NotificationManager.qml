@@ -36,7 +36,8 @@ Singleton {
       });
       root.notifications = [...root.notifications, notif];
 
-      root.notif(notif);
+      if (!root.dnd)
+        root.notif(notif);
     }
   }
 
