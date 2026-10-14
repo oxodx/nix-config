@@ -17,16 +17,18 @@ Item {
   function currentText(): string {
     if (MprisController.lyricsLoading)
       return "Finding lyrics…";
-    return MprisController.currentLyric
-      || MprisController.firstPlainLyric
-      || MprisController.lyricsError
-      || "No lyrics available";
+    return MprisController.currentLyric || MprisController.firstPlainLyric || MprisController.lyricsError || "No lyrics available";
   }
 
   function populate(layer: Item): void {
-    layer.previousText = MprisController.previousLyric;
     layer.currentText = currentText();
-    layer.nextText = MprisController.nextLyric;
+    if (currentText() === "Finding lyrics…" || currentText() === "No lyrics available") {
+      layer.previousText = "";
+      layer.nextText = "";
+    } else {
+      layer.previousText = MprisController.previousLyric;
+      layer.nextText = MprisController.nextLyric;
+    }
     layer.synced = MprisController.currentLyric !== "";
   }
 
@@ -60,11 +62,21 @@ Item {
 
   Connections {
     target: MprisController
-    function onCurrentLyricIndexChanged(): void { root.refresh(false); }
-    function onFirstPlainLyricChanged(): void { root.refresh(false); }
-    function onLyricsLoadingChanged(): void { root.refresh(false); }
-    function onLyricsErrorChanged(): void { root.refresh(false); }
-    function onActivePlayerChanged(): void { root.refresh(true); }
+    function onCurrentLyricIndexChanged(): void {
+      root.refresh(false);
+    }
+    function onFirstPlainLyricChanged(): void {
+      root.refresh(false);
+    }
+    function onLyricsLoadingChanged(): void {
+      root.refresh(false);
+    }
+    function onLyricsErrorChanged(): void {
+      root.refresh(false);
+    }
+    function onActivePlayerChanged(): void {
+      root.refresh(true);
+    }
   }
 
   LyricStack {
