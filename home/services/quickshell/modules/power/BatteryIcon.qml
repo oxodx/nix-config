@@ -17,9 +17,12 @@ Item {
     fill: 1
     color: root.percentage <= 0.2 ? Appearance.colors.m3error : Appearance.colors.m3primary
     text: {
-      if (root.isCharging) return "battery_charging_full";
-      if (root.percentage >= 0.95) return "battery_full";
-      if (root.percentage <= 0.05) return "battery_alert";
+      if (root.isCharging)
+        return "battery_charging_full";
+      if (root.percentage >= 0.95)
+        return "battery_full";
+      if (root.percentage <= 0.05)
+        return "battery_alert";
       return "battery_" + Math.min(6, Math.floor(root.percentage * 7)) + "_bar";
     }
   }

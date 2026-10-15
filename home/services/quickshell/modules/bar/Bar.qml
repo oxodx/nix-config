@@ -52,6 +52,7 @@ BarContainment {
       }
     }
   }
+
   BarSurface {
     id: centerIsland
     anchors.horizontalCenter: parent.horizontalCenter
@@ -69,6 +70,7 @@ BarContainment {
       edgeInset: 30
     }
   }
+
   BarSurface {
     id: rightIsland
     anchors.right: parent.right
@@ -76,34 +78,41 @@ BarContainment {
     height: root.barHeight
     width: rightSection.implicitWidth + 42
     cutLeft: true
+
     RowLayout {
       id: rightSection
       anchors.fill: parent
       anchors.leftMargin: 32
       anchors.rightMargin: 10
       spacing: 8
+
       SysTray.SysTray {
         bar: root
         Layout.fillHeight: true
       }
+
       Notifs.NotificationWidget {
         bar: root
         Layout.fillHeight: true
         Layout.preferredWidth: 30
       }
+
       Connections.Connections {
         bar: root
         Layout.fillHeight: true
       }
+
       Audio.AudioControls {
         bar: root
         Layout.fillHeight: true
       }
+
       Power.Power {
         bar: root
         Layout.fillHeight: true
         Layout.preferredWidth: 28
       }
+
       ClockWidget {
         bar: root
         Layout.fillHeight: true

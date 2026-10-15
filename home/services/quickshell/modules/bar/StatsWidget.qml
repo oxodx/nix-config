@@ -8,11 +8,27 @@ import qs.services
 RowLayout {
   spacing: 12
   Repeater {
-    model: [ { icon: "memory", value: SystemStats.cpu }, { icon: "storage", value: SystemStats.memory } ]
+    model: [
+      {
+        icon: "memory",
+        value: SystemStats.cpu
+      },
+      {
+        icon: "storage",
+        value: SystemStats.memory
+      }
+    ]
+
     RowLayout {
       required property var modelData
       spacing: 4
-      MaterialIcon { text: modelData.icon; font.pointSize: 12; color: Appearance.colors.m3primary }
+
+      MaterialIcon {
+        text: modelData.icon
+        font.pointSize: 12
+        color: Appearance.colors.m3primary
+      }
+
       StyledText {
         Layout.preferredWidth: 34
         text: Math.round(modelData.value * 100) + "%"

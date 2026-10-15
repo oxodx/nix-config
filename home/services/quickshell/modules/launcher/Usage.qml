@@ -5,6 +5,7 @@ import Quickshell
 
 Singleton {
   id: root
+
   readonly property var counts: {
     try {
       const parsed = JSON.parse(settings.counts);
@@ -13,11 +14,13 @@ Singleton {
       return {};
     }
   }
+
   Settings {
     id: settings
     category: "launcher-history"
     property string counts: "{}"
   }
+
   function record(entry): void {
     const next = Object.assign({}, root.counts);
     const key = entry.id || entry.name;

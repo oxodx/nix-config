@@ -24,7 +24,9 @@ Item {
 
   readonly property var sink: Pipewire.defaultAudioSink
   readonly property var source: Pipewire.defaultAudioSource
-  PwObjectTracker { objects: [root.sink, root.source] }
+  PwObjectTracker {
+    objects: [root.sink, root.source]
+  }
   readonly property var battery: UPower.displayDevice
 
   SystemClock {
@@ -110,7 +112,10 @@ Item {
         label: "Microphone"
         enabled: root.source?.audio != null
         active: root.source?.audio != null && !root.source.audio.muted
-        onTriggered: { if (root.source?.audio) root.source.audio.muted = !root.source.audio.muted; }
+        onTriggered: {
+          if (root.source?.audio)
+            root.source.audio.muted = !root.source.audio.muted;
+        }
       }
 
       DashboardAction {
@@ -277,8 +282,16 @@ Item {
       Layout.fillWidth: true
       Layout.fillHeight: true
       spacing: 12
-      CalendarCard { Layout.fillWidth: true; Layout.fillHeight: true }
-      SystemUsage { Layout.fillWidth: true; Layout.fillHeight: true }
+
+      CalendarCard {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+      }
+
+      SystemUsage {
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+      }
     }
   }
 }
