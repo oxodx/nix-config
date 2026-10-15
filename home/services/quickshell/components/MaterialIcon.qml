@@ -1,4 +1,4 @@
-import qs
+import qs.theme
 
 StyledText {
   property real fill

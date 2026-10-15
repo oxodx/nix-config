@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 
+import qs.theme
 import QtQuick
 
 Item {
@@ -51,33 +52,16 @@ Item {
       }
     }
 
-    StyledRect {
-      id: grooveFill
-
-      anchors {
-        left: groove.left
-        top: groove.top
-        bottom: groove.bottom
-      }
-
-      radius: 5
-      color: "#80ceffff"
-      width: mouseArea.valueOffset
-    }
-
-    StyledRect {
+    SliderGroove {
       id: groove
-
-      anchors {
-        left: parent.left
-        right: parent.right
-      }
-
+      anchors.left: parent.left
+      anchors.right: parent.right
       y: 5
-      implicitHeight: 7
-      border.color: "#20eeffff"
-      border.width: 1
-      radius: 5
+      height: implicitHeight
+      fillWidth: mouseArea.valueOffset
+      fillColor: Appearance.colors.sliderFill
+      outlineColor: "#20eeffff"
+      cornerRadius: 5
     }
 
     StyledRect {

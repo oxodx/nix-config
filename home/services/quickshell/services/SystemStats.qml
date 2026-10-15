@@ -22,17 +22,26 @@ Singleton {
       root.previousIdle = idle;
     }
   }
+
   FileView {
     id: memoryFile
     path: "/proc/meminfo"
     onLoaded: {
       const total = text().match(/MemTotal:\s+(\d+)/);
       const available = text().match(/MemAvailable:\s+(\d+)/);
-      if (total && available) root.memory = 1 - Number(available[1]) / Number(total[1]);
+      if (total && available)
+        root.memory = 1 - Number(available[1]) / Number(total[1]);
     }
   }
+
   Timer {
-    interval: 2000; running: true; repeat: true; triggeredOnStart: true
-    onTriggered: { cpuFile.reload(); memoryFile.reload(); }
+    interval: 2000
+    running: true
+    repeat: true
+    triggeredOnStart: true
+    onTriggered: {
+      cpuFile.reload();
+      memoryFile.reload();
+    }
   }
 }

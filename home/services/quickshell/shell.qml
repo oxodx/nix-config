@@ -1,17 +1,18 @@
 //@ pragma Env QS_NO_RELOAD_POPUP=1
 //@ pragma Env QT_QUICK_FLICKABLE_WHEEL_DECELERATION=10000
+import qs.services
 import QtQuick
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Pipewire
 import Quickshell.Wayland
-import qs.bar
-import qs.background
-import qs.lock as Lock
-import qs.launcher as Launcher
-import qs.notifications as Notifs
-import qs.osd as Osd
-import qs.screenshot as Screenshot
+import qs.modules.bar
+import qs.modules.background
+import qs.modules.lock as Lock
+import qs.modules.launcher as Launcher
+import qs.modules.notifications as Notifs
+import qs.modules.osd as Osd
+import qs.modules.screenshot as Screenshot
 
 ShellRoot {
   id: root

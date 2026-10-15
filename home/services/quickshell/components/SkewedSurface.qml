@@ -1,5 +1,5 @@
+import qs.theme
 import QtQuick
-import qs
 
 Item {
   id: root
@@ -11,7 +11,7 @@ Item {
   property real slant: 18
   property color fillColor: "#e61c1b24"
   property color outlineColor: Appearance.colors.widgetOutlineSeparate
-  property color shadowColor: "#50000000"
+  property color shadowColor: Appearance.colors.neutralShadow
   property real shadowOffset: 4
 
   SkewedPanel {
