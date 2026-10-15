@@ -1,8 +1,4 @@
-{
-  inputs,
-  pkgs,
-  ...
-}: {
+{pkgs, ...}: {
   services = {
     logind.settings.Login = {
       powerKey = "suspend";
