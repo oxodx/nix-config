@@ -3,8 +3,8 @@ import qs
 import qs.components
 
 StyledRect {
-  color: "#181b2530"
+  color: "transparent"
   radius: 0
   border.color: Appearance.colors.widgetOutline
-  border.width: 1
+  border.width: 0
 }

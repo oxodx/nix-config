@@ -16,7 +16,8 @@ PanelWindow {
     top: true
   }
 
-  property real baseHeight: 68
+  property real baseHeight: 40
+  readonly property real barHeight: 40
   property real topMargin: 0
   implicitHeight: baseHeight
   exclusiveZone: baseHeight
@@ -46,7 +47,7 @@ PanelWindow {
     id: barRect
 
     y: Math.round(root.topMargin - Lock.Controller.lockSlide * (barRect.height + root.topMargin))
-    height: 60
+    height: root.barHeight
 
     anchors {
       left: parent.left

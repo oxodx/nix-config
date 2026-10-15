@@ -5,6 +5,7 @@ import QtQuick.Layouts
 import Quickshell
 import Quickshell.Services.Pipewire
 import Quickshell.Services.UPower
+import Quickshell.Networking
 import qs
 import qs.components
 import qs.launcher as Launcher
@@ -17,10 +18,12 @@ Item {
 
   signal requestClose
 
-  implicitWidth: 520
-  implicitHeight: 390
+  implicitWidth: 760
+  implicitHeight: 660
 
   readonly property var sink: Pipewire.defaultAudioSink
+  readonly property var source: Pipewire.defaultAudioSource
+  PwObjectTracker { objects: [root.sink, root.source] }
   readonly property var battery: UPower.displayDevice
 
   SystemClock {
@@ -91,6 +94,23 @@ Item {
     RowLayout {
       Layout.fillWidth: true
       spacing: 8
+
+      DashboardAction {
+        Layout.fillWidth: true
+        icon: Networking.wifiEnabled ? "wifi" : "wifi_off"
+        label: "Wi-Fi"
+        active: Networking.wifiEnabled
+        onTriggered: Networking.wifiEnabled = !Networking.wifiEnabled
+      }
+
+      DashboardAction {
+        Layout.fillWidth: true
+        icon: root.source?.audio?.muted ? "mic_off" : "mic"
+        label: "Microphone"
+        enabled: root.source?.audio != null
+        active: root.source?.audio != null && !root.source.audio.muted
+        onTriggered: { if (root.source?.audio) root.source.audio.muted = !root.source.audio.muted; }
+      }
 
       DashboardAction {
         Layout.fillWidth: true
@@ -183,7 +203,7 @@ Item {
 
     SkewedSurface {
       Layout.fillWidth: true
-      Layout.fillHeight: true
+      Layout.preferredHeight: 116
       slantLeft: true
       slantRight: true
       slant: 14
@@ -253,6 +273,14 @@ Item {
           onTriggered: Mpris.MprisController.next()
         }
       }
+    }
+
+    RowLayout {
+      Layout.fillWidth: true
+      Layout.fillHeight: true
+      spacing: 12
+      CalendarCard { Layout.fillWidth: true; Layout.fillHeight: true }
+      SystemUsage { Layout.fillWidth: true; Layout.fillHeight: true }
     }
   }
 }

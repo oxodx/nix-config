@@ -12,6 +12,7 @@ FullwidthMouseArea {
 
   required property var bar
   property bool skewed: false
+  property bool compactBar: false
   property real edgeInset: 0
   readonly property var player: MprisController.activePlayer
 
@@ -45,6 +46,7 @@ FullwidthMouseArea {
 
   BackgroundArt {
     id: background
+    visible: !root.compactBar
     anchors.fill: parent
     overlay.color: "#b012141b"
     skewed: root.skewed
@@ -62,6 +64,7 @@ FullwidthMouseArea {
   }
 
   RowLayout {
+    visible: !root.compactBar
     anchors {
       fill: parent
       leftMargin: root.edgeInset + 6
@@ -157,6 +160,44 @@ FullwidthMouseArea {
     }
   }
 
+  RowLayout {
+    anchors.fill: parent
+    anchors.leftMargin: root.edgeInset
+    anchors.rightMargin: root.edgeInset
+    anchors.topMargin: 1
+    anchors.bottomMargin: 4
+    visible: root.compactBar
+    spacing: 16
+
+    StyledText {
+      Layout.preferredWidth: Math.min(135, root.width * 0.22)
+      Layout.minimumWidth: 0
+      text: (MprisController.activeTrack?.artist ?? root.player?.identity ?? "").toUpperCase()
+      color: Appearance.colors.m3primary
+      font.pointSize: 8
+      font.weight: Font.Bold
+      elide: Text.ElideRight
+    }
+    AnimatedLyrics {
+      Layout.fillWidth: true
+      Layout.fillHeight: true
+      Layout.minimumWidth: 0
+      compact: true
+      currentColor: Appearance.colors.m3tertiary
+      surroundingColor: "#40ffffff"
+    }
+    StyledText {
+      Layout.preferredWidth: Math.min(145, root.width * 0.22)
+      Layout.minimumWidth: 0
+      text: (MprisController.activeTrack?.title ?? "").toUpperCase()
+      horizontalAlignment: Text.AlignRight
+      color: Appearance.colors.m3primary
+      font.pointSize: 8
+      font.weight: Font.Bold
+      elide: Text.ElideRight
+    }
+  }
+
   ProgressBar {
     anchors {
       left: parent.left
@@ -166,8 +207,8 @@ FullwidthMouseArea {
       rightMargin: root.edgeInset + 8
     }
     visible: root.player !== null && position.length > 0
-    height: 3
-    thickness: 3
+    height: root.compactBar ? 1 : 3
+    thickness: root.compactBar ? 1 : 3
     value: position.current
     to: Math.max(1, position.length)
   }

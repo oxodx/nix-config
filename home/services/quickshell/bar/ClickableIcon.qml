@@ -1,4 +1,6 @@
 import QtQuick
+import QtQuick.Effects
+import qs
 
 BarButton {
   id: root
@@ -16,5 +18,10 @@ BarButton {
     fillMode: Image.PreserveAspectFit
     sourceSize.width: Math.max(24, Math.round(width))
     sourceSize.height: Math.max(24, Math.round(height))
+    layer.enabled: true
+    layer.effect: MultiEffect {
+      colorization: 1
+      colorizationColor: Appearance.colors.m3primary
+    }
   }
 }

@@ -1,5 +1,4 @@
 pragma ComponentBehavior: Bound
-
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
@@ -16,189 +15,82 @@ import qs.launcher as Launcher
 
 BarContainment {
   id: root
-
-  SkewedSurface {
+  BarSurface {
     id: leftIsland
     anchors.left: parent.left
     anchors.top: parent.top
-    height: 60
-    width: leftSection.implicitWidth + 34
-
-    slantRight: true
-
-    Rectangle {
-      anchors {
-        left: parent.left
-        right: parent.right
-        rightMargin: 20
-        bottom: parent.bottom
-      }
-      height: 2
-      color: Appearance.colors.m3tertiary
-      opacity: 0.7
-    }
-
+    height: root.barHeight
+    width: leftSection.implicitWidth + 42
+    cutRight: true
     RowLayout {
       id: leftSection
-      anchors {
-        fill: parent
-        leftMargin: 10
-        rightMargin: 28
-        topMargin: 5
-        bottomMargin: 5
-      }
-      spacing: 7
-
+      anchors.fill: parent
+      anchors.leftMargin: 10
+      anchors.rightMargin: 32
+      spacing: 10
       FullwidthMouseArea {
         id: launcherButton
+        Layout.preferredWidth: 24
+        Layout.fillHeight: true
         hoverEnabled: true
         acceptedButtons: Qt.LeftButton
         onPressed: Launcher.Controller.toggle()
-
-        SkewedPanel {
-          anchors.fill: parent
-          anchors.margins: 3
-          slantLeft: true
-          slantRight: true
-          slant: 7
-          fillColor: launcherButton.containsMouse ? Appearance.colors.widgetActive : "transparent"
-          outlineColor: launcherButton.containsMouse ? Appearance.colors.m3tertiary : "transparent"
-
-          Behavior on fillColor {
-            ColorAnimation {
-              duration: 140
-            }
-          }
-        }
-
         MaterialIcon {
           anchors.centerIn: parent
           text: Icons.osIcon
           font.family: "Symbols Nerd Font Mono"
-          font.pointSize: Appearance.font.size.large
-          color: Appearance.colors.m3tertiary
+          font.pointSize: 14
+          color: launcherButton.containsMouse ? Appearance.colors.m3tertiary : Appearance.colors.m3primary
         }
-
-        Layout.fillHeight: true
-        Layout.preferredWidth: height
-        Layout.alignment: Qt.AlignVCenter
       }
-
-      Notifs.NotificationWidget {
-        bar: root
-        Layout.fillHeight: true
-        Layout.preferredWidth: height
-      }
-
+      StatsWidget { Layout.alignment: Qt.AlignVCenter }
       Workspaces {
         bar: root
         Layout.fillHeight: true
+        visible: root.width >= 1700 && visibleWorkspaces.length > 0
       }
     }
   }
-
-  SkewedSurface {
+  BarSurface {
     id: centerIsland
     anchors.horizontalCenter: parent.horizontalCenter
     anchors.top: parent.top
-    height: 60
-    width: Mpris.MprisController.activePlayer ? Math.min(900, Math.max(600, parent.width - leftIsland.width - rightIsland.width - 48)) : 360
-
-    slantLeft: true
-    slantRight: true
-    fillColor: "#dc11131a"
-
-    Rectangle {
-      anchors {
-        left: parent.left
-        right: parent.right
-        leftMargin: 22
-        rightMargin: 22
-        bottom: parent.bottom
-      }
-      height: 2
-      color: Appearance.colors.m3tertiary
-      opacity: Mpris.MprisController.activePlayer ? 0.9 : 0.35
-      visible: !Mpris.MprisController.activePlayer
-    }
-
+    height: root.barHeight
+    // Symmetric bounds keep the centered island clear of both corner panels.
+    width: Math.max(0, Math.min(820, root.width - 2 * Math.max(leftIsland.width, rightIsland.width) - 24))
+    visible: width >= 240 && Mpris.MprisController.activePlayer !== null
+    cutLeft: true
+    cutRight: true
     Mpris.Players {
       bar: root
       anchors.fill: parent
-      skewed: true
-      edgeInset: 22
+      compactBar: true
+      edgeInset: 30
     }
   }
-
-  SkewedSurface {
+  BarSurface {
     id: rightIsland
     anchors.right: parent.right
     anchors.top: parent.top
-    height: 60
-    width: rightSection.implicitWidth + 34
-
-    slantLeft: true
-
-    Rectangle {
-      anchors {
-        left: parent.left
-        right: parent.right
-        leftMargin: 20
-        bottom: parent.bottom
-      }
-      height: 2
-      color: Appearance.colors.m3tertiary
-      opacity: 0.7
-    }
-
+    height: root.barHeight
+    width: rightSection.implicitWidth + 42
+    cutLeft: true
     RowLayout {
       id: rightSection
-      anchors {
-        fill: parent
-        leftMargin: 28
-        rightMargin: 10
-        topMargin: 5
-        bottomMargin: 5
-      }
-      spacing: 7
-
-      Audio.AudioControls {
+      anchors.fill: parent
+      anchors.leftMargin: 32
+      anchors.rightMargin: 10
+      spacing: 8
+      SysTray.SysTray { bar: root; Layout.fillHeight: true }
+      Notifs.NotificationWidget {
         bar: root
         Layout.fillHeight: true
+        Layout.preferredWidth: 30
       }
-
-      Rectangle {
-        Layout.preferredWidth: 1
-        Layout.preferredHeight: 26
-        color: Appearance.colors.widgetOutlineSeparate
-      }
-
-      SysTray.SysTray {
-        bar: root
-        Layout.fillHeight: true
-      }
-
-      Connections.Connections {
-        bar: root
-        Layout.fillHeight: true
-      }
-
-      Rectangle {
-        Layout.preferredWidth: 1
-        Layout.preferredHeight: 26
-        color: Appearance.colors.widgetOutlineSeparate
-      }
-
-      Power.Power {
-        bar: root
-        Layout.fillHeight: true
-        Layout.preferredWidth: height
-      }
-
-      ClockWidget {
-        bar: root
-        Layout.fillHeight: true
-      }
+      Connections.Connections { bar: root; Layout.fillHeight: true }
+      Audio.AudioControls { bar: root; Layout.fillHeight: true }
+      Power.Power { bar: root; Layout.fillHeight: true; Layout.preferredWidth: 28 }
+      ClockWidget { bar: root; Layout.fillHeight: true }
     }
   }
 }

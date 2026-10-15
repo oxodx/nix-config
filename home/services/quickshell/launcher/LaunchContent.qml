@@ -166,6 +166,10 @@ Item {
               matches: matches
             };
           }).filter(entry => entry !== null).sort((a, b) => {
+            if (search.text === "") {
+              const frequency = Usage.score(b.object) - Usage.score(a.object);
+              if (frequency !== 0) return frequency;
+            }
             let ai = 0;
             let bi = 0;
             let s = 0;
@@ -288,8 +292,10 @@ Item {
               if (modelData.command === "")
                 return;
               Quickshell.execDetached(["sh", "-lc", modelData.command]);
-            } else
+            } else {
               entry.execute();
+              Usage.record(entry);
+            }
             root.dismissed();
           }
 

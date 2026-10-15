@@ -19,6 +19,9 @@ SkewedSurface {
   fillColor: active ? Appearance.colors.m3primaryContainer : mouse.containsMouse ? Appearance.colors.widgetActive : Appearance.colors.widget
   outlineColor: active ? Appearance.colors.m3tertiary : Appearance.colors.widgetOutline
   shadowColor: "transparent"
+  opacity: enabled ? 1 : 0.4
+  Behavior on fillColor { ColorAnimation { duration: 150 } }
+  Behavior on outlineColor { ColorAnimation { duration: 150 } }
 
   Column {
     anchors.centerIn: parent
@@ -33,6 +36,7 @@ SkewedSurface {
     }
 
     StyledText {
+      visible: root.label !== ""
       anchors.horizontalCenter: parent.horizontalCenter
       text: root.label
       color: root.active ? Appearance.colors.m3onPrimaryContainer : Appearance.colors.m3onSurfaceVariant

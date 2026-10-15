@@ -11,8 +11,8 @@ BarWidgetInner {
   required property var bar
   property bool dashboardOpen: false
 
-  implicitHeight: layout.implicitHeight
-  implicitWidth: layout.implicitWidth + 24
+  implicitHeight: 30
+  implicitWidth: layout.implicitWidth + 12
 
   SystemClock {
     id: clock
@@ -35,12 +35,13 @@ BarWidgetInner {
       Text {
         Layout.alignment: Qt.AlignHCenter
         text: Qt.formatDateTime(clock.date, "hh:mm")
-        font.pixelSize: 15
+        font.pixelSize: 12
         font.weight: Font.DemiBold
-        color: "white"
+        color: Appearance.colors.m3tertiary
       }
 
       Text {
+        visible: false
         Layout.alignment: Qt.AlignHCenter
         text: Qt.formatDateTime(clock.date, "ddd, MMM d")
         font.pixelSize: 10
@@ -73,8 +74,8 @@ BarWidgetInner {
     onClose: root.dashboardOpen = false
 
     contentItem {
-      implicitWidth: 520
-      implicitHeight: 390
+      implicitWidth: 760
+      implicitHeight: 660
     }
 
     Dashboard.Dashboard {
