@@ -59,7 +59,9 @@ FullwidthMouseArea {
 
     Connections {
       target: MprisController
-      function onTrackChanged(reverse: bool): void { background.refresh(reverse); }
+      function onTrackChanged(reverse: bool): void {
+        background.refresh(reverse);
+      }
     }
   }
 
@@ -246,10 +248,13 @@ FullwidthMouseArea {
     onClose: persist.menuOpen = false
 
     contentItem {
-      implicitWidth: 560
-      implicitHeight: 460
+      implicitWidth: menuContent.implicitWidth
+      implicitHeight: menuContent.implicitHeight
     }
 
-    MediaMenu { anchors.fill: parent }
+    MediaMenu {
+      id: menuContent
+      anchors.fill: parent
+    }
   }
 }

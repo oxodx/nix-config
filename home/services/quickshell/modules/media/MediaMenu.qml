@@ -11,7 +11,7 @@ Item {
   id: root
 
   implicitWidth: 560
-  implicitHeight: 460
+  implicitHeight: 660
 
   readonly property var player: MprisController.activePlayer
   readonly property int position: MprisController.position
@@ -143,7 +143,9 @@ Item {
           elide: Text.ElideRight
         }
 
-        Item { Layout.fillHeight: true }
+        Item {
+          Layout.fillHeight: true
+        }
 
         StyledText {
           Layout.fillWidth: true
@@ -155,25 +157,9 @@ Item {
       }
     }
 
-    SkewedSurface {
+    LyricsPane {
       Layout.fillWidth: true
-      Layout.preferredHeight: 76
-      slantLeft: true
-      slantRight: true
-      slant: 12
-      shadowColor: "transparent"
-      fillColor: "#2811131a"
-      outlineColor: Appearance.colors.widgetOutline
-
-      AnimatedLyrics {
-        anchors {
-          fill: parent
-          leftMargin: 18
-          rightMargin: 18
-          topMargin: 8
-          bottomMargin: 8
-        }
-      }
+      Layout.fillHeight: true
     }
 
     RowLayout {
@@ -194,7 +180,8 @@ Item {
         to: Math.max(1, root.length)
         barColor: Appearance.colors.m3tertiary
         grooveColor: Appearance.colors.sliderGroove
-        onPressedChanged: if (!pressed && root.player?.canSeek) root.player.position = value
+        onPressedChanged: if (!pressed && root.player?.canSeek)
+          root.player.position = value
 
         Binding {
           target: seek
@@ -240,7 +227,9 @@ Item {
         }
       }
 
-      Item { Layout.fillWidth: true }
+      Item {
+        Layout.fillWidth: true
+      }
 
       MediaControlButton {
         buttonSize: 36

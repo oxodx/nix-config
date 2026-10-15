@@ -13,11 +13,25 @@ Item {
   property color currentColor: "white"
   property color surroundingColor: "#70ffffff"
   property bool frontActive: true
+  property bool immediateRefresh: false
+
+  function scheduleRefresh(immediate: bool): void {
+    immediateRefresh = immediateRefresh || immediate;
+    Qt.callLater(applyRefresh);
+  }
+
+  function applyRefresh(): void {
+    const immediate = immediateRefresh;
+    immediateRefresh = false;
+    refresh(immediate);
+  }
 
   function currentText(): string {
     if (MprisController.lyricsLoading)
       return "Finding lyrics…";
-    return MprisController.currentLyric || MprisController.firstPlainLyric || MprisController.lyricsError || "No lyrics available";
+    const lines = MprisController.syncedLyrics;
+    const index = MprisController.currentLyricIndex;
+    return index >= 0 ? lines[index]?.text || "♪" : MprisController.firstPlainLyric || MprisController.lyricStatus;
   }
 
   function populate(layer: Item): void {
@@ -26,10 +40,12 @@ Item {
       layer.previousText = "";
       layer.nextText = "";
     } else {
-      layer.previousText = MprisController.previousLyric;
-      layer.nextText = MprisController.nextLyric;
+      const lines = MprisController.syncedLyrics;
+      const index = MprisController.currentLyricIndex;
+      layer.previousText = lines[index - 1]?.text ?? "";
+      layer.nextText = lines[index + 1]?.text ?? "";
     }
-    layer.synced = MprisController.currentLyric !== "";
+    layer.synced = MprisController.currentLyricIndex >= 0;
   }
 
   function refresh(immediate: bool): void {
@@ -63,19 +79,25 @@ Item {
   Connections {
     target: MprisController
     function onCurrentLyricIndexChanged(): void {
-      root.refresh(false);
+      root.scheduleRefresh(false);
     }
     function onFirstPlainLyricChanged(): void {
-      root.refresh(false);
+      root.scheduleRefresh(false);
     }
     function onLyricsLoadingChanged(): void {
-      root.refresh(false);
+      root.scheduleRefresh(false);
     }
     function onLyricsErrorChanged(): void {
-      root.refresh(false);
+      root.scheduleRefresh(false);
+    }
+    function onLyricStatusChanged(): void {
+      root.scheduleRefresh(false);
     }
     function onActivePlayerChanged(): void {
-      root.refresh(true);
+      root.scheduleRefresh(true);
+    }
+    function onSyncedLyricsChanged(): void {
+      root.scheduleRefresh(true);
     }
   }
 
@@ -101,6 +123,7 @@ Item {
       duration: 520
       easing.type: Easing.InOutCubic
     }
+
     OpacityAnimator {
       target: root.frontActive ? front : back
       from: 1
@@ -108,6 +131,7 @@ Item {
       duration: 420
       easing.type: Easing.InOutCubic
     }
+
     YAnimator {
       target: root.frontActive ? back : front
       from: root.height * 0.3
@@ -115,6 +139,7 @@ Item {
       duration: 520
       easing.type: Easing.InOutCubic
     }
+
     OpacityAnimator {
       target: root.frontActive ? back : front
       from: 0

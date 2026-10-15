@@ -3,6 +3,7 @@ pragma ComponentBehavior: Bound
 
 import QtQml.Models
 import QtQuick
+import QtCore
 import Quickshell
 import Quickshell.Io
 import Quickshell.Services.Mpris
@@ -32,9 +33,24 @@ Singleton {
   readonly property alias previousLyric: lyrics.previousLyric
   readonly property alias nextLyric: lyrics.nextLyric
   readonly property alias firstPlainLyric: lyrics.firstPlainLyric
+  readonly property alias lyricProgress: lyrics.lineProgress
+  readonly property alias lyricStatus: lyrics.statusText
+  property alias lyricOffset: settings.lyricOffset
+
+  Settings {
+    id: settings
+    location: "file://" + StandardPaths.writableLocation(StandardPaths.GenericConfigLocation) + "/quickshell-lyrics.ini"
+    category: "lyrics"
+    property real lyricOffset: 0
+  }
+
+  function retryLyrics(): void {
+    lyrics.retry();
+  }
 
   Lyrics {
     id: lyrics
+    timingOffset: root.lyricOffset
     player: root.activePlayer
     track: root.activeTrack
   }
