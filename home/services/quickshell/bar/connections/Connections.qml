@@ -5,15 +5,17 @@ import qs.bar
 BarWidgetInner {
   id: root
   required property var bar
-  implicitWidth: row.implicitWidth + 10
+  implicitWidth: row.implicitWidth
 
   RowLayout {
     id: row
 
     anchors {
       fill: parent
-      margins: 5
+      topMargin: 5
+      bottomMargin: 5
     }
+    spacing: 8
 
     Network {
       Layout.fillHeight: true

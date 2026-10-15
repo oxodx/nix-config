@@ -29,7 +29,7 @@ BarWidgetInner {
 
   implicitHeight: width
   visible: displayDevice != null
-  color: isLow ? "#45ff6060" : Appearance.colors.widget
+  color: isLow ? "#45ff6060" : "transparent"
 
   BarButton {
     id: button

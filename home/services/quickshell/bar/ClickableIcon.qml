@@ -8,6 +8,7 @@ BarButton {
   property url image
   property bool scaleIcon: true
   property bool asynchronous: false
+  property real iconBrightness: 0
 
   Image {
     anchors.centerIn: parent
@@ -20,6 +21,7 @@ BarButton {
     sourceSize.height: Math.max(24, Math.round(height))
     layer.enabled: true
     layer.effect: MultiEffect {
+      brightness: root.iconBrightness
       colorization: 1
       colorizationColor: Appearance.colors.m3primary
     }

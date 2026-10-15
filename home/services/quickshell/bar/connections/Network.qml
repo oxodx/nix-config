@@ -10,6 +10,7 @@ import qs.bar
 
 ClickableIcon {
   id: root
+  iconBrightness: 0.3
   required property var bar
   readonly property var adapter: Networking.devices.values.find(d => d.type === DeviceType.Wifi) ?? null
   readonly property var eth: Networking.devices.values.find(d => d.type === DeviceType.Wired) ?? null

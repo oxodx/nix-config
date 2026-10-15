@@ -9,15 +9,16 @@ import qs.bar
 BarWidgetInner {
   id: root
   required property var bar
-  implicitWidth: row.implicitWidth + 10
+  implicitWidth: row.implicitWidth
 
   RowLayout {
     id: row
     anchors {
       fill: parent
-      margins: 5
+      topMargin: 5
+      bottomMargin: 5
     }
-    spacing: 5
+    spacing: 8
 
     Loader {
       Layout.fillHeight: true
@@ -25,6 +26,7 @@ BarWidgetInner {
       active: Pipewire.defaultAudioSink != null
 
       sourceComponent: AudioControl {
+        iconBrightness: 0.3
         bar: root.bar
         node: Pipewire.defaultAudioSink
         image: `image://icon/${node.audio.muted ? "audio-volume-muted-symbolic" : "audio-volume-high-symbolic"}`
@@ -37,6 +39,7 @@ BarWidgetInner {
       active: Pipewire.defaultAudioSource != null
 
       sourceComponent: AudioControl {
+        iconBrightness: 0.3
         bar: root.bar
         node: Pipewire.defaultAudioSource
         image: `image://icon/${node.audio.muted ? "microphone-sensitivity-muted-symbolic" : "microphone-sensitivity-high-symbolic"}`

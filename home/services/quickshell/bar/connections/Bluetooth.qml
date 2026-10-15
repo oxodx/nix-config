@@ -10,6 +10,7 @@ import qs.bar
 
 ClickableIcon {
   id: root
+  iconBrightness: 0.3
   required property var bar
   readonly property var adapter: Bluetooth.defaultAdapter ?? null
   readonly property bool connected: adapter?.devices.values.some(device => device.connected) ?? false
