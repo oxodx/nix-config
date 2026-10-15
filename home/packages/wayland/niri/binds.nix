@@ -40,7 +40,7 @@
     spawn._args = ["qs" "ipc" "call" "osd" "brightnessDown"];
   };
 
-  "Ctrl+Alt+L".spawn._args = ["${pkgs.swaylock}/bin/swaylock" "-f" "-c" "000000"];
+  "Ctrl+Alt+L".spawn._args = ["qs" "ipc" "call" "lockscreen" "lock"];
   "Mod+D".spawn._args = ["qs" "ipc" "call" "launcher" "toggle"];
   "Mod+Shift+D".spawn._args = ["${pkgs.fuzzel}/bin/fuzzel"];
   "Mod+Return".spawn._args = ["${pkgs.alacritty}/bin/alacritty"];

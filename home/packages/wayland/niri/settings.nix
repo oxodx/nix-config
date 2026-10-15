@@ -21,7 +21,7 @@ in {
     ["xwayland-satellite"]
     ["nm-applet" "--indicator"]
     ["dbus-update-activation-environment" "--systemd" "--all"]
-    ["swayidle" "-w" "timeout" "300" "swaylock -f -c 000000" "before-sleep" "swaylock -f -c 000000"]
+    ["swayidle" "-w" "timeout" "300" "qs ipc call lockscreen lock" "before-sleep" "qs ipc call lockscreen lock" "lock" "qs ipc call lockscreen lock"]
     ["sh" "-c" "/run/current-system/sw/libexec/polkit-kde-authentication-agent-1 2>/dev/null || true"]
   ];
 
