@@ -18,7 +18,10 @@ Singleton {
 
   property var activeTrack
   readonly property int position: Math.floor(activePlayer?.position ?? 0)
-  readonly property int length: Math.floor(activePlayer?.length ?? 0)
+  readonly property int length: {
+    const duration = activePlayer?.lengthSupported ? activePlayer.length : lyrics.trackDuration;
+    return Number.isFinite(duration) && duration > 0 ? Math.floor(duration) : 0;
+  }
 
   FrameAnimation {
     running: root.activePlayer?.isPlaying ?? false

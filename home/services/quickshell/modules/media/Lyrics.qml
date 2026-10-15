@@ -17,12 +17,14 @@ Scope {
   property var lyricsCache: ({})
   property real timingOffset: 0
   property bool instrumental: false
+  property real trackDuration: 0
   readonly property real effectivePosition: (player?.position ?? 0) + timingOffset
   readonly property real lineProgress: {
     if (currentLyricIndex < 0)
       return 0;
     const start = syncedLyrics[currentLyricIndex].time;
-    const end = syncedLyrics[currentLyricIndex + 1]?.time ?? player?.length ?? start;
+    const duration = player?.lengthSupported ? player.length : trackDuration;
+    const end = syncedLyrics[currentLyricIndex + 1]?.time ?? Math.max(start, duration);
     return end > start ? Math.max(0, Math.min(1, (effectivePosition - start) / (end - start))) : 0;
   }
   readonly property string statusText: !player ? "Nothing playing" : lyricsLoading ? "Finding lyrics…" : instrumental ? "Instrumental" : syncedLyrics.length > 0 ? "Synced lyrics" : plainLyrics ? "Unsynced lyrics" : lyricsError || "No lyrics available"
@@ -68,6 +70,8 @@ Scope {
   }
 
   function applyLyrics(result): void {
+    const duration = Number(result.duration ?? 0);
+    trackDuration = Number.isFinite(duration) && duration > 0 ? duration : 0;
     plainLyrics = result.plainLyrics ?? "";
     syncedLyrics = parseSyncedLyrics(result.syncedLyrics ?? "");
     instrumental = result.instrumental ?? false;
@@ -103,6 +107,7 @@ Scope {
 
   function fetchLyrics(): void {
     const track = root.track;
+    trackDuration = 0;
     const key = lyricKey(track);
     instrumental = false;
     if (!player || !track || !track.title || !track.artist) {
@@ -130,7 +135,7 @@ Scope {
       return;
     lyricProcess.requestKey = key;
     const command = lrclibArguments(track).concat(["--data-urlencode", `album_name=${track.album}`]);
-    const duration = Math.round(player.length ?? 0);
+    const duration = player.lengthSupported ? Math.round(player.length) : 0;
     if (duration >= 1 && duration <= 3600)
       command.push("--data-urlencode", `duration=${duration}`);
     request("exact", "https://lrclib.net/api/get", command);
@@ -177,7 +182,7 @@ Scope {
             return;
           }
           const normalize = value => String(value ?? "").toLowerCase().replace(/[\s.,!?'"():;_-]+/g, "");
-          const score = result => (normalize(result.trackName) === normalize(root.track.title) ? 100 : 0) + (normalize(result.artistName) === normalize(root.track.artist) ? 50 : 0) + (result.syncedLyrics ? 10 : 0) - Math.abs((result.duration ?? root.player?.length ?? 0) - (root.player?.length ?? 0));
+          const score = result => (normalize(result.trackName) === normalize(root.track.title) ? 100 : 0) + (normalize(result.artistName) === normalize(root.track.artist) ? 50 : 0) + (result.syncedLyrics ? 10 : 0) - (root.player?.lengthSupported ? Math.abs((result.duration ?? root.player.length) - root.player.length) : 0);
           response.sort((a, b) => score(b) - score(a));
           root.cacheAndApply(response[0]);
         } else if (lyricProcess.stage === "fallback") {

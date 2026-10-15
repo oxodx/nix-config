@@ -175,7 +175,7 @@ Item {
       MediaSlider {
         id: seek
         Layout.fillWidth: true
-        enabled: root.player?.canSeek ?? false
+        enabled: (root.player?.canSeek ?? false) && root.length > 0
         from: 0
         to: Math.max(1, root.length)
         barColor: Appearance.colors.m3tertiary
@@ -192,7 +192,7 @@ Item {
       }
 
       StyledText {
-        text: root.timeString(root.length)
+        text: root.length > 0 ? root.timeString(root.length) : "--:--"
         color: Appearance.colors.m3onSurfaceVariant
         font.family: Appearance.font.family.mono
       }
