@@ -140,11 +140,14 @@ SkewedSurface {
             }
           }
         }
-        StyledText {
+        TimedLyricText {
           id: label
           anchors.centerIn: parent
           width: parent.width - 30
-          text: line.modelData.text || "♪"
+          lineText: line.modelData.text || "♪"
+          words: line.modelData.words ?? []
+          position: root.service.lyricPosition
+          highlighting: line.current
           horizontalAlignment: Text.AlignHCenter
           wrapMode: Text.Wrap
           font.pointSize: Appearance.font.size.normal

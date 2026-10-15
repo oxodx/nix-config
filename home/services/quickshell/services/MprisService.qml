@@ -37,6 +37,9 @@ Singleton {
   readonly property alias nextLyric: lyrics.nextLyric
   readonly property alias firstPlainLyric: lyrics.firstPlainLyric
   readonly property alias lyricProgress: lyrics.lineProgress
+  readonly property alias lyricPosition: lyrics.effectivePosition
+  readonly property alias enhancedLyrics: lyrics.enhanced
+  readonly property alias lyricSource: lyrics.source
   readonly property alias lyricStatus: lyrics.statusText
   property alias lyricOffset: settings.lyricOffset
 

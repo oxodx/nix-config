@@ -14,9 +14,14 @@ import qs.modules.osd as Osd
 ShellRoot {
   id: root
 
+  settings.watchFiles: true
+
   Background {}
 
-  Component.onCompleted: [LockService.init(), LauncherService.init()]
+  Component.onCompleted: {
+    LockService.init();
+    LauncherService.init();
+  }
 
   LazyLoader {
     id: screenshot

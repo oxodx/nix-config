@@ -6,201 +6,211 @@ import Quickshell.Services.Mpris
 
 Scope {
   id: root
+
   property MprisPlayer player: null
   property var track: null
-  onTrackChanged: fetchLyrics()
-
+  property real timingOffset: 0
   property string plainLyrics: ""
   property var syncedLyrics: []
   property bool lyricsLoading: false
   property string lyricsError: ""
-  property var lyricsCache: ({})
-  property real timingOffset: 0
   property bool instrumental: false
+  property bool enhanced: false
+  property string source: ""
   property real trackDuration: 0
-  readonly property real effectivePosition: (player?.position ?? 0) + timingOffset
-  readonly property real lineProgress: {
-    if (currentLyricIndex < 0)
-      return 0;
-    const start = syncedLyrics[currentLyricIndex].time;
-    const duration = player?.lengthSupported ? player.length : trackDuration;
-    const end = syncedLyrics[currentLyricIndex + 1]?.time ?? Math.max(start, duration);
-    return end > start ? Math.max(0, Math.min(1, (effectivePosition - start) / (end - start))) : 0;
-  }
-  readonly property string statusText: !player ? "Nothing playing" : lyricsLoading ? "Finding lyrics…" : instrumental ? "Instrumental" : syncedLyrics.length > 0 ? "Synced lyrics" : plainLyrics ? "Unsynced lyrics" : lyricsError || "No lyrics available"
-
+  property real clockPosition: 0
+  property real anchorPosition: 0
+  property real lastSourcePosition: 0
+  readonly property real effectivePosition: clockPosition + timingOffset
+  readonly property string statusText: !player ? "Nothing playing" : lyricsLoading ? "Finding lyrics…" : instrumental ? "Instrumental" : syncedLyrics.length ? (enhanced ? "Word-synced lyrics" : "Synced lyrics") : plainLyrics ? "Unsynced lyrics" : lyricsError || "No lyrics available"
   readonly property int currentLyricIndex: {
-    const lines = syncedLyrics ?? [];
-    if (!Array.isArray(lines))
-      return -1;
-    const position = effectivePosition;
-    let current = -1;
-    for (let i = 0; i < lines.length; ++i) {
-      if (lines[i].time > position)
-        break;
-      current = i;
+    let low = 0;
+    let high = syncedLyrics.length;
+    while (low < high) {
+      const middle = (low + high) >> 1;
+      if (syncedLyrics[middle].time <= effectivePosition) low = middle + 1;
+      else high = middle;
     }
-    return current;
+    return low - 1;
   }
-  readonly property string currentLyric: currentLyricIndex >= 0 ? syncedLyrics[currentLyricIndex].text : ""
-  readonly property string previousLyric: currentLyricIndex > 0 ? syncedLyrics[currentLyricIndex - 1].text : ""
-  readonly property string nextLyric: currentLyricIndex + 1 < syncedLyrics.length ? syncedLyrics[currentLyricIndex + 1].text : ""
+  readonly property string currentLyric: syncedLyrics[currentLyricIndex]?.text ?? ""
+  readonly property string previousLyric: syncedLyrics[currentLyricIndex - 1]?.text ?? ""
+  readonly property string nextLyric: syncedLyrics[currentLyricIndex + 1]?.text ?? ""
   readonly property string firstPlainLyric: plainLyrics.split("\n").map(line => line.trim()).find(line => line !== "") ?? ""
-
-  function lyricKey(track): string {
-    return track ? `${track.title}\n${track.artist}\n${track.album}`.toLowerCase() : "";
-  }
-
-  function parseSyncedLyrics(source: string): var {
-    if (!source)
-      return [];
-    const lines = [];
-    const offset = Number(source.match(/\[offset:([+-]?\d+)\]/i)?.[1] ?? 0) / 1000;
-    for (const rawLine of source.split("\n")) {
-      const timestamps = /\[(\d+):(\d+(?:\.\d+)?)\]/g;
-      const text = rawLine.replace(/\[[^\]]*\]/g, "").trim();
-      let match;
-      while ((match = timestamps.exec(rawLine)) !== null)
-        lines.push({
-          time: Math.max(0, Number(match[1]) * 60 + Number(match[2]) + offset),
-          text: text
-        });
+  readonly property real lineProgress: {
+    const line = syncedLyrics[currentLyricIndex];
+    if (!line) return 0;
+    if (line.words?.length) {
+      let characters = 0;
+      for (const word of line.words) {
+        if (effectivePosition < word.start) break;
+        const fraction = word.end > word.start ? Math.max(0, Math.min(1, (effectivePosition - word.start) / (word.end - word.start))) : 1;
+        characters = word.offset + word.length * fraction;
+        if (fraction < 1) break;
+      }
+      return line.text.length ? Math.max(0, Math.min(1, characters / line.text.length)) : 0;
     }
-    return lines.sort((a, b) => a.time - b.time);
+    return line.end > line.time ? Math.max(0, Math.min(1, (effectivePosition - line.time) / (line.end - line.time))) : 0;
   }
 
-  function applyLyrics(result): void {
-    const duration = Number(result.duration ?? 0);
-    trackDuration = Number.isFinite(duration) && duration > 0 ? duration : 0;
-    plainLyrics = result.plainLyrics ?? "";
-    syncedLyrics = parseSyncedLyrics(result.syncedLyrics ?? "");
-    instrumental = result.instrumental ?? false;
-    lyricsError = instrumental || plainLyrics || syncedLyrics.length > 0 ? "" : "No lyrics found";
+  ElapsedTimer { id: elapsed }
+  ElapsedTimer { id: syncLatency }
+  ElapsedTimer { id: sourceElapsed }
+
+  function predictedPosition(): real {
+    return anchorPosition + (player?.isPlaying ? elapsed.elapsed() * (player.rate ?? 1) : 0);
   }
 
-  function cacheAndApply(result): void {
-    const updated = Object.assign({}, lyricsCache);
-    updated[lyricProcess.requestKey] = result;
-    lyricsCache = updated;
-    if (lyricProcess.requestKey === lyricKey(track))
-      applyLyrics(result);
+  function anchor(position: real): void {
+    anchorPosition = Math.max(0, position);
+    elapsed.restart();
+    clockPosition = anchorPosition;
+    lastSourcePosition = player?.position ?? 0;
+    sourceElapsed.restart();
   }
 
-  function request(stage: string, url: string, requestArguments: var): void {
-    lyricProcess.stage = stage;
-    lyricProcess.command = ["curl", "--fail", "--silent", "--show-error", "--max-time", "12"].concat(requestArguments, [url]);
-    lyricProcess.running = true;
+  onTrackChanged: {
+    anchor(player?.position ?? 0);
+    lookupDelay.restart();
   }
+  onPlayerChanged: anchor(player?.position ?? 0)
 
-  function lrclibArguments(track): var {
-    return ["--header", "Lrclib-Client: oxod-quickshell/1.0", "--get", "--data-urlencode", `track_name=${track.title}`, "--data-urlencode", `artist_name=${track.artist}`];
-  }
-
-  function startLrclibSearch(): void {
-    request("search", "https://lrclib.net/api/search", lrclibArguments(track));
-  }
-
-  function startPlainLyricsFallback(): void {
-    const primaryArtist = track.artist.split(/\s+(?:&|and|feat\.?|ft\.?)\s+|,|;/i)[0].trim();
-    request("fallback", `https://api.lyrics.ovh/v1/${encodeURIComponent(primaryArtist)}/${encodeURIComponent(track.title)}`, []);
-  }
-
-  function fetchLyrics(): void {
-    const track = root.track;
-    trackDuration = 0;
-    const key = lyricKey(track);
-    instrumental = false;
-    if (!player || !track || !track.title || !track.artist) {
-      plainLyrics = "";
-      syncedLyrics = [];
-      lyricsError = "";
-      lyricsLoading = false;
-      return;
+  Connections {
+    target: root.player
+    function onPlaybackStateChanged() { root.anchor(root.player?.position ?? 0); }
+    function onRateChanged() { root.anchor(root.player?.position ?? 0); }
+    function onPositionChanged() {
+      const position = root.player?.position ?? 0;
+      const expected = root.player?.isPlaying ? sourceElapsed.elapsed() * (root.player.rate ?? 1) : 0;
+      // Only a discontinuity is a seek. Regular position notifications must
+      // not undo the drift correction from the real playerctl measurement.
+      if (Math.abs(position - root.lastSourcePosition - expected) > 0.15)
+        root.anchor(position);
+      root.lastSourcePosition = position;
+      sourceElapsed.restart();
     }
-
-    const cached = lyricsCache[key];
-    if (cached !== undefined) {
-      applyLyrics(cached);
-      lyricsLoading = false;
-      return;
-    }
-
-    lyricsLoading = true;
-    lyricsError = "";
-    plainLyrics = "";
-    syncedLyrics = [];
-    // Let the old request finish; its exit handler will start the current
-    // track rather than letting a late response replace the new lyrics.
-    if (lyricProcess.running)
-      return;
-    lyricProcess.requestKey = key;
-    const command = lrclibArguments(track).concat(["--data-urlencode", `album_name=${track.album}`]);
-    const duration = player.lengthSupported ? Math.round(player.length) : 0;
-    if (duration >= 1 && duration <= 3600)
-      command.push("--data-urlencode", `duration=${duration}`);
-    request("exact", "https://lrclib.net/api/get", command);
   }
 
-  function retry(): void {
-    const updated = Object.assign({}, lyricsCache);
-    delete updated[lyricKey(track)];
-    lyricsCache = updated;
-    fetchLyrics();
+  Timer {
+    interval: 33
+    repeat: true
+    running: root.player?.isPlaying ?? false
+    onTriggered: root.clockPosition = root.predictedPosition()
+  }
+
+  // Query only the selected player. This corrects slow drift without a second
+  // metadata polling loop or switching to some other playing browser tab.
+  Timer {
+    interval: 5000
+    repeat: true
+    running: (root.player?.isPlaying ?? false) && root.syncedLyrics.length > 0
+    onTriggered: {
+      if (positionSync.running) return;
+      positionSync.playerName = root.player.dbusName;
+      syncLatency.restart();
+      positionSync.running = true;
+    }
   }
 
   Process {
-    id: lyricProcess
-    property string requestKey: ""
-    property string stage: "exact"
-
-    stdout: StdioCollector {
-      id: lyricOutput
-    }
-
+    id: positionSync
+    property string playerName: ""
+    command: ["playerctl", "--player=" + playerName.replace("org.mpris.MediaPlayer2.", ""), "position"]
+    stdout: StdioCollector { id: positionOutput }
     onExited: code => {
-      if (lyricProcess.requestKey !== root.lyricKey(root.track)) {
-        root.fetchLyrics();
-        return;
-      }
-      if (code !== 0) {
-        if (lyricProcess.stage === "exact")
-          root.startLrclibSearch();
-        else if (lyricProcess.stage === "search")
-          root.startPlainLyricsFallback();
-        else {
-          root.lyricsLoading = false;
-          root.lyricsError = "No lyrics found";
-        }
-        return;
-      }
+      if (code !== 0 || playerName !== root.player?.dbusName) return;
+      const value = Number(positionOutput.text.trim());
+      if (!Number.isFinite(value) || !positionOutput.text.trim()) return;
+      const measured = value + (root.player.isPlaying ? Math.min(0.15, syncLatency.elapsed() / 2) * root.player.rate : 0);
+      const predicted = root.predictedPosition();
+      const drift = measured - predicted;
+      root.anchor(Math.abs(drift) > 1 ? measured : predicted + drift * 0.25);
+    }
+  }
 
-      try {
-        const response = JSON.parse(lyricOutput.text);
-        if (lyricProcess.stage === "search") {
-          if (!Array.isArray(response) || response.length === 0) {
-            root.startPlainLyricsFallback();
-            return;
-          }
-          const normalize = value => String(value ?? "").toLowerCase().replace(/[\s.,!?'"():;_-]+/g, "");
-          const score = result => (normalize(result.trackName) === normalize(root.track.title) ? 100 : 0) + (normalize(result.artistName) === normalize(root.track.artist) ? 50 : 0) + (result.syncedLyrics ? 10 : 0) - (root.player?.lengthSupported ? Math.abs((result.duration ?? root.player.length) - root.player.length) : 0);
-          response.sort((a, b) => score(b) - score(a));
-          root.cacheAndApply(response[0]);
-        } else if (lyricProcess.stage === "fallback") {
-          root.cacheAndApply({
-            plainLyrics: response.lyrics ?? "",
-            syncedLyrics: ""
-          });
-        } else
-          root.cacheAndApply(response);
-        root.lyricsLoading = false;
-      } catch (error) {
-        if (lyricProcess.stage !== "fallback")
-          root.startPlainLyricsFallback();
-        else {
-          root.lyricsLoading = false;
-          root.lyricsError = "Could not read lyrics";
-        }
+  function lyricKey(): string {
+    if (!track || !player || !track.title || track.title === "Unknown Title") return "";
+    if ((!track.artist || track.artist === "Unknown Artist") && !track.title.includes(" - ")) return "";
+    return JSON.stringify([(track.artist ?? "").trim().toLowerCase(), track.title.trim().toLowerCase()]);
+  }
+
+  Timer {
+    id: lookupDelay
+    interval: 300
+    onTriggered: root.fetchLyrics(false)
+  }
+
+  function clear(): void {
+    plainLyrics = "";
+    syncedLyrics = [];
+    lyricsError = "";
+    instrumental = false;
+    enhanced = false;
+    source = "";
+    trackDuration = 0;
+  }
+
+  function fetchLyrics(refresh: bool): void {
+    const key = lyricKey();
+    if (key === lookup.requestKey && lookup.running) return;
+    if (!refresh && key === lookup.requestKey && (syncedLyrics.length || plainLyrics || instrumental)) return;
+    if (!key) {
+      clear();
+      lyricsLoading = false;
+      return;
+    }
+    clear();
+    lyricsLoading = true;
+    if (lookup.running) return;
+    lookup.requestKey = key;
+    const metadata = JSON.stringify({artist: track.artist, title: track.title, album: track.album, duration: player.lengthSupported ? Math.round(player.length) : 0});
+    lookup.command = ["quickshell-lyrics", metadata].concat(refresh ? ["--refresh"] : []);
+    lookup.running = true;
+  }
+
+  function retry(): void { fetchLyrics(true); }
+
+  Process {
+    id: lookup
+    property string requestKey: ""
+    stdout: StdioCollector { id: resultOutput }
+    onRunningChanged: {
+      if (running) watchdog.restart();
+      else watchdog.stop();
+    }
+    onExited: code => {
+      if (requestKey !== root.lyricKey()) {
+        lookupDelay.restart();
+        return;
       }
+      root.lyricsLoading = false;
+      if (code !== 0) {
+        root.lyricsError = "Lyrics lookup failed — retry";
+        return;
+      }
+      try {
+        const result = JSON.parse(resultOutput.text);
+        root.syncedLyrics = Array.isArray(result.lines) ? result.lines : [];
+        root.plainLyrics = result.plainLyrics ?? "";
+        root.enhanced = result.enhanced ?? false;
+        root.instrumental = result.instrumental ?? false;
+        root.source = result.source ?? "";
+        const duration = Number(result.duration);
+        root.trackDuration = Number.isFinite(duration) && duration > 0 ? duration : 0;
+        root.lyricsError = root.syncedLyrics.length || root.plainLyrics || root.instrumental ? "" : "No lyrics found";
+      } catch (error) {
+        root.lyricsError = "Could not read lyrics — retry";
+      }
+    }
+  }
+
+  Timer {
+    id: watchdog
+    interval: 40000
+    onTriggered: {
+      lookup.running = false;
+      root.lyricsLoading = false;
+      root.lyricsError = "Lyrics lookup timed out — retry";
     }
   }
 }

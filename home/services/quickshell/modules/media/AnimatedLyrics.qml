@@ -36,6 +36,8 @@ Item {
   }
 
   function populate(layer: Item): void {
+    layer.lyricIndex = MprisService.currentLyricIndex;
+    layer.words = MprisService.syncedLyrics[layer.lyricIndex]?.words ?? [];
     layer.currentText = currentText();
     if (currentText() === "Finding lyrics…" || currentText() === "No lyrics available") {
       layer.previousText = "";
@@ -153,10 +155,13 @@ Item {
   }
 
   component LyricStack: Item {
+    id: stack
     property string previousText: ""
     property string currentText: ""
     property string nextText: ""
     property bool synced: false
+    property int lyricIndex: -1
+    property var words: []
 
     ColumnLayout {
       anchors.fill: parent
@@ -173,10 +178,13 @@ Item {
         elide: Text.ElideRight
       }
 
-      StyledText {
+      TimedLyricText {
         Layout.fillWidth: true
         Layout.fillHeight: true
-        text: parent.parent.currentText
+        lineText: stack.currentText
+        words: stack.words
+        position: MprisService.lyricPosition
+        highlighting: stack.synced && stack.lyricIndex === MprisService.currentLyricIndex
         color: parent.parent.synced ? root.currentColor : Appearance.colors.m3onSurfaceVariant
         font.pointSize: root.compact ? 8 : Appearance.font.size.normal
         font.weight: parent.parent.synced ? Font.Bold : Font.Normal

@@ -5,8 +5,14 @@
   ...
 }: let
   quickshell = inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  lyricsPython = pkgs.python3.withPackages (python: [python.syncedlyrics python.requests]);
+  lyricsFetcher = pkgs.writeShellScriptBin "quickshell-lyrics" ''
+    exec ${lyricsPython}/bin/python ${./scripts/lyrics.py} "$@"
+  '';
 
   dependencies = with pkgs; [
+    lyricsFetcher
+    playerctl
     bash
     coreutils
     gawk
@@ -26,6 +32,7 @@
     "${pkgs.kdePackages.kirigami.unwrapped}/lib/qt-6/qml"
   ];
 in {
+  environment.systemPackages = [lyricsFetcher];
   users.users.oxod.packages = [quickshell];
 
   environment.sessionVariables.QML2_IMPORT_PATH = QML2_IMPORT_PATH;
