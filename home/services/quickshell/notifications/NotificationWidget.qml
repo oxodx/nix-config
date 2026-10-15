@@ -1,6 +1,8 @@
 import QtQuick
 import QtQuick.Controls
 import qs.bar
+import qs
+import qs.components
 
 BarWidgetInner {
   id: root
@@ -28,15 +30,12 @@ BarWidgetInner {
     acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
     showPressed: root.controlsOpen || (pressedButtons & ~Qt.RightButton)
 
-    Image {
-      anchors.fill: parent
-
-      source: NotificationManager.hasNotifs ? "root:icons/bell-fill.svg" : "root:icons/bell.svg"
-
-      fillMode: Image.PreserveAspectFit
-
-      sourceSize.width: width
-      sourceSize.height: height
+    MaterialIcon {
+      anchors.centerIn: parent
+      text: "notifications"
+      fill: NotificationManager.hasNotifs ? 1 : 0
+      font.pointSize: 15
+      color: Appearance.colors.m3primary
     }
 
     onPressed: event => {

@@ -173,12 +173,10 @@ Item {
               bottom: textBox.bottom
             }
 
-            Image {
-              anchors.fill: parent
-              anchors.margins: 5
-              source: "root:icons/fingerprint.svg"
-              sourceSize.width: width
-              sourceSize.height: height
+            MaterialIcon {
+              anchors.centerIn: parent
+              text: "fingerprint"
+              font.pointSize: 24
             }
           }
         }

@@ -10,7 +10,6 @@ import qs.bar
 
 ClickableIcon {
   id: root
-  iconBrightness: 0.3
   required property var bar
   readonly property var adapter: Bluetooth.defaultAdapter ?? null
   readonly property bool connected: adapter?.devices.values.some(device => device.connected) ?? false
@@ -37,7 +36,7 @@ ClickableIcon {
   fillWindowWidth: true
   enabled: adapter != null
   acceptedButtons: Qt.LeftButton | Qt.RightButton
-  image: adapter?.enabled ? (connected ? "image://icon/bluetooth-active-symbolic" : "image://icon/bluetooth-symbolic") : "image://icon/bluetooth-disabled-symbolic"
+  icon: adapter?.enabled ? (connected ? "bluetooth_connected" : "bluetooth") : "bluetooth_disabled"
 
   property var tooltip: TooltipItem {
     tooltip: bar.tooltip
@@ -76,7 +75,7 @@ ClickableIcon {
           width: parent.width
 
           ClickableIcon {
-            image: root.image
+            icon: root.icon
             implicitHeight: 40
             implicitWidth: height
             onClicked: root.adapter.enabled = !root.adapter.enabled
@@ -91,7 +90,7 @@ ClickableIcon {
           }
 
           ActivityButton {
-            image: "root:/icons/binoculars.svg"
+            icon: "search"
             implicitHeight: 24
             implicitWidth: height
             onClicked: root.adapter.discovering = !root.adapter.discovering

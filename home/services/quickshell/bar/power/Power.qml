@@ -94,9 +94,9 @@ BarWidgetInner {
         }
 
         RowLayout {
-          IconImage {
-            source: "root:icons/gauge.svg"
-            implicitSize: 32
+          MaterialIcon {
+            text: "speed"
+            font.pointSize: 24
           }
 
           ColumnLayout {
@@ -115,10 +115,10 @@ BarWidgetInner {
         }
 
         RowLayout {
-          IconImage {
+          MaterialIcon {
             Layout.alignment: Qt.AlignTop
-            source: "root:icons/battery-empty.svg"
-            implicitSize: 32
+            text: "battery_full"
+            font.pointSize: 24
           }
 
           ColumnLayout {
@@ -198,16 +198,16 @@ BarWidgetInner {
           RowLayout {
             required property UPowerDevice modelData
 
-            IconImage {
+            MaterialIcon {
               Layout.alignment: Qt.AlignTop
-              source: {
+              text: {
                 switch (modelData.type) {
                 case UPowerDeviceType.Headset:
-                  return "root:icons/headset.svg";
+                  return "headphones";
                 }
-                return Quickshell.iconPath(modelData.iconName);
+                return "devices";
               }
-              implicitSize: 32
+              font.pointSize: 24
             }
 
             ColumnLayout {

@@ -58,7 +58,7 @@ WrapperMouseArea {
     ColumnLayout {
       RowLayout {
         ClickableIcon {
-          image: `root:/icons/wifi-${Math.round(root.network.signalStrength * 3)}`
+          icon: root.network.signalStrength > 0.75 ? "wifi" : root.network.signalStrength > 0.5 ? "wifi_2_bar" : "wifi_1_bar"
           implicitHeight: 40
           implicitWidth: height
         }
@@ -72,7 +72,7 @@ WrapperMouseArea {
         }
 
         ActivityButton {
-          image: root.network.connected ? "root:/icons/plugs-connected.svg" : "root:/icons/plugs.svg"
+          icon: root.network.connected ? "link_off" : "link"
           implicitHeight: 24
           implicitWidth: height
           showAction: root.network.stateChanging
@@ -80,7 +80,7 @@ WrapperMouseArea {
         }
 
         ClickableIcon {
-          image: "root:/icons/trash.svg"
+          icon: "delete"
           implicitHeight: 24
           implicitWidth: height
           visible: root.network.known

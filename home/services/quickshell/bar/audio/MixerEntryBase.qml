@@ -32,6 +32,7 @@ RowLayout {
 
   ClickableIcon {
     image: root.image
+    icon: root.node.isStream ? "" : root.node.isSink ? "speaker" : "mic"
     asynchronous: true
     implicitHeight: 40
     implicitWidth: height

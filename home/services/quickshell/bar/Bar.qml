@@ -37,8 +37,7 @@ BarContainment {
         onPressed: Launcher.Controller.toggle()
         MaterialIcon {
           anchors.centerIn: parent
-          text: Icons.osIcon
-          font.family: "Symbols Nerd Font Mono"
+          text: "apps"
           font.pointSize: 14
           color: launcherButton.containsMouse ? Appearance.colors.m3tertiary : Appearance.colors.m3primary
         }

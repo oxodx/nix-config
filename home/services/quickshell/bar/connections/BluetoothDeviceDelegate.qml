@@ -26,7 +26,7 @@ WrapperMouseArea {
     ColumnLayout {
       RowLayout {
         ClickableIcon {
-          image: Quickshell.iconPath(root.device.icon)
+          icon: String(root.device.icon).includes("head") ? "headphones" : String(root.device.icon).includes("mouse") ? "mouse" : String(root.device.icon).includes("keyboard") ? "keyboard" : "bluetooth"
           implicitHeight: 40
           implicitWidth: height
         }
@@ -40,7 +40,7 @@ WrapperMouseArea {
         }
 
         ActivityButton {
-          image: root.device.connected ? "root:/icons/plugs-connected.svg" : "root:/icons/plugs.svg"
+          icon: root.device.connected ? "link_off" : "link"
           implicitHeight: 24
           implicitWidth: height
           showAction: root.device.pairing || root.device.state === BluetoothDeviceState.Connecting || root.device.state === BluetoothDeviceState.Disconnecting
@@ -57,7 +57,7 @@ WrapperMouseArea {
         }
 
         ClickableIcon {
-          image: "root:/icons/trash.svg"
+          icon: "delete"
           implicitHeight: 24
           implicitWidth: height
           visible: root.device.bonded

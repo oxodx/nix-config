@@ -10,7 +10,6 @@ import qs.bar
 
 ClickableIcon {
   id: root
-  iconBrightness: 0.3
   required property var bar
   readonly property var adapter: Networking.devices.values.find(d => d.type === DeviceType.Wifi) ?? null
   readonly property var eth: Networking.devices.values.find(d => d.type === DeviceType.Wired) ?? null
@@ -19,28 +18,27 @@ ClickableIcon {
   readonly property string wifiIcon: {
     if (root.adapter) {
       if (!Networking.wifiEnabled)
-        return "image://icon/network-wireless-disabled-symbolic";
+        return "wifi_off";
       if (!root.adapter.connected)
-        return "image://icon/network-wireless-offline-symbolic";
+        return "wifi_find";
       const strength = root.activeNetwork?.signalStrength ?? 0;
-      const level = strength > 0.75 ? "excellent" : strength > 0.5 ? "good" : strength > 0.25 ? "ok" : "weak";
-      return `image://icon/network-wireless-signal-${level}-symbolic`;
+      return strength > 0.75 ? "wifi" : strength > 0.5 ? "wifi_2_bar" : "wifi_1_bar";
     }
 
-    return "image://icon/network-wireless-offline-symbolic";
+    return "wifi_off";
   }
 
   readonly property string ethIcon: {
     if (root.eth) {
       if (!root.eth.network)
-        return "image://icon/network-wired-disconnected-symbolic";
+        return "lan";
       else if (!root.eth.network.connected)
-        return "image://icon/network-wired-disconnected-symbolic";
+        return "lan";
       else
-        return "image://icon/network-wired-symbolic";
+        return "lan";
     }
 
-    return "image://icon/network-wired-disconnected-symbolic";
+    return "lan";
   }
 
   property bool showMenu: false
@@ -63,15 +61,15 @@ ClickableIcon {
   implicitHeight: width
   fillWindowWidth: true
   acceptedButtons: Qt.LeftButton | Qt.RightButton
-  image: {
+  icon: {
     if (root.eth?.network && root.eth.network.connected) {
-      return "image://icon/network-wired-symbolic";
+      return "lan";
     } else if (Networking.wifiEnabled) {
       return root.wifiIcon;
     } else if (root.eth?.network) {
-      return "image://icon/network-wired-disconnected-symbolic";
+      return "wifi_off";
     } else {
-      return "image://icon/network-wired-disconnected-symbolic";
+      return "wifi_off";
     }
   }
 
@@ -117,7 +115,7 @@ ClickableIcon {
               Layout.fillWidth: true
 
               ClickableIcon {
-                image: root.ethIcon
+                icon: root.ethIcon
                 implicitHeight: 40
                 implicitWidth: height
                 onClicked: {
@@ -151,7 +149,7 @@ ClickableIcon {
             RowLayout {
               Layout.fillWidth: true
               ClickableIcon {
-                image: root.wifiIcon
+                icon: root.wifiIcon
                 implicitHeight: 40
                 implicitWidth: height
                 onClicked: Networking.wifiEnabled = !Networking.wifiEnabled
@@ -166,7 +164,7 @@ ClickableIcon {
               }
 
               ActivityButton {
-                image: "root:/icons/binoculars.svg"
+                icon: "search"
                 implicitHeight: 24
                 implicitWidth: height
                 onClicked: root.adapter.scannerEnabled = !root.adapter.scannerEnabled

@@ -5,6 +5,7 @@ import Quickshell.Widgets
 import Quickshell.Wayland
 import Quickshell.Services.Pipewire
 import qs.bar
+import qs.components
 
 BarWidgetInner {
   id: root
@@ -26,10 +27,9 @@ BarWidgetInner {
       active: Pipewire.defaultAudioSink != null
 
       sourceComponent: AudioControl {
-        iconBrightness: 0.3
         bar: root.bar
         node: Pipewire.defaultAudioSink
-        image: `image://icon/${node.audio.muted ? "audio-volume-muted-symbolic" : "audio-volume-high-symbolic"}`
+        icon: node.audio.muted ? "volume_off" : "volume_up"
       }
     }
 
@@ -39,10 +39,9 @@ BarWidgetInner {
       active: Pipewire.defaultAudioSource != null
 
       sourceComponent: AudioControl {
-        iconBrightness: 0.3
         bar: root.bar
         node: Pipewire.defaultAudioSource
-        image: `image://icon/${node.audio.muted ? "microphone-sensitivity-muted-symbolic" : "microphone-sensitivity-high-symbolic"}`
+        icon: node.audio.muted ? "mic_off" : "mic"
       }
     }
   }
@@ -74,9 +73,10 @@ BarWidgetInner {
         color: "#40000000"
         radius: 15
 
-        IconImage {
-          source: Quickshell.iconPath("microphone-sensitivity-muted-symbolic")
-          anchors.fill: parent
+        MaterialIcon {
+          text: "mic_off"
+          anchors.centerIn: parent
+          font.pointSize: 36
           opacity: 0.3
         }
       }
