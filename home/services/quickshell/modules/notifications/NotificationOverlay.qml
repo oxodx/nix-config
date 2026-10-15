@@ -40,16 +40,16 @@ PanelWindow {
   }
   onIsFocusedChanged: {
     if (isFocused)
-      NotificationManager.overlay = root;
+      NotificationService.overlay = root;
   }
 
   Component.onCompleted: {
     if (isFocused)
-      NotificationManager.overlay = root;
+      NotificationService.overlay = root;
   }
 
   Connections {
-    target: NotificationManager
+    target: NotificationService
 
     function onNotif(notification) {
       if (root.isFocused)

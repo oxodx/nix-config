@@ -1,5 +1,6 @@
 pragma Singleton
 
+import qs.modules.lock
 import QtQuick
 import QtQuick.Controls
 import Quickshell

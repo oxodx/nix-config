@@ -1,4 +1,5 @@
 pragma ComponentBehavior: Bound
+import qs.services
 import qs.theme
 import QtQuick
 import QtQuick.Layouts
@@ -11,7 +12,6 @@ import qs.modules.media as Mpris
 import qs.modules.connections as Connections
 import qs.modules.power as Power
 import qs.modules.notifications as Notifs
-import qs.modules.launcher as Launcher
 
 BarContainment {
   id: root
@@ -34,7 +34,7 @@ BarContainment {
         Layout.fillHeight: true
         hoverEnabled: true
         acceptedButtons: Qt.LeftButton
-        onPressed: Launcher.Controller.toggle()
+        onPressed: LauncherService.toggle()
         MaterialIcon {
           anchors.centerIn: parent
           text: "apps"
@@ -60,7 +60,7 @@ BarContainment {
     height: root.barHeight
     // Symmetric bounds keep the centered island clear of both corner panels.
     width: Math.max(0, Math.min(820, root.width - 2 * Math.max(leftIsland.width, rightIsland.width) - 24))
-    visible: width >= 240 && Mpris.MprisController.activePlayer !== null
+    visible: width >= 240 && MprisService.activePlayer !== null
     cutLeft: true
     cutRight: true
     Mpris.Players {

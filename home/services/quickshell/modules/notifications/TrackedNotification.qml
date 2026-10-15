@@ -1,3 +1,4 @@
+import qs.services
 import QtQuick
 import Quickshell
 
@@ -39,11 +40,11 @@ Scope {
   property int expireTimeout: -1
   property real timePercentage: 1
   property int pauseCounter: 0
-  readonly property bool shouldPause: root.pauseCounter != 0 || (NotificationManager.lastHoveredNotif?.pauseCounter ?? 0) != 0
+  readonly property bool shouldPause: root.pauseCounter != 0 || (NotificationService.lastHoveredNotif?.pauseCounter ?? 0) != 0
 
   onPauseCounterChanged: {
     if (pauseCounter > 0) {
-      NotificationManager.lastHoveredNotif = this;
+      NotificationService.lastHoveredNotif = this;
     }
   }
 

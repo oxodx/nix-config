@@ -1,3 +1,4 @@
+import qs.services
 import qs.theme
 import QtQuick
 import QtQuick.Controls
@@ -9,13 +10,13 @@ BarWidgetInner {
   required property var bar
 
   property bool controlsOpen: false
-  onControlsOpenChanged: NotificationManager.showTrayNotifs = controlsOpen
+  onControlsOpenChanged: NotificationService.showTrayNotifs = controlsOpen
 
   Connections {
-    target: NotificationManager
+    target: NotificationService
 
     function onHasNotifsChanged() {
-      if (!NotificationManager.hasNotifs)
+      if (!NotificationService.hasNotifs)
         root.controlsOpen = false;
     }
   }
@@ -33,13 +34,13 @@ BarWidgetInner {
     MaterialIcon {
       anchors.centerIn: parent
       text: "notifications"
-      fill: NotificationManager.hasNotifs ? 1 : 0
+      fill: NotificationService.hasNotifs ? 1 : 0
       font.pointSize: 15
       color: Appearance.colors.m3primary
     }
 
     onPressed: event => {
-      if (event.button == Qt.RightButton && NotificationManager.hasNotifs) {
+      if (event.button == Qt.RightButton && NotificationService.hasNotifs) {
         root.controlsOpen = !root.controlsOpen;
       }
     }
@@ -53,7 +54,7 @@ BarWidgetInner {
     Label {
       anchors.verticalCenter: parent.verticalCenter
       text: {
-        const count = NotificationManager.notifications.length;
+        const count = NotificationService.notifications.length;
         return count == 0 ? "No notifications" : count == 1 ? "1 notification" : `${count} notifications`;
       }
     }
@@ -63,7 +64,7 @@ BarWidgetInner {
     tooltip: bar.tooltip
     owner: root
     isMenu: true
-    grabWindows: [NotificationManager.overlay]
+    grabWindows: [NotificationService.overlay]
     show: root.controlsOpen
     onClose: root.controlsOpen = false
 
@@ -85,7 +86,7 @@ BarWidgetInner {
 
         hoverEnabled: true
         onPressed: {
-          NotificationManager.sendDiscardAll();
+          NotificationService.sendDiscardAll();
         }
 
         Rectangle {

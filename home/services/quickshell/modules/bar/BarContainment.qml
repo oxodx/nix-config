@@ -1,9 +1,9 @@
+import qs.services
 import qs.theme
 import QtQuick
 import Quickshell
 import Quickshell.Wayland
 import qs.components
-import qs.modules.lock as Lock
 
 PanelWindow {
   id: root
@@ -46,7 +46,7 @@ PanelWindow {
   StyledRect {
     id: barRect
 
-    y: Math.round(root.topMargin - Lock.Controller.lockSlide * (barRect.height + root.topMargin))
+    y: Math.round(root.topMargin - LockService.lockSlide * (barRect.height + root.topMargin))
     height: root.barHeight
 
     anchors {

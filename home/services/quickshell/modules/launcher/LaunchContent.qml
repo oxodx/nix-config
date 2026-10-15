@@ -1,3 +1,4 @@
+import qs.services
 import qs.theme
 import QtQuick
 import "Search.js" as Search
@@ -115,7 +116,7 @@ Item {
         cacheBuffer: 0 // works around QTBUG-131106
         //reuseItems: true
         model: ScriptModel {
-          values: Search.results(DesktopEntries.applications.values, search.text, Usage.counts)
+          values: Search.results(DesktopEntries.applications.values, search.text, LauncherUsage.counts)
 
           onValuesChanged: list.currentIndex = 0
         }
@@ -207,7 +208,7 @@ Item {
               Quickshell.execDetached(["sh", "-lc", modelData.command]);
             } else {
               entry.execute();
-              Usage.record(entry);
+              LauncherUsage.record(entry);
             }
             root.dismissed();
           }

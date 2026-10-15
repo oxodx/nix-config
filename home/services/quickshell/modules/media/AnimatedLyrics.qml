@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 
+import qs.services
 import qs.theme
 import QtQuick
 import QtQuick.Layouts
@@ -27,11 +28,11 @@ Item {
   }
 
   function currentText(): string {
-    if (MprisController.lyricsLoading)
+    if (MprisService.lyricsLoading)
       return "Finding lyrics…";
-    const lines = MprisController.syncedLyrics;
-    const index = MprisController.currentLyricIndex;
-    return index >= 0 ? lines[index]?.text || "♪" : MprisController.firstPlainLyric || MprisController.lyricStatus;
+    const lines = MprisService.syncedLyrics;
+    const index = MprisService.currentLyricIndex;
+    return index >= 0 ? lines[index]?.text || "♪" : MprisService.firstPlainLyric || MprisService.lyricStatus;
   }
 
   function populate(layer: Item): void {
@@ -40,12 +41,12 @@ Item {
       layer.previousText = "";
       layer.nextText = "";
     } else {
-      const lines = MprisController.syncedLyrics;
-      const index = MprisController.currentLyricIndex;
+      const lines = MprisService.syncedLyrics;
+      const index = MprisService.currentLyricIndex;
       layer.previousText = lines[index - 1]?.text ?? "";
       layer.nextText = lines[index + 1]?.text ?? "";
     }
-    layer.synced = MprisController.currentLyricIndex >= 0;
+    layer.synced = MprisService.currentLyricIndex >= 0;
   }
 
   function refresh(immediate: bool): void {
@@ -77,7 +78,7 @@ Item {
   }
 
   Connections {
-    target: MprisController
+    target: MprisService
     function onCurrentLyricIndexChanged(): void {
       root.scheduleRefresh(false);
     }

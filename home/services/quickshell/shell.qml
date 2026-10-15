@@ -8,24 +8,21 @@ import Quickshell.Services.Pipewire
 import Quickshell.Wayland
 import qs.modules.bar
 import qs.modules.background
-import qs.modules.lock as Lock
-import qs.modules.launcher as Launcher
 import qs.modules.notifications as Notifs
 import qs.modules.osd as Osd
-import qs.modules.screenshot as Screenshot
 
 ShellRoot {
   id: root
 
   Background {}
 
-  Component.onCompleted: [Lock.Controller.init(), Launcher.Controller.init()]
+  Component.onCompleted: [LockService.init(), LauncherService.init()]
 
   LazyLoader {
     id: screenshot
     loading: true
 
-    Screenshot.Controller {}
+    ScreenshotService {}
   }
 
   Connections {

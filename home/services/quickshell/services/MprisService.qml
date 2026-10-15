@@ -51,7 +51,7 @@ Singleton {
     lyrics.retry();
   }
 
-  Lyrics {
+  LyricsService {
     id: lyrics
     timingOffset: root.lyricOffset
     player: root.activePlayer

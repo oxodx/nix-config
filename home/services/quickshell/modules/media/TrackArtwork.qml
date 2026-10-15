@@ -1,7 +1,8 @@
+import qs.services
 import qs.components
 
 SkewedImage {
-  source: MprisController.activeTrack?.artUrl || "image://icon/audio-x-generic-symbolic"
+  source: MprisService.activeTrack?.artUrl || "image://icon/audio-x-generic-symbolic"
   asynchronous: true
   cache: false
 }

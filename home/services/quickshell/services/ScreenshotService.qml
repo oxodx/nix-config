@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 
+import qs.modules.screenshot
 import QtQuick
 import Quickshell
 import Quickshell.Io

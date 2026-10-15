@@ -1,4 +1,5 @@
 pragma ComponentBehavior: Bound
+import qs.services
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls as Controls
@@ -7,7 +8,7 @@ import qs.components
 
 SkewedSurface {
   id: root
-  property var controller: MprisController
+  property var service: MprisService
   implicitHeight: 270
   slantLeft: true
   slantRight: true
@@ -16,14 +17,14 @@ SkewedSurface {
   fillColor: "#2811131a"
   outlineColor: Appearance.colors.widgetOutline
   property bool follow: true
-  readonly property bool synced: root.controller.syncedLyrics.length > 0
-  readonly property var lines: synced ? root.controller.syncedLyrics : root.controller.plainLyrics.split("\n").map(text => ({
+  readonly property bool synced: root.service.syncedLyrics.length > 0
+  readonly property var lines: synced ? root.service.syncedLyrics : root.service.plainLyrics.split("\n").map(text => ({
         text: text.trim()
       })).filter(line => line.text !== "")
 
   function followCurrent() {
     if (follow && synced && list.count > 0)
-      list.positionViewAtIndex(Math.max(0, root.controller.currentLyricIndex), ListView.Center);
+      list.positionViewAtIndex(Math.max(0, root.service.currentLyricIndex), ListView.Center);
   }
   onFollowChanged: if (follow)
     followCurrent()
@@ -32,7 +33,7 @@ SkewedSurface {
     Qt.callLater(followCurrent);
   }
   Connections {
-    target: root.controller
+    target: root.service
     function onCurrentLyricIndexChanged() {
       root.followCurrent();
     }
@@ -56,7 +57,7 @@ SkewedSurface {
       }
       StyledText {
         Layout.fillWidth: true
-        text: root.controller.lyricStatus
+        text: root.service.lyricStatus
         font.pointSize: Appearance.font.size.small
         color: Appearance.colors.m3onSurfaceVariant
         elide: Text.ElideRight
@@ -65,8 +66,8 @@ SkewedSurface {
         buttonSize: 28
         iconSize: 13
         icon: "refresh"
-        enabled: !root.controller.lyricsLoading && root.controller.activePlayer !== null
-        onTriggered: root.controller.retryLyrics()
+        enabled: !root.service.lyricsLoading && root.service.activePlayer !== null
+        onTriggered: root.service.retryLyrics()
       }
       MediaControlButton {
         buttonSize: 28
@@ -114,14 +115,14 @@ SkewedSurface {
         id: line
         required property var modelData
         required property int index
-        readonly property bool current: root.synced && index === root.controller.currentLyricIndex
+        readonly property bool current: root.synced && index === root.service.currentLyricIndex
         width: list.width
         height: Math.max(46, label.implicitHeight + 20)
         hoverEnabled: true
-        cursorShape: root.synced && root.controller.activePlayer?.canSeek ? Qt.PointingHandCursor : Qt.ArrowCursor
+        cursorShape: root.synced && root.service.activePlayer?.canSeek ? Qt.PointingHandCursor : Qt.ArrowCursor
         onClicked: {
-          if (root.synced && root.controller.activePlayer?.canSeek) {
-            root.controller.activePlayer.position = Math.max(0, modelData.time - root.controller.lyricOffset);
+          if (root.synced && root.service.activePlayer?.canSeek) {
+            root.service.activePlayer.position = Math.max(0, modelData.time - root.service.lyricOffset);
             root.follow = true;
           }
         }
@@ -164,7 +165,7 @@ SkewedSurface {
           anchors.rightMargin: 14
           visible: line.current
           thickness: 1
-          value: root.controller.lyricProgress
+          value: root.service.lyricProgress
         }
       }
       MouseArea {
@@ -179,7 +180,7 @@ SkewedSurface {
         anchors.centerIn: parent
         width: parent.width - 24
         visible: list.count === 0
-        text: root.controller.lyricStatus
+        text: root.service.lyricStatus
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.Wrap
         color: Appearance.colors.m3onSurfaceVariant
@@ -201,23 +202,23 @@ SkewedSurface {
         buttonSize: 26
         iconSize: 12
         icon: "remove"
-        onTriggered: root.controller.lyricOffset = Math.max(-10, root.controller.lyricOffset - 0.25)
+        onTriggered: root.service.lyricOffset = Math.max(-10, root.service.lyricOffset - 0.25)
       }
       StyledText {
-        text: (root.controller.lyricOffset >= 0 ? "+" : "") + root.controller.lyricOffset.toFixed(2) + "s"
+        text: (root.service.lyricOffset >= 0 ? "+" : "") + root.service.lyricOffset.toFixed(2) + "s"
         font.pointSize: Appearance.font.size.small
         font.family: Appearance.font.family.mono
         MouseArea {
           anchors.fill: parent
           cursorShape: Qt.PointingHandCursor
-          onClicked: root.controller.lyricOffset = 0
+          onClicked: root.service.lyricOffset = 0
         }
       }
       MediaControlButton {
         buttonSize: 26
         iconSize: 12
         icon: "add"
-        onTriggered: root.controller.lyricOffset = Math.min(10, root.controller.lyricOffset + 0.25)
+        onTriggered: root.service.lyricOffset = Math.min(10, root.service.lyricOffset + 0.25)
       }
     }
   }

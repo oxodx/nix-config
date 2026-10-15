@@ -9,9 +9,6 @@ import Quickshell.Services.Pipewire
 import Quickshell.Services.UPower
 import Quickshell.Networking
 import qs.components
-import qs.modules.launcher as Launcher
-import qs.modules.lock as Lock
-import qs.modules.notifications as Notifs
 import qs.modules.media as Mpris
 
 Item {
@@ -88,7 +85,7 @@ Item {
 
         StyledText {
           Layout.alignment: Qt.AlignRight
-          text: `${Notifs.NotificationManager.notifications.length} notifications`
+          text: `${NotificationService.notifications.length} notifications`
           color: Appearance.colors.m3onSurfaceVariant
         }
       }
@@ -124,7 +121,7 @@ Item {
         label: "Launcher"
         onTriggered: {
           root.requestClose();
-          Launcher.Controller.open();
+          LauncherService.open();
         }
       }
 
@@ -140,10 +137,10 @@ Item {
 
       DashboardAction {
         Layout.fillWidth: true
-        icon: Notifs.NotificationManager.dnd ? "notifications_off" : "notifications"
+        icon: NotificationService.dnd ? "notifications_off" : "notifications"
         label: "Focus"
-        active: Notifs.NotificationManager.dnd
-        onTriggered: Notifs.NotificationManager.dnd = !Notifs.NotificationManager.dnd
+        active: NotificationService.dnd
+        onTriggered: NotificationService.dnd = !NotificationService.dnd
       }
 
       DashboardAction {
@@ -152,7 +149,7 @@ Item {
         label: "Lock"
         onTriggered: {
           root.requestClose();
-          Lock.Controller.locked = true;
+          LockService.locked = true;
         }
       }
     }
@@ -240,7 +237,7 @@ Item {
 
           StyledText {
             Layout.fillWidth: true
-            text: Mpris.MprisController.activeTrack?.title ?? "Nothing playing"
+            text: MprisService.activeTrack?.title ?? "Nothing playing"
             color: Appearance.colors.m3onSurface
             font.weight: Font.Bold
             elide: Text.ElideRight
@@ -248,7 +245,7 @@ Item {
 
           StyledText {
             Layout.fillWidth: true
-            text: Mpris.MprisController.activeTrack?.artist ?? "Open a media player"
+            text: MprisService.activeTrack?.artist ?? "Open a media player"
             color: Appearance.colors.m3tertiary
             elide: Text.ElideRight
           }
@@ -257,23 +254,23 @@ Item {
         Mpris.MediaControlButton {
           buttonSize: 34
           icon: "skip_previous"
-          enabled: Mpris.MprisController.canGoPrevious
-          onTriggered: Mpris.MprisController.previous()
+          enabled: MprisService.canGoPrevious
+          onTriggered: MprisService.previous()
         }
 
         Mpris.MediaControlButton {
           buttonSize: 38
           prominent: true
-          icon: Mpris.MprisController.isPlaying ? "pause" : "play_arrow"
-          enabled: Mpris.MprisController.canTogglePlaying
-          onTriggered: Mpris.MprisController.togglePlaying()
+          icon: MprisService.isPlaying ? "pause" : "play_arrow"
+          enabled: MprisService.canTogglePlaying
+          onTriggered: MprisService.togglePlaying()
         }
 
         Mpris.MediaControlButton {
           buttonSize: 34
           icon: "skip_next"
-          enabled: Mpris.MprisController.canGoNext
-          onTriggered: Mpris.MprisController.next()
+          enabled: MprisService.canGoNext
+          onTriggered: MprisService.next()
         }
       }
     }

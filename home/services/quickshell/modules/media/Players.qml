@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 
+import qs.services
 import qs.theme
 import QtQuick
 import QtQuick.Layouts
@@ -14,7 +15,7 @@ FullwidthMouseArea {
   property bool skewed: false
   property bool compactBar: false
   property real edgeInset: 0
-  readonly property var player: MprisController.activePlayer
+  readonly property var player: MprisService.activePlayer
 
   hoverEnabled: true
   fillWindowWidth: true
@@ -29,18 +30,18 @@ FullwidthMouseArea {
 
   onPressed: event => {
     if (event.button === Qt.LeftButton)
-      MprisController.togglePlaying();
+      MprisService.togglePlaying();
     else if (event.button === Qt.RightButton)
       persist.menuOpen = !persist.menuOpen;
     else if (event.button === Qt.ForwardButton)
-      MprisController.next();
+      MprisService.next();
     else if (event.button === Qt.BackButton)
-      MprisController.previous();
+      MprisService.previous();
   }
 
   onWheel: event => {
     event.accepted = true;
-    if (MprisController.canChangeVolume)
+    if (MprisService.canChangeVolume)
       root.player.volume = Math.max(0, Math.min(1, root.player.volume + event.angleDelta.y / 2400));
   }
 
@@ -52,13 +53,13 @@ FullwidthMouseArea {
     skewed: root.skewed
 
     function refresh(reverse: bool): void {
-      setArt(MprisController.activeTrack?.artUrl ?? "", reverse, false);
+      setArt(MprisService.activeTrack?.artUrl ?? "", reverse, false);
     }
 
     Component.onCompleted: refresh(false)
 
     Connections {
-      target: MprisController
+      target: MprisService
       function onTrackChanged(reverse: bool): void {
         background.refresh(reverse);
       }
@@ -93,7 +94,7 @@ FullwidthMouseArea {
       StyledText {
         Layout.fillWidth: true
         Layout.fillHeight: true
-        text: root.player ? MprisController.activeTrack?.title ?? "Unknown title" : "Nothing playing"
+        text: root.player ? MprisService.activeTrack?.title ?? "Unknown title" : "Nothing playing"
         color: "#f8ffffff"
         font.pointSize: 10
         font.weight: Font.DemiBold
@@ -104,7 +105,7 @@ FullwidthMouseArea {
       StyledText {
         Layout.fillWidth: true
         Layout.fillHeight: true
-        text: root.player ? MprisController.activeTrack?.artist ?? root.player.identity : "Open a media player"
+        text: root.player ? MprisService.activeTrack?.artist ?? root.player.identity : "Open a media player"
         color: "#98ffffff"
         font.pointSize: 7
         verticalAlignment: Text.AlignTop
@@ -135,8 +136,8 @@ FullwidthMouseArea {
       Layout.preferredHeight: 32
       buttonSize: 32
       icon: "skip_previous"
-      enabled: MprisController.canGoPrevious
-      onTriggered: MprisController.previous()
+      enabled: MprisService.canGoPrevious
+      onTriggered: MprisService.previous()
     }
 
     MediaControlButton {
@@ -144,9 +145,9 @@ FullwidthMouseArea {
       Layout.preferredHeight: 34
       buttonSize: 30
       prominent: true
-      icon: MprisController.isPlaying ? "pause" : "play_arrow"
-      enabled: MprisController.canTogglePlaying
-      onTriggered: MprisController.togglePlaying()
+      icon: MprisService.isPlaying ? "pause" : "play_arrow"
+      enabled: MprisService.canTogglePlaying
+      onTriggered: MprisService.togglePlaying()
     }
 
     MediaControlButton {
@@ -154,8 +155,8 @@ FullwidthMouseArea {
       Layout.preferredHeight: 32
       buttonSize: 32
       icon: "skip_next"
-      enabled: MprisController.canGoNext
-      onTriggered: MprisController.next()
+      enabled: MprisService.canGoNext
+      onTriggered: MprisService.next()
     }
   }
 
@@ -171,7 +172,7 @@ FullwidthMouseArea {
     StyledText {
       Layout.preferredWidth: Math.min(135, root.width * 0.22)
       Layout.minimumWidth: 0
-      text: (MprisController.activeTrack?.artist ?? root.player?.identity ?? "").toUpperCase()
+      text: (MprisService.activeTrack?.artist ?? root.player?.identity ?? "").toUpperCase()
       color: Appearance.colors.m3primary
       font.pointSize: 8
       font.weight: Font.Bold
@@ -188,7 +189,7 @@ FullwidthMouseArea {
     StyledText {
       Layout.preferredWidth: Math.min(145, root.width * 0.22)
       Layout.minimumWidth: 0
-      text: (MprisController.activeTrack?.title ?? "").toUpperCase()
+      text: (MprisService.activeTrack?.title ?? "").toUpperCase()
       horizontalAlignment: Text.AlignRight
       color: Appearance.colors.m3primary
       font.pointSize: 8
@@ -205,11 +206,11 @@ FullwidthMouseArea {
       leftMargin: root.edgeInset + 8
       rightMargin: root.edgeInset + 8
     }
-    visible: root.player !== null && MprisController.length > 0
+    visible: root.player !== null && MprisService.length > 0
     height: root.compactBar ? 1 : 3
     thickness: root.compactBar ? 1 : 3
-    value: MprisController.position
-    to: Math.max(1, MprisController.length)
+    value: MprisService.position
+    to: Math.max(1, MprisService.length)
   }
 
   property TooltipItem hoverTooltip: TooltipItem {
@@ -224,13 +225,13 @@ FullwidthMouseArea {
 
       StyledText {
         Layout.fillWidth: true
-        text: MprisController.activeTrack?.title ?? "No media playing"
+        text: MprisService.activeTrack?.title ?? "No media playing"
         font.weight: Font.DemiBold
         elide: Text.ElideRight
       }
       StyledText {
         Layout.fillWidth: true
-        text: `${MprisController.activeTrack?.artist ?? ""}  •  right-click for details  •  scroll for volume`
+        text: `${MprisService.activeTrack?.artist ?? ""}  •  right-click for details  •  scroll for volume`
         color: Appearance.colors.m3onSurfaceVariant
         elide: Text.ElideRight
       }

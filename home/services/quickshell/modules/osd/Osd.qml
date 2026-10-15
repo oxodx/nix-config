@@ -27,7 +27,7 @@ PanelWindow {
   mask: Region {}
 
   Connections {
-    target: Controller
+    target: OsdService
     function onRequested(): void {
       if (!root.focusedScreen)
         return;
@@ -83,10 +83,10 @@ PanelWindow {
       MaterialIcon {
         Layout.preferredWidth: 28
         Layout.alignment: Qt.AlignVCenter
-        text: Controller.kind === "brightness" ? "brightness_6" : Controller.kind === "microphone" ? (Controller.muted ? "mic_off" : "mic") : (Controller.muted || Controller.value === 0 ? "volume_off" : "volume_up")
+        text: OsdService.kind === "brightness" ? "brightness_6" : OsdService.kind === "microphone" ? (OsdService.muted ? "mic_off" : "mic") : (OsdService.muted || OsdService.value === 0 ? "volume_off" : "volume_up")
         fill: 1
         font.pointSize: Appearance.font.size.extraLarge
-        color: Controller.muted ? Appearance.colors.alert : Appearance.colors.m3tertiary
+        color: OsdService.muted ? Appearance.colors.alert : Appearance.colors.m3tertiary
       }
 
       ColumnLayout {
@@ -99,15 +99,15 @@ PanelWindow {
 
           StyledText {
             Layout.fillWidth: true
-            text: Controller.kind === "brightness" ? "BRIGHTNESS" : Controller.kind === "microphone" ? "MICROPHONE" : "VOLUME"
+            text: OsdService.kind === "brightness" ? "BRIGHTNESS" : OsdService.kind === "microphone" ? "MICROPHONE" : "VOLUME"
             color: Appearance.colors.m3onSurfaceVariant
             font.pointSize: Appearance.font.size.smaller
             font.weight: Font.DemiBold
           }
 
           StyledText {
-            text: Controller.muted ? "OFF" : `${Math.round(Controller.value * 100)}%`
-            color: Controller.muted ? Appearance.colors.alert : "#f4f6fb"
+            text: OsdService.muted ? "OFF" : `${Math.round(OsdService.value * 100)}%`
+            color: OsdService.muted ? Appearance.colors.alert : "#f4f6fb"
             font.pointSize: Appearance.font.size.smaller
             font.weight: Font.Bold
           }
@@ -116,10 +116,10 @@ PanelWindow {
         ProgressBar {
           Layout.fillWidth: true
           Layout.preferredHeight: 6
-          value: Controller.value
+          value: OsdService.value
           thickness: 6
           cornerRadius: 0
-          fillColor: Controller.muted ? Appearance.colors.alert : Appearance.colors.m3tertiary
+          fillColor: OsdService.muted ? Appearance.colors.alert : Appearance.colors.m3tertiary
           trackColor: Appearance.colors.sliderGroove
 
           Behavior on value {

@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 
+import qs.services
 import qs.theme
 import QtQuick
 import QtQuick.Layouts
@@ -13,9 +14,9 @@ Item {
   implicitWidth: 560
   implicitHeight: 660
 
-  readonly property var player: MprisController.activePlayer
-  readonly property int position: MprisController.position
-  readonly property int length: MprisController.length
+  readonly property var player: MprisService.activePlayer
+  readonly property int position: MprisService.position
+  readonly property int length: MprisService.length
 
   function timeString(value: int): string {
     if (!Number.isFinite(value) || value < 0)
@@ -92,7 +93,7 @@ Item {
           MouseArea {
             anchors.fill: parent
             cursorShape: Qt.PointingHandCursor
-            onClicked: MprisController.setActivePlayer(playerButton.modelData)
+            onClicked: MprisService.setActivePlayer(playerButton.modelData)
           }
         }
       }
@@ -117,7 +118,7 @@ Item {
 
         StyledText {
           Layout.fillWidth: true
-          text: MprisController.activeTrack?.title ?? "Nothing playing"
+          text: MprisService.activeTrack?.title ?? "Nothing playing"
           font.pointSize: Appearance.font.size.large
           font.weight: Font.Bold
           color: "white"
@@ -128,7 +129,7 @@ Item {
 
         StyledText {
           Layout.fillWidth: true
-          text: MprisController.activeTrack?.artist ?? "Open a music player"
+          text: MprisService.activeTrack?.artist ?? "Open a music player"
           font.pointSize: Appearance.font.size.normal
           color: Appearance.colors.m3tertiary
           elide: Text.ElideRight
@@ -136,7 +137,7 @@ Item {
 
         StyledText {
           Layout.fillWidth: true
-          text: MprisController.activeTrack?.album ?? ""
+          text: MprisService.activeTrack?.album ?? ""
           color: Appearance.colors.m3onSurfaceVariant
           wrapMode: Text.Wrap
           maximumLineCount: 2
@@ -205,7 +206,7 @@ Item {
       MediaControlButton {
         buttonSize: 34
         icon: (root.player?.volume ?? 0) <= 0 ? "volume_off" : "volume_up"
-        enabled: MprisController.canChangeVolume
+        enabled: MprisService.canChangeVolume
         onTriggered: root.player.volume = root.player.volume > 0 ? 0 : 0.7
       }
 
@@ -214,7 +215,7 @@ Item {
         Layout.preferredWidth: 100
         from: 0
         to: 1
-        enabled: MprisController.canChangeVolume
+        enabled: MprisService.canChangeVolume
         barColor: Appearance.colors.m3tertiary
         grooveColor: Appearance.colors.sliderGroove
         onMoved: root.player.volume = value
@@ -233,42 +234,42 @@ Item {
 
       MediaControlButton {
         buttonSize: 36
-        icon: MprisController.hasShuffle ? "shuffle_on" : "shuffle"
-        active: MprisController.hasShuffle
-        enabled: MprisController.shuffleSupported
-        onTriggered: MprisController.setShuffle(!MprisController.hasShuffle)
+        icon: MprisService.hasShuffle ? "shuffle_on" : "shuffle"
+        active: MprisService.hasShuffle
+        enabled: MprisService.shuffleSupported
+        onTriggered: MprisService.setShuffle(!MprisService.hasShuffle)
       }
       MediaControlButton {
         buttonSize: 36
         icon: "skip_previous"
-        enabled: MprisController.canGoPrevious
-        onTriggered: MprisController.previous()
+        enabled: MprisService.canGoPrevious
+        onTriggered: MprisService.previous()
       }
       MediaControlButton {
         buttonSize: 38
         prominent: true
-        icon: MprisController.isPlaying ? "pause" : "play_arrow"
-        enabled: MprisController.canTogglePlaying
-        onTriggered: MprisController.togglePlaying()
+        icon: MprisService.isPlaying ? "pause" : "play_arrow"
+        enabled: MprisService.canTogglePlaying
+        onTriggered: MprisService.togglePlaying()
       }
       MediaControlButton {
         buttonSize: 36
         icon: "skip_next"
-        enabled: MprisController.canGoNext
-        onTriggered: MprisController.next()
+        enabled: MprisService.canGoNext
+        onTriggered: MprisService.next()
       }
       MediaControlButton {
         buttonSize: 36
-        icon: MprisController.loopState === MprisLoopState.Track ? "repeat_one" : "repeat"
-        active: MprisController.loopState !== MprisLoopState.None
-        enabled: MprisController.loopSupported
+        icon: MprisService.loopState === MprisLoopState.Track ? "repeat_one" : "repeat"
+        active: MprisService.loopState !== MprisLoopState.None
+        enabled: MprisService.loopSupported
         onTriggered: {
-          if (MprisController.loopState === MprisLoopState.None)
-            MprisController.setLoopState(MprisLoopState.Track);
-          else if (MprisController.loopState === MprisLoopState.Track)
-            MprisController.setLoopState(MprisLoopState.Playlist);
+          if (MprisService.loopState === MprisLoopState.None)
+            MprisService.setLoopState(MprisLoopState.Track);
+          else if (MprisService.loopState === MprisLoopState.Track)
+            MprisService.setLoopState(MprisLoopState.Playlist);
           else
-            MprisController.setLoopState(MprisLoopState.None);
+            MprisService.setLoopState(MprisLoopState.None);
         }
       }
     }

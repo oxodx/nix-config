@@ -1,6 +1,7 @@
 pragma Singleton
 pragma ComponentBehavior: Bound
 
+import qs.modules.launcher
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
