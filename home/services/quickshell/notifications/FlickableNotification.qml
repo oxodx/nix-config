@@ -39,6 +39,8 @@ Item {
 
   function playEntry(delay: real) {
     if (display.state != FlickableNotification.Flinging) {
+      display.velocityX = 0;
+      display.velocityY = 0;
       display.displayX = -display.width + edgeXOffset;
       root.playReturn(delay);
     }
@@ -192,55 +194,65 @@ Item {
 
           running: display.state != FlickableNotification.Inert
           onTriggered: {
-            let frameTime = this.frameTime;
+            // Bound catch-up after a stalled frame, then integrate in small
+            // steps so the spring behaves consistently at any refresh rate.
+            let remainingTime = Math.min(this.frameTime, 0.05);
             if (display.animationDelay != 0) {
-              const usedDelay = Math.min(display.animationDelay, frameTime);
-              frameTime -= usedDelay;
+              const usedDelay = Math.min(display.animationDelay, remainingTime);
+              remainingTime -= usedDelay;
               display.animationDelay -= usedDelay;
-              if (frameTime == 0)
+              if (remainingTime == 0)
                 return;
             }
 
-            if (display.state == FlickableNotification.Flinging) {
-              display.velocityY += frameTime * 100000 * (1 / display.velocityX * 100);
-              //display.velocityX -= display.velocityX * 0.98 * frameTime
-              display.unmesh(frameTime);
-            } else if (display.state == FlickableNotification.Dismissing) {
-              const d = Math.max(0, Math.min(5000, display.displayX)) / 2000;
-              display.displayY = root.padding + display.releaseY * d;
-              display.velocityY = 0;
-
-              display.velocityX += frameTime * -20000;
-
-              if (display.displayX + display.width > 0)
-                display.updateMeshFactor(false);
-              else
+            while (remainingTime > 0) {
+              const frameTime = Math.min(remainingTime, 1 / 120);
+              remainingTime -= frameTime;
+              if (display.state == FlickableNotification.Flinging) {
+                display.velocityY += frameTime * 100000 * (1 / display.velocityX * 100);
+                //display.velocityX -= display.velocityX * 0.98 * frameTime
                 display.unmesh(frameTime);
-            } else {
-              const deltaX = 0 - display.displayX;
-              const deltaY = root.padding - display.displayY;
-
-              display.velocityX += dampingVelocity(display.velocityX, deltaX) * frameTime;
-              display.velocityY += dampingVelocity(display.velocityY, deltaY) * frameTime;
-
-              if (Math.abs(display.velocityX) < 0.01 && Math.abs(deltaX) < 1 && Math.abs(display.velocityY) < 0.01 && Math.abs(deltaY) < 1) {
-                display.state = FlickableNotification.Inert;
-                display.displayX = 0;
-                display.displayY = root.padding;
-                display.velocityX = 0;
+              } else if (display.state == FlickableNotification.Dismissing) {
+                const d = Math.max(0, Math.min(5000, display.displayX)) / 2000;
+                display.displayY = root.padding + display.releaseY * d;
                 display.velocityY = 0;
-                display.initialAnimComplete = true;
+
+                display.velocityX += frameTime * -20000;
+
+                if (display.displayX + display.width > 0)
+                  display.updateMeshFactor(false);
+                else
+                  display.unmesh(frameTime);
+              } else {
+                const deltaX = 0 - display.displayX;
+                const deltaY = root.padding - display.displayY;
+
+                display.velocityX += dampingVelocity(display.velocityX, deltaX) * frameTime;
+                display.velocityY += dampingVelocity(display.velocityY, deltaY) * frameTime;
+
+                if (Math.abs(display.velocityX) < 2 && Math.abs(deltaX) < 0.5 && Math.abs(display.velocityY) < 2 && Math.abs(deltaY) < 0.5) {
+                  display.state = FlickableNotification.Inert;
+                  display.displayX = 0;
+                  display.displayY = root.padding;
+                  display.velocityX = 0;
+                  display.velocityY = 0;
+                  display.initialAnimComplete = true;
+                  display.meshFactor = 1;
+                  break;
+                }
+
+                display.updateMeshFactor(true);
               }
 
-              display.updateMeshFactor(true);
+              display.displayX += display.velocityX * frameTime;
+              display.displayY += display.velocityY * frameTime;
+
+              // todo: actually base this on the viewport
+              if (display.displayX > 10000 || display.displayY > 10000 || (display.displayX + display.width < root.edgeXOffset && display.meshFactor == 0) || display.displayY < -10000) {
+                root.leftViewBounds();
+                return;
+              }
             }
-
-            display.displayX += display.velocityX * frameTime;
-            display.displayY += display.velocityY * frameTime;
-
-            // todo: actually base this on the viewport
-            if (display.displayX > 10000 || display.displayY > 10000 || (display.displayX + display.width < root.edgeXOffset && display.meshFactor == 0) || display.displayY < -10000)
-              root.leftViewBounds();
           }
         }
       }

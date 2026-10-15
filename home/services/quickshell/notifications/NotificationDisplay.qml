@@ -1,7 +1,5 @@
 import QtQuick
-import QtQuick.Effects
 import qs.components
-import qs.shaders as Shaders
 
 Item {
   id: root
@@ -73,24 +71,8 @@ Item {
     id: compositedStack
     anchors.fill: parent
 
-    layer.enabled: stack.topNotification != null
-    layer.effect: Shaders.MaskedOverlay {
-      overlayItem: overlaySource
-      overlaySize: Qt.size(overlaySource.width, overlaySource.height)
-      overlayPos: Qt.point(stack.x + (stack.topNotification?.x ?? 0) + (stack.topNotification?.displayContainer.x ?? 0), stack.y + (stack.topNotification?.y ?? 0) + (stack.topNotification?.displayContainer.y ?? 0))
-    }
-
-    ShaderEffectSource {
-      id: overlaySource
-      sourceItem: stack.topNotification?.displayContainer ?? null
-      hideSource: false
-      live: true
-      recursive: true
-      smooth: true
-      width: sourceItem?.width ?? 0
-      height: sourceItem?.height ?? 0
-      opacity: 0
-    }
+    // Render cards directly: a full-screen offscreen layer and live copy of
+    // the front card added two render passes to every animation frame.
 
     ZHVStack {
       id: stack
