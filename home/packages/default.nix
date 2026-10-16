@@ -20,6 +20,11 @@
       ffmpegthumbnailer
       imagemagick
       bun
+      rustc
+      cargo
+      rustfmt
+      clippy
+      gcc
       file-roller
       gnome-control-center
       nautilus

@@ -3,12 +3,15 @@
 import contextlib
 import hashlib
 import json
+import multiprocessing
 import os
-from pathlib import Path
+import queue
 import re
 import signal
 import sys
+import time
 import unicodedata
+from pathlib import Path
 
 STAMP = r"(\d+):(\d+(?:\.\d+)?)"
 
@@ -36,14 +39,14 @@ def parse_lrc(source, duration=0):
     if markers:
       text = rest[:markers[0].start()]
       for index, marker in enumerate(markers):
-        end = markers[index + 1].start() if index + 1 < len(markers) else len(rest)
+        end = (markers[index + 1].start() if index + 1 < len(markers) else len(rest))
         word = rest[marker.end():end]
         if word:
           words.append({
             "start": seconds(marker.groups()) + offset,
             "offset": text_length(text),
             "length": text_length(word),
-            "word": word
+            "word": word,
           })
           text += word
         elif index == len(markers) - 1:
@@ -59,20 +62,22 @@ def parse_lrc(source, duration=0):
                     seconds(stamp.groups()) + offset),
         "text": text,
         "words": line_words,
-        "end_hint": end_hint + shift if end_hint else 0
+        "end_hint": end_hint + shift if end_hint else 0,
       })
   lines.sort(key=lambda line: line["time"])
   for index, line in enumerate(lines):
     following = lines[index + 1]["time"] if index + 1 < len(lines) else duration
     # A final empty enhanced timestamp can provide a real ending.
     hint = line.pop("end_hint")
-    end = hint if hint > line["time"] else following if following > line["time"] else max(
-      line["time"] + 3, line["words"][-1]["start"] + 0.3 if line["words"] else 0)
+    end = (hint if hint > line["time"] else following if following > line["time"] else max(
+      line["time"] + 3,
+      line["words"][-1]["start"] + 0.3 if line["words"] else 0,
+    ))
     if following > line["time"]:
       end = min(end, following)
     line["end"] = end
     for wi, word in enumerate(line["words"]):
-      next_start = line["words"][wi + 1]["start"] if wi + 1 < len(line["words"]) else end
+      next_start = (line["words"][wi + 1]["start"] if wi + 1 < len(line["words"]) else end)
       word["end"] = max(word["start"], min(end, next_start))
   return lines
 
@@ -85,14 +90,19 @@ def clean_track(track):
     artist, title = title.split(" - ", 1)
   elif title.casefold().startswith(artist.casefold() + " - "):
     title = title[len(artist) + 3:]
-  title = re.sub(r"\s*[\[(](?:official\s+)?(?:music\s+)?(?:video|audio|lyrics?|visuali[sz]er)[\])]",
-                 "",
-                 title,
-                 flags=re.I).strip()
+  title = re.sub(
+    r"\s*[\[(](?:official\s+)?(?:music\s+)?(?:video|audio|lyrics?|visuali[sz]er)[\])]",
+    "",
+    title,
+    flags=re.I,
+  ).strip()
   return dict(track, artist=artist, title=title)
 
 def cache_key(track):
-  identity = {"artist": normalize(track["artist"]), "title": normalize(track["title"])}
+  identity = {
+    "artist": normalize(track["artist"]),
+    "title": normalize(track["title"]),
+  }
   return hashlib.sha256(json.dumps(identity, sort_keys=True).encode()).hexdigest()
 
 @contextlib.contextmanager
@@ -109,102 +119,203 @@ def deadline(seconds_limit):
     signal.alarm(0)
     signal.signal(signal.SIGALRM, previous)
 
-def enhanced_lookup(query):
-  import syncedlyrics
-  with deadline(10):
-    result = syncedlyrics.search(query, enhanced=True, providers=["Musixmatch"])
-  return result if result and re.search(r"<" + STAMP + r">", result) else None
+def matches(track, artist, title, duration=0):
+  if normalize(artist) != normalize(track["artist"]) or normalize(title) != normalize(
+      track["title"]):
+    return False
+  expected = track.get("duration", 0)
+  return not (expected and duration and abs(expected - duration) > max(3, expected * 0.02))
 
-def lookup(track):
-  import requests
-  artist, title = track["artist"], track["title"]
-  duration = track.get("duration", 0)
-  result, enhanced = {}, None
-  try:
-    enhanced = enhanced_lookup(f"{artist} {title}")
-  except (Exception, ProviderTimeout) as error:
-    print(f"Enhanced lookup: {error}", file=sys.stderr)
-  session = requests.Session()
-  session.headers["User-Agent"] = "oxod-quickshell-lyrics/2.0"
-  params = {"artist_name": artist, "track_name": title}
-  if duration > 0:
-    params["duration"] = duration
-  try:
-    response = session.get("https://lrclib.net/api/get", params=params, timeout=5)
-    if response.ok:
-      result = response.json()
-  except Exception as error:
-    print(f"LRCLIB lookup: {error}", file=sys.stderr)
-  if not result.get("syncedLyrics") and not result.get("instrumental") and not enhanced:
-    try:
-      response = session.get("https://lrclib.net/api/search",
-                             params={
-                               "artist_name": artist,
-                               "track_name": title
-                             },
-                             timeout=5)
-      response.raise_for_status()
-      candidates = response.json()
-
-      def score(candidate):
-        return (100 * (normalize(candidate.get("trackName", "")) == normalize(title)) + 50 *
-                (normalize(candidate.get("artistName", "")) == normalize(artist)) +
-                10 * bool(candidate.get("syncedLyrics")) -
-                (abs(candidate.get("duration", duration) - duration) if duration else 0))
-
-      if candidates:
-        result = max(candidates, key=score)
-    except Exception as error:
-      print(f"LRCLIB search: {error}", file=sys.stderr)
-  lrc = enhanced or result.get("syncedLyrics") or ""
-  if not lrc and not result.get("plainLyrics") and not result.get("instrumental"):
-    try:
-      import syncedlyrics
-      with deadline(10):
-        lrc = syncedlyrics.search(
-          f"{artist} {title}", synced_only=True, providers=["NetEase", "Megalobiz"]) or ""
-    except (Exception, ProviderTimeout) as error:
-      print(f"Fallback lookup: {error}", file=sys.stderr)
-  total = float(result.get("duration") or duration or 0)
-  lines = parse_lrc(lrc, total)
+def candidate(track, lrc, plain, duration, source, instrumental=False):
+  lines = parse_lrc(lrc or "", duration or track.get("duration", 0))
   return {
     "lines": lines,
     "enhanced": any(line["words"] for line in lines),
-    "plainLyrics": result.get("plainLyrics") or "",
-    "duration": total,
-    "instrumental": bool(result.get("instrumental")),
-    "source": "Musixmatch" if enhanced else "LRCLIB" if result else "syncedlyrics"
+    "plainLyrics": plain or "",
+    "duration": duration or track.get("duration", 0),
+    "instrumental": instrumental,
+    "source": source,
+    "schema": 3,
   }
+
+def quality(result):
+  if not result:
+    return (0, 0)
+  lines = result.get("lines", [])
+  return (
+    3 if result.get("enhanced") else
+    2 if lines else 1 if result.get("plainLyrics") or result.get("instrumental") else 0,
+    len([line for line in lines if line["text"].strip()]),
+  )
+
+def provider_lookup(provider, track, output):
+  try:
+    with deadline(18):
+      for result in provider(track):
+        output.put(result)
+  except (Exception, ProviderTimeout) as error:
+    print(f"{provider.__name__}: {error}", file=sys.stderr)
+  finally:
+    output.put(None)
+
+def lrclib(track):
+  import requests
+
+  session = requests.Session()
+  session.headers["User-Agent"] = "oxod-quickshell-lyrics/3.0"
+  params = {"artist_name": track["artist"], "track_name": track["title"]}
+  for endpoint in ("get", "search"):
+    try:
+      query = dict(params)
+      if endpoint == "get" and track.get("duration"):
+        query["duration"] = track["duration"]
+      response = session.get("https://lrclib.net/api/" + endpoint, params=query, timeout=5)
+      response.raise_for_status()
+      results = [response.json()] if endpoint == "get" else response.json()
+      for result in results:
+        if matches(
+            track,
+            result.get("artistName", ""),
+            result.get("trackName", ""),
+            result.get("duration", 0),
+        ):
+          yield candidate(
+            track,
+            result.get("syncedLyrics"),
+            result.get("plainLyrics"),
+            result.get("duration", 0),
+            "LRCLIB",
+            bool(result.get("instrumental")),
+          )
+    except Exception as error:
+      print(f"LRCLIB {endpoint}: {error}", file=sys.stderr)
+
+def musixmatch(track):
+  from syncedlyrics.providers import Musixmatch
+
+  provider = Musixmatch()
+  response = provider._get(
+    "track.search",
+    [
+      ("q", f"{track['artist']} {track['title']}"),
+      ("page_size", "5"),
+      ("page", "1"),
+    ],
+  )
+  for item in response.json()["message"]["body"]["track_list"]:
+    song = item["track"]
+    if not matches(
+        track,
+        song.get("artist_name", ""),
+        song.get("track_name", ""),
+        song.get("track_length", 0),
+    ):
+      continue
+    for fetch in (provider.get_lrc_by_id, provider.get_lrc_word_by_word):
+      result = fetch(song["track_id"])
+      if result:
+        yield candidate(
+          track,
+          result.synced,
+          result.unsynced,
+          song.get("track_length", 0),
+          "Musixmatch",
+        )
+
+def netease(track):
+  from syncedlyrics.providers import NetEase
+
+  provider = NetEase()
+  response = provider.session.get(
+    "https://music.163.com/api/search/pc",
+    params={
+      "limit": 10,
+      "type": 1,
+      "offset": 0,
+      "s": f"{track['artist']} {track['title']}",
+    },
+    timeout=5,
+  )
+  response.raise_for_status()
+  for song in response.json().get("result", {}).get("songs", []):
+    duration = song.get("duration", 0) / 1000
+    if not any(
+        matches(track, artist["name"], song["name"], duration)
+        for artist in song.get("artists", [])):
+      continue
+    result = provider.get_lrc_by_id(song["id"])
+    if result:
+      yield candidate(track, result.synced, result.unsynced, duration, "NetEase")
+
+def lookup(track):
+  context = multiprocessing.get_context("fork")
+  output = context.Queue()
+  workers = [
+    context.Process(target=provider_lookup, args=(provider, track, output), daemon=True)
+    for provider in (lrclib, musixmatch, netease)
+  ]
+  for worker in workers:
+    worker.start()
+  finished, expires = 0, time.monotonic() + 20
+  try:
+    while finished < len(workers) and time.monotonic() < expires:
+      try:
+        result = output.get(timeout=min(0.5, max(0.01, expires - time.monotonic())))
+      except queue.Empty:
+        continue
+      if result is None:
+        finished += 1
+      else:
+        yield result
+  finally:
+    for worker in workers:
+      if worker.is_alive():
+        worker.terminate()
+      worker.join()
+    output.close()
+
+def save_cache(cache_file, result):
+  try:
+    cache_file.parent.mkdir(parents=True, exist_ok=True)
+    temp = cache_file.with_suffix(f".{os.getpid()}.tmp")
+    temp.write_text(json.dumps(result, ensure_ascii=False))
+    temp.replace(cache_file)
+  except OSError as error:
+    print(f"Lyrics cache: {error}", file=sys.stderr)
 
 def main():
   track = clean_track(json.loads(sys.argv[1]))
   key = cache_key(track)
-  cache_dir = Path(os.environ.get("XDG_CACHE_HOME", str(
-    Path.home() / ".cache"))) / "quickshell" / "lyrics-v2"
+  cache_dir = (Path(os.environ.get("XDG_CACHE_HOME", str(Path.home() / ".cache"))) / "quickshell" /
+               "lyrics-v2")
   cache_file = cache_dir / (key + ".json")
   cached = None
   if cache_file.exists():
     try:
       cached = json.loads(cache_file.read_text())
-      if not isinstance(cached.get("lines"), list):
+      if not isinstance(cached.get("lines"), list) or cached.get("schema") != 3:
         cached = None
-      if cached is not None and "--refresh" not in sys.argv:
+      if (cached is not None and cached.get("complete") and "--refresh" not in sys.argv):
         print(json.dumps(cached, ensure_ascii=False), flush=True)
         return
     except (ValueError, OSError, AttributeError):
       cached = None
-  result = lookup(track)
-  if result["lines"] or result["plainLyrics"] or result["instrumental"]:
-    try:
-      cache_dir.mkdir(parents=True, exist_ok=True)
-      temp = cache_file.with_suffix(f".{os.getpid()}.tmp")
-      temp.write_text(json.dumps(result, ensure_ascii=False))
-      temp.replace(cache_file)
-    except OSError as error:
-      print(f"Lyrics cache: {error}", file=sys.stderr)
-  elif cached is not None:
-    result = cached
-  print(json.dumps(result, ensure_ascii=False), flush=True)
+  if cached is not None:
+    print(json.dumps(cached, ensure_ascii=False), flush=True)
+  best = cached
+  results = lookup(track)
+  # Also allow a single result for small offline fixtures.
+  if isinstance(results, dict):
+    results = [results]
+  for result in results:
+    if quality(result) <= quality(best):
+      continue
+    result = dict(result, schema=3, complete=False)
+    best = result
+    print(json.dumps(result, ensure_ascii=False), flush=True)
+    save_cache(cache_file, result)
+  if best:
+    save_cache(cache_file, dict(best, complete=True))
 
 if __name__ == "__main__":
   main()

@@ -18,9 +18,7 @@ Scope {
   property bool enhanced: false
   property string source: ""
   property real trackDuration: 0
-  property real clockPosition: 0
-  property real anchorPosition: 0
-  property real lastSourcePosition: 0
+  readonly property real clockPosition: player?.position ?? 0
   readonly property real effectivePosition: clockPosition + timingOffset
   readonly property string statusText: !player ? "Nothing playing" : lyricsLoading ? "Finding lyrics…" : instrumental ? "Instrumental" : syncedLyrics.length ? (enhanced ? "Word-synced lyrics" : "Synced lyrics") : plainLyrics ? "Unsynced lyrics" : lyricsError || "No lyrics available"
   readonly property int currentLyricIndex: {
@@ -53,80 +51,9 @@ Scope {
     return line.end > line.time ? Math.max(0, Math.min(1, (effectivePosition - line.time) / (line.end - line.time))) : 0;
   }
 
-  ElapsedTimer { id: elapsed }
-  ElapsedTimer { id: syncLatency }
-  ElapsedTimer { id: sourceElapsed }
-
-  function predictedPosition(): real {
-    return anchorPosition + (player?.isPlaying ? elapsed.elapsed() * (player.rate ?? 1) : 0);
-  }
-
-  function anchor(position: real): void {
-    anchorPosition = Math.max(0, position);
-    elapsed.restart();
-    clockPosition = anchorPosition;
-    lastSourcePosition = player?.position ?? 0;
-    sourceElapsed.restart();
-  }
-
-  onTrackChanged: {
-    anchor(player?.position ?? 0);
-    lookupDelay.restart();
-  }
-  onPlayerChanged: anchor(player?.position ?? 0)
-
-  Connections {
-    target: root.player
-    function onPlaybackStateChanged() { root.anchor(root.player?.position ?? 0); }
-    function onRateChanged() { root.anchor(root.player?.position ?? 0); }
-    function onPositionChanged() {
-      const position = root.player?.position ?? 0;
-      const expected = root.player?.isPlaying ? sourceElapsed.elapsed() * (root.player.rate ?? 1) : 0;
-      // Only a discontinuity is a seek. Regular position notifications must
-      // not undo the drift correction from the real playerctl measurement.
-      if (Math.abs(position - root.lastSourcePosition - expected) > 0.15)
-        root.anchor(position);
-      root.lastSourcePosition = position;
-      sourceElapsed.restart();
-    }
-  }
-
-  Timer {
-    interval: 33
-    repeat: true
-    running: root.player?.isPlaying ?? false
-    onTriggered: root.clockPosition = root.predictedPosition()
-  }
-
-  // Query only the selected player. This corrects slow drift without a second
-  // metadata polling loop or switching to some other playing browser tab.
-  Timer {
-    interval: 5000
-    repeat: true
-    running: (root.player?.isPlaying ?? false) && root.syncedLyrics.length > 0
-    onTriggered: {
-      if (positionSync.running) return;
-      positionSync.playerName = root.player.dbusName;
-      syncLatency.restart();
-      positionSync.running = true;
-    }
-  }
-
-  Process {
-    id: positionSync
-    property string playerName: ""
-    command: ["playerctl", "--player=" + playerName.replace("org.mpris.MediaPlayer2.", ""), "position"]
-    stdout: StdioCollector { id: positionOutput }
-    onExited: code => {
-      if (code !== 0 || playerName !== root.player?.dbusName) return;
-      const value = Number(positionOutput.text.trim());
-      if (!Number.isFinite(value) || !positionOutput.text.trim()) return;
-      const measured = value + (root.player.isPlaying ? Math.min(0.15, syncLatency.elapsed() / 2) * root.player.rate : 0);
-      const predicted = root.predictedPosition();
-      const drift = measured - predicted;
-      root.anchor(Math.abs(drift) > 1 ? measured : predicted + drift * 0.25);
-    }
-  }
+  // MprisService already ticks Quickshell's interpolated position. A second
+  // clock plus playerctl corrections can repeatedly rewind stale players.
+  onTrackChanged: lookupDelay.restart()
 
   function lyricKey(): string {
     if (!track || !player || !track.title || track.title === "Unknown Title") return "";
@@ -159,8 +86,8 @@ Scope {
       lyricsLoading = false;
       return;
     }
-    clear();
-    lyricsLoading = true;
+    if (key !== lookup.requestKey) clear();
+    lyricsLoading = !(syncedLyrics.length || plainLyrics || instrumental);
     if (lookup.running) return;
     lookup.requestKey = key;
     const metadata = JSON.stringify({artist: track.artist, title: track.title, album: track.album, duration: player.lengthSupported ? Math.round(player.length) : 0});
@@ -173,7 +100,24 @@ Scope {
   Process {
     id: lookup
     property string requestKey: ""
-    stdout: StdioCollector { id: resultOutput }
+    stdout: SplitParser {
+      onRead: data => {
+        if (lookup.requestKey !== root.lyricKey()) return;
+        try {
+          const result = JSON.parse(data);
+          root.syncedLyrics = Array.isArray(result.lines) ? result.lines : [];
+          root.plainLyrics = result.plainLyrics ?? "";
+          root.enhanced = result.enhanced ?? false;
+          root.instrumental = result.instrumental ?? false;
+          root.source = result.source ?? "";
+          root.trackDuration = Number(result.duration) || 0;
+          root.lyricsLoading = false;
+          root.lyricsError = "";
+        } catch (error) {
+          root.lyricsError = "Could not read lyrics — retry";
+        }
+      }
+    }
     onRunningChanged: {
       if (running) watchdog.restart();
       else watchdog.stop();
@@ -188,19 +132,7 @@ Scope {
         root.lyricsError = "Lyrics lookup failed — retry";
         return;
       }
-      try {
-        const result = JSON.parse(resultOutput.text);
-        root.syncedLyrics = Array.isArray(result.lines) ? result.lines : [];
-        root.plainLyrics = result.plainLyrics ?? "";
-        root.enhanced = result.enhanced ?? false;
-        root.instrumental = result.instrumental ?? false;
-        root.source = result.source ?? "";
-        const duration = Number(result.duration);
-        root.trackDuration = Number.isFinite(duration) && duration > 0 ? duration : 0;
-        root.lyricsError = root.syncedLyrics.length || root.plainLyrics || root.instrumental ? "" : "No lyrics found";
-      } catch (error) {
-        root.lyricsError = "Could not read lyrics — retry";
-      }
+      root.lyricsError = root.syncedLyrics.length || root.plainLyrics || root.instrumental ? "" : "No lyrics found";
     }
   }
 

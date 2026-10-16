@@ -4,6 +4,11 @@
     biome = "${pkgs.biome}/bin/biome";
     oxfmt = "${pkgs.oxfmt}/bin/oxfmt";
     shfmt = "${pkgs.shfmt}/bin/shfmt";
+    yapf = pkgs.writeShellScript "zed-yapf" ''
+      # Resolve .style.yapf relative to the buffer, not Zed's working directory.
+      cd -- "$(${pkgs.coreutils}/bin/dirname -- "$1")" || exit 1
+      exec ${pkgs.python3Packages.yapf}/bin/yapf
+    '';
   };
 
   languageServers = {
@@ -24,6 +29,12 @@
   };
 in {
   languages = {
+    Python = {
+      tab_size = 2;
+      hard_tabs = false;
+      formatter = mkExternalFormatter formatters.yapf ["{buffer_path}"];
+      format_on_save = "on";
+    };
     YAML = {
       tab_size = 2;
       formatter = mkExternalFormatter formatters.oxfmt ["--stdin-filepath" "{buffer_path}"];

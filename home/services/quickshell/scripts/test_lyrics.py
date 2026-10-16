@@ -1,10 +1,10 @@
 import json
 import os
-from pathlib import Path
-import sys
 import subprocess
+import sys
 import tempfile
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 
 import lyrics
@@ -168,7 +168,31 @@ class LyricsTests(unittest.TestCase):
         lyrics.main()
         sys.argv.append("--refresh")
         lyrics.main()
-        self.assertEqual(json.loads(output.call_args.args[0]), result)
+        self.assertEqual(json.loads(output.call_args.args[0]), dict(result, schema=3,
+                                                                    complete=True))
+
+  def test_match_rejects_wrong_song_version_artist_and_duration(self):
+    track = {"artist": "Artist", "title": "Song", "duration": 200}
+    self.assertTrue(lyrics.matches(track, "ARTIST", "Song", 201))
+    self.assertFalse(lyrics.matches(track, "Artist", "Song (Live)", 200))
+    self.assertFalse(lyrics.matches(track, "Other", "Song", 200))
+    self.assertFalse(lyrics.matches(track, "Artist", "Song", 240))
+
+  def test_stream_only_emits_improvements(self):
+    track = {"artist": "Artist", "title": "Song"}
+    plain = lyrics.candidate(track, "", "Words", 20, "plain")
+    synced = lyrics.candidate(track, "[00:01]Words", "", 20, "synced")
+    enhanced = lyrics.candidate(track, "[00:01]<00:01>Words<00:02>", "", 20, "enhanced")
+    with tempfile.TemporaryDirectory() as directory:
+      with patch.dict(os.environ, {"XDG_CACHE_HOME": directory}), patch.object(
+          sys, "argv", ["lyrics", json.dumps(track)]), patch.object(
+            lyrics, "lookup", return_value=iter([plain, synced, plain, enhanced,
+                                                 synced])), patch("builtins.print") as output:
+        lyrics.main()
+        emitted = [json.loads(call.args[0]) for call in output.call_args_list]
+        self.assertEqual([item["source"] for item in emitted], ["plain", "synced", "enhanced"])
+        cached = json.loads(next(Path(directory).rglob("*.json")).read_text())
+        self.assertTrue(cached["enhanced"])
 
 if __name__ == "__main__":
   unittest.main()

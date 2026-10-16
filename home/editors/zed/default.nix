@@ -149,4 +149,20 @@ in {
     text = settingsJSON;
     mutable = true;
   };
+  # Mutable settings are only seeded once; merge managed Python formatting
+  # into existing settings without replacing preferences edited inside Zed.
+  system.activationScripts.zedPythonFormatter = lib.stringAfter ["xdgUserFiles"] ''
+    settings=/home/oxod/.config/zed/settings.json
+    temporary=$(${pkgs.coreutils}/bin/mktemp "$settings.XXXXXX")
+    if ${pkgs.jq}/bin/jq --slurpfile python ${pkgs.writeText "zed-python-settings.json" (builtins.toJSON languageConfig.languages.Python)} \
+      '.languages.Python = ((.languages.Python // {}) * $python[0])' "$settings" > "$temporary"; then
+      ${pkgs.coreutils}/bin/chown --reference="$settings" "$temporary"
+      ${pkgs.coreutils}/bin/chmod --reference="$settings" "$temporary"
+      ${pkgs.coreutils}/bin/mv -- "$temporary" "$settings"
+    else
+      ${pkgs.coreutils}/bin/rm -- "$temporary"
+      echo "Could not update Zed Python formatting settings" >&2
+      exit 1
+    fi
+  '';
 }
