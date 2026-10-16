@@ -14,6 +14,7 @@
         set -gx NIXPKGS_ALLOW_INSECURE 1
         set -gx EDITOR hx
         set -gx VISUAL hx
+        fish_add_path --path --append "$HOME/.cargo/bin"
 
         set -g fish_greeting ""
 

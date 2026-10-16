@@ -91,7 +91,6 @@
       lm_sensors
       ethtool
       usbutils
-      vscode
       bash
     ]
     ++ (with inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}; [
