@@ -10,15 +10,22 @@ SkewedSurface {
   property real iconSize: Appearance.font.size.large
   property real disabledOpacity: 0.4
   property int transitionDuration: 150
+  activeFocusOnTab: enabled && visible
+  Accessible.role: Accessible.Button
+  Accessible.name: label || icon.replace(/_/g, " ")
+  Accessible.onPressAction: if (enabled) triggered()
+  Keys.onSpacePressed: event => { if (!event.isAutoRepeat) triggered(); }
+  Keys.onReturnPressed: triggered()
+  Keys.onEnterPressed: triggered()
   readonly property color contentColor: active ? Appearance.colors.m3onPrimaryContainer : Appearance.colors.m3onSurface
 
   implicitWidth: 40
   implicitHeight: 40
   slantLeft: true
   slantRight: true
-  slant: 0
-  fillColor: active ? Appearance.colors.m3primaryContainer : mouse.containsMouse ? Appearance.colors.widgetActive : Appearance.colors.widget
-  outlineColor: active ? Appearance.colors.m3tertiary : Appearance.colors.widgetOutline
+  slant: 6
+  fillColor: mouse.pressed ? Qt.alpha(Appearance.colors.m3primary, 0.28) : active ? Appearance.colors.m3primaryContainer : mouse.containsMouse ? Appearance.colors.widgetActive : Appearance.colors.widget
+  outlineColor: activeFocus ? Appearance.colors.m3primary : active ? Appearance.colors.m3tertiary : mouse.containsMouse ? Qt.alpha(Appearance.colors.m3primary, 0.45) : Appearance.colors.widgetOutline
   shadowColor: "transparent"
   opacity: enabled ? 1 : disabledOpacity
 
@@ -37,6 +44,8 @@ SkewedSurface {
   Column {
     anchors.centerIn: parent
     spacing: 2
+    scale: mouse.pressed ? 0.94 : 1
+    Behavior on scale { NumberAnimation { duration: 100; easing.type: Easing.OutCubic } }
 
     MaterialIcon {
       anchors.horizontalCenter: parent.horizontalCenter

@@ -79,7 +79,7 @@ Item {
 
         StyledText {
           Layout.alignment: Qt.AlignRight
-          text: root.battery ? `${Math.round(root.battery.percentage * 100)}% battery` : "Desktop power"
+          text: root.battery?.isPresent ? `${Math.round(root.battery.percentage * 100)}% battery` : "Desktop power"
           color: Appearance.colors.m3onSurfaceVariant
         }
 
@@ -172,10 +172,14 @@ Item {
         }
         spacing: 12
 
-        MaterialIcon {
-          text: root.sink?.audio?.muted ? "volume_off" : "volume_up"
-          fill: 1
-          color: Appearance.colors.m3tertiary
+        ActionButton {
+          implicitWidth: 34
+          implicitHeight: 34
+          icon: root.sink?.audio?.muted ? "volume_off" : "volume_up"
+          active: root.sink?.audio?.muted ?? false
+          enabled: root.sink?.audio != null
+          Accessible.name: active ? "Unmute speakers" : "Mute speakers"
+          onTriggered: root.sink.audio.muted = !root.sink.audio.muted
         }
 
         Mpris.MediaSlider {
@@ -197,6 +201,8 @@ Item {
         }
 
         StyledText {
+          Layout.preferredWidth: 52
+          horizontalAlignment: Text.AlignRight
           text: `${Math.round((root.sink?.audio?.volume ?? 0) * 100)}%`
           color: Appearance.colors.m3onSurfaceVariant
           font.family: Appearance.font.family.mono

@@ -54,6 +54,8 @@ Item {
       Layout.bottomMargin: 12
 
       RowLayout {
+        Layout.fillWidth: true
+        spacing: 10
         Item {
           Layout.preferredWidth: 30
           Layout.preferredHeight: 30
@@ -102,24 +104,22 @@ Item {
           }
         }
 
-        Item {
-          Layout.fillWidth: true
-        }
-
         MouseArea {
           id: closeArea
           Layout.preferredWidth: 30
           Layout.preferredHeight: 30
 
           hoverEnabled: true
-          onPressed: root.backer.discard()
+          cursorShape: Qt.PointingHandCursor
+          onClicked: root.backer.discard()
 
-          Rectangle {
+          SkewedPanel {
             anchors.fill: parent
             anchors.margins: 5
-            radius: width * 0.5
-            antialiasing: true
-            color: "#60ffffff"
+            slantLeft: true
+            slantRight: true
+            slant: 5
+            fillColor: Appearance.colors.widgetActive
             opacity: closeArea.containsMouse ? 1 : 0
             Behavior on opacity {
               SmoothedAnimation {
@@ -164,6 +164,10 @@ Item {
           width: root.width - 48
           text: notif.body
           wrapMode: Text.Wrap
+          maximumLineCount: 8
+          elide: Text.ElideRight
+          font.family: Appearance.font.family.sans
+          font.pointSize: Appearance.font.size.smaller
           color: Appearance.colors.m3onSurface
 
           onLineLaidOut: line => {
@@ -196,6 +200,7 @@ Item {
       }
 
       RowLayout {
+        Layout.fillWidth: true
         spacing: 0
 
         Repeater {
@@ -225,14 +230,19 @@ Item {
             MouseArea {
               id: actionArea
               anchors.fill: parent
+              hoverEnabled: true
+              cursorShape: Qt.PointingHandCursor
 
               onClicked: {
                 modelData.invoke();
               }
 
-              Rectangle {
+              SkewedPanel {
                 anchors.fill: parent
-                color: actionArea.pressed && actionArea.containsMouse ? "#20000000" : "transparent"
+                slantLeft: true
+                slantRight: true
+                slant: 6
+                fillColor: actionArea.pressed ? Appearance.colors.widgetActive : actionArea.containsMouse ? Appearance.colors.widget : "transparent"
               }
 
               RowLayout {
@@ -249,6 +259,9 @@ Item {
 
                 Label {
                   text: modelData.text
+                  color: Appearance.colors.m3primary
+                  font.family: Appearance.font.family.sans
+                  font.pointSize: Appearance.font.size.smaller
                 }
               }
             }

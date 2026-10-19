@@ -11,6 +11,10 @@ import Quickshell.Wayland
 import Quickshell.Widgets
 
 Singleton {
+  id: root
+  function open(): void { persist.launcherOpen = true; }
+  function close(): void { persist.launcherOpen = false; }
+  function toggle(): void { persist.launcherOpen = !persist.launcherOpen; }
   PersistentProperties {
     id: persist
     property bool launcherOpen: false
@@ -20,24 +24,25 @@ Singleton {
     target: "launcher"
 
     function open(): void {
-      persist.launcherOpen = true;
+      root.open();
     }
 
     function close(): void {
-      persist.launcherOpen = false;
+      root.close();
     }
 
     function toggle(): void {
-      persist.launcherOpen = !persist.launcherOpen;
+      root.toggle();
     }
   }
 
   LazyLoader {
     id: loader
-    activeAsync: persist.launcherOpen
+    active: persist.launcherOpen
 
     PanelWindow {
       id: launcherWindow
+      visible: true
       color: "transparent"
       implicitWidth: 560
       implicitHeight: content.height
@@ -47,6 +52,7 @@ Singleton {
 
       LaunchContent {
         id: content
+        maximumHeight: Math.max(240, launcherWindow.screen.height - 80)
         anchors.centerIn: parent
         onDismissed: persist.launcherOpen = false
       }

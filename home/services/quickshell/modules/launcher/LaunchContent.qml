@@ -13,13 +13,14 @@ Item {
   id: root
   signal dismissed
   readonly property int visibleRows: 11
-  readonly property real listHeight: Math.min(list.contentHeight, list.delegateHeight * visibleRows)
+  property real maximumHeight: 760
+  readonly property real listHeight: Math.max(100, Math.min(list.count * list.delegateHeight, list.delegateHeight * visibleRows, maximumHeight - 142))
   height: content.height
   width: 560
 
   SkewedSurface {
     id: content
-    height: 18 + searchContainer.implicitHeight + 8 + list.topMargin + list.bottomMargin + root.listHeight + 14
+    height: 18 + searchContainer.implicitHeight + 16 + list.topMargin + list.bottomMargin + root.listHeight + footer.implicitHeight + 14
     Behavior on height {
       NumberAnimation {
         duration: 200
@@ -49,14 +50,14 @@ Item {
         slantLeft: true
         slantRight: true
         slant: 12
-        fillColor: "#30c0ffff"
-        outlineColor: search.activeFocus ? Appearance.colors.m3tertiary : "#50ffffff"
+        fillColor: Qt.alpha(Appearance.colors.m3primary, 0.10)
+        outlineColor: search.activeFocus ? Qt.alpha(Appearance.colors.m3primary, 0.65) : Appearance.colors.widgetOutline
         shadowColor: "transparent"
 
         RowLayout {
           id: searchbox
           anchors.fill: parent
-          anchors.margins: 5
+          anchors.margins: 12
 
           MaterialIcon {
             text: "search"
@@ -74,6 +75,18 @@ Item {
             selectedTextColor: Appearance.colors.m3onPrimaryContainer
 
             focus: true
+            clip: true
+            selectByMouse: true
+            Accessible.name: "Search applications or run a command"
+            StyledText {
+              anchors.fill: parent
+              visible: search.text === ""
+              text: "Search apps or > run a command"
+              color: Appearance.colors.m3onSurfaceVariant
+              font.pointSize: Appearance.font.size.smaller
+              verticalAlignment: Text.AlignVCenter
+              elide: Text.ElideRight
+            }
             Keys.forwardTo: [list]
             Keys.onEscapePressed: root.dismissed()
 
@@ -98,12 +111,15 @@ Item {
             }
           }
 
-          StyledText {
-            Layout.fillWidth: true
-            visible: search.text === ""
-            text: "Search apps  •  > run a command"
-            color: Appearance.colors.m3onSurfaceVariant
-            font.pointSize: Appearance.font.size.smaller
+          ActionButton {
+            visible: search.text !== ""
+            implicitWidth: 28
+            implicitHeight: 28
+            icon: "close"
+            iconSize: Appearance.font.size.normal
+            slant: 5
+            Accessible.name: "Clear search"
+            onTriggered: { search.text = ""; search.forceActiveFocus(); }
           }
         }
       }
@@ -173,6 +189,8 @@ Item {
         }
 
         highlight: SkewedPanel {
+          width: list.width
+          height: list.delegateHeight
           slantLeft: true
           slantRight: true
           slant: 10
@@ -188,12 +206,34 @@ Item {
         preferredHighlightEnd: list.height - list.bottomMargin
         highlightRangeMode: ListView.ApplyRange
         snapMode: ListView.SnapToItem
+        boundsBehavior: Flickable.StopAtBounds
+        ScrollIndicator.vertical: ScrollIndicator {}
+
+        Column {
+          anchors.centerIn: parent
+          visible: list.count === 0
+          spacing: 6
+          MaterialIcon {
+            anchors.horizontalCenter: parent.horizontalCenter
+            text: "search_off"
+            color: Appearance.colors.m3tertiary
+            font.pointSize: Appearance.font.size.extraLarge
+          }
+          StyledText {
+            text: "No matching applications"
+            color: Appearance.colors.m3onSurfaceVariant
+          }
+        }
 
         readonly property real delegateHeight: 52
 
         delegate: MouseArea {
           id: appDelegate
           required property var modelData
+          required property int index
+          hoverEnabled: true
+          cursorShape: Qt.PointingHandCursor
+          onPositionChanged: if (containsMouse) list.currentIndex = index
 
           readonly property bool commandMode: modelData.kind === "command"
           readonly property var entry: modelData.object ?? null
@@ -221,6 +261,8 @@ Item {
               verticalCenter: parent.verticalCenter
               left: parent.left
               leftMargin: 12
+              right: parent.right
+              rightMargin: 12
             }
             spacing: 12
 
@@ -266,9 +308,27 @@ Item {
             MaterialIcon {
               Layout.rightMargin: 12
               text: "keyboard_return"
+              opacity: appDelegate.ListView.isCurrentItem ? 1 : 0
               color: Appearance.colors.m3onSurfaceVariant
             }
           }
+        }
+      }
+
+      RowLayout {
+        id: footer
+        Layout.fillWidth: true
+        StyledText {
+          Layout.fillWidth: true
+          text: search.text.startsWith(">") ? "COMMAND" : `${list.count} APPLICATION${list.count === 1 ? "" : "S"}`
+          font.pointSize: Appearance.font.size.small
+          font.letterSpacing: 1
+          color: Appearance.colors.m3onSurfaceVariant
+        }
+        StyledText {
+          text: "↑ ↓ navigate   ↵ open   Esc close"
+          font.pointSize: Appearance.font.size.small
+          color: Appearance.colors.m3onSurfaceVariant
         }
       }
     }

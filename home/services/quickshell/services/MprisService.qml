@@ -45,7 +45,7 @@ Singleton {
 
   Settings {
     id: settings
-    location: "file://" + StandardPaths.writableLocation(StandardPaths.GenericConfigLocation) + "/quickshell-lyrics.ini"
+    location: `file://${Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config"}/quickshell-lyrics.ini`
     category: "lyrics"
     property real lyricOffset: 0
   }

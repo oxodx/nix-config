@@ -17,6 +17,7 @@ Singleton {
 
   Settings {
     id: settings
+    location: `file://${Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config"}/quickshell-launcher.ini`
     category: "launcher-history"
     property string counts: "{}"
   }
