@@ -1,5 +1,8 @@
 {
-  imports = [./hardware.nix];
+  imports = [
+    ./hardware.nix
+    ../../system/core/time.nix
+  ];
 
   services = {
     asusd.enable = true;
