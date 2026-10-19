@@ -21,4 +21,8 @@
     pkgs.prismlauncher
     self.packages.${pkgs.stdenv.hostPlatform.system}.eden
   ];
+
+  systemd.user.tmpfiles.rules = [
+    "d %h/Games/roms/switch 0755 - - -"
+  ];
 }

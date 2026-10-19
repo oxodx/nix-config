@@ -1,17 +1,22 @@
 if [[ ${1:-} == --help ]]; then
-  echo "Usage: eden [GAME_FILE [KEYS_DIRECTORY]]"
-  echo "Defaults: EDEN_GAME, EDEN_KEYS_DIR, EDEN_SANDBOX_DIR, or the original local paths."
+  echo "Usage: eden [ROM_DIRECTORY_OR_GAME [KEYS_DIRECTORY]]"
+  echo "ROM folder: \${EDEN_ROM_DIR:-\$HOME/Games/roms/switch} (shown as /home/eden/roms inside Eden)."
+  echo "Overrides: EDEN_ROM_DIR, EDEN_GAME, EDEN_KEYS_DIR, EDEN_SANDBOX_DIR."
   exit 0
 fi
 if (( $# > 2 )); then
-  echo "Usage: eden [GAME_FILE [KEYS_DIRECTORY]]" >&2
+  echo "Usage: eden [ROM_DIRECTORY_OR_GAME [KEYS_DIRECTORY]]" >&2
   exit 2
 fi
 
-game=${1:-${EDEN_GAME:-$HOME/Downloads/totk-inspect/TOTK [0100F2C0115B6000][v0].xci}}
+target=${1:-${EDEN_GAME:-}}
+roms=${EDEN_ROM_DIR:-$HOME/Games/roms/switch}
+game=""
 keys=${2:-${EDEN_KEYS_DIR:-$HOME/Downloads/switch-key-check}}
-base=${EDEN_SANDBOX_DIR:-$HOME/.local/share/eden-sandbox}
+host_data=${XDG_DATA_HOME:-$HOME/.local/share}
+base=${EDEN_SANDBOX_DIR:-$host_data/eden-sandbox}
 runtime=${XDG_RUNTIME_DIR:?XDG_RUNTIME_DIR is not set}
+host_config=${XDG_CONFIG_HOME:-$HOME/.config}
 wayland=${WAYLAND_DISPLAY:-wayland-0}
 if [[ $wayland == /* ]]; then
   wayland_socket=$wayland
@@ -20,15 +25,41 @@ else
 fi
 
 fail() { echo "Eden: $*" >&2; exit 1; }
-[[ -f $game ]] || fail "Game file missing: $game"
+if [[ -n $target ]]; then
+  if [[ -d $target ]]; then
+    roms=$target
+  elif [[ -f $target ]]; then
+    game=$(realpath -- "$target")
+  else
+    fail "ROM directory or game file missing: $target"
+  fi
+fi
 [[ -f $keys/prod.keys ]] || fail "prod.keys missing in $keys"
 [[ -f $keys/title.keys ]] || fail "title.keys missing in $keys"
 [[ -S $wayland_socket ]] || fail "Wayland socket missing: $wayland_socket"
 [[ -S $runtime/pulse/native ]] || fail "PulseAudio socket missing: $runtime/pulse/native"
-game=$(realpath -- "$game")
 keys=$(realpath -- "$keys")
-mkdir -p -- "$base/config" "$base/data/eden/keys" "$base/cache" "$base/tmp"
+mkdir -p -- "$roms" "$base/config" "$base/data/eden/keys" "$base/cache" "$base/tmp"
+roms=$(realpath -- "$roms")
 base=$(realpath -- "$base")
+
+# Synchronize non-secret desktop defaults into the isolated XDG config. Eden
+# keeps its own writable settings under $base; it does not gain access to the
+# host's complete configuration directory or D-Bus session.
+for relative in \
+  mimeapps.list \
+  user-dirs.dirs \
+  user-dirs.locale \
+  kdeglobals \
+  gtk-3.0/settings.ini \
+  gtk-4.0/settings.ini; do
+  source_file=$host_config/$relative
+  if [[ -f $source_file ]]; then
+    destination=$base/config/$relative
+    mkdir -p -- "${destination%/*}"
+    install -m 0644 -- "$(realpath -- "$source_file")" "$destination"
+  fi
+done
 
 args=(
   --die-with-parent --new-session --cap-drop ALL
@@ -49,7 +80,7 @@ args=(
   --bind "$base/data" /home/eden/data
   --bind "$base/cache" /home/eden/cache
   --bind "$base/tmp" /tmp/eden
-  --ro-bind "$game" "/home/eden/game.${game##*.}"
+  --ro-bind "$roms" /home/eden/roms
   --ro-bind "$keys/prod.keys" /home/eden/prod.keys
   --ro-bind "$keys/title.keys" /home/eden/title.keys
   --ro-bind "$keys/prod.keys" /home/eden/data/eden/keys/prod.keys
@@ -72,6 +103,10 @@ args=(
   --unsetenv VK_DRIVER_FILES --unsetenv VK_ICD_FILENAMES
 )
 
+if [[ -n $game ]]; then
+  args+=(--ro-bind "$game" "/home/eden/game.${game##*.}")
+fi
+
 for device in /dev/nvidia0 /dev/nvidiactl /dev/nvidia-modeset /dev/nvidia-uvm /dev/nvidia-uvm-tools; do
   [[ ! -c $device ]] || args+=(--dev-bind "$device" "$device")
 done
@@ -91,5 +126,9 @@ if [[ -e /run/opengl-driver/share/vulkan/icd.d/nvidia_icd.json && -c /dev/nvidia
   )
 fi
 
-echo "Launching Eden sandbox; game: /home/eden/game.${game##*.}"
+echo "Eden ROM library: $roms (inside sandbox: /home/eden/roms)"
+if [[ -n $game ]]; then
+  echo "Additional game: /home/eden/game.${game##*.}"
+fi
+echo "Launching Eden sandbox..."
 exec "$BWRAP_BINARY" "${args[@]}" "$EDEN_BINARY"

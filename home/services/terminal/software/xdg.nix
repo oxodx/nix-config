@@ -25,6 +25,7 @@
 
   associations =
     {
+      "inode/directory" = ["org.gnome.Nautilus.desktop"];
       "application/pdf" = ["org.gnome.Papers.desktop"];
       "application/zip" = ["org.gnome.FileRoller.desktop"];
       "application/x-7z-compressed" = ["org.gnome.FileRoller.desktop"];
