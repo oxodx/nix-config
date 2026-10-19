@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  self,
+  ...
+}: {
   programs = {
     gamescope = {
       enable = true;
@@ -13,7 +17,8 @@
     };
   };
 
-  environment.systemPackages = with pkgs; [
-    prismlauncher
+  environment.systemPackages = [
+    pkgs.prismlauncher
+    self.packages.${pkgs.stdenv.hostPlatform.system}.eden
   ];
 }

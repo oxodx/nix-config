@@ -14,6 +14,7 @@
     ./nixYourShell.nix
     ./nix.nix
     ./payRespects.nix
+    ./rokit.nix
     ./skim.nix
     ./ssh.nix
     ./television.nix
