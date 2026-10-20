@@ -29,9 +29,11 @@
   in {
     nixosConfigurations = import ./hosts {inherit self inputs;};
 
-    packages =
-      forAllSystems (system:
-        import ./pkgs {pkgs = pkgsFor system;});
+    packages = forAllSystems (system:
+      import ./pkgs {
+        pkgs = pkgsFor system;
+        inherit inputs;
+      });
 
     devShells = forAllSystems (system: let
       pkgs = pkgsFor system;
