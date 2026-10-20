@@ -9,9 +9,13 @@
   lyricsFetcher = pkgs.writeShellScriptBin "quickshell-lyrics" ''
     exec ${lyricsPython}/bin/python ${./scripts/lyrics.py} "$@"
   '';
+  wallpaperFetcher = pkgs.writeShellScriptBin "quickshell-wallpaper" ''
+    exec ${lyricsPython}/bin/python ${./scripts/wallpaper.py} "$@"
+  '';
 
   dependencies = with pkgs; [
     lyricsFetcher
+    wallpaperFetcher
     playerctl
     bash
     coreutils
@@ -32,7 +36,7 @@
     "${pkgs.kdePackages.kirigami.unwrapped}/lib/qt-6/qml"
   ];
 in {
-  environment.systemPackages = [lyricsFetcher];
+  environment.systemPackages = [lyricsFetcher wallpaperFetcher];
   users.users.oxod.packages = [quickshell];
 
   environment.sessionVariables.QML2_IMPORT_PATH = QML2_IMPORT_PATH;

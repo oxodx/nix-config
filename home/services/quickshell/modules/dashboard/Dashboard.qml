@@ -89,6 +89,17 @@ Item {
           color: Appearance.colors.m3onSurfaceVariant
         }
       }
+
+      ActionButton {
+        implicitWidth: 100
+        implicitHeight: 52
+        icon: "wallpaper"
+        label: "Wallpaper"
+        onTriggered: {
+          root.requestClose();
+          WallpaperService.open();
+        }
+      }
     }
 
     RowLayout {

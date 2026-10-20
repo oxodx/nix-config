@@ -1,11 +1,12 @@
 import qs.theme
+import qs.services
 import QtQuick
 import Quickshell
 
 Item {
   id: root
 
-  property url source: Qt.resolvedUrl(Quickshell.env("HOME") + "/Pictures/wallpaper.png")
+  property url source: WallpaperService.source
   readonly property alias status: image.status
 
   anchors.fill: parent
@@ -29,6 +30,7 @@ Item {
     anchors.fill: parent
     source: root.source
     asynchronous: true
+    retainWhileLoading: true
     fillMode: Image.PreserveAspectCrop
     horizontalAlignment: Image.AlignHCenter
     verticalAlignment: Image.AlignVCenter

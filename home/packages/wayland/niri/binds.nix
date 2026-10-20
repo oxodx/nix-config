@@ -42,6 +42,7 @@
 
   "Ctrl+Alt+L".spawn._args = ["qs" "ipc" "call" "lockscreen" "lock"];
   "Mod+D".spawn._args = ["qs" "ipc" "call" "launcher" "toggle"];
+  "Mod+Shift+W".spawn._args = ["qs" "ipc" "call" "wallpaper" "toggle"];
   "Mod+Shift+D".spawn._args = ["${pkgs.fuzzel}/bin/fuzzel"];
   "Mod+Return".spawn._args = ["${pkgs.alacritty}/bin/alacritty"];
   "Mod+X".spawn._args = ["fish" "-c" "niri msg pick-color | grep -oP '#[0-9a-fA-F]+' | wl-copy"];
