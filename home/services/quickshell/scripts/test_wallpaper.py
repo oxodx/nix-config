@@ -1,7 +1,8 @@
 import tempfile
+import json
 from pathlib import Path
 import unittest
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import wallpaper
 
@@ -17,28 +18,27 @@ class WallpaperTests(unittest.TestCase):
         "file_url": "https://konachan.net/image/test.png"
       }, **changes)
 
-  def session(self, posts, content=b"image fixture", content_type="image/png"):
-    api = MagicMock()
-    api.json.return_value = posts
-    image = MagicMock()
-    image.headers = {"Content-Type": content_type}
-    image.iter_content.return_value = [content]
-    image.__enter__.return_value = image
-    session = MagicMock()
-    session.get.side_effect = [api, image]
-    return session
+  def transport(self, posts, content=b"image fixture", content_type="image/png"):
+
+    def transfer(address, output=None):
+      if output is None:
+        return json.dumps(posts)
+      output.write_bytes(content)
+      return content_type
+
+    return transfer
 
   def test_download_saved_atomically(self):
-    session = self.session([self.post()])
-    with tempfile.TemporaryDirectory() as temporary, patch.object(wallpaper.requests,
-                                                                  "Session",
-                                                                  return_value=session):
+    with tempfile.TemporaryDirectory() as temporary, patch.object(wallpaper,
+                                                                  "request",
+                                                                  side_effect=self.transport(
+                                                                    [self.post()])) as request:
       directory = Path(temporary)
       result = wallpaper.fetch(directory)
       self.assertEqual(result["image"], (directory / "konachan-42.png").as_uri())
       self.assertEqual((directory / "konachan-42.png").read_bytes(), b"image fixture")
       self.assertEqual(len(list(directory.iterdir())), 1)
-      self.assertIn("rating:safe", session.get.call_args_list[0].kwargs["params"]["tags"])
+      self.assertIn("rating%3Asafe", request.call_args_list[0].args[0])
 
   def test_unsafe_or_untrusted_results_are_rejected(self):
     for changes in ({
@@ -54,16 +54,16 @@ class WallpaperTests(unittest.TestCase):
         "height": 1920
     }):
       with self.subTest(changes=changes), tempfile.TemporaryDirectory() as temporary:
-        session = self.session([self.post(**changes)])
-        with patch.object(wallpaper.requests, "Session", return_value=session):
+        with patch.object(wallpaper, "request",
+                          side_effect=self.transport([self.post(**changes)])) as request:
           with self.assertRaises(ValueError):
             wallpaper.fetch(Path(temporary))
-          self.assertEqual(session.get.call_count, 1)
+          self.assertEqual(request.call_count, 1)
 
   def test_previous_image_is_not_repeated(self):
-    with tempfile.TemporaryDirectory() as temporary, patch.object(wallpaper.requests,
-                                                                  "Session",
-                                                                  return_value=self.session(
+    with tempfile.TemporaryDirectory() as temporary, patch.object(wallpaper,
+                                                                  "request",
+                                                                  side_effect=self.transport(
                                                                     [self.post()])):
       with self.assertRaises(ValueError):
         wallpaper.fetch(Path(temporary), "file:///wallpapers/konachan-42.png")
@@ -71,11 +71,11 @@ class WallpaperTests(unittest.TestCase):
   def test_invalid_or_oversized_download_is_cleaned_up(self):
     for content_type, limit in (("text/html", 100), ("image/png", 1)):
       with self.subTest(content_type=content_type), tempfile.TemporaryDirectory() as temporary:
-        with patch.object(wallpaper.requests,
-                          "Session",
-                          return_value=self.session([self.post()],
-                                                    content_type=content_type)), patch.object(
-                                                      wallpaper, "MAX_BYTES", limit):
+        with patch.object(wallpaper,
+                          "request",
+                          side_effect=self.transport([self.post()],
+                                                     content_type=content_type)), patch.object(
+                                                       wallpaper, "MAX_BYTES", limit):
           with self.assertRaises(ValueError):
             wallpaper.fetch(Path(temporary))
           self.assertEqual(list(Path(temporary).iterdir()), [])

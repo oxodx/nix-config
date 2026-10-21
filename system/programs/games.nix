@@ -18,7 +18,9 @@
   };
 
   environment.systemPackages = [
-    pkgs.prismlauncher
+    (pkgs.prismlauncher.overrideAttrs (old: {
+      qtWrapperArgs = (old.qtWrapperArgs or []) ++ ["--set-default DISPLAY :0"];
+    }))
     self.packages.${pkgs.stdenv.hostPlatform.system}.eden
   ];
 

@@ -5,24 +5,33 @@ from pathlib import Path
 import random
 import re
 import sys
+import subprocess
 import tempfile
-from urllib.parse import urlparse
-
-import requests
+from urllib.parse import urlencode, urlparse
 
 MAX_BYTES = 32 * 1024 * 1024
 
+def request(address, output=None):
+  # Prefer QUIC/HTTP3, with curl's automatic TCP fallback on other networks.
+  command = [
+    "curl", "--http3", "--fail", "--location", "--silent", "--show-error", "--proto", "=https",
+    "--proto-redir", "=https", "--connect-timeout", "4", "--max-time", "15" if output else "8",
+    "--max-filesize",
+    str(MAX_BYTES), "--user-agent", "oxod-quickshell-wallpaper/1.0"
+  ]
+  if output is not None:
+    command += ["--output", str(output), "--write-out", "%{content_type}"]
+  command.append(address)
+  response = subprocess.run(command, capture_output=True, text=True, timeout=17)
+  if response.returncode:
+    if response.returncode == 28:
+      raise ValueError("Konachan timed out; try again")
+    raise ValueError("Konachan request failed: " + response.stderr.strip())
+  return response.stdout
+
 def fetch(directory, current=""):
-  session = requests.Session()
-  session.headers["User-Agent"] = "oxod-quickshell-wallpaper/1.0"
-  response = session.get("https://konachan.net/post.json",
-                         params={
-                           "limit": 20,
-                           "tags": "rating:safe order:random width:>=1920 height:>=1080"
-                         },
-                         timeout=(10, 20))
-  response.raise_for_status()
-  posts = response.json()
+  query = urlencode({"limit": 20, "tags": "rating:safe order:random width:>=1920 height:>=1080"})
+  posts = json.loads(request("https://konachan.net/post.json?" + query))
   if not isinstance(posts, list):
     raise ValueError("Konachan returned an unexpected response")
   random.shuffle(posts)
@@ -47,22 +56,18 @@ def fetch(directory, current=""):
     if not destination.is_file():
       temporary = None
       try:
-        with session.get(address, stream=True, timeout=(10, 30)) as image:
-          image.raise_for_status()
-          if not image.headers.get("Content-Type", "").startswith("image/"):
-            raise ValueError("Konachan did not return an image")
-          with tempfile.NamedTemporaryFile(dir=directory, prefix=".download-",
-                                           delete=False) as output:
-            temporary = Path(output.name)
-            size = 0
-            for chunk in image.iter_content(64 * 1024):
-              size += len(chunk)
-              if size > MAX_BYTES:
-                raise ValueError("Wallpaper exceeds the 32 MB download limit")
-              output.write(chunk)
-          if not size:
-            raise ValueError("Konachan returned an empty image")
-          temporary.replace(destination)
+        with tempfile.NamedTemporaryFile(dir=directory, prefix=".download-",
+                                         delete=False) as output:
+          temporary = Path(output.name)
+        content_type = request(address, temporary)
+        if not content_type.startswith("image/"):
+          raise ValueError("Konachan did not return an image")
+        size = temporary.stat().st_size
+        if size > MAX_BYTES:
+          raise ValueError("Wallpaper exceeds the 32 MB download limit")
+        if not size:
+          raise ValueError("Konachan returned an empty image")
+        temporary.replace(destination)
       finally:
         if temporary is not None:
           temporary.unlink(missing_ok=True)
@@ -73,10 +78,8 @@ if __name__ == "__main__":
   try:
     result = fetch(Path.home() / "Pictures" / "Wallpapers" / "Konachan",
                    sys.argv[1] if len(sys.argv) > 1 else "")
-  except requests.Timeout:
+  except subprocess.TimeoutExpired:
     result = {"error": "Konachan timed out; try again"}
-  except requests.ConnectionError:
-    result = {"error": "Could not reach Konachan; check your connection and try again"}
-  except (requests.RequestException, ValueError, OSError) as error:
+  except (ValueError, OSError) as error:
     result = {"error": str(error)}
   print(json.dumps(result), flush=True)

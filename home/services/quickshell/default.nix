@@ -9,9 +9,13 @@
   lyricsFetcher = pkgs.writeShellScriptBin "quickshell-lyrics" ''
     exec ${lyricsPython}/bin/python ${./scripts/lyrics.py} "$@"
   '';
-  wallpaperFetcher = pkgs.writeShellScriptBin "quickshell-wallpaper" ''
-    exec ${lyricsPython}/bin/python ${./scripts/wallpaper.py} "$@"
-  '';
+  wallpaperFetcher = pkgs.writeShellApplication {
+    name = "quickshell-wallpaper";
+    runtimeInputs = [pkgs.curl];
+    text = ''
+      exec ${pkgs.python3}/bin/python ${./scripts/wallpaper.py} "$@"
+    '';
+  };
 
   dependencies = with pkgs; [
     lyricsFetcher

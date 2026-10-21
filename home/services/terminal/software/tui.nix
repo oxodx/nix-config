@@ -29,9 +29,9 @@
       meteor-git
       nix-search-tv
       gemini-cli
+      codex
     ]
     ++ (with inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}; [
       opencode
-      codex
     ]);
 }

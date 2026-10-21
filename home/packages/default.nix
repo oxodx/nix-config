@@ -92,6 +92,7 @@
       ethtool
       usbutils
       bash
+      obsidian
     ]
     ++ (with inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}; [
       chatgpt
