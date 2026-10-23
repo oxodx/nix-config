@@ -81,6 +81,7 @@ BarWidgetInner {
 
     Dashboard.Dashboard {
       id: dashboardContent
+      opened: root.dashboardOpen
       anchors.fill: parent
       onRequestClose: root.dashboardOpen = false
     }

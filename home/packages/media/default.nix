@@ -1,5 +1,6 @@
 {pkgs, ...}: {
   imports = [
+    ./ardour.nix
     ./mpv.nix
     ./obs.nix
     ./rnnoise.nix

@@ -15,6 +15,16 @@ Item {
   id: root
 
   signal requestClose
+  property bool opened: false
+
+  onOpenedChanged: if (opened) OllamaService.refresh()
+
+  Timer {
+    interval: 5000
+    running: root.opened
+    repeat: true
+    onTriggered: OllamaService.refresh()
+  }
 
   implicitWidth: 760
   implicitHeight: 660
@@ -108,6 +118,16 @@ Item {
 
       DashboardAction {
         Layout.fillWidth: true
+        icon: "neurology"
+        label: OllamaService.busy ? "Waiting…" : OllamaService.active ? "Ollama on" : "Ollama off"
+        active: OllamaService.active
+        enabled: OllamaService.available && !OllamaService.busy
+        Accessible.name: OllamaService.active ? "Stop Ollama" : "Start Ollama"
+        onTriggered: OllamaService.toggle()
+      }
+
+      DashboardAction {
+        Layout.fillWidth: true
         icon: Networking.wifiEnabled ? "wifi" : "wifi_off"
         label: "Wi-Fi"
         active: Networking.wifiEnabled
@@ -163,6 +183,14 @@ Item {
           LockService.locked = true;
         }
       }
+    }
+
+    StyledText {
+      Layout.fillWidth: true
+      visible: OllamaService.error !== ""
+      text: OllamaService.error
+      color: Appearance.colors.alert
+      wrapMode: Text.Wrap
     }
 
     SkewedSurface {
