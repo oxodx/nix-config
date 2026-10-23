@@ -6,7 +6,6 @@
   imports = [
     ./hardware.nix
     ./vpn.nix
-    ../../system/core/time.nix
   ];
 
   services = {
