@@ -1,6 +1,7 @@
 {
   self,
   inputs,
+  mylib,
   ...
 }: let
   inherit (inputs.nixpkgs.lib) nixosSystem;
@@ -10,7 +11,7 @@
   inherit (import "${self}/system") desktop laptop;
 
   specialArgs = {
-    inherit inputs self;
+    inherit inputs self mylib;
   };
 in {
   "oxod-laptop" = nixosSystem {
@@ -19,7 +20,6 @@ in {
       laptop
       ++ [
         ./oxod-laptop
-        "${mod}/core/time.nix"
         "${mod}/programs/games.nix"
         "${mod}/services/gnomeServices.nix"
         "${mod}/hardware/cpuAmdPstate.nix"

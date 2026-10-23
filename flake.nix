@@ -20,6 +20,7 @@
     ...
   } @ inputs: let
     inherit (nixpkgs) lib;
+    mylib = import ./lib {inherit lib;};
     forAllSystems = lib.genAttrs (import systems);
     pkgsFor = system:
       import nixpkgs {
@@ -27,7 +28,9 @@
         config.allowUnfree = true;
       };
   in {
-    nixosConfigurations = import ./hosts {inherit self inputs;};
+    lib = mylib;
+
+    nixosConfigurations = import ./hosts {inherit self inputs mylib;};
 
     packages = forAllSystems (system:
       import ./pkgs {

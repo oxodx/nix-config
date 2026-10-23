@@ -1,10 +1,9 @@
-{lib, ...}: {
-  imports = [
-    ./boot.nix
-    ./limine.nix
-    ./security.nix
-    ./users.nix
-  ];
+{
+  lib,
+  mylib,
+  ...
+}: {
+  imports = mylib.scanPaths ./.;
 
   i18n = {
     defaultLocale = "en_US.UTF-8";

@@ -1,5 +1,3 @@
-{
-  imports = [
-    ./alacritty.nix
-  ];
+{mylib, ...}: {
+  imports = mylib.scanPaths ./.;
 }

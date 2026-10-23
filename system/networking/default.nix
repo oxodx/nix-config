@@ -1,7 +1,9 @@
-{pkgs, ...}: {
-  imports = [
-    ./tailscale.nix
-  ];
+{
+  mylib,
+  pkgs,
+  ...
+}: {
+  imports = mylib.scanPaths ./.;
 
   networking = {
     nameservers = [

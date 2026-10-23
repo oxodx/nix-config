@@ -3,13 +3,10 @@
   pkgs,
   inputs,
   lib,
+  mylib,
   ...
 }: {
-  imports = [
-    ./nh.nix
-    ./nixpkgs.nix
-    ./substituters.nix
-  ];
+  imports = mylib.scanPaths ./.;
 
   environment.systemPackages = [pkgs.git];
 
