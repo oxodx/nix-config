@@ -2,6 +2,10 @@
   environment = {
     shells = [pkgs.fish];
     pathsToLink = ["/share/fish"];
+    systemPackages = with pkgs; [
+      eza
+      lazygit
+    ];
   };
 
   programs = {
