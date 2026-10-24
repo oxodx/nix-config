@@ -8,7 +8,7 @@
   mod = "${self}/system";
   home = "${self}/home";
 
-  inherit (import "${self}/system") desktop laptop;
+  inherit (import "${self}/system") desktop laptop server;
 
   specialArgs = {
     inherit inputs self mylib;
@@ -39,6 +39,15 @@ in {
         "${mod}/services/gnomeServices.nix"
         "${mod}/hardware/cpuAmdPstate.nix"
         "${home}"
+      ];
+  };
+
+  "homelab-camelot" = nixosSystem {
+    inherit specialArgs;
+    modules =
+      server
+      ++ [
+        ./homelab/camelot
       ];
   };
 }

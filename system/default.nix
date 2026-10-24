@@ -1,4 +1,6 @@
 let
+  server = [./nix];
+
   desktop = [
     ./core
     ./networking
@@ -17,5 +19,5 @@ let
       ./services/power.nix
     ];
 in {
-  inherit desktop laptop;
+  inherit desktop laptop server;
 }

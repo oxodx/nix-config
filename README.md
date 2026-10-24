@@ -19,6 +19,7 @@
 ```bash
 sudo nixos-rebuild switch --flake .#oxod-laptop
 sudo nixos-rebuild --target-host trouble@192.168.1.237 switch --flake .#tv
+sudo nixos-rebuild --target-host oxod@192.168.1.185 switch --flake .#homelab-camelot
 ```
 
 ---
