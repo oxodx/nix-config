@@ -50,4 +50,22 @@ in {
         ./homelab/camelot
       ];
   };
+
+  "homelab-excalibur" = nixosSystem {
+    inherit specialArgs;
+    modules =
+      server
+      ++ [
+        ./homelab/excalibur
+      ];
+  };
+
+  "homelab-gawain" = nixosSystem {
+    inherit specialArgs;
+    modules =
+      server
+      ++ [
+        ./homelab/gawain
+      ];
+  };
 }

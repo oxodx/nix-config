@@ -15,6 +15,18 @@ in {
     requires = ["systemd-resolved.service"];
     after = ["systemd-resolved.service"];
   };
+
+  systemd.services.mullvad-lan-dns = {
+    description = "Use the homelab DNS resolver with Mullvad";
+    wantedBy = ["multi-user.target"];
+    requires = ["mullvad-daemon.service"];
+    after = ["mullvad-daemon.service"];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = "${pkgs.mullvad-vpn}/bin/mullvad dns set custom 192.168.1.41";
+    };
+  };
   systemd.services.tailscaled = {
     requires = ["systemd-resolved.service"];
     after = ["systemd-resolved.service"];
