@@ -1,4 +1,8 @@
-{...}: {
+{
+  config,
+  lib,
+  ...
+}: {
   time.hardwareClockInLocalTime = false;
 
   services.timesyncd = {
@@ -15,7 +19,7 @@
     wantedBy = ["sysinit.target"];
     serviceConfig.TimeoutStartSec = "30s";
   };
-  systemd.services.greetd = {
+  systemd.services.greetd = lib.mkIf config.services.greetd.enable {
     wants = ["time-sync.target"];
     after = ["time-set.target" "time-sync.target"];
     restartIfChanged = false;

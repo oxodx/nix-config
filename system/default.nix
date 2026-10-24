@@ -1,8 +1,14 @@
 let
-  server = [./nix];
+  server = [
+    ./core
+    ./nix
+    ./programs/fish.nix
+  ];
 
   desktop = [
     ./core
+    ./core/boot.nix
+    ./core/limine.nix
     ./networking
     ./nix
     ./programs

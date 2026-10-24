@@ -3,7 +3,10 @@
   mylib,
   ...
 }: {
-  imports = mylib.scanPaths ./.;
+  imports =
+    builtins.filter
+    (module: module != ./boot.nix && module != ./limine.nix)
+    (mylib.scanPaths ./.);
 
   i18n = {
     defaultLocale = "en_US.UTF-8";
