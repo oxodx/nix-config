@@ -4,7 +4,7 @@ if [[ ${1:-} == --help ]]; then
   echo "Overrides: EDEN_ROM_DIR, EDEN_GAME, EDEN_KEYS_DIR, EDEN_SANDBOX_DIR."
   exit 0
 fi
-if (( $# > 2 )); then
+if (($# > 2)); then
   echo "Usage: eden [ROM_DIRECTORY_OR_GAME [KEYS_DIRECTORY]]" >&2
   exit 2
 fi
@@ -24,7 +24,10 @@ else
   wayland_socket=$runtime/$wayland
 fi
 
-fail() { echo "Eden: $*" >&2; exit 1; }
+fail() {
+  echo "Eden: $*" >&2
+  exit 1
+}
 if [[ -n $target ]]; then
   if [[ -d $target ]]; then
     roms=$target
