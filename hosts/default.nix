@@ -44,28 +44,16 @@ in {
 
   "homelab-camelot" = nixosSystem {
     inherit specialArgs;
-    modules =
-      server
-      ++ [
-        ./homelab/camelot
-      ];
+    modules = server ++ [./homelab/camelot];
   };
 
   "homelab-excalibur" = nixosSystem {
     inherit specialArgs;
-    modules =
-      server
-      ++ [
-        ./homelab/excalibur
-      ];
+    modules = server ++ [./homelab/excalibur];
   };
 
   "homelab-gawain" = nixosSystem {
     inherit specialArgs;
-    modules =
-      server
-      ++ [
-        ./homelab/gawain
-      ];
+    modules = server ++ [./homelab/gawain];
   };
 }

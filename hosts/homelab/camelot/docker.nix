@@ -1,4 +1,4 @@
-{pkgs, ...}: let
+{...}: let
   commonEnvironment = {
     PGID = "0";
     PUID = "0";

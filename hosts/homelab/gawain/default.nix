@@ -6,7 +6,7 @@
 }: {
   imports = [
     "${modulesPath}/virtualisation/proxmox-lxc.nix"
-    ./docker.nix
+    ./services.nix
   ];
 
   networking = {
