@@ -10,4 +10,5 @@
 in {
   eden = pkgs.callPackage ./eden {eden = unstable.eden;};
   rokit = pkgs.callPackage ./rokit {};
+  webApp = pkgs.callPackage ./webApp {};
 }
