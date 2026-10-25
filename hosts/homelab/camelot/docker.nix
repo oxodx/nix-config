@@ -101,7 +101,7 @@ in {
           ports = ["6767:6767"];
         };
         jellyfin = {
-          image = "lscr.io/linuxserver/jellyfin:latest";
+          image = "lscr.io/linuxserver/jellyfin:12.2ubu2604-ls55";
           environment = commonEnvironment;
           volumes = [
             "/srv/ssl/ca-jellyfin.crt:/etc/ssl/certs/ca-certificates.crt:ro"
