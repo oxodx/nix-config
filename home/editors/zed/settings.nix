@@ -1,4 +1,6 @@
 {pkgs, ...}: let
+  java21Home = "${pkgs.jdk21_headless}/lib/openjdk";
+  jdtlsJavaHome = "${pkgs.jdk25_headless}/lib/openjdk";
   formatters = {
     alejandra = "${pkgs.alejandra}/bin/alejandra";
     biome = "${pkgs.biome}/bin/biome";
@@ -29,6 +31,16 @@
   };
 in {
   languages = {
+    Java = {
+      tab_size = 2;
+      hard_tabs = false;
+      formatter = mkExternalFormatter "${pkgs.clang-tools}/bin/clang-format" [
+        "--assume-filename={buffer_path}"
+        "--style={BasedOnStyle: Google, IndentWidth: 2, ContinuationIndentWidth: 4, ColumnLimit: 120, BreakBeforeBraces: Attach}"
+      ];
+      format_on_save = "on";
+      language_servers = ["jdtls"];
+    };
     Python = {
       tab_size = 2;
       hard_tabs = false;
@@ -103,6 +115,22 @@ in {
   };
 
   lsp = {
+    jdtls = {
+      settings = {
+        java_home = jdtlsJavaHome;
+        jdk_auto_download = false;
+      };
+      initialization_options.settings.java = {
+        configuration.runtimes = [
+          {
+            name = "JavaSE-21";
+            path = java21Home;
+            default = true;
+          }
+        ];
+        import.gradle.java.home = jdtlsJavaHome;
+      };
+    };
     "astro-language-server" = {
       binary = {
         path = languageServers.astro-ls;

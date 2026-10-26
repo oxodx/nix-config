@@ -28,7 +28,6 @@
           url
           ;
         icon = "${mylib.relativeToRoot "assets/jellyfin.png"}";
-        ignoreSslErrors = true;
       })
   ];
 }

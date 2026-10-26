@@ -4,6 +4,10 @@
   ...
 }: let
   configFile = "zed/settings.json";
+  # JDTLS 1.63+ is built against Eclipse components requiring Java 25.
+  # This is the language server runtime, not the project's target JDK.
+  jdtlsJdk = pkgs.jdk25_headless;
+  jdtlsJavaHome = "${jdtlsJdk}/lib/openjdk";
   languageConfig = import ./settings.nix {inherit pkgs lib;};
   settingsJSON = builtins.toJSON ({
       node = {
@@ -110,6 +114,7 @@
     biome
     marksman
     nil
+    jdtlsJdk
     kdePackages.qtdeclarative # qmlls for the QML extension
     tailwindcss-language-server
     vue-language-server
@@ -133,7 +138,8 @@
       rm -rf $out/bin
       mkdir -p $out/bin
       makeWrapper ${pkgs.zed-editor}/bin/zeditor $out/bin/zeditor \
-        --prefix PATH : ${lspBinPath}/bin
+        --prefix PATH : ${lspBinPath}/bin \
+        --set JAVA_HOME ${jdtlsJavaHome}
       for bin in ${pkgs.zed-editor}/bin/*; do
         if [ "$(basename $bin)" != "zeditor" ]; then
           ln -s $bin $out/bin/$(basename $bin)
@@ -149,19 +155,26 @@ in {
     text = settingsJSON;
     mutable = true;
   };
-  # Mutable settings are only seeded once; merge managed Python formatting
+  # Mutable settings are only seeded once; merge managed language tooling
   # into existing settings without replacing preferences edited inside Zed.
-  system.activationScripts.zedPythonFormatter = lib.stringAfter ["xdgUserFiles"] ''
+  system.activationScripts.zedLanguageTooling = lib.stringAfter ["xdgUserFiles"] ''
     settings=/home/oxod/.config/zed/settings.json
     temporary=$(${pkgs.coreutils}/bin/mktemp "$settings.XXXXXX")
-    if ${pkgs.jq}/bin/jq --slurpfile python ${pkgs.writeText "zed-python-settings.json" (builtins.toJSON languageConfig.languages.Python)} \
-      '.languages.Python = ((.languages.Python // {}) * $python[0])' "$settings" > "$temporary"; then
+    if ${pkgs.jq}/bin/jq --slurpfile managed ${pkgs.writeText "zed-managed-language-settings.json" (builtins.toJSON {
+      languages = {
+        inherit (languageConfig.languages) Java Python;
+      };
+      lsp.jdtls = languageConfig.lsp.jdtls;
+    })} \
+      '.languages.Java = ((.languages.Java // {}) * $managed[0].languages.Java)
+       | .languages.Python = ((.languages.Python // {}) * $managed[0].languages.Python)
+       | .lsp.jdtls = ((.lsp.jdtls // {}) * $managed[0].lsp.jdtls)' "$settings" > "$temporary"; then
       ${pkgs.coreutils}/bin/chown --reference="$settings" "$temporary"
       ${pkgs.coreutils}/bin/chmod --reference="$settings" "$temporary"
       ${pkgs.coreutils}/bin/mv -- "$temporary" "$settings"
     else
       ${pkgs.coreutils}/bin/rm -- "$temporary"
-      echo "Could not update Zed Python formatting settings" >&2
+      echo "Could not update managed Zed language settings" >&2
       exit 1
     fi
   '';

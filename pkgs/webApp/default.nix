@@ -8,6 +8,7 @@
   width ? 800,
   height ? 600,
   fullscreen ? false,
+  privateMode ? false,
   pythonPackages ? pkgs.python3Packages,
   extraPythonPackages ? ps: [],
   qt ? false,
@@ -91,7 +92,7 @@
         print(f"Warning: Could not set application name: {e}", file=sys.stderr)
 
       webview.create_window(title, url, width=width, height=height, fullscreen=fullscreen)
-      webview.start(user_agent=user_agent)
+      webview.start(user_agent=user_agent, private_mode=${if privateMode then "True" else "False"})
 
     if __name__ == "__main__":
       main()
@@ -118,7 +119,7 @@
       export XDG_DATA_DIRS="${pkgs.gsettings-desktop-schemas}/share/gsettings-schemas/${pkgs.gsettings-desktop-schemas.name}:${pkgs.gtk3}/share/gsettings-schemas/${pkgs.gtk3.name}:$XDG_DATA_DIRS"
       # GIO TLS backend (required for HTTPS in WebKitGTK)
       export GIO_EXTRA_MODULES="${pkgs.glib-networking}/lib/gio/modules''${GIO_EXTRA_MODULES:+:$GIO_EXTRA_MODULES}"
-      export SSL_CERT_FILE="${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
+      export SSL_CERT_FILE="/etc/ssl/certs/ca-certificates.crt"
     ''}
 
     # Set up environment for Qt (if used)
