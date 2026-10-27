@@ -1,31 +1,18 @@
-{pkgs, ...}: {
-  extraFiles = {
-    "custom-snippets/all.snippets".source = ../snippets/all.snippets;
-    "custom-snippets/actionscript.snippets".source = ../snippets/actionscript.snippets;
-    "custom-snippets/ada.snippets".source = ../snippets/ada.snippets;
-    "custom-snippets/alpaca.snippets".source = ../snippets/alpaca.snippets;
-    "custom-snippets/apache.snippets".source = ../snippets/apache.snippets;
-    "custom-snippets/arduino.snippets".source = ../snippets/arduino.snippets;
-    "custom-snippets/asm.snippets".source = ../snippets/asm.snippets;
-    "custom-snippets/autoit.snippets".source = ../snippets/autoit.snippets;
-    "custom-snippets/awk.snippets".source = ../snippets/awk.snippets;
-    "custom-snippets/bash.snippets".source = ../snippets/bash.snippets;
-    "custom-snippets/c.snippets".source = ../snippets/c.snippets;
-    "custom-snippets/chef.snippets".source = ../snippets/chef.snippets;
-    "custom-snippets/clojure.snippets".source = ../snippets/clojure.snippets;
-    "custom-snippets/cmake.snippets".source = ../snippets/cmake.snippets;
-    "custom-snippets/codeigniter.snippets".source = ../snippets/codeigniter.snippets;
-    "custom-snippets/cpp.snippets".source = ../snippets/cpp.snippets;
-    "custom-snippets/cs.snippets".source = ../snippets/cs.snippets;
-    "custom-snippets/crystal.snippets".source = ../snippets/crystal.snippets;
-    "custom-snippets/css.snippets".source = ../snippets/css.snippets;
-    "custom-snippets/cuda.snippets".source = ../snippets/cuda.snippets;
-    "custom-snippets/d.snippets".source = ../snippets/d.snippets;
-    "custom-snippets/dart.snippets".source = ../snippets/dart.snippets;
-    "custom-snippets/dart-flutter.snippets".source = ../snippets/dart-flutter.snippets;
-    "custom-snippets/diff.snippets".source = ../snippets/diff.snippets;
-    "custom-snippets/django.snippets".source = ../snippets/django.snippets;
-  };
+{
+  lib,
+  pkgs,
+  ...
+}: let
+  snippetDir = ../snippets;
+  snippetFiles =
+    lib.filterAttrs
+    (name: type: type == "regular" && lib.hasSuffix ".snippets" name)
+    (builtins.readDir snippetDir);
+in {
+  extraFiles =
+    lib.mapAttrs'
+    (name: _: lib.nameValuePair "custom-snippets/${name}" {source = snippetDir + "/${name}";})
+    snippetFiles;
 
   extraConfigLua = ''
     require("luasnip.loaders.from_vscode").lazy_load()
