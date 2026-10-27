@@ -33,7 +33,7 @@
       (celluloid.override {youtubeSupport = true;})
       loupe
       packet
-      fractal
+      cinny-desktop
       gnome-text-editor
       gnome-calculator
       amberol
