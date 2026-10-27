@@ -49,26 +49,6 @@ in {
           ];
           cmd = ["python" "main.py"];
         };
-        sonarr = {
-          image = "lscr.io/linuxserver/sonarr:latest";
-          environment = commonEnvironment;
-          volumes = [
-            "/srv/ssl/ca-sonarr.crt:/etc/ssl/certs/ca-certificates.crt:ro"
-            "/srv/sonarr:/config"
-            "/mnt/media:/data"
-          ];
-          ports = ["8989:8989"];
-        };
-        radarr = {
-          image = "lscr.io/linuxserver/radarr:latest";
-          environment = commonEnvironment;
-          volumes = [
-            "/srv/ssl/ca-radarr.crt:/etc/ssl/certs/ca-certificates.crt:ro"
-            "/srv/radarr:/config"
-            "/mnt/media:/data"
-          ];
-          ports = ["7878:7878"];
-        };
         jackett =
           vpnNetwork
           // {
@@ -90,27 +70,6 @@ in {
               "/srv/prowlarr:/config"
             ];
           };
-        bazarr = {
-          image = "lscr.io/linuxserver/bazarr:latest";
-          environment = commonEnvironment;
-          volumes = [
-            "/srv/ssl/ca-bazarr.crt:/etc/ssl/certs/ca-certificates.crt:ro"
-            "/srv/bazarr:/config"
-            "/mnt/media:/data"
-          ];
-          ports = ["6767:6767"];
-        };
-        jellyfin = {
-          image = "lscr.io/linuxserver/jellyfin:12.2ubu2604-ls55";
-          environment = commonEnvironment;
-          volumes = [
-            "/srv/ssl/ca-jellyfin.crt:/etc/ssl/certs/ca-certificates.crt:ro"
-            "/srv/jellyfin:/config"
-            "/mnt/media:/data"
-          ];
-          ports = ["7359:7359/udp" "8096:8096"];
-          extraOptions = ["--device=/dev/dri/renderD128:/dev/dri/renderD128" "--group-add=993"];
-        };
         profilarr = {
           image = "ghcr.io/dictionarry-hub/profilarr:latest";
           environment =
@@ -119,7 +78,7 @@ in {
               ORIGIN = "https://profilarr.oxod.home";
               PORT = "6868";
             };
-          volumes = ["/srv/profilarr:/config"];
+          volumes = ["/data/.state/media/profilarr:/config"];
           ports = ["6868:6868"];
         };
         flaresolverr =
@@ -141,22 +100,6 @@ in {
             environment = commonEnvironment;
             volumes = ["/srv/qbittorrent:/config" "/mnt/media:/data"];
           };
-        seerr = {
-          image = "ghcr.io/seerr-team/seerr:latest";
-          environment =
-            commonEnvironment
-            // {
-              NODE_EXTRA_CA_CERTS = "/certs/caddy-root.crt";
-              PORT = "5055";
-            };
-          volumes = [
-            "/srv/ssl/caddy-root.crt:/certs/caddy-root.crt:ro"
-            "/srv/seerr:/app/config"
-          ];
-          ports = ["5055:5055"];
-          cmd = ["npm" "start"];
-          extraOptions = ["--init" "--user=node:node"];
-        };
         beszel-agent = {
           image = "henrygd/beszel-agent:latest";
           environment = {
@@ -195,5 +138,6 @@ in {
     "d /srv 0755 root root -"
     "d /var/lib/camelot 0700 root root -"
     "d /mnt/media/.beszel 0755 root root -"
+    "d /data/.state/media/profilarr 0755 root root -"
   ];
 }
