@@ -1,10 +1,23 @@
-{...}: {
+{
+  lib,
+  pkgs,
+  ...
+}: {
+  extraPackages = with pkgs; [deadnix statix];
+
   plugins = {
     lsp = {
       enable = true;
       inlayHints = true;
       servers = {
-        nixd.enable = true;
+        nixd = {
+          enable = true;
+          settings = {
+            formatting.command = ["${lib.getExe pkgs.alejandra}"];
+            nixpkgs.expr = ''(builtins.getFlake "/home/oxod/dev/nix-config").inputs.nixpkgs.legacyPackages.x86_64-linux'';
+            options.nixos.expr = ''(builtins.getFlake "/home/oxod/dev/nix-config").nixosConfigurations.oxod-laptop.options'';
+          };
+        };
 
         yamlls = {
           enable = true;
@@ -38,7 +51,7 @@
         # Spellcheck
         harper_ls = {
           enable = true;
-          settings.settings = {
+          settings = {
             "harper-ls" = {
               linters = {
                 boring_words = true;

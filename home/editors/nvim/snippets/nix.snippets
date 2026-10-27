@@ -1,0 +1,111 @@
+# Nix expressions and modules
+
+snippet mod Nix module
+	{
+	  config,
+	  lib,
+	  pkgs,
+	  ...
+	}: {
+	  ${0}
+	}
+
+snippet opt NixOS option
+	options.${1:name} = lib.mkOption {
+	  type = lib.types.${2:str};
+	  default = ${3:null};
+	  description = "${4:Description}";
+	};
+
+snippet enable Boolean enable option
+	options.${1:name}.enable = lib.mkEnableOption "${2:feature}";
+
+snippet cfg Conditional module configuration
+	config = lib.mkIf config.${1:name}.enable {
+	  ${0}
+	};
+
+snippet mkif lib.mkIf
+	lib.mkIf ${1:condition} {
+	  ${0}
+	}
+
+snippet mkmerge lib.mkMerge
+	lib.mkMerge [
+	  ${0}
+	]
+
+snippet let let ... in
+	let
+	  ${1:name} = ${2:value};
+	in
+	${0}
+
+snippet flake Flake
+	{
+	  description = "${1:Description}";
+
+	  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+
+	  outputs = {self, nixpkgs, ...} @ inputs: {
+	    ${0}
+	  };
+	}
+
+snippet pkg Package derivation
+	{
+	  lib,
+	  stdenv,
+	  fetchFromGitHub,
+	}: stdenv.mkDerivation (finalAttrs: {
+	  pname = "${1:name}";
+	  version = "${2:1.0.0}";
+
+	  src = fetchFromGitHub {
+	    owner = "${3:owner}";
+	    repo = finalAttrs.pname;
+	    rev = "v${finalAttrs.version}";
+	    hash = "${4:sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=}";
+	  };
+
+	  ${0}
+
+	  meta = {
+	    description = "${5:Description}";
+	    homepage = "https://github.com/${3:owner}/${1:name}";
+	    license = lib.licenses.${6:mit};
+	    maintainers = [];
+	    platforms = lib.platforms.all;
+	  };
+	})
+
+snippet shell Development shell
+	pkgs.mkShell {
+	  packages = with pkgs; [
+	    ${0}
+	  ];
+	}
+
+snippet overlay Overlay
+	final: prev: {
+	  ${1:package} = prev.${1:package}.overrideAttrs (old: {
+	    ${0}
+	  });
+	}
+
+snippet fetch Fetch from GitHub
+	pkgs.fetchFromGitHub {
+	  owner = "${1:owner}";
+	  repo = "${2:repo}";
+	  rev = "${3:revision}";
+	  hash = "${0:sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=}";
+	}
+
+snippet write pkgs.writeShellApplication
+	pkgs.writeShellApplication {
+	  name = "${1:name}";
+	  runtimeInputs = with pkgs; [${2}];
+	  text = ''
+	    ${0}
+	  '';
+	}

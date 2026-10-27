@@ -26,6 +26,7 @@ in {
     ./conform.nix
     ./gitsigns.nix
     ./indentBlankline.nix
+    ./lint.nix
     ./lsp.nix
     ./lualine.nix
     ./neotree.nix
@@ -54,6 +55,7 @@ in {
       settings = {
         keymap = {
           preset = "default";
+          "<CR>" = ["accept" "fallback"];
           "<Tab>" = ["snippet_forward" "select_next" "fallback"];
           "<S-Tab>" = ["snippet_backward" "select_prev" "fallback"];
         };
