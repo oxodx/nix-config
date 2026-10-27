@@ -6,6 +6,7 @@
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     systems.url = "github:nix-systems/default";
 
+    nixvim.url = "github:nix-community/nixvim/nixos-26.05";
     nix-index-database.url = "github:nix-community/nix-index-database";
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
     quickshell.url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";

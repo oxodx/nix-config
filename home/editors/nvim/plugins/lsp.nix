@@ -1,0 +1,114 @@
+{...}: {
+  plugins = {
+    lsp = {
+      enable = true;
+      inlayHints = true;
+      servers = {
+        nixd.enable = true;
+
+        yamlls = {
+          enable = true;
+          settings = {
+            schemaStore = {
+              enable = false;
+              url = "";
+            };
+          };
+        };
+
+        # Golang
+        gopls = {
+          enable = true;
+          autostart = true;
+        };
+
+        # Lua
+        lua_ls = {
+          enable = true;
+          settings.telemetry.enable = false;
+        };
+
+        # Rust
+        rust_analyzer = {
+          enable = true;
+          installRustc = true;
+          installCargo = true;
+        };
+
+        # Spellcheck
+        harper_ls = {
+          enable = true;
+          settings.settings = {
+            "harper-ls" = {
+              linters = {
+                boring_words = true;
+                linking_verbs = true;
+                # Rarely useful with coding
+                sentence_capitalization = false;
+                spell_check = false;
+              };
+              codeActions.forceStable = true;
+            };
+          };
+        };
+
+        ts_ls.enable = true; # TS/JS
+        cssls.enable = true; # CSS
+        tailwindcss.enable = true; # TailwindCSS
+        html.enable = true; # HTML
+        astro.enable = true; # AstroJS
+        phpactor.enable = true; # PHP
+        svelte.enable = false; # Svelte
+        pyright.enable = true; # Python
+        nil_ls.enable = false; # nixd is configured above
+        dockerls.enable = true; # Docker
+        bashls.enable = true; # Bash
+        clangd.enable = true; # C/C++
+        csharp_ls.enable = true; # C#
+        markdown_oxide.enable = true; # Markdown
+      };
+
+      keymaps = {
+        silent = true;
+        lspBuf = {
+          gd = {
+            action = "definition";
+            desc = "Goto Definition";
+          };
+          gr = {
+            action = "references";
+            desc = "Goto References";
+          };
+          gD = {
+            action = "declaration";
+            desc = "Goto Declaration";
+          };
+          gI = {
+            action = "implementation";
+            desc = "Goto Implementation";
+          };
+          gT = {
+            action = "type_definition";
+            desc = "Type Definition";
+          };
+          "<leader>cr" = {
+            action = "rename";
+            desc = "Rename";
+          };
+          "<leader>ca" = {
+            action = "code_action";
+            desc = "Code action";
+          };
+          K = {
+            action = "hover";
+            desc = "Hover documentation";
+          };
+          "<C-k>" = {
+            action = "signature_help";
+            desc = "Signature help";
+          };
+        };
+      };
+    };
+  };
+}

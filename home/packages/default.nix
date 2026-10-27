@@ -47,7 +47,6 @@
       libsForQt5.qt5ct
       kdePackages.breeze
       kdePackages.breeze.qt5
-      neovim
       wget
       git
       fastfetch
