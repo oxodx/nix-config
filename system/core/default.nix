@@ -1,12 +1,9 @@
-{
-  lib,
-  mylib,
-  ...
-}: {
-  imports =
-    builtins.filter
-    (module: module != ./boot.nix && module != ./limine.nix)
-    (mylib.scanPaths ./.);
+{lib, ...}: {
+  imports = [
+    ./security.nix
+    ./time.nix
+    ./users.nix
+  ];
 
   i18n = {
     defaultLocale = "en_US.UTF-8";

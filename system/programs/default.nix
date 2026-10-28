@@ -1,5 +1,4 @@
 {
-  mylib,
   self,
   pkgs,
   ...
@@ -22,12 +21,12 @@
       name = "jellyfin";
       url = "https://jellyfin.oxod.home/";
     in
-      self.packages.${pkgs.stdenv.hostPlatform.system}.webApp {
+      self.lib.mkWebApp pkgs {
         inherit
           name
           url
           ;
-        icon = "${mylib.relativeToRoot "assets/jellyfin.png"}";
+        icon = ../../assets/jellyfin.png;
       })
   ];
 }

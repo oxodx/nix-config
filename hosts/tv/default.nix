@@ -9,7 +9,13 @@
     config.allowUnfree = true;
   };
 in {
-  imports = [./hardware.nix];
+  imports = [
+    ../../profiles/desktop.nix
+    ../../system/services/gnomeServices.nix
+    ../../system/hardware/cpuAmdPstate.nix
+    ../../home
+    ./hardware.nix
+  ];
 
   networking.hostName = "tv";
 

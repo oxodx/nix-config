@@ -3,66 +3,59 @@
   lib,
   ...
 }: let
-  sshGitPath = "${config.users.users.oxod.home}/.ssh/git";
+  username = "oxod";
+  sshDirectory = "${config.users.users.${username}.home}/.ssh";
+  hostName = config.networking.hostName;
 
-  secrets = {
-    ssh = {
-      git = {
-        path = sshGitPath;
-        publicKey = ./git.pub;
-      };
-      camelot = {
-        path = "${config.users.users.oxod.home}/.ssh/homelab-camelot";
-        publicKey = ./camelot.pub;
-      };
-      excalibur = {
-        path = "${config.users.users.oxod.home}/.ssh/homelab-excalibur";
-        publicKey = ./excalibur.pub;
-      };
-      gawain = {
-        path = "${config.users.users.oxod.home}/.ssh/homelab-gawain";
-        publicKey = ./gawain.pub;
-      };
+  # Each identity declares its encrypted source, destination and consumers.
+  identities = {
+    git = {
+      secretName = "git-ssh-key";
+      fileName = "git";
+      clients = ["laptop" "tv"];
+      server = null;
+    };
+    camelot = {
+      secretName = "homelab-camelot";
+      fileName = "homelab-camelot";
+      clients = ["laptop"];
+      server = "camelot-nixos";
+    };
+    excalibur = {
+      secretName = "homelab-excalibur";
+      fileName = "homelab-excalibur";
+      clients = ["laptop"];
+      server = "excalibur-nixos";
+    };
+    gawain = {
+      secretName = "homelab-gawain";
+      fileName = "homelab-gawain";
+      clients = ["laptop"];
+      server = "gawain-nixos";
     };
   };
+
+  secrets.ssh =
+    lib.mapAttrs (name: identity: {
+      path = "${sshDirectory}/${identity.fileName}";
+      publicKey = ./. + "/${name}.pub";
+    })
+    identities;
 in {
-  # Expose the registry to every module as the `secrets` argument.
+  # Consumers accept {secrets, ...} and use secrets.ssh.<name>.path.
   _module.args = {inherit secrets;};
 
-  age.secrets.git-ssh-key = lib.mkIf (builtins.elem config.networking.hostName ["laptop" "tv"]) {
-    file = ./git.age;
-    path = sshGitPath;
-    owner = "oxod";
-    group = "users";
-    mode = "0600";
-  };
+  age.secrets = lib.mapAttrs' (name: identity:
+    lib.nameValuePair identity.secretName {
+      file = ./. + "/${name}.age";
+      path = secrets.ssh.${name}.path;
+      owner = username;
+      group = "users";
+      mode = "0600";
+    })
+  (lib.filterAttrs (_: identity: builtins.elem hostName identity.clients) identities);
 
-  age.secrets.homelab-camelot = lib.mkIf (config.networking.hostName == "laptop") {
-    file = ./camelot.age;
-    path = secrets.ssh.camelot.path;
-    owner = "oxod";
-    group = "users";
-    mode = "0600";
-  };
-
-  age.secrets.homelab-excalibur = lib.mkIf (config.networking.hostName == "laptop") {
-    file = ./excalibur.age;
-    path = secrets.ssh.excalibur.path;
-    owner = "oxod";
-    group = "users";
-    mode = "0600";
-  };
-
-  age.secrets.homelab-gawain = lib.mkIf (config.networking.hostName == "laptop") {
-    file = ./gawain.age;
-    path = secrets.ssh.gawain.path;
-    owner = "oxod";
-    group = "users";
-    mode = "0600";
-  };
-
-  users.users.oxod.openssh.authorizedKeys.keyFiles =
-    lib.optionals (config.networking.hostName == "camelot-nixos") [secrets.ssh.camelot.publicKey]
-    ++ lib.optionals (config.networking.hostName == "excalibur-nixos") [secrets.ssh.excalibur.publicKey]
-    ++ lib.optionals (config.networking.hostName == "gawain-nixos") [secrets.ssh.gawain.publicKey];
+  users.users.${username}.openssh.authorizedKeys.keyFiles =
+    lib.mapAttrsToList (name: _: secrets.ssh.${name}.publicKey)
+    (lib.filterAttrs (_: identity: identity.server == hostName) identities);
 }

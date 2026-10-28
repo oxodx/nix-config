@@ -23,7 +23,6 @@
     ...
   } @ inputs: let
     inherit (nixpkgs) lib;
-    mylib = import ./lib {inherit lib;};
     forAllSystems = lib.genAttrs (import systems);
     pkgsFor = system:
       import nixpkgs {
@@ -31,15 +30,15 @@
         config.allowUnfree = true;
       };
   in {
-    lib = mylib;
+    lib = import ./lib;
 
-    nixosConfigurations = import ./hosts {inherit self inputs mylib;};
+    nixosConfigurations = import ./hosts {inherit self inputs;};
 
     packages = forAllSystems (system:
-      import ./pkgs {
+      lib.filterAttrs (_: package: lib.meta.availableOn (pkgsFor system).stdenv.hostPlatform package) (import ./pkgs {
         pkgs = pkgsFor system;
         inherit inputs;
-      });
+      }));
 
     devShells = forAllSystems (system: let
       pkgs = pkgsFor system;
@@ -55,6 +54,18 @@
       };
     });
 
-    formatter = forAllSystems (system: (pkgsFor system).alejandra);
+    formatter = forAllSystems (system: let
+      pkgs = pkgsFor system;
+    in
+      pkgs.writeShellApplication {
+        name = "format";
+        runtimeInputs = [pkgs.alejandra];
+        text = ''
+          if [ "$#" -eq 0 ]; then
+            set -- .
+          fi
+          exec alejandra "$@"
+        '';
+      });
   };
 }

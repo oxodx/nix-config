@@ -4,6 +4,14 @@
   ...
 }: {
   imports = [
+    ../../profiles/laptop.nix
+    ../../system/programs/games.nix
+    ../../system/services/gnomeServices.nix
+    ../../system/hardware/cpuAmdPstate.nix
+    ../../system/hardware/asusBattery.nix
+    ../../home
+    ../../home/packages/wayland/niri
+    ../../home/services/quickshell
     ./hardware.nix
     ./vpn.nix
   ];

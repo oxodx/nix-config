@@ -5,6 +5,7 @@
   ...
 }: {
   imports = [
+    ../../../profiles/server.nix
     "${modulesPath}/virtualisation/proxmox-lxc.nix"
     ./services.nix
   ];

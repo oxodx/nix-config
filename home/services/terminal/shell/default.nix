@@ -1,3 +1,7 @@
-{mylib, ...}: {
-  imports = mylib.scanPaths ./.;
+{
+  imports = [
+    ./carapace.nix
+    ./fish.nix
+    ./starship.nix
+  ];
 }

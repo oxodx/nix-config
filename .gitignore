@@ -1,3 +1,6 @@
 /.direnv/
 /.agents/
 /.codex/
+/result
+/result-*
+/nvim.log

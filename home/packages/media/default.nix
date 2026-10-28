@@ -1,9 +1,11 @@
-{
-  pkgs,
-  mylib,
-  ...
-}: {
-  imports = mylib.scanPaths ./.;
+{pkgs, ...}: {
+  imports = [
+    ./ardour.nix
+    ./mpv.nix
+    ./obs.nix
+    ./rnnoise.nix
+    ./yt-dlp.nix
+  ];
 
   users.users.oxod.packages = with pkgs; [
     alsa-utils

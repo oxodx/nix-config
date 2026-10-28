@@ -1,3 +1,7 @@
-{mylib, ...}: {
-  imports = mylib.scanPaths ./.;
+{
+  imports = [
+    ./cliphist.nix
+    ./gpgAgent.nix
+    ./polkitAgent.nix
+  ];
 }

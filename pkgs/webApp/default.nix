@@ -92,7 +92,11 @@
         print(f"Warning: Could not set application name: {e}", file=sys.stderr)
 
       webview.create_window(title, url, width=width, height=height, fullscreen=fullscreen)
-      webview.start(user_agent=user_agent, private_mode=${if privateMode then "True" else "False"})
+      webview.start(user_agent=user_agent, private_mode=${
+      if privateMode
+      then "True"
+      else "False"
+    })
 
     if __name__ == "__main__":
       main()
