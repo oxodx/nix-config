@@ -52,8 +52,33 @@
     {
       mode = "n";
       key = "<leader>cf";
-      action.__raw = "function() require('conform').format({ async = true, lsp_format = 'fallback' }) end";
+      action.__raw = ''
+        function()
+          require("conform").format({
+            async = false,
+            lsp_format = "fallback",
+            timeout_ms = 5000,
+          }, function(err)
+            if err then
+              vim.notify("Formatting failed: " .. err, vim.log.levels.ERROR)
+            end
+          end)
+        end
+      '';
       options.desc = "Format";
+    }
+    {
+      mode = "n";
+      key = "<leader>co";
+      action.__raw = ''
+        function()
+          vim.lsp.buf.code_action({
+            context = { only = { "source.organizeImports" } },
+            apply = true,
+          })
+        end
+      '';
+      options.desc = "Organize imports";
     }
     {
       mode = ["n" "v"];

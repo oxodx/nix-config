@@ -3,7 +3,7 @@
   pkgs,
   ...
 }: {
-  extraPackages = with pkgs; [deadnix statix];
+  extraPackages = with pkgs; [deadnix statix jdk21 maven gradle];
 
   plugins = {
     lsp = {
@@ -16,6 +16,24 @@
             formatting.command = ["${lib.getExe pkgs.alejandra}"];
             nixpkgs.expr = ''(builtins.getFlake "/home/oxod/dev/nix-config").inputs.nixpkgs.legacyPackages.x86_64-linux'';
             options.nixos.expr = ''(builtins.getFlake "/home/oxod/dev/nix-config").nixosConfigurations.oxod-laptop.options'';
+          };
+        };
+
+        jdtls = {
+          enable = true;
+          settings.java = {
+            completion.favoriteStaticMembers = [
+              "org.junit.jupiter.api.Assertions.*"
+              "org.mockito.Mockito.*"
+              "java.util.Objects.requireNonNull"
+            ];
+            configuration.updateBuildConfiguration = "interactive";
+            contentProvider.preferred = "fernflower";
+            eclipse.downloadSources = true;
+            maven.downloadSources = true;
+            implementationsCodeLens.enabled = true;
+            referencesCodeLens.enabled = true;
+            signatureHelp.enabled = true;
           };
         };
 
