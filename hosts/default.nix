@@ -9,6 +9,8 @@
   home = "${self}/home";
 
   inherit (import "${self}/system") desktop laptop server;
+  agenixModule = inputs.agenix.nixosModules.default;
+  secretsModule = "${self}/secrets";
 
   specialArgs = {
     inherit inputs self mylib;
@@ -17,7 +19,8 @@ in {
   "oxod-laptop" = nixosSystem {
     inherit specialArgs;
     modules =
-      laptop
+      [agenixModule secretsModule]
+      ++ laptop
       ++ [
         ./oxod-laptop
         "${mod}/programs/games.nix"
@@ -33,7 +36,8 @@ in {
   "tv" = nixosSystem {
     inherit specialArgs;
     modules =
-      desktop
+      [agenixModule secretsModule]
+      ++ desktop
       ++ [
         ./tv
         "${mod}/services/gnomeServices.nix"
@@ -44,16 +48,16 @@ in {
 
   "homelab-camelot" = nixosSystem {
     inherit specialArgs;
-    modules = server ++ [./homelab/camelot];
+    modules = [agenixModule secretsModule] ++ server ++ [./homelab/camelot];
   };
 
   "homelab-excalibur" = nixosSystem {
     inherit specialArgs;
-    modules = server ++ [./homelab/excalibur];
+    modules = [agenixModule secretsModule] ++ server ++ [./homelab/excalibur];
   };
 
   "homelab-gawain" = nixosSystem {
     inherit specialArgs;
-    modules = server ++ [./homelab/gawain];
+    modules = [agenixModule secretsModule] ++ server ++ [./homelab/gawain];
   };
 }

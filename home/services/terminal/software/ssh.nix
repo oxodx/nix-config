@@ -1,13 +1,14 @@
 {
   config,
   pkgs,
+  secrets,
   ...
 }: let
   sshAgentSocket = "${config.xdg.runtimeDir}/ssh-agent.socket";
 in {
-  users.users.oxod.packages = with pkgs; [
-    openssh
-  ];
+  users.users.oxod.packages = with pkgs; [openssh];
+
+  home.file.".ssh/git.pub".source = secrets.ssh.git.publicKey;
 
   home.file.".ssh/config".text = ''
     AddKeysToAgent yes
@@ -29,7 +30,7 @@ in {
     Host github.com
       HostName github.com
       User git
-      IdentityFile ~/.ssh/git
+      IdentityFile ${secrets.ssh.git.path}
 
     Include ~/.ssh/config.d/*
   '';

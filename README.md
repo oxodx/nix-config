@@ -26,6 +26,27 @@ sudo nixos-rebuild --target-host oxod@192.168.1.41 --sudo switch --flake .#homel
 
 ---
 
+## Secrets
+
+Secrets are managed with agenix. The development shell includes its CLI.
+
+To edit or rekey the Git SSH identity, run:
+
+```bash
+nix develop
+cd secrets
+agenix -e git.age
+```
+
+Recipients are declared in `secrets/secrets.nix`. Keep private keys only in the
+encrypted `.age` files; public keys may be committed normally.
+
+`secrets/default.nix` is the central registry. It exposes a `secrets` argument
+to every NixOS module, so a module can accept `{ secrets, ... }` and use paths
+such as `secrets.ssh.git.path` or `secrets.ssh.git.publicKey`.
+
+---
+
 ## Credits
 
 - [**ryan4yin/nix-config**](https://github.com/ryan4yin/nix-config)
