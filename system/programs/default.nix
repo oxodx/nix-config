@@ -1,5 +1,6 @@
 {
   self,
+  mylib,
   pkgs,
   ...
 }: {
@@ -26,7 +27,7 @@
           name
           url
           ;
-        icon = ../../assets/jellyfin.png;
+        icon = mylib.relativeToRoot "assets/jellyfin.png";
       })
   ];
 }

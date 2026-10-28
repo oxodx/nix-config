@@ -15,7 +15,7 @@
 ---
 
 Personal NixOS configurations for a laptop, a TV, and three Proxmox homelab nodes.
-Pinned flake inputs, explicit module imports, and agenix-managed SSH identities.
+Pinned flake inputs, shared module profiles, and agenix-managed SSH identities.
 
 ## Quick Start
 
@@ -47,8 +47,13 @@ assets/         Shared images and public certificates
 ```
 
 Each host imports a profile and its own additional modules. Profiles compose
-ordinary NixOS modules; adding a file to a directory does not enable it.
-Add new modules to the relevant explicit `imports` list.
+ordinary NixOS modules. Directories that enable all their modules use
+`mylib.scanPaths ./.`, which imports child directories and Nix files except
+`default.nix`. Adding a module there enables it automatically.
+
+Profiles and directories containing optional modules keep explicit `imports`
+lists. Shared root-level assets use `mylib.relativeToRoot "assets/..."`.
+Both helpers are available through the `mylib` module argument.
 
 The `home/` directory contains **NixOS modules**, not Home Manager modules.
 `home/xdgCompat.nix` provides the existing `home.file` and `xdg.configFile`

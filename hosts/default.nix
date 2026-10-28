@@ -5,7 +5,10 @@
 }: let
   mkHost = path:
     inputs.nixpkgs.lib.nixosSystem {
-      specialArgs = {inherit inputs self;};
+      specialArgs = {
+        inherit inputs self;
+        mylib = self.lib;
+      };
       modules = [path];
     };
 in {

@@ -1,9 +1,9 @@
-{pkgs, ...}: {
-  imports = [
-    ./nvim
-    ./vscode
-    ./zed
-  ];
+{
+  pkgs,
+  mylib,
+  ...
+}: {
+  imports = mylib.scanPaths ./.;
 
   users.users.oxod.packages = with pkgs; [jetbrains.idea];
 }

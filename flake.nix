@@ -30,7 +30,7 @@
         config.allowUnfree = true;
       };
   in {
-    lib = import ./lib;
+    lib = import ./lib {inherit lib;};
 
     nixosConfigurations = import ./hosts {inherit self inputs;};
 
