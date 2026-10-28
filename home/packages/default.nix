@@ -20,6 +20,8 @@
       ffmpegthumbnailer
       imagemagick
       bun
+      python3
+      uv
       rustc
       cargo
       rustfmt
@@ -73,6 +75,7 @@
       which
       tree
       gnused
+      gnugrep
       gnutar
       gawk
       zstd
