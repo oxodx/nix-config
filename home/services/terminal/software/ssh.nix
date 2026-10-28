@@ -9,6 +9,9 @@ in {
   users.users.oxod.packages = with pkgs; [openssh];
 
   home.file.".ssh/git.pub".source = secrets.ssh.git.publicKey;
+  home.file.".ssh/homelab-camelot.pub".source = secrets.ssh.camelot.publicKey;
+  home.file.".ssh/homelab-excalibur.pub".source = secrets.ssh.excalibur.publicKey;
+  home.file.".ssh/homelab-gawain.pub".source = secrets.ssh.gawain.publicKey;
 
   home.file.".ssh/config".text = ''
     AddKeysToAgent yes
@@ -31,6 +34,21 @@ in {
       HostName github.com
       User git
       IdentityFile ${secrets.ssh.git.path}
+
+    Host camelot
+      HostName 192.168.1.185
+      User oxod
+      IdentityFile ${secrets.ssh.camelot.path}
+
+    Host excalibur
+      HostName 192.168.1.206
+      User oxod
+      IdentityFile ${secrets.ssh.excalibur.path}
+
+    Host gawain
+      HostName 192.168.1.41
+      User oxod
+      IdentityFile ${secrets.ssh.gawain.path}
 
     Include ~/.ssh/config.d/*
   '';
