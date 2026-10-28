@@ -50,6 +50,7 @@ such as `secrets.ssh.git.path` or `secrets.ssh.git.publicKey`.
 ## Credits
 
 - [**ryan4yin/nix-config**](https://github.com/ryan4yin/nix-config)
+- [**nix-media-server/nixarr**](https://github.com/nix-media-server/nixarr)
 
 ---
 
