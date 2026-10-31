@@ -1,17 +1,18 @@
 {
   lib,
   pkgs,
+  mylib,
   ...
 }: {
   imports = [
-    ../../profiles/laptop.nix
-    ../../system/programs/games.nix
-    ../../system/services/gnomeServices.nix
-    ../../system/hardware/cpuAmdPstate.nix
-    ../../system/hardware/asusBattery.nix
-    ../../home
-    ../../home/packages/wayland/niri
-    ../../home/services/quickshell
+    "${mylib.relativeToRoot}/profiles/laptop.nix"
+    "${mylib.relativeToRoot}/system/programs/games.nix"
+    "${mylib.relativeToRoot}/system/services/gnomeServices.nix"
+    "${mylib.relativeToRoot}/system/hardware/cpuAmdPstate.nix"
+    "${mylib.relativeToRoot}/system/hardware/asusBattery.nix"
+    "${mylib.relativeToRoot}/home"
+    "${mylib.relativeToRoot}/home/packages/wayland/niri"
+    "${mylib.relativeToRoot}/home/services/quickshell"
     ./hardware.nix
     ./vpn.nix
   ];

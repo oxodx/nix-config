@@ -1,6 +1,7 @@
 {
   lib,
   pkgs,
+  mylib,
   inputs,
   ...
 }: let
@@ -10,10 +11,10 @@
   };
 in {
   imports = [
-    ../../profiles/desktop.nix
-    ../../system/services/gnomeServices.nix
-    ../../system/hardware/cpuAmdPstate.nix
-    ../../home
+    "${mylib.relativeToRoot}/profiles/desktop.nix"
+    "${mylib.relativeToRoot}/system/services/gnomeServices.nix"
+    "${mylib.relativeToRoot}/system/hardware/cpuAmdPstate.nix"
+    "${mylib.relativeToRoot}/home"
     ./hardware.nix
   ];
 

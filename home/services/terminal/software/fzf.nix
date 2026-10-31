@@ -1,7 +1,5 @@
 {pkgs, ...}: {
-  users.users.oxod.packages = with pkgs; [
-    fzf
-  ];
+  users.users.oxod.packages = with pkgs; [fzf];
 
   xdg.configFile = {
     "fish/conf.d/fzf.fish".source = "${pkgs.fzf}/share/fzf/key-bindings.fish";

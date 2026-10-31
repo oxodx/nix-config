@@ -1,11 +1,12 @@
 {
   lib,
-  modulesPath,
   pkgs,
+  mylib,
+  modulesPath,
   ...
 }: {
   imports = [
-    ../../../profiles/server.nix
+    "${mylib.relativeToRoot}/profiles/server.nix"
     "${modulesPath}/virtualisation/proxmox-lxc.nix"
     ./services.nix
   ];

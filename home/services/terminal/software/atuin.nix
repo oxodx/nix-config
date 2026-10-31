@@ -22,9 +22,7 @@ in {
       enter_accept = true;
       history_filter = ["shit"];
       keymap_mode = "vim-normal";
-      sync = {
-        records = true;
-      };
+      sync.records = true;
     };
 
     "fish/conf.d/atuin.fish".source =

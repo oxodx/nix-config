@@ -3,9 +3,7 @@
   hostsFile = "gh/hosts.yml";
   toYAML = (pkgs.formats.yaml {}).generate;
 in {
-  users.users.oxod.packages = with pkgs; [
-    gh
-  ];
+  users.users.oxod.packages = with pkgs; [gh];
 
   xdg.configFile."${configFile}".source = toYAML "config.yml" {
     version = 1;

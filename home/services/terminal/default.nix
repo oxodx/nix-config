@@ -1,9 +1,9 @@
-{config, ...}: {
-  imports = [
-    ./emulators
-    ./shell
-    ./software
-  ];
+{
+  mylib,
+  config,
+  ...
+}: {
+  imports = mylib.scanPaths ./.;
 
   environment.sessionVariables = {
     LESSHISTFILE = "${config.users.users.oxod.home}/.cache/less/history";
