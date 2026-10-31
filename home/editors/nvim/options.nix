@@ -54,6 +54,33 @@
 
   autoCmd = [
     {
+      event = "BufWritePre";
+      desc = "Remove trailing whitespace";
+      callback.__raw = ''
+        function(args)
+          local view = vim.fn.winsaveview()
+          vim.api.nvim_buf_call(args.buf, function()
+            vim.cmd([[keeppatterns %s/\s\+$//e]])
+          end)
+          vim.fn.winrestview(view)
+        end
+      '';
+    }
+    {
+      event = ["FileType" "BufEnter"];
+      desc = "Use two-space indentation for Python";
+      callback.__raw = ''
+        function(args)
+          if vim.bo[args.buf].filetype == "python" then
+            vim.bo[args.buf].expandtab = true
+            vim.bo[args.buf].tabstop = 2
+            vim.bo[args.buf].softtabstop = 2
+            vim.bo[args.buf].shiftwidth = 2
+          end
+        end
+      '';
+    }
+    {
       event = "TextYankPost";
       desc = "Highlight copied text";
       callback.__raw = "function() vim.highlight.on_yank({ timeout = 150 }) end";
