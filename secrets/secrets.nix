@@ -7,4 +7,6 @@ in {
   "camelot.age".publicKeys = [oxod laptop];
   "excalibur.age".publicKeys = [oxod laptop];
   "gawain.age".publicKeys = [oxod laptop];
+  "magister-android-keystore.age".publicKeys = [oxod laptop];
+  "magister-github-actions.age".publicKeys = [oxod laptop];
 }
