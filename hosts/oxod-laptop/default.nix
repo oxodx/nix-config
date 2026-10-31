@@ -30,6 +30,13 @@
     };
   };
 
+  virtualisation.docker = {
+    enable = true;
+    enableOnBoot = true;
+    autoPrune.enable = true;
+    logDriver = "journald";
+  };
+
   systemd.services.ollama.wantedBy = lib.mkForce [];
 
   security.polkit.extraConfig = ''
