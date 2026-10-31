@@ -5,6 +5,19 @@
 }: {
   extraPackages = with pkgs; [deadnix statix jdk21 maven gradle];
 
+  extraConfigLua = ''
+    vim.lsp.config("pyright", {
+      before_init = function(_, config)
+        local venv_python = config.root_dir and (config.root_dir .. "/.venv/bin/python")
+        if venv_python and vim.fn.executable(venv_python) == 1 then
+          config.settings = config.settings or {}
+          config.settings.python = config.settings.python or {}
+          config.settings.python.pythonPath = venv_python
+        end
+      end,
+    })
+  '';
+
   plugins = {
     lsp = {
       enable = true;
