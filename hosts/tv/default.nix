@@ -9,12 +9,12 @@
     system = pkgs.stdenv.hostPlatform.system;
     config.allowUnfree = true;
   };
+  inherit (import (mylib.relativeToRoot "system") {inherit mylib inputs;}) desktop;
 in {
-  imports = [
-    "${mylib.relativeToRoot}/profiles/desktop.nix"
-    "${mylib.relativeToRoot}/system/services/gnomeServices.nix"
-    "${mylib.relativeToRoot}/system/hardware/cpuAmdPstate.nix"
-    "${mylib.relativeToRoot}/home"
+  imports = desktop ++ [
+    (mylib.relativeToRoot "system/services/gnomeServices.nix")
+    (mylib.relativeToRoot "system/hardware/cpuAmdPstate.nix")
+    (mylib.relativeToRoot "home")
     ./hardware.nix
   ];
 

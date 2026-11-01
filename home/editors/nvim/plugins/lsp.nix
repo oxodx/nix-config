@@ -72,6 +72,9 @@
           settings.telemetry.enable = false;
         };
 
+        # Luau
+        luau_lsp.enable = true;
+
         # Rust
         rust_analyzer = {
           enable = true;

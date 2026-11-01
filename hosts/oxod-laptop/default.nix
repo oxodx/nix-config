@@ -5,14 +5,14 @@
   ...
 }: {
   imports = [
-    "${mylib.relativeToRoot}/profiles/laptop.nix"
-    "${mylib.relativeToRoot}/system/programs/games.nix"
-    "${mylib.relativeToRoot}/system/services/gnomeServices.nix"
-    "${mylib.relativeToRoot}/system/hardware/cpuAmdPstate.nix"
-    "${mylib.relativeToRoot}/system/hardware/asusBattery.nix"
-    "${mylib.relativeToRoot}/home"
-    "${mylib.relativeToRoot}/home/packages/wayland/niri"
-    "${mylib.relativeToRoot}/home/services/quickshell"
+    (mylib.relativeToRoot "profiles/laptop.nix")
+    (mylib.relativeToRoot "system/programs/games.nix")
+    (mylib.relativeToRoot "system/services/gnomeServices.nix")
+    (mylib.relativeToRoot "system/hardware/cpuAmdPstate.nix")
+    (mylib.relativeToRoot "system/hardware/asusBattery.nix")
+    (mylib.relativeToRoot "home")
+    (mylib.relativeToRoot "home/packages/wayland/niri")
+    (mylib.relativeToRoot "home/services/quickshell")
     ./hardware.nix
     ./vpn.nix
   ];

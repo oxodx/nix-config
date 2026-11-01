@@ -15,6 +15,7 @@
         nix = ["alejandra"];
         java = ["clang_format"];
         lua = ["stylua"];
+        luau = ["stylua"];
         python = ["yapf"];
 
         bash = ["shfmt"];

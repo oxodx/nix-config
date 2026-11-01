@@ -47,12 +47,8 @@ in {
 
   systemd.user.services.quickshell = {
     description = "Quickshell";
-    partOf = [
-      "tray.target"
-      "graphical-session.target"
-    ];
+    partOf = ["graphical-session.target"];
     after = ["graphical-session.target"];
-    wantedBy = ["graphical-session.target"];
 
     serviceConfig = {
       Environment = "PATH=/run/wrappers/bin:${lib.makeBinPath dependencies} QML2_IMPORT_PATH=${QML2_IMPORT_PATH} QSG_RHI_BACKEND=vulkan";

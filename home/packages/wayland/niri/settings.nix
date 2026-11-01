@@ -20,7 +20,7 @@ in {
   spawn-at-startup = [
     ["xwayland-satellite"]
     ["nm-applet" "--indicator"]
-    ["dbus-update-activation-environment" "--systemd" "--all"]
+    ["sh" "-c" "dbus-update-activation-environment --systemd --all && systemctl --user start quickshell.service"]
     ["swayidle" "-w" "timeout" "300" "qs ipc call lockscreen lock" "before-sleep" "qs ipc call lockscreen lock" "lock" "qs ipc call lockscreen lock"]
     ["sh" "-c" "/run/current-system/sw/libexec/polkit-kde-authentication-agent-1 2>/dev/null || true"]
   ];
