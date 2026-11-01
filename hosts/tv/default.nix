@@ -11,12 +11,14 @@
   };
   inherit (import (mylib.relativeToRoot "system") {inherit mylib inputs;}) desktop;
 in {
-  imports = desktop ++ [
-    (mylib.relativeToRoot "system/services/gnomeServices.nix")
-    (mylib.relativeToRoot "system/hardware/cpuAmdPstate.nix")
-    (mylib.relativeToRoot "home")
-    ./hardware.nix
-  ];
+  imports =
+    desktop
+    ++ [
+      (mylib.relativeToRoot "system/services/gnomeServices.nix")
+      (mylib.relativeToRoot "system/hardware/cpuAmdPstate.nix")
+      (mylib.relativeToRoot "home")
+      ./hardware.nix
+    ];
 
   networking.hostName = "tv";
 

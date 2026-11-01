@@ -1,14 +1,19 @@
 {
   lib,
-  modulesPath,
   pkgs,
+  mylib,
+  inputs,
+  modulesPath,
   ...
-}: {
-  imports = [
-    ../../../profiles/server.nix
-    "${modulesPath}/virtualisation/proxmox-lxc.nix"
-    ./services.nix
-  ];
+}: let
+  inherit (import (mylib.relativeToRoot "system") {inherit mylib inputs;}) server;
+in {
+  imports =
+    server
+    ++ [
+      "${modulesPath}/virtualisation/proxmox-lxc.nix"
+      ./services.nix
+    ];
 
   networking = {
     dhcpcd.enable = false;
