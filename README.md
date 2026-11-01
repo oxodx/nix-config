@@ -142,6 +142,7 @@ The parameterized web-app builder is `lib.mkWebApp pkgs { name = ...; url = ...;
 ## Credits
 
 - [**ryan4yin/nix-config**](https://github.com/ryan4yin/nix-config)
+- [**linuxmobile/shin**](https://github.com/linuxmobile/shin)
 - [**nix-media-server/nixarr**](https://github.com/nix-media-server/nixarr)
 
 ---
