@@ -3,6 +3,7 @@ import qs.services
 import QtQuick
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Hyprland
 import Quickshell.Wayland
 import qs.components
 
@@ -11,7 +12,8 @@ PanelWindow {
   required property ShellScreen screen
 
   property bool showing: false
-  readonly property bool focusedScreen: screen.name === NiriState.focusedOutput || NiriState.focusedOutput === ""
+  readonly property var focusedMonitor: Hyprland.focusedMonitor
+  readonly property bool focusedScreen: focusedMonitor === null || screen.name === focusedMonitor.name
 
   visible: showing && focusedScreen
   implicitWidth: 340

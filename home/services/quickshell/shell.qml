@@ -16,7 +16,11 @@ ShellRoot {
 
   settings.watchFiles: true
 
-  Background {}
+  Variants {
+    id: background
+    model: Quickshell.screens
+    Background {}
+  }
 
   Component.onCompleted: {
     LockService.init();

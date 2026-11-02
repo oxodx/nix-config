@@ -65,7 +65,7 @@ interfaces. Keep application settings and their supporting assets together.
 
 | Flake name | Profile | Purpose |
 | --- | --- | --- |
-| `oxod-laptop` | laptop | Niri, Quickshell, development and games |
+| `oxod-laptop` | laptop | Hyprland, Quickshell, development and games |
 | `tv` | desktop | Plasma Bigscreen |
 | `homelab-camelot` | server | Media services |
 | `homelab-excalibur` | server | Pelican and container management |

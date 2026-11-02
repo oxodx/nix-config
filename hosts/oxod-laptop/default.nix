@@ -15,7 +15,7 @@ in {
       (mylib.relativeToRoot "system/hardware/cpuAmdPstate.nix")
       (mylib.relativeToRoot "system/hardware/asusBattery.nix")
       (mylib.relativeToRoot "home")
-      (mylib.relativeToRoot "home/packages/wayland/niri")
+      (mylib.relativeToRoot "home/packages/wayland/hyprland")
       (mylib.relativeToRoot "home/services/quickshell")
       ./hardware.nix
       ./vpn.nix

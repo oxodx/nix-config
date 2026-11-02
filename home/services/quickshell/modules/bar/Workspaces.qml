@@ -4,13 +4,14 @@ import qs.theme
 import qs.services
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
+import Quickshell.Hyprland
 import qs.modules.bar
 import qs.components
 
 FullwidthMouseArea {
   id: root
   required property var bar
-  property int wsCount: 10
 
   implicitWidth: row.implicitWidth + 12
 
@@ -28,17 +29,20 @@ FullwidthMouseArea {
     const offset = sign * Math.floor(acc / 120);
     scrollAccumulator = sign * (acc % 120);
 
-    if (offset != 0) {
-      const targetWorkspace = Math.max(1, Math.min(wsCount, currentIndex + offset));
-      if (targetWorkspace != currentIndex)
-        NiriState.focusWorkspace(bar.screen.name, targetWorkspace);
-    }
+    if (offset == 0)
+      return;
+
+    const workspaces = root.visibleWorkspaces;
+    const index = workspaces.findIndex(workspace => workspace.id === root.currentIndex);
+    const target = Math.max(0, Math.min(workspaces.length - 1, index + offset));
+    if (target != index)
+      ShellIpc.focusWorkspace(workspaces[target].id);
   }
 
-  readonly property var monitorWorkspaces: NiriState.workspaces.filter(workspace => workspace.output == bar.screen.name)
-  readonly property var visibleWorkspaces: monitorWorkspaces.filter(workspace => workspace.idx <= wsCount).sort((a, b) => a.idx - b.idx)
-  readonly property var activeWorkspace: monitorWorkspaces.find(workspace => workspace.is_active) ?? null
-  readonly property int currentIndex: activeWorkspace?.idx ?? 1
+  readonly property var monitorWorkspaces: Hyprland.workspaces.values.filter(workspace => workspace.monitor?.name === bar.screen.name)
+  readonly property var visibleWorkspaces: monitorWorkspaces.filter(workspace => workspace.id > 0).sort((a, b) => a.id - b.id)
+  readonly property var activeWorkspace: monitorWorkspaces.find(workspace => workspace.active) ?? null
+  readonly property int currentIndex: activeWorkspace?.id ?? 1
   visible: visibleWorkspaces.length > 0
 
   RowLayout {
@@ -55,7 +59,7 @@ FullwidthMouseArea {
 
       FullwidthMouseArea {
         id: wsItem
-        onPressed: NiriState.focusWorkspace(root.bar.screen.name, workspaceIndex)
+        onPressed: ShellIpc.focusWorkspace(workspaceIndex)
 
         Layout.fillHeight: true
         implicitWidth: active ? 38 : 30
@@ -63,8 +67,8 @@ FullwidthMouseArea {
         fillWindowWidth: false
 
         required property var modelData
-        property int workspaceIndex: modelData.idx
-        property bool active: modelData.is_active
+        property int workspaceIndex: modelData.id
+        property bool active: modelData.active
 
         property real animActive: active ? 1 : 0
         Behavior on animActive {

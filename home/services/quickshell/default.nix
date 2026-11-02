@@ -47,6 +47,7 @@ in {
 
   systemd.user.services.quickshell = {
     description = "Quickshell";
+    wantedBy = ["graphical-session.target"];
     partOf = ["graphical-session.target"];
     after = ["graphical-session.target"];
 

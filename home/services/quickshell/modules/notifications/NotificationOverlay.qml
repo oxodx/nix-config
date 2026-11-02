@@ -1,6 +1,7 @@
 import qs.services
 import QtQuick
 import Quickshell
+import Quickshell.Hyprland
 import Quickshell.Wayland
 
 PanelWindow {
@@ -19,8 +20,9 @@ PanelWindow {
   }
 
   property var bar: null
-  readonly property bool isFocused: screen?.name == NiriState.focusedOutput || NiriState.focusedOutput === ""
-  //property var fullscreen: Hyprland.monitorFor(root.screen)?.activeWorkspace?.hasFullscreen ?? false
+  readonly property var focusedMonitor: Hyprland.focusedMonitor
+  readonly property bool isFocused: focusedMonitor === null || screen?.name === focusedMonitor.name
+  readonly property bool fullscreen: Hyprland.monitorFor(root.screen)?.activeWorkspace?.hasFullscreen ?? false
 
   property Component notifComponent: DaemonNotification {}
 
