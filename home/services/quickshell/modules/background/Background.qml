@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Wayland
 import qs.services
+import qs.modules.editMode
 
 PanelWindow {
   id: win
@@ -92,180 +93,133 @@ PanelWindow {
     }
   }
 
-    readonly property string wantedPath: WallpaperService.pathFor(win.screenName)
-    readonly property string wantedImage: WallpaperService.imageFor(win.wantedPath)
-    property string shownImage: ""
-    property real progress: 1.0
-    property string activeStyle: "sekaiRing"
-    readonly property bool transitioning: win.previousSlot !== null
+  readonly property string wantedPath: WallpaperService.pathFor(win.screenName)
+  readonly property string wantedImage: WallpaperService.imageFor(win.wantedPath)
+  property string shownImage: ""
+  property real progress: 1.0
+  property string activeStyle: "sekaiRing"
+  readonly property bool transitioning: win.previousSlot !== null
 
-    property Item previousSlot: null
-    property Item currentSlot: null
+  property Item previousSlot: null
+  property Item currentSlot: null
 
-    Component {
-        id: textureSlotComponent
-        WallpaperTextureSlot {}
+  Component {
+    id: textureSlotComponent
+    WallpaperTextureSlot {}
+  }
+
+  function createSlot(image) {
+    const obj = textureSlotComponent.createObject(pic, {
+      sourceSize: win.sourceSize,
+      source: image ? ("file://" + image) : ""
+    });
+    obj.sourceSize = Qt.binding(() => win.sourceSize);
+    obj.statusChanged.connect(() => {
+      const done = obj.status === Image.Ready || obj.status === Image.Error;
+      if (done)
+        obj.sourceSize = Qt.size(obj.sourceSize.width, obj.sourceSize.height);
+      if (obj === win.currentSlot && done)
+        win.slotReady();
+    });
+    win.bindRole(obj);
+    return obj;
+  }
+
+  function bindRole(obj) {
+    obj.visible = Qt.binding(() => obj === win.currentSlot && win.previousSlot === null);
+    obj.layer.enabled = Qt.binding(() => obj === win.previousSlot
+        || (obj === win.currentSlot && win.previousSlot !== null));
+  }
+
+  property Item freshSlot: null
+
+  function dropFresh() {
+    freshTimer.stop();
+    if (win.freshSlot) {
+      win.freshSlot.destroy();
+      win.freshSlot = null;
+    }
+  }
+
+  function releaseWallpaperResources() {
+    fullscreenRefresh.stop();
+    resizeTimer.stop();
+    freshTimer.stop();
+    readyTimeout.stop();
+    warmup.stop();
+    blendAnim.stop();
+
+    dropFresh();
+
+    if (win.previousSlot) {
+      win.previousSlot.destroy();
+      win.previousSlot = null;
     }
 
-    function createSlot(image) {
-        // win is a real Wayland window (PanelWindow), not a plain
-        // Item — declaring children of it directly in QML works
-        // because the engine special-cases that at parse time, but
-        // Component.createObject() doesn't get that treatment. Handing
-        // it `win` just sets the new Image's `parent` property without
-        // ever attaching it to the window's actual scene graph, so it
-        // exists (bindings on it evaluate fine) but never draws —
-        // exactly the "Created graphical object was not placed in the
-        // graphics scene" warning. win.contentItem is the window's
-        // real content root and the correct target for imperative
-        // reparenting. (Here it is `stage`, a full-window Item that
-        // Edit Desktop shrinks into its card; see below.)
-        // sourceSize goes in with the initial properties so the decode
-        // starts once, at the output's size. Setting it after `source`
-        // used to make the Image throw away its first (full-size) decode
-        // and start over, which made the wait for a big wallpaper longer.
-        const obj = textureSlotComponent.createObject(pic, {
-            sourceSize: win.sourceSize,
-            source: image ? ("file://" + image) : ""
-        });
-        // The decode size follows the window only until the picture has
-        // decoded (the window may still be getting its size at start-up).
-        // After that it is FROZEN (see the statusChanged handler): an Image
-        // that is told a new sourceSize throws its picture away and decodes
-        // again, and shows nothing until that is done, which is what made the
-        // wallpaper blink black while the Parallax settings were being
-        // changed (they change the size the picture is decoded at). A change
-        // of size on a settled picture is handled by redecode() below, which
-        // decodes the new size UNDER the one on screen and swaps silently.
-        obj.sourceSize = Qt.binding(() => win.sourceSize);
-        // Start the blend once this slot has really decoded, or the
-        // incoming wallpaper is still an empty texture and the wipe
-        // reveals black. (Error counts too, or a bad file would stall
-        // the switch until readyTimeout below.)
-        obj.statusChanged.connect(() => {
-            const done = obj.status === Image.Ready || obj.status === Image.Error;
-            if (done)
-                obj.sourceSize = Qt.size(obj.sourceSize.width, obj.sourceSize.height);
-            if (obj === win.currentSlot && done)
-                win.slotReady();
-        });
-        // Both conditions key off the same two pointers
-        // (win.currentSlot / win.previousSlot), so a slot's visible
-        // and layer.enabled state updates itself the instant its role
-        // changes — current -> previous -> destroyed — with nothing
-        // elsewhere needing to toggle it imperatively.
-        win.bindRole(obj);
-        return obj;
+    if (win.currentSlot) {
+      win.currentSlot.destroy();
+      win.currentSlot = null;
     }
 
-    function bindRole(obj) {
-        obj.visible = Qt.binding(() => obj === win.currentSlot && win.previousSlot === null);
-        obj.layer.enabled = Qt.binding(() => obj === win.previousSlot
-            || (obj === win.currentSlot && win.previousSlot !== null));
+    win.progress = 1.0;
+    win.shownImage = "";
+  }
+
+  function restoreWallpaperResources() {
+    if (!win.wallpaperEnabled)
+      return;
+
+    const image = WallpaperService.imageFor(
+        WallpaperService.pathFor(win.screenName));
+
+    if (image === "")
+      return;
+
+    win.shownImage = image;
+    win.currentSlot = win.createSlot(image);
+  }
+
+  function redecode() {
+    const cur = win.currentSlot;
+    if (!cur || win.shownImage === "" || cur.status === Image.Error)
+      return;
+    if (win.previousSlot || cur.status !== Image.Ready || win.freshSlot) {
+      resizeTimer.restart();
+      return;
     }
+    const want = win.sourceSize;
+    if (want.width <= 0 || want.height <= 0)
+      return;
+    if (cur.sourceSize.width >= want.width && cur.sourceSize.height >= want.height)
+      return;
+    const obj = textureSlotComponent.createObject(pic, {
+      sourceSize: want,
+      source: "file://" + win.shownImage,
+      visible: false
+    });
+    win.freshSlot = obj;
+    obj.statusChanged.connect(() => {
+      if (obj !== win.freshSlot)
+        return;
+      if (obj.status === Image.Error) {
+        win.dropFresh();
+      } else if (obj.status === Image.Ready) {
+        obj.visible = true;
+        freshTimer.restart();
+      }
+    });
+  }
 
-    // ===== decode size changes =====
-    property Item freshSlot: null
+  onSourceSizeChanged: resizeTimer.restart()
 
-    function dropFresh() {
-        freshTimer.stop();
-        if (win.freshSlot) {
-            win.freshSlot.destroy();
-            win.freshSlot = null;
-        }
-    }
-   function releaseWallpaperResources() {
-        // Stop all pending wallpaper work.
-        fullscreenRefresh.stop();
-        resizeTimer.stop();
-        freshTimer.stop();
-        readyTimeout.stop();
-        warmup.stop();
-        blendAnim.stop();
+  Timer {
+    id: resizeTimer
+    interval: 250
+    onTriggered: win.redecode()
+  }
 
-        // Destroy any temporary image being decoded.
-        dropFresh();
-
-        // Destroy both wallpaper textures.
-        if (win.previousSlot) {
-            win.previousSlot.destroy();
-            win.previousSlot = null;
-        }
-
-        if (win.currentSlot) {
-            win.currentSlot.destroy();
-            win.currentSlot = null;
-        }
-
-        win.progress = 1.0;
-        win.shownImage = "";
-    }
-
-    function restoreWallpaperResources() {
-        if (!win.wallpaperEnabled)
-            return;
-
-        const image = WallpaperService.imageFor(
-            WallpaperService.pathFor(win.screenName)
-        );
-
-        if (image === "")
-            return;
-
-        win.shownImage = image;
-        win.currentSlot = win.createSlot(image);
-    }
-    function redecode() {
-        const cur = win.currentSlot;
-        if (!cur || win.shownImage === "" || cur.status === Image.Error)
-            return;
-        // Busy (a blend is running, or the picture or the copy is still
-        // decoding): look again shortly.
-        if (win.previousSlot || cur.status !== Image.Ready || win.freshSlot) {
-            resizeTimer.restart();
-            return;
-        }
-        const want = win.sourceSize;
-        if (want.width <= 0 || want.height <= 0)
-            return;
-        // Never allocate a second giant texture just because the requested
-        // decode size became slightly smaller. The existing texture already
-        // contains at least as many pixels, so keeping it is visually lossless
-        // and avoids a large temporary RAM/GPU allocation during monitor/zoom
-        // changes. A larger requested size still gets the existing seamless
-        // fresh-slot path below.
-        if (cur.sourceSize.width >= want.width && cur.sourceSize.height >= want.height)
-            return;
-        const obj = textureSlotComponent.createObject(pic, {
-            sourceSize: want,
-            source: "file://" + win.shownImage,
-            visible: false
-        });
-        win.freshSlot = obj;
-        obj.statusChanged.connect(() => {
-            if (obj !== win.freshSlot)
-                return;
-            if (obj.status === Image.Error) {
-                win.dropFresh();
-            } else if (obj.status === Image.Ready) {
-                // Drawn over the old one now, so its first texture upload
-                // happens while the old one still covers the screen.
-                obj.visible = true;
-                freshTimer.restart();
-            }
-        });
-    }
-
-    onSourceSizeChanged: resizeTimer.restart()
-
-    Timer {
-        id: resizeTimer
-        interval: 250
-        onTriggered: win.redecode()
-    }
-
-    Timer {
-        id: freshTimer
+  Timer {
+    id: freshTimer
         interval: 100
         onTriggered: {
             const f = win.freshSlot;

@@ -1,8 +1,16 @@
 {
   lib,
   pkgs,
+  nixosConfig,
   ...
-}: {
+}: let
+  qmlImportPaths =
+    lib.optionals (nixosConfig.environment.sessionVariables ? QML_IMPORT_PATH)
+    (lib.splitString ":" nixosConfig.environment.sessionVariables.QML_IMPORT_PATH);
+  qmllsCommand =
+    ["qmlls" "--no-cmake-calls"]
+    ++ lib.concatMap (path: ["-I" path]) qmlImportPaths;
+in {
   extraPackages = with pkgs; [deadnix statix jdk21 maven gradle];
 
   extraConfigLua = ''
@@ -72,11 +80,11 @@
           settings.telemetry.enable = false;
         };
 
-        # QML / Quickshell. `-E` makes qmlls resolve modules from
-        # QML_IMPORT_PATH, including the Quickshell and Qt QML modules.
+        # QML / Quickshell. Use explicit immutable Nix store paths so this
+        # works even when Neovim was launched without the session environment.
         qmlls = {
           enable = true;
-          settings.cmd = ["qmlls" "-E" "--no-cmake-calls"];
+          settings.cmd = qmllsCommand;
         };
 
         # Luau
