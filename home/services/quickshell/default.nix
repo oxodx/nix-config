@@ -43,7 +43,10 @@ in {
   environment.systemPackages = [lyricsFetcher wallpaperFetcher];
   users.users.oxod.packages = [quickshell];
 
-  environment.sessionVariables.QML2_IMPORT_PATH = QML2_IMPORT_PATH;
+  environment.sessionVariables = {
+    QML2_IMPORT_PATH = QML2_IMPORT_PATH;
+    QML_IMPORT_PATH = QML2_IMPORT_PATH;
+  };
 
   systemd.user.services.quickshell = {
     description = "Quickshell";

@@ -72,6 +72,13 @@
           settings.telemetry.enable = false;
         };
 
+        # QML / Quickshell. `-E` makes qmlls resolve modules from
+        # QML_IMPORT_PATH, including the Quickshell and Qt QML modules.
+        qmlls = {
+          enable = true;
+          settings.cmd = ["qmlls" "-E" "--no-cmake-calls"];
+        };
+
         # Luau
         luau_lsp.enable = true;
 
