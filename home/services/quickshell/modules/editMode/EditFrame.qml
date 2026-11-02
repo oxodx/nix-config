@@ -1,11 +1,17 @@
 import QtQuick
 import Quickshell
 import qs.services
+import qs.theme
 
 Item {
   id: root
 
-  readonly property var mt: Theme.of(QsWindow.window)
+  readonly property QtObject mt: QtObject {
+    readonly property color colBorder: Appearance.colors.m3outline
+    readonly property color accentCyan: Appearance.colors.m3primaryFixedDim
+    readonly property color accentMint: Appearance.colors.m3tertiaryFixedDim
+    readonly property color pRingWhite: Appearance.colors.m3onSurface
+  }
 
   property var screenObj: null
   property real uiScale: 1

@@ -3,14 +3,13 @@ import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Wayland
 import qs.services
+import qs.theme
 import qs.modules.editMode
 
 PanelWindow {
   id: win
 
-  readonly property var mt: Theme.of(screen)
-
-  readonly property bool wallpaperEnabled:SettingsService.flag("wallpaper.enabled")
+  readonly property bool wallpaperEnabled: SettingsService.flag("wallpaper.enabled")
   onWallpaperEnabledChanged: {
     if (wallpaperEnabled)
       restoreWallpaperResources();
@@ -39,14 +38,10 @@ PanelWindow {
     const logicalW = Math.max(1, width);
     const logicalH = Math.max(1, height);
     const geometry = win.screen.geometry;
-    const geometryRatio = geometry
-        ? Math.max(geometry.width / logicalW, geometry.height / logicalH)
-        : 1;
+    const geometryRatio = geometry ? Math.max(geometry.width / logicalW, geometry.height / logicalH) : 1;
     return Math.max(1, Math.min(win.screen.devicePixelRatio || 1, geometryRatio || 1));
   }
-  readonly property size sourceSize: Qt.size(
-      Math.ceil(width * win.parallaxZoom * win.outputPixelRatio),
-      Math.ceil(height * win.parallaxZoom * win.outputPixelRatio))
+  readonly property size sourceSize: Qt.size(Math.ceil(width * win.parallaxZoom * win.outputPixelRatio), Math.ceil(height * win.parallaxZoom * win.outputPixelRatio))
 
   readonly property bool parallaxOn: SettingsService.flag("wallpaper.parallax")
   readonly property real parallaxZoom: parallaxOn ? 1 + SettingsService.get("wallpaper.parallaxAmount") / 100 : 1
@@ -61,26 +56,21 @@ PanelWindow {
   readonly property bool hasWindows: !!(win.wsInfo && win.wsInfo.windows > 0)
   readonly property string pauseMode: SettingsService.get("wallpaper.videoPause")
   readonly property bool focusReduced: FocusService.effectsReducedOn(win.screenName)
-  readonly property bool videoCovered: win.focusReduced || (win.pauseMode === "windows" ? (win.hasWindows || win.fullscreenCovered)
-      : win.pauseMode === "never" ? false
-      : win.fullscreenCovered)
+  readonly property bool videoCovered: win.focusReduced || (win.pauseMode === "windows" ? (win.hasWindows || win.fullscreenCovered) : win.pauseMode === "never" ? false : win.fullscreenCovered)
 
   property bool mpvpaperFailed: false
   readonly property bool useMpvpaper: SettingsService.flag("wallpaper.mpvpaper") && !win.mpvpaperFailed
   readonly property bool restartOnPause: SettingsService.get("wallpaper.videoResume") === "restart"
-      || (win.useMpvpaper && LockState.desktopAsleep)
   readonly property bool videoEditing: EditMode.editing(win.screenName)
-  readonly property bool videoPausedBase: LockState.phase !== "idle" || win.videoCovered
+  readonly property bool videoPausedBase: LockService.locked || win.videoCovered
   readonly property bool videoPaused: win.videoPausedBase || win.videoEditing
 
   Connections {
     target: Hyprland
 
     function onRawEvent(event) {
-      if (event.name === "fullscreen" || event.name === "workspace" || event.name === "workspacev2"
-          || event.name === "focusedmon" || event.name === "openwindow" || event.name === "closewindow"
-          || event.name === "movewindow" || event.name === "movewindowv2")
-        fullscreenRefresh.restart()
+      if (event.name === "fullscreen" || event.name === "workspace" || event.name === "workspacev2" || event.name === "focusedmon" || event.name === "openwindow" || event.name === "closewindow" || event.name === "movewindow" || event.name === "movewindowv2")
+        fullscreenRefresh.restart();
     }
   }
 
@@ -89,7 +79,7 @@ PanelWindow {
     interval: 150
     onTriggered: {
       if (videoLayer.active)
-        Hyprland.refreshWorkspaces()
+        Hyprland.refreshWorkspaces();
     }
   }
 
@@ -97,7 +87,6 @@ PanelWindow {
   readonly property string wantedImage: WallpaperService.imageFor(win.wantedPath)
   property string shownImage: ""
   property real progress: 1.0
-  property string activeStyle: "sekaiRing"
   readonly property bool transitioning: win.previousSlot !== null
 
   property Item previousSlot: null
@@ -125,10 +114,11 @@ PanelWindow {
     return obj;
   }
 
+  // Crossfade: the outgoing picture stays opaque underneath while the incoming
+  // one fades in over it as progress runs from 0 to 1.
   function bindRole(obj) {
-    obj.visible = Qt.binding(() => obj === win.currentSlot && win.previousSlot === null);
-    obj.layer.enabled = Qt.binding(() => obj === win.previousSlot
-        || (obj === win.currentSlot && win.previousSlot !== null));
+    obj.visible = Qt.binding(() => obj === win.currentSlot || obj === win.previousSlot);
+    obj.opacity = Qt.binding(() => obj === win.currentSlot && win.previousSlot !== null ? win.progress : 1.0);
   }
 
   property Item freshSlot: null
@@ -169,8 +159,7 @@ PanelWindow {
     if (!win.wallpaperEnabled)
       return;
 
-    const image = WallpaperService.imageFor(
-        WallpaperService.pathFor(win.screenName));
+    const image = WallpaperService.imageFor(WallpaperService.pathFor(win.screenName));
 
     if (image === "")
       return;
@@ -220,427 +209,324 @@ PanelWindow {
 
   Timer {
     id: freshTimer
-        interval: 100
-        onTriggered: {
-            const f = win.freshSlot;
-            const old = win.currentSlot;
-            if (!f)
-                return;
-            if (!old || win.previousSlot) {
-                win.dropFresh();
-                return;
-            }
-            win.freshSlot = null;
-            win.currentSlot = f;
-            win.bindRole(f);
-            old.destroy();
-            // The size may have changed again while the copy was decoding.
-            resizeTimer.restart();
-        }
-    }
-
-    function swapTo(image) {
-        if (win.currentSlot && win.currentSlot.status !== Image.Ready) {
-            // Switched again before the last wallpaper finished
-            // decoding, so it was never on screen. Drop it; what is
-            // actually showing is the outgoing slot (if there is one),
-            // and that stays the thing we blend out of. Fading out of
-            // the unfinished slot would be fading out of black.
-            win.currentSlot.destroy();
-            win.currentSlot = null;
-            win.currentSlot = win.createSlot(image);
-            return;
-        }
-        if (win.previousSlot) {
-            // A switch landed mid-transition (fast picker navigation,
-            // a short slideshow tick) — there's already an outgoing
-            // slot nobody finished blending out. destroy() it now
-            // instead of leaking it forward.
-            win.previousSlot.destroy();
-        }
-        win.previousSlot = win.currentSlot;
-        win.currentSlot = win.createSlot(image);
-    }
-
-    function finishLocalTransition() {
-        if (win.previousSlot) {
-            win.previousSlot.destroy();
-            win.previousSlot = null;
-        }
-        win.progress = 1.0;
-    }
-
-    // This monitor's wallpaper changed.
-    function show(image) {
-    if (!win.wallpaperEnabled)
-            return;
-        if (image === "" || image === win.shownImage)
-            return;
-        win.shownImage = image;
-        win.activeStyle = WallpaperService.styleForSwitch();
+    interval: 100
+    onTriggered: {
+      const f = win.freshSlot;
+      const old = win.currentSlot;
+      if (!f)
+        return;
+      if (!old || win.previousSlot) {
         win.dropFresh();
-        // A new switch cancels a blend that was waiting or running.
-        // (stop() doesn't fire onFinished, so this can't end the
-        // transition by accident.)
-        blendAnim.stop();
-        warmup.stop();
-        win.progress = 0.0;
-        win.swapTo(image);
-        // Nothing more happens here: the blend starts from slotReady()
-        // once the incoming wallpaper has decoded. Until then the
-        // ShaderEffect sits at progress 0, which shows the outgoing
-        // wallpaper as-is (and with no outgoing slot the incoming one
-        // just appears when it is ready).
-        readyTimeout.restart();
+        return;
+      }
+      win.freshSlot = null;
+      win.currentSlot = f;
+      win.bindRole(f);
+      old.destroy();
+      // The size may have changed again while the copy was decoding.
+      resizeTimer.restart();
     }
+  }
 
-    onWantedImageChanged: win.show(win.wantedImage)
-
-    function slotReady() {
-        readyTimeout.stop();
-        // One short beat so the first texture upload / mipmap pass
-        // of the new wallpaper lands while progress is still 0
-        // instead of stuttering the first frames of the wipe.
-        warmup.restart();
+  function swapTo(image) {
+    if (win.currentSlot && win.currentSlot.status !== Image.Ready) {
+      // Switched again before the last wallpaper finished
+      // decoding, so it was never on screen. Drop it; what is
+      // actually showing is the outgoing slot (if there is one),
+      // and that stays the thing we blend out of. Fading out of
+      // the unfinished slot would be fading out of black.
+      win.currentSlot.destroy();
+      win.currentSlot = null;
+      win.currentSlot = win.createSlot(image);
+      return;
     }
-
-    readonly property string screenName: win.modelData ? win.modelData.name : ""
-
-      Component.onCompleted: {
-        if (win.wallpaperEnabled && win.wantedImage !== "") {
-            win.shownImage = win.wantedImage;
-            win.currentSlot = win.createSlot(win.wantedImage);
-        }
+    if (win.previousSlot) {
+      // A switch landed mid-transition (fast picker navigation,
+      // a short slideshow tick) — there's already an outgoing
+      // slot nobody finished blending out. destroy() it now
+      // instead of leaking it forward.
+      win.previousSlot.destroy();
     }
+    win.previousSlot = win.currentSlot;
+    win.currentSlot = win.createSlot(image);
+  }
 
-    // A file that never reports (corrupt, unreadable) mustn't leave the
-    // switch hanging forever.
-    Timer {
-        id: readyTimeout
-        interval: 5000
-        onTriggered: win.slotReady()
+  function finishLocalTransition() {
+    if (win.previousSlot) {
+      win.previousSlot.destroy();
+      win.previousSlot = null;
     }
+    win.progress = 1.0;
+  }
 
-    Timer {
-        id: warmup
-        interval: 50
-        onTriggered: {
-            // No outgoing picture (the first wallpaper): nothing to blend from.
-            if (win.previousSlot)
-                blendAnim.restart();
-        }
+  // This monitor's wallpaper changed.
+  function show(image) {
+    if (!win.wallpaperEnabled)
+      return;
+    if (image === "" || image === win.shownImage)
+      return;
+    win.shownImage = image;
+    win.dropFresh();
+    // A new switch cancels a blend that was waiting or running.
+    // (stop() doesn't fire onFinished, so this can't end the
+    // transition by accident.)
+    blendAnim.stop();
+    warmup.stop();
+    win.progress = 0.0;
+    win.swapTo(image);
+    // Nothing more happens here: the blend starts from slotReady()
+    // once the incoming wallpaper has decoded. Until then the
+    // ShaderEffect sits at progress 0, which shows the outgoing
+    // wallpaper as-is (and with no outgoing slot the incoming one
+    // just appears when it is ready).
+    readyTimeout.restart();
+  }
+
+  onWantedImageChanged: win.show(win.wantedImage)
+
+  function slotReady() {
+    readyTimeout.stop();
+    // One short beat so the first texture upload / mipmap pass
+    // of the new wallpaper lands while progress is still 0
+    // instead of stuttering the first frames of the wipe.
+    warmup.restart();
+  }
+
+  readonly property string screenName: win.modelData ? win.modelData.name : ""
+
+  Component.onCompleted: {
+    if (win.wallpaperEnabled && win.wantedImage !== "") {
+      win.shownImage = win.wantedImage;
+      win.currentSlot = win.createSlot(win.wantedImage);
     }
+  }
 
-    NumberAnimation {
-        id: blendAnim
-        target: win
-        property: "progress"
-        from: 0.0
-        to: 1.0
-        // sekaiIris gets its own forced duration/easing rather than
-        // WallpaperService.transitionDuration/transitionEasing — its
-        // shader (shaders/sekai_iris.frag) does its own easing along a
-        // drop-through path and staggers the discs by fixed fractions
-        // of progress, which only stays equal in real time if progress
-        // advances at a constant rate. Forcing both here means
-        // switching to sekaiIris always gets that right, and the other
-        // styles keep using transitionDuration/transitionEasing for
-        // their own feel.
-        // sekaiRing does its own easing inside the shader too (fast start,
-        // gentle slow-down), so it also wants Linear progress; its length
-        // comes from WallpaperService.ringDuration.
-        // "star" (sekai_star) and "diagonalBlocks" (sekai_blocks) share the
-        // ring's easing and duration, so all three run at the same speed.
-        duration: win.activeStyle === "sekaiIris" ? 2000
-            : (win.activeStyle === "sekaiRing"
-               || win.activeStyle === "star"
-               || win.activeStyle === "diagonalBlocks") ? WallpaperService.ringDuration
-            : WallpaperService.transitionDuration
-        easing.type: (win.activeStyle === "sekaiIris"
-            || win.activeStyle === "sekaiRing"
-            || win.activeStyle === "star"
-            || win.activeStyle === "diagonalBlocks") ? Easing.Linear : WallpaperService.transitionEasing
-        onFinished: win.finishLocalTransition()
+  // A file that never reports (corrupt, unreadable) mustn't leave the
+  // switch hanging forever.
+  Timer {
+    id: readyTimeout
+    interval: 5000
+    onTriggered: win.slotReady()
+  }
+
+  Timer {
+    id: warmup
+    interval: 50
+    onTriggered: {
+      // No outgoing picture (the first wallpaper): nothing to blend from.
+      if (win.previousSlot)
+        blendAnim.restart();
     }
+  }
 
-    // This monitor's UI scale (scale.json / services/ShellScale.qml), for the
-    // sizes Edit Desktop draws in design pixels.
-    readonly property real uiScale: ShellScale.forScreen(win.screen)
+  NumberAnimation {
+    id: blendAnim
+    target: win
+    property: "progress"
+    from: 0.0
+    to: 1.0
+    duration: 900
+    easing.type: Easing.OutCubic
+    onFinished: win.finishLocalTransition()
+  }
 
-    // ===== Edit Desktop =====
-    Loader {
-        anchors.fill: parent
-        active: EditMode.editing(win.screenName)
+  // This monitor's UI scale (scale.json / services/ShellScale.qml), for the
+  // sizes Edit Desktop draws in design pixels.
+  readonly property real uiScale: ShellScale.forScreen(win.screen)
 
-        sourceComponent: EditBackdrop {
-            screenObj: win.screen
-            uiScale: win.uiScale
-        }
+  // ===== Edit Desktop =====
+  Loader {
+    anchors.fill: parent
+    active: EditMode.editing(win.screenName)
+
+    sourceComponent: EditBackdrop {
+      screenObj: win.screen
+      uiScale: win.uiScale
     }
+  }
 
-    // The picture itself. Out of edit mode it is the whole window, exactly
-    // as before; in it, it is scaled about the top-left corner and moved to
-    // where the card sits (the same numbers the widget windows use, see
-    // EditStage.qml), and the ring in EditFrame hides its square corners.
+  // The picture itself. Out of edit mode it is the whole window, exactly
+  // as before; in it, it is scaled about the top-left corner and moved to
+  // where the card sits (the same numbers the widget windows use, see
+  // EditStage.qml), and the ring in EditFrame hides its square corners.
+  Item {
+    id: stage
+    visible: win.wallpaperEnabled
+    width: parent.width
+    height: parent.height
+    x: EditMode.xFor(win.screenName, win.width, win.height, win.uiScale)
+    y: EditMode.yFor(win.screenName, win.width, win.height, win.uiScale)
+    scale: EditMode.scaleFor(win.screenName, win.width, win.height, win.uiScale)
+    transformOrigin: Item.TopLeft
+    // Parallax draws the picture past the window's edge: cut it off there
+    // (in Edit Desktop that is the card's edge).
+    clip: win.parallaxOn
+
+    // The pictures and the transition, as one thing that parallax can slide.
+    // (Without parallax it is exactly the stage.)
     Item {
-        id: stage
-        visible: win.wallpaperEnabled
-        width: parent.width
-        height: parent.height
-        x: EditMode.xFor(win.screenName, win.width, win.height, win.uiScale)
-        y: EditMode.yFor(win.screenName, win.width, win.height, win.uiScale)
-        scale: EditMode.scaleFor(win.screenName, win.width, win.height, win.uiScale)
-        transformOrigin: Item.TopLeft
-        // Parallax draws the picture past the window's edge: cut it off there
-        // (in Edit Desktop that is the card's edge).
-        clip: win.parallaxOn
+      id: pic
+      width: stage.width * win.parallaxZoom
+      height: stage.height * win.parallaxZoom
+      x: -(width - stage.width) * win.parallaxFraction
+      y: -(height - stage.height) / 2
 
-        // The pictures and the transition, as one thing that parallax can slide.
-        // (Without parallax it is exactly the stage.)
-        Item {
-            id: pic
-            width: stage.width * win.parallaxZoom
-            height: stage.height * win.parallaxZoom
-            x: -(width - stage.width) * win.parallaxFraction
-            y: -(height - stage.height) / 2
-
-            Behavior on x {
-                enabled: win.parallaxOn
-                NumberAnimation { duration: 480; easing.type: Easing.OutCubic }
-            }
-
-            // The last frame of the video, saved by mpvpaper when Edit Desktop opened. It shrinks
-            // with the card. It stays up a moment after editing ends, until mpvpaper is back.
-            Image {
-                id: frozen
-                anchors.fill: parent
-                sourceSize: win.sourceSize
-                z: 4
-                visible: source !== "" && !win.transitioning
-                cache: false
-                asynchronous: true
-                fillMode: Image.PreserveAspectCrop
-            }
-
-            Timer {
-                id: hideFrozen
-                interval: 900
-                onTriggered: frozen.source = ""
-            }
-
-            Connections {
-                target: win
-
-                function onVideoEditingChanged() {
-                    if (win.videoEditing)
-                        hideFrozen.stop()
-                    else
-                        hideFrozen.restart()
-                }
-
-                function onWantedPathChanged() {
-                    hideFrozen.stop()
-                    frozen.source = ""
-                }
-            }
-
-            // The video, over the first-frame picture once the transition is
-            // done. Not while a transition runs (it blends pictures). It keeps
-            // playing through Edit Desktop (the card just shows it smaller):
-            // unloading it for the mode stopped the video and swapped it for
-            // its first frame at the moment the mode started. Built only for a
-            // video wallpaper.
-            Loader {
-                id: videoLayer
-                anchors.fill: parent
-                z: 5
-                 active: win.wallpaperEnabled
-                    && WallpaperService.videoFor(win.screenName)
-                    && !win.transitioning
-                    && win.currentSlot !== null
-                    && win.currentSlot.status === Image.Ready
-                source: active ? Qt.resolvedUrl(win.useMpvpaper ? "MpvpaperWallpaper.qml" : "VideoWallpaper.qml") : ""
-                onLoaded: {
-                    item.hidden = win.videoEditing
-                    item.screenName = win.screenName
-                    item.restartOnPause = win.restartOnPause
-                    item.path = win.wantedPath
-                }
-                onStatusChanged: {
-                    if (status === Loader.Error)
-                        console.warn("WallpaperLayer: video wallpapers need qt6-multimedia (and a backend such as qt6-multimedia-ffmpeg); showing the first frame instead")
-                }
-
-                Binding {
-                    target: videoLayer.item
-                    property: "path"
-                    value: win.wantedPath
-                    when: videoLayer.item !== null
-                }
-
-                Connections {
-                    target: videoLayer.item
-                    ignoreUnknownSignals: true
-
-                    function onFailed() {
-                        win.mpvpaperFailed = true
-                    }
-
-                    function onFrameReady(path) {
-                        hideFrozen.stop()
-                        frozen.source = "file://" + path
-                    }
-                }
-
-                Binding {
-                    target: videoLayer.item
-                    property: "restartOnPause"
-                    value: win.restartOnPause
-                    when: videoLayer.item !== null
-                }
-
-                Binding {
-                    target: videoLayer.item
-                    property: "hidden"
-                    value: win.videoEditing
-                    when: videoLayer.item !== null
-                }
-
-                Binding {
-                    target: videoLayer.item
-                    property: "paused"
-                    value: win.useMpvpaper ? win.videoPausedBase : win.videoPaused
-                    when: videoLayer.item !== null
-                }
-            }
-
-        ShaderEffect {
-            id: blend
-            anchors.fill: parent
-            visible: win.previousSlot !== null
-
-            // Bound to whichever shader win.activeStyle
-            // picks. Property -> uniform matching is by NAME (see
-            // shaders/README.md) — a property here with no matching
-            // uniform in the currently-bound shader is just harmlessly
-            // ignored, which is what lets this declare the full union of
-            // what every style needs rather than swapping property sets
-            // per style.
-            //
-            // Maps the style name to the compiled shader pair's shared
-            // filename stem — "fade" is the Phase 2 placeholder, anything
-            // else names a real .vert/.frag pair in shaders/ (see
-            // shaders/README.md, "Adding a fourth style").
-            readonly property string shaderBase: {
-                switch (win.activeStyle) {
-                case "sekaiIris": return "sekai_iris";
-                case "sekaiRing": return "sekai_ring";
-                case "star": return "sekai_star";
-                case "diagonalBlocks": return "sekai_blocks";
-                case "sekaiFlash": return "sekai_flash";
-                default: return "fade";
-                }
-            }
-
-            property var source1: win.previousSlot // outgoing
-            property var source2: win.currentSlot  // incoming
-            property real progress: win.progress
-            property real aspect: height > 0 ? width / height : 1.0
-            property color accentColor: mt.accentCyan
-            // sekaiIris-only: fixed white/pink/green band colours, kept
-            // separate from accentColor since the iris wipe stays the
-            // same regardless of which group's accent is active elsewhere.
-            //
-            // The colours follow the theme (Theme.transitionColors, with the
-            // Settings -> Desktop -> Wallpaper -> "Transition colours" switch).
-            // With matugen they change when the new wallpaper's palette lands,
-            // which can be halfway through a transition, so each one drifts to
-            // its new value (the Behaviors below) instead of jumping.
-            readonly property var tc: mt.transitionColors(ThemeService.palette)
-            property color colorWhite: tc.white
-            property color colorPink: tc.pink
-            property color colorGreen: tc.green
-            Behavior on colorWhite { ColorAnimation { duration: 450 } }
-            Behavior on colorPink { ColorAnimation { duration: 450 } }
-            Behavior on colorGreen { ColorAnimation { duration: 450 } }
-
-            // sekaiRing-only. Its three colours are colorWhite and colorPink
-            // (shared with sekaiIris above) plus colorCyan here. Every
-            // ring-* value is tuned from WallpaperService (ring* properties),
-            // never here. `transitionStyle` is the ring's variant number
-            // (0 ring, 1 petal, 2 echo, 3 swirl), not WallpaperService's
-            // style-name string of the same name.
-            property color colorCyan: tc.cyan
-            Behavior on colorCyan { ColorAnimation { duration: 450 } }
-            property int transitionStyle: WallpaperService.ringVariant
-            property real distortion: WallpaperService.ringDistortion
-            property real speed: WallpaperService.ringSpeed
-            property real ringWidth: WallpaperService.ringWidth
-
-            // `colorIntensity` and `center` are shared by sekaiRing and star
-            // (same uniform names in both shaders), so each takes its value
-            // from whichever style is active.
-            readonly property bool isStar: win.activeStyle === "star"
-            property real colorIntensity: isStar ? WallpaperService.starColorIntensity
-                                                 : WallpaperService.ringColorIntensity
-            property vector2d center: isStar ? WallpaperService.starCenter
-                                             : WallpaperService.ringCenter
-
-            // star-only (shaders/sekai_star.*). Tuned from WallpaperService
-            // (star* properties), never here. The style itself is picked by
-            // win.activeStyle === "star", which is a name
-            // for the shader pair, not a uniform: GLSL has no string type.
-            property real thickness: WallpaperService.starThickness
-            property real pointLength: WallpaperService.starPointLength
-            property real curvature: WallpaperService.starCurvature
-            property real elastic: WallpaperService.starElastic
-            property real spin: WallpaperService.starSpin
-
-            // diagonalBlocks-only (shaders/sekai_blocks.*). Its three colours
-            // are colorWhite / colorPink / colorCyan above. Tuned from
-            // WallpaperService (blocks* properties), never here. As with the
-            // star, the style name "diagonalBlocks" only picks the shader
-            // pair (see shaderBase); it is not a uniform.
-            property vector2d direction: WallpaperService.blocksDirection
-            property real bandThickness: WallpaperService.blocksBandThickness
-            property real blockSize: WallpaperService.blocksBlockSize
-            property real stagger: WallpaperService.blocksStagger
-
-            fragmentShader: Directories.shader(blend.shaderBase + ".frag.qsb")
-            vertexShader: Directories.shader(blend.shaderBase + ".vert.qsb")
+      Behavior on x {
+        enabled: win.parallaxOn
+        NumberAnimation {
+          duration: 480
+          easing.type: Easing.OutCubic
         }
-        } // pic
-    }
+      }
 
-    // Over the picture: the card's frame.
-    Loader {
+      // Fallback under the pictures, visible until one has loaded.
+      Rectangle {
         anchors.fill: parent
-        active: EditMode.editing(win.screenName)
-
-        sourceComponent: EditFrame {
-            screenObj: win.screen
-            uiScale: win.uiScale
+        gradient: Gradient {
+          GradientStop {
+            position: 0.0
+            color: Appearance.colors.m3surfaceContainerHigh
+          }
+          GradientStop {
+            position: 1.0
+            color: Appearance.colors.m3surfaceContainerLowest
+          }
         }
-    }
+      }
 
-    // Edit Desktop: a click on the bare card (nothing but wallpaper under it)
-    // stops editing the selected widget. Widgets, the bar and the dock are
-    // all above this layer, so only a click that really lands on the
-    // wallpaper gets here.
-    MouseArea {
+      // The last frame of the video, saved by mpvpaper when Edit Desktop opened. It shrinks
+      // with the card. It stays up a moment after editing ends, until mpvpaper is back.
+      Image {
+        id: frozen
         anchors.fill: parent
-        acceptedButtons: Qt.LeftButton
-        enabled: EditMode.active
-        onClicked: EditMode.select("")
-    }
+        sourceSize: win.sourceSize
+        z: 4
+        visible: source !== "" && !win.transitioning
+        cache: false
+        asynchronous: true
+        fillMode: Image.PreserveAspectCrop
+      }
 
-    // Right-click on the bare desktop: the Edit Desktop menu (DesktopMenu.qml).
-    // Windows, the bar and the widgets are all above this layer, so only a
-    // click that really lands on the wallpaper gets here.
-    MouseArea {
+      Timer {
+        id: hideFrozen
+        interval: 900
+        onTriggered: frozen.source = ""
+      }
+
+      Connections {
+        target: win
+
+        function onVideoEditingChanged() {
+          if (win.videoEditing)
+            hideFrozen.stop();
+          else
+            hideFrozen.restart();
+        }
+
+        function onWantedPathChanged() {
+          hideFrozen.stop();
+          frozen.source = "";
+        }
+      }
+
+      // The video, over the first-frame picture once the transition is
+      // done. Not while a transition runs (it blends pictures). It keeps
+      // playing through Edit Desktop (the card just shows it smaller):
+      // unloading it for the mode stopped the video and swapped it for
+      // its first frame at the moment the mode started. Built only for a
+      // video wallpaper.
+      Loader {
+        id: videoLayer
         anchors.fill: parent
-        acceptedButtons: Qt.RightButton
-        enabled: !EditMode.active
-        onClicked: mouse => EditMode.openMenu(win.screenName, mouse.x, mouse.y)
+        z: 5
+        active: win.wallpaperEnabled && WallpaperService.videoFor(win.screenName) && !win.transitioning && win.currentSlot !== null && win.currentSlot.status === Image.Ready
+        source: active ? Qt.resolvedUrl(win.useMpvpaper ? "MpvpaperWallpaper.qml" : "VideoWallpaper.qml") : ""
+        onLoaded: {
+          item.hidden = win.videoEditing;
+          item.screenName = win.screenName;
+          item.restartOnPause = win.restartOnPause;
+          item.path = win.wantedPath;
+        }
+        onStatusChanged: {
+          if (status === Loader.Error)
+            console.warn("WallpaperLayer: video wallpapers need qt6-multimedia (and a backend such as qt6-multimedia-ffmpeg); showing the first frame instead");
+        }
+
+        Binding {
+          target: videoLayer.item
+          property: "path"
+          value: win.wantedPath
+          when: videoLayer.item !== null
+        }
+
+        Connections {
+          target: videoLayer.item
+          ignoreUnknownSignals: true
+
+          function onFailed() {
+            win.mpvpaperFailed = true;
+          }
+
+          function onFrameReady(path) {
+            hideFrozen.stop();
+            frozen.source = "file://" + path;
+          }
+        }
+
+        Binding {
+          target: videoLayer.item
+          property: "restartOnPause"
+          value: win.restartOnPause
+          when: videoLayer.item !== null
+        }
+
+        Binding {
+          target: videoLayer.item
+          property: "hidden"
+          value: win.videoEditing
+          when: videoLayer.item !== null
+        }
+
+        Binding {
+          target: videoLayer.item
+          property: "paused"
+          value: win.useMpvpaper ? win.videoPausedBase : win.videoPaused
+          when: videoLayer.item !== null
+        }
+      }
+
+    } // pic
+  }
+
+  // Over the picture: the card's frame.
+  Loader {
+    anchors.fill: parent
+    active: EditMode.editing(win.screenName)
+
+    sourceComponent: EditFrame {
+      screenObj: win.screen
+      uiScale: win.uiScale
     }
+  }
+
+  // Edit Desktop: a click on the bare card (nothing but wallpaper under it)
+  // stops editing the selected widget. Widgets, the bar and the dock are
+  // all above this layer, so only a click that really lands on the
+  // wallpaper gets here.
+  MouseArea {
+    anchors.fill: parent
+    acceptedButtons: Qt.LeftButton
+    enabled: EditMode.active
+    onClicked: EditMode.select("")
+  }
+
+  // Right-click on the bare desktop: the Edit Desktop menu (DesktopMenu.qml).
+  // Windows, the bar and the widgets are all above this layer, so only a
+  // click that really lands on the wallpaper gets here.
+  MouseArea {
+    anchors.fill: parent
+    acceptedButtons: Qt.RightButton
+    enabled: !EditMode.active
+    onClicked: mouse => EditMode.openMenu(win.screenName, mouse.x, mouse.y)
+  }
 }

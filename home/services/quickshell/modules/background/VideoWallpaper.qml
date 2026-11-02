@@ -15,16 +15,17 @@ Item {
     source: root.path !== "" ? ("file://" + root.path) : ""
     loops: MediaPlayer.Infinite
     videoOutput: out
-    Component.onCompleted: if (!root.paused) play()
+    Component.onCompleted: if (!root.paused)
+      play()
   }
 
   onPausedChanged: {
     if (paused) {
-      player.pause()
+      player.pause();
     } else {
       if (root.restartOnPause)
-        player.position = 0
-      player.play()
+        player.position = 0;
+      player.play();
     }
   }
 

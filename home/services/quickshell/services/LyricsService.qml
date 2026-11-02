@@ -18,7 +18,7 @@ Scope {
   property bool enhanced: false
   property string source: ""
   property real trackDuration: 0
-  readonly property real clockPosition: player?.position ?? 0
+  readonly property real clockPosition: Number(player?.position) || 0
   readonly property real effectivePosition: clockPosition + timingOffset
   readonly property string statusText: !player ? "Nothing playing" : lyricsLoading ? "Finding lyrics…" : instrumental ? "Instrumental" : syncedLyrics.length ? (enhanced ? "Word-synced lyrics" : "Synced lyrics") : plainLyrics ? "Unsynced lyrics" : lyricsError || "No lyrics available"
   readonly property int currentLyricIndex: {

@@ -18,6 +18,35 @@ Singleton {
   property bool downloading: false
   property string error: ""
 
+  readonly property var videoExtensions: ["mp4", "m4v", "mkv", "webm", "mov", "avi"]
+
+  // The wallpaper is one global image for now, so every monitor shares it.
+  function pathFor(screenName: string): string {
+    try {
+      return decodeURIComponent(String(root.source).replace(/^file:\/\//, ""));
+    } catch (e) {
+      return "";
+    }
+  }
+
+  function isVideo(path: string): bool {
+    const dot = path.lastIndexOf(".");
+    return dot >= 0 && root.videoExtensions.indexOf(path.substring(dot + 1).toLowerCase()) >= 0;
+  }
+
+  // A still image path to show, or "" for video wallpapers (no still frame yet).
+  function imageFor(path: string): string {
+    return path !== "" && !root.isVideo(path) ? path : "";
+  }
+
+  function videoFor(screenName: string): bool {
+    return root.isVideo(root.pathFor(screenName));
+  }
+
+  // Kept for the mpvpaper surface, which raises widgets above it. Nothing to
+  // restack while the wallpaper is drawn inside the shell.
+  function restackWidgets(): void {}
+
   function open(): void { opened = true; }
   function close(): void { opened = false; }
   function apply(image: url): void {

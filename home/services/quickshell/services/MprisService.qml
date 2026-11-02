@@ -17,7 +17,7 @@ Singleton {
   property bool __reverse: false
 
   property var activeTrack
-  readonly property int position: Math.floor(activePlayer?.position ?? 0)
+  readonly property int position: Math.floor(Number(activePlayer?.position) || 0)
   readonly property int length: {
     const duration = activePlayer?.lengthSupported ? activePlayer.length : lyrics.trackDuration;
     return Number.isFinite(duration) && duration > 0 ? Math.floor(duration) : 0;

@@ -17,7 +17,9 @@ SkewedSurface {
   readonly property bool applied: String(selectedFile) === String(WallpaperService.source)
   Connections {
     target: WallpaperService
-    function onSourceChanged(): void { root.selectedFile = WallpaperService.source; }
+    function onSourceChanged(): void {
+      root.selectedFile = WallpaperService.source;
+    }
   }
 
   slantLeft: true
@@ -28,7 +30,8 @@ SkewedSurface {
   shadowOffset: 6
 
   function applySelection(): void {
-    if (preview.status === Image.Ready) WallpaperService.apply(selectedFile);
+    if (preview.status === Image.Ready)
+      WallpaperService.apply(selectedFile);
   }
 
   Keys.onEscapePressed: dismissed()
@@ -44,7 +47,8 @@ SkewedSurface {
       if (status === Image.Ready && root.applyWhenReady) {
         root.applyWhenReady = false;
         root.applySelection();
-      } else if (status === Image.Error) root.applyWhenReady = false;
+      } else if (status === Image.Error)
+        root.applyWhenReady = false;
     }
   }
 
@@ -57,7 +61,10 @@ SkewedSurface {
     showDotAndDotDot: false
     showOnlyReadable: true
     sortCaseSensitive: false
-    onFolderChanged: { grid.currentIndex = 0; grid.positionViewAtBeginning(); }
+    onFolderChanged: {
+      grid.currentIndex = 0;
+      grid.positionViewAtBeginning();
+    }
   }
 
   ColumnLayout {
@@ -160,10 +167,12 @@ SkewedSurface {
         readonly property bool selected: String(root.selectedFile) === String(fileUrl)
 
         function activate(apply: bool): void {
-          if (fileIsDir) WallpaperService.directory = fileUrl;
+          if (fileIsDir)
+            WallpaperService.directory = fileUrl;
           else {
             if (String(root.selectedFile) === String(fileUrl)) {
-              if (apply) root.applySelection();
+              if (apply)
+                root.applySelection();
             } else {
               root.applyWhenReady = apply;
               root.selectedFile = fileUrl;
@@ -182,7 +191,12 @@ SkewedSurface {
           shadowColor: "transparent"
 
           SkewedImage {
-            anchors { left: parent.left; right: parent.right; top: parent.top; margins: 5 }
+            anchors {
+              left: parent.left
+              right: parent.right
+              top: parent.top
+              margins: 5
+            }
             height: 100
             slant: 10
             visible: !tile.fileIsDir
@@ -199,7 +213,12 @@ SkewedSurface {
             color: Appearance.colors.m3primary
           }
           StyledText {
-            anchors { left: parent.left; right: parent.right; bottom: parent.bottom; margins: 12 }
+            anchors {
+              left: parent.left
+              right: parent.right
+              bottom: parent.bottom
+              margins: 12
+            }
             text: tile.fileName
             elide: Text.ElideRight
             font.pointSize: Appearance.font.size.smaller
@@ -210,8 +229,13 @@ SkewedSurface {
             anchors.fill: parent
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
-            onClicked: { grid.currentIndex = tile.index; grid.forceActiveFocus(); tile.activate(false); }
-            onDoubleClicked: if (!tile.fileIsDir) root.applySelection()
+            onClicked: {
+              grid.currentIndex = tile.index;
+              grid.forceActiveFocus();
+              tile.activate(false);
+            }
+            onDoubleClicked: if (!tile.fileIsDir)
+              root.applySelection()
           }
         }
       }
@@ -226,7 +250,10 @@ SkewedSurface {
           color: Appearance.colors.m3tertiary
           font.pointSize: 36
         }
-        StyledText { text: "No images here"; anchors.horizontalCenter: parent.horizontalCenter }
+        StyledText {
+          text: "No images here"
+          anchors.horizontalCenter: parent.horizontalCenter
+        }
         StyledText {
           text: "Add images to this folder, or browse another one."
           color: Appearance.colors.m3onSurfaceVariant
