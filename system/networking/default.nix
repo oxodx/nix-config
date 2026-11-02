@@ -33,6 +33,7 @@
   services = {
     openssh = {
       enable = true;
+      openFirewall = false;
       settings.UseDns = true;
     };
   };

@@ -12,12 +12,12 @@
     '';
   };
 
-  # Restore the saved clock before login, then briefly allow NTP to catch up.
-  # A failed/offline synchronization must not prevent access to the laptop.
+  # The RTC is restored before login; NTP corrects the clock afterwards in the
+  # background so an offline boot cannot delay or block the greeter.
   systemd.additionalUpstreamSystemUnits = ["systemd-time-wait-sync.service"];
   systemd.services.systemd-time-wait-sync = {
-    wantedBy = ["sysinit.target"];
-    serviceConfig.TimeoutStartSec = "30s";
+    wantedBy = lib.mkForce [];
+    serviceConfig.TimeoutStartSec = "10s";
   };
   systemd.services.greetd = lib.mkIf config.services.greetd.enable {
     wants = ["time-sync.target"];

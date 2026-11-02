@@ -24,7 +24,15 @@ in {
     serviceConfig = {
       Type = "oneshot";
       RemainAfterExit = true;
-      ExecStart = "${pkgs.mullvad-vpn}/bin/mullvad dns set custom 192.168.1.41";
+      ExecStart = pkgs.writeShellScript "mullvad-lan-dns" ''
+        for i in $(seq 1 60); do
+          if ${pkgs.mullvad-vpn}/bin/mullvad dns set custom 192.168.1.41; then
+            exit 0
+          fi
+          sleep 2
+        done
+        exit 1
+      '';
     };
   };
   systemd.services.tailscaled = {

@@ -31,7 +31,7 @@ in {
   boot.initrd.kernelModules = [];
   # The FA506NCR has no iGPU and its firmware only exposes s2idle. Without
   # NVIDIA S0ix support the dGPU never completes the suspend/resume cycle.
-  boot.kernelParams = ["idle=nomwait"];
+  boot.kernelParams = ["idle=nomwait" "pci=noaer"];
   # The in-kernel r8169 driver intermittently loses carrier with this
   # RTL8111/8168 (10ec:8168, rev 15). Use Realtek's r8168 driver instead.
   boot.kernelModules = ["kvm-amd" "r8168"];
