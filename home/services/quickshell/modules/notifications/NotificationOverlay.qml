@@ -3,6 +3,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Hyprland
 import Quickshell.Wayland
+import qs.theme
 
 PanelWindow {
   id: root
@@ -10,7 +11,7 @@ PanelWindow {
   WlrLayershell.namespace: "shell:notifications"
   exclusionMode: ExclusionMode.Ignore
   color: "transparent"
-  //color: "#30606000"
+  //color: Qt.alpha(Appearance.colors.m3onSurface, 0.0)
 
   anchors {
     left: true

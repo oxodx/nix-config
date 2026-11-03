@@ -69,7 +69,7 @@ Item {
           TextInput {
             id: search
             Layout.fillWidth: true
-            color: "white"
+            color: Appearance.colors.m3onSurface
             font.pointSize: Appearance.font.size.normal
             selectionColor: Appearance.colors.m3primaryContainer
             selectedTextColor: Appearance.colors.m3onPrimaryContainer
@@ -194,7 +194,7 @@ Item {
           slantLeft: true
           slantRight: true
           slant: 10
-          fillColor: "#28e0ffff"
+          fillColor: Appearance.colors.m3onSurfaceVariant
           outlineColor: Appearance.colors.m3tertiary
         }
 
@@ -290,7 +290,7 @@ Item {
               StyledText {
                 Layout.fillWidth: true
                 text: appDelegate.commandMode ? (modelData.command || "Type a command") : appDelegate.entry?.name ?? ""
-                color: "#f0f0f0"
+                color: Appearance.colors.m3onSurface
                 font.weight: Font.DemiBold
                 elide: Text.ElideRight
               }

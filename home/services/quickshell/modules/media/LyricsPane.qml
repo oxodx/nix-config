@@ -14,7 +14,7 @@ SkewedSurface {
   slantRight: true
   skew: Appearance.skew
   shadowColor: "transparent"
-  fillColor: "#2811131a"
+  fillColor: Qt.alpha(Appearance.colors.m3surface, 0.1)
   outlineColor: Appearance.colors.widgetOutline
   property bool follow: true
   readonly property bool synced: root.service.syncedLyrics.length > 0

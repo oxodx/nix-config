@@ -2,9 +2,13 @@ pragma Singleton
 
 import QtQuick
 import Quickshell
+import qs.services
 
 Singleton {
   id: root
+
+  // The palette in use: the default unless the chosen theme (SettingsService: theme.preset) is another.
+  readonly property var pal: ThemePresets.palette(SettingsService.get("theme.preset") ?? "blend")
 
   readonly property var popoutXCurve: EasingCurve {
     curve.type: Easing.OutQuint
@@ -20,7 +24,7 @@ Singleton {
   }
 
   // 0 draws every skewed shape as a flat rounded rectangle; 1 draws the skewed look.
-  readonly property real slantScale: 1
+  readonly property real slantScale: SettingsService.flag("ui.slant") ? 1 : 0
 
   // Horizontal cut per pixel of height. Nested skewed panels use this same slope, so their
   // edges run parallel at any size.
@@ -28,84 +32,85 @@ Singleton {
 
   readonly property QtObject colors: QtObject {
     // shadcn neutrals: zinc surfaces, zinc borders, and near-white text. No gradients.
-    readonly property color m3background: "#09090b"
-    readonly property color m3onBackground: "#fafafa"
-    readonly property color m3surface: "#09090b"
-    readonly property color m3surfaceDim: "#09090b"
-    readonly property color m3surfaceBright: "#3f3f46"
-    readonly property color m3surfaceContainerLowest: "#09090b"
-    readonly property color m3surfaceContainerLow: "#09090b"
-    readonly property color m3surfaceContainer: "#18181b"
-    readonly property color m3surfaceContainerHigh: "#27272a"
-    readonly property color m3surfaceContainerHighest: "#3f3f46"
-    readonly property color m3onSurface: "#fafafa"
-    readonly property color m3surfaceVariant: "#27272a"
-    readonly property color m3onSurfaceVariant: "#a1a1aa"
-    readonly property color m3inverseSurface: "#fafafa"
-    readonly property color m3inverseOnSurface: "#18181b"
-    readonly property color m3outline: "#52525b"
-    readonly property color m3outlineVariant: "#27272a"
-    readonly property color m3shadow: "#000000"
-    readonly property color m3scrim: "#000000"
-    readonly property color m3surfaceTint: "#fafafa"
-    readonly property color m3primary: "#fafafa"
-    readonly property color m3onPrimary: "#18181b"
-    readonly property color m3primaryContainer: "#27272a"
-    readonly property color m3onPrimaryContainer: "#fafafa"
-    readonly property color m3inversePrimary: "#18181b"
-    readonly property color m3secondary: "#a1a1aa"
-    readonly property color m3onSecondary: "#18181b"
-    readonly property color m3secondaryContainer: "#27272a"
-    readonly property color m3onSecondaryContainer: "#fafafa"
-    readonly property color m3tertiary: "#a1a1aa"
-    readonly property color m3onTertiary: "#18181b"
-    readonly property color m3tertiaryContainer: "#3f3f46"
-    readonly property color m3onTertiaryContainer: "#fafafa"
-    readonly property color m3error: "#ef4444"
-    readonly property color m3onError: "#fafafa"
-    readonly property color m3errorContainer: "#7f1d1d"
-    readonly property color m3onErrorContainer: "#fecaca"
-    readonly property color m3primaryFixed: "#fafafa"
-    readonly property color m3primaryFixedDim: "#d4d4d8"
-    readonly property color m3onPrimaryFixed: "#18181b"
-    readonly property color m3onPrimaryFixedVariant: "#3f3f46"
-    readonly property color m3secondaryFixed: "#e4e4e7"
-    readonly property color m3secondaryFixedDim: "#d4d4d8"
-    readonly property color m3onSecondaryFixed: "#18181b"
-    readonly property color m3onSecondaryFixedVariant: "#3f3f46"
-    readonly property color m3tertiaryFixed: "#e4e4e7"
-    readonly property color m3tertiaryFixedDim: "#a1a1aa"
-    readonly property color m3onTertiaryFixed: "#18181b"
-    readonly property color m3onTertiaryFixedVariant: "#3f3f46"
+    readonly property color m3background: root.pal.m3background
+    readonly property color m3onBackground: root.pal.m3onBackground
+    readonly property color m3surface: root.pal.m3surface
+    readonly property color m3surfaceDim: root.pal.m3surfaceDim
+    readonly property color m3surfaceBright: root.pal.m3surfaceBright
+    readonly property color m3surfaceContainerLowest: root.pal.m3surfaceContainerLowest
+    readonly property color m3surfaceContainerLow: root.pal.m3surfaceContainerLow
+    readonly property color m3surfaceContainer: root.pal.m3surfaceContainer
+    readonly property color m3surfaceContainerHigh: root.pal.m3surfaceContainerHigh
+    readonly property color m3surfaceContainerHighest: root.pal.m3surfaceContainerHighest
+    readonly property color m3onSurface: root.pal.m3onSurface
+    readonly property color m3surfaceVariant: root.pal.m3surfaceVariant
+    readonly property color m3onSurfaceVariant: root.pal.m3onSurfaceVariant
+    readonly property color m3inverseSurface: root.pal.m3inverseSurface
+    readonly property color m3inverseOnSurface: root.pal.m3inverseOnSurface
+    readonly property color m3outline: root.pal.m3outline
+    readonly property color m3outlineVariant: root.pal.m3outlineVariant
+    readonly property color m3shadow: root.pal.m3shadow
+    readonly property color m3scrim: root.pal.m3scrim
+    readonly property color m3surfaceTint: root.pal.m3surfaceTint
+    readonly property color m3primary: root.pal.m3primary
+    readonly property color m3onPrimary: root.pal.m3onPrimary
+    readonly property color m3primaryContainer: root.pal.m3primaryContainer
+    readonly property color m3onPrimaryContainer: root.pal.m3onPrimaryContainer
+    readonly property color m3inversePrimary: root.pal.m3inversePrimary
+    readonly property color m3secondary: root.pal.m3secondary
+    readonly property color m3onSecondary: root.pal.m3onSecondary
+    readonly property color m3secondaryContainer: root.pal.m3secondaryContainer
+    readonly property color m3onSecondaryContainer: root.pal.m3onSecondaryContainer
+    readonly property color m3tertiary: root.pal.m3tertiary
+    readonly property color m3onTertiary: root.pal.m3onTertiary
+    readonly property color m3tertiaryContainer: root.pal.m3tertiaryContainer
+    readonly property color m3onTertiaryContainer: root.pal.m3onTertiaryContainer
+    readonly property color m3error: root.pal.m3error
+    readonly property color m3onError: root.pal.m3onError
+    readonly property color m3errorContainer: root.pal.m3errorContainer
+    readonly property color m3onErrorContainer: root.pal.m3onErrorContainer
+    readonly property color m3primaryFixed: root.pal.m3primaryFixed
+    readonly property color m3primaryFixedDim: root.pal.m3primaryFixedDim
+    readonly property color m3onPrimaryFixed: root.pal.m3onPrimaryFixed
+    readonly property color m3onPrimaryFixedVariant: root.pal.m3onPrimaryFixedVariant
+    readonly property color m3secondaryFixed: root.pal.m3secondaryFixed
+    readonly property color m3secondaryFixedDim: root.pal.m3secondaryFixedDim
+    readonly property color m3onSecondaryFixed: root.pal.m3onSecondaryFixed
+    readonly property color m3onSecondaryFixedVariant: root.pal.m3onSecondaryFixedVariant
+    readonly property color m3tertiaryFixed: root.pal.m3tertiaryFixed
+    readonly property color m3tertiaryFixedDim: root.pal.m3tertiaryFixedDim
+    readonly property color m3onTertiaryFixed: root.pal.m3onTertiaryFixed
+    readonly property color m3onTertiaryFixedVariant: root.pal.m3onTertiaryFixedVariant
 
-    readonly property color bar: "#e609090b"
-    readonly property color barOutline: "#27272a"
-    readonly property color widget: "#18181b"
-    readonly property color widgetActive: "#27272a"
-    readonly property color widgetOutline: "#27272a"
-    readonly property color widgetOutlineSeparate: "#27272a"
-    readonly property color separator: "#27272a"
-    readonly property color panel: "#ee09090b"
-    readonly property color panelTranslucent: "#c209090b"
-    readonly property color overlayPanel: "#f209090b"
-    readonly property color alert: "#ef4444"
-    readonly property color alertOutline: "#66ef4444"
-    readonly property color sliderFill: "#fafafa"
-    readonly property color sliderGroove: "#27272a"
-    readonly property color neutralShadow: "#33000000"
-    readonly property color elevatedShadow: "#66000000"
+    readonly property color bar: root.pal.bar
+    readonly property color barOutline: root.pal.barOutline
+    readonly property color widget: root.pal.widget
+    readonly property color widgetActive: root.pal.widgetActive
+    readonly property color widgetOutline: root.pal.widgetOutline
+    readonly property color widgetOutlineSeparate: root.pal.widgetOutlineSeparate
+    readonly property color separator: root.pal.separator
+    readonly property color panel: root.pal.panel
+    readonly property color panelTranslucent: root.pal.panelTranslucent
+    readonly property color overlayPanel: root.pal.overlayPanel
+    readonly property color alert: root.pal.alert
+    readonly property color alertOutline: root.pal.alertOutline
+    readonly property color sliderFill: root.pal.sliderFill
+    readonly property color sliderGroove: root.pal.sliderGroove
+    readonly property color neutralShadow: root.pal.neutralShadow
+    readonly property color elevatedShadow: root.pal.elevatedShadow
 
     // The keycap finish, in neutrals: a near-black outline and edge, a zinc ring, and a hard shadow.
-    readonly property color ink: "#09090b"
-    readonly property color cream: "#fafafa"
-    readonly property color cardRing: "#3f3f46"
-    readonly property color inkShadow: "#e609090b"
+    readonly property color ink: root.pal.ink
+    readonly property color cream: root.pal.cream
+    readonly property color cardRing: root.pal.cardRing
+    readonly property color inkShadow: root.pal.inkShadow
+    readonly property color keycapShadow: SettingsService.flag("ui.buttonShadow") ? root.pal.keycapShadow : "#00000000"
   }
 
   readonly property QtObject rounding: QtObject {
-    readonly property int small: 6
-    readonly property int normal: 8
-    readonly property int large: 12
+    readonly property int small: Math.round(8 * SettingsService.get("ui.radiusScale"))
+    readonly property int normal: Math.round(12 * SettingsService.get("ui.radiusScale"))
+    readonly property int large: Math.round(16 * SettingsService.get("ui.radiusScale"))
     readonly property int full: 1000
   }
 

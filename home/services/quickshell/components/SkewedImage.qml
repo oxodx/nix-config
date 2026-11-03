@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Effects
+import qs.theme
 
 Item {
   id: root
@@ -35,7 +36,7 @@ Item {
     slantRight: root.slantRight
     slant: root.slant
     skew: root.skew
-    fillColor: "white"
+    fillColor: Appearance.colors.m3onSurface
     visible: false
     layer.enabled: true
   }

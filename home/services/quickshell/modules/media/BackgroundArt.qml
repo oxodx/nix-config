@@ -170,7 +170,7 @@ BarWidgetInner {
     slantLeft: root.skewed
     slantRight: root.skewed
     slant: root.skew
-    fillColor: "white"
+    fillColor: Appearance.colors.m3onSurface
     visible: false
     layer.enabled: true
   }

@@ -14,6 +14,15 @@ Singleton {
     "wallpaper.mpvpaper": true,
     "wallpaper.videoPause": "fullscreen",
     "wallpaper.videoResume": "pause",
+    "theme.preset": "blend",
+    "ui.slant": false,
+    "ui.buttonShadow": true,
+    "ui.radiusScale": 1,
+    "bar.height": 40,
+    "bar.showWorkspaces": true,
+    "bar.showMedia": true,
+    "bar.showClock": true,
+    "bar.showTray": true,
   })
 
   property var values: ({})

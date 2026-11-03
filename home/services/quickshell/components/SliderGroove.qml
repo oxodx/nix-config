@@ -1,4 +1,5 @@
 import QtQuick
+import qs.theme
 
 Item {
   id: root
@@ -6,8 +7,8 @@ Item {
   property color fillColor: "transparent"
   property color outlineColor: "transparent"
   property color peakColor: "transparent"
-  property color warningColor: "#60ffa800"
-  property color warningMarkerColor: "#60eeffff"
+  property color warningColor: Qt.alpha(Appearance.colors.m3onSurfaceVariant, 0.0)
+  property color warningMarkerColor: Appearance.colors.m3onSurfaceVariant
   property real fillWidth: 0
   property real peakWidth: 0
   property real warningStart: -1

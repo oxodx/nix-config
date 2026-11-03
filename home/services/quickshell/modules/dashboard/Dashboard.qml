@@ -48,7 +48,7 @@ Item {
     skew: Appearance.skew
     fillColor: Appearance.colors.panel
     outlineColor: Appearance.colors.widgetOutlineSeparate
-    shadowColor: "#70000000"
+    shadowColor: Qt.alpha(Appearance.colors.alert, 0.0)
     shadowOffset: 6
   }
 
@@ -176,6 +176,14 @@ Item {
 
       DashboardAction {
         Layout.fillWidth: true
+        icon: "palette"
+        label: ThemePresets.title(SettingsService.get("theme.preset") ?? "blend")
+        Accessible.name: "Switch theme"
+        onTriggered: SettingsService.set("theme.preset", ThemePresets.nextName(SettingsService.get("theme.preset") ?? "blend"))
+      }
+
+      DashboardAction {
+        Layout.fillWidth: true
         icon: "lock"
         label: "Lock"
         onTriggered: {
@@ -255,7 +263,7 @@ Item {
       slantLeft: true
       slantRight: true
       skew: Appearance.skew
-      fillColor: "#2411131a"
+      fillColor: Qt.alpha(Appearance.colors.m3surface, 0.1)
       outlineColor: Appearance.colors.widgetOutline
       shadowColor: "transparent"
 

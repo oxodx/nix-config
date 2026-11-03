@@ -16,8 +16,8 @@ PanelWindow {
     top: true
   }
 
-  property real baseHeight: 50
-  readonly property real barHeight: 50
+  property real baseHeight: SettingsService.get("bar.height")
+  readonly property real barHeight: SettingsService.get("bar.height")
   property real topMargin: 0
   implicitHeight: baseHeight
   exclusiveZone: baseHeight

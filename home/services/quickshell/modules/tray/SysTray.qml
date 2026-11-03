@@ -7,6 +7,7 @@ import QtQuick.Effects
 import Quickshell
 import Quickshell.Services.SystemTray
 import qs.modules.bar
+import qs.theme
 
 BarWidgetInner {
   id: root
@@ -82,7 +83,7 @@ BarWidgetInner {
             Text {
               id: tooltipText
               text: item.modelData.tooltipTitle != "" ? item.modelData.tooltipTitle : item.modelData.id
-              color: "white"
+              color: Appearance.colors.m3onSurface
             }
           }
 

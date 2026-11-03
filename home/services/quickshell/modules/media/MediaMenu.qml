@@ -32,7 +32,7 @@ Item {
     slantLeft: true
     slantRight: true
     skew: Appearance.skew
-    fillColor: "#f21c1b24"
+    fillColor: Qt.alpha(Appearance.colors.alert, 0.14)
     shadowColor: Appearance.colors.elevatedShadow
     shadowOffset: 5
   }
@@ -121,7 +121,7 @@ Item {
           text: MprisService.activeTrack?.title ?? "Nothing playing"
           font.pointSize: Appearance.font.size.large
           font.weight: Font.Bold
-          color: "white"
+          color: Appearance.colors.m3onSurface
           wrapMode: Text.Wrap
           maximumLineCount: 2
           elide: Text.ElideRight

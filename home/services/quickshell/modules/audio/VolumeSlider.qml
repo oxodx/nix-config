@@ -1,6 +1,7 @@
 import QtQuick
 import qs.components
 import QtQuick.Shapes
+import qs.theme
 
 Item {
   id: root
@@ -28,11 +29,11 @@ Item {
       anchors.verticalCenter: parent.verticalCenter
       height: implicitHeight
       fillWidth: root.__valueOffset
-      fillColor: "#40ceffff"
+      fillColor: Appearance.colors.m3onSurfaceVariant
       peakWidth: root.__peakOffset
-      peakColor: "#60ceffff"
+      peakColor: Appearance.colors.m3onSurfaceVariant
       warningStart: ((root.warning - root.from) / (root.to - root.from)) * width
-      outlineColor: "#20050505"
+      outlineColor: Qt.alpha(Appearance.colors.m3surface, 0.02)
       cornerRadius: 5
     }
 

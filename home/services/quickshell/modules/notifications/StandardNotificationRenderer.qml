@@ -27,7 +27,7 @@ Item {
     slantLeft: true
     slantRight: true
     slant: 18
-    fillColor: notif.urgency == NotificationUrgency.Critical ? "#ed341b29" : Appearance.colors.overlayPanel
+    fillColor: notif.urgency == NotificationUrgency.Critical ? Qt.alpha(Appearance.colors.alert, 0.16) : Appearance.colors.overlayPanel
     outlineColor: notif.urgency == NotificationUrgency.Critical ? Appearance.colors.alertOutline : Appearance.colors.widgetOutlineSeparate
     shadowOffset: 5
   }

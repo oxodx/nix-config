@@ -1,20 +1,19 @@
 import qs.theme
 import QtQuick
 
-// The hover and press state layer for a bar widget: a tint over a small skewed shape.
-// It sits behind the widget's content, the way Material state layers do.
+// The hover and press state layer for a bar widget: a flat rounded tint, drawn behind the
+// widget's content. Hover is a light wash; press uses the lilac accent.
 SkewedPanel {
   id: root
 
   property bool hovered: false
   property bool pressed: false
 
-  slantLeft: true
-  slantRight: true
-  slant: 6
-  fillColor: Qt.alpha(Appearance.colors.m3onSurface, root.pressed ? 0.16 : root.hovered ? 0.08 : 0)
-  outlineColor: Qt.alpha(Appearance.colors.cream, root.hovered ? 0.35 : 0)
+  radius: Appearance.rounding.small
+  fillColor: root.pressed ? Qt.alpha(Appearance.colors.m3primary, 0.24)
+           : root.hovered ? Qt.alpha(Appearance.colors.m3onSurface, 0.12)
+           : "transparent"
+  outlineColor: "transparent"
 
-  Behavior on fillColor { ColorAnimation { duration: 160; easing.type: Easing.OutCubic } }
-  Behavior on outlineColor { ColorAnimation { duration: 160; easing.type: Easing.OutCubic } }
+  Behavior on fillColor { ColorAnimation { duration: 150; easing.type: Easing.OutCubic } }
 }

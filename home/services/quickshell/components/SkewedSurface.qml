@@ -23,7 +23,7 @@ Item {
   property bool gradient: false
   property real gloss: 0
   property color outlineColor: Appearance.colors.widgetOutlineSeparate
-  property real outlineWidth: 2
+  property real outlineWidth: 1
   property color ringColor: Appearance.colors.cardRing
   property real ringGap: 2.5
   property color shadowColor: Appearance.colors.inkShadow
@@ -32,9 +32,13 @@ Item {
   property bool hovered: false
   property real lift: 2
 
+  // Pressed buttons shrink slightly, as shadcn buttons do.
+  scale: root.pressed ? 0.98 : 1
+  Behavior on scale { NumberAnimation { duration: 120; easing.type: Easing.OutCubic } }
+
   readonly property real cutPx: root.skew > 0 ? root.skew * root.height : root.slant
   // Content keeps clear of the outline and the ring on every side, not only the cut ones.
-  readonly property real frameInset: root.outlineColor.a > 0 ? root.outlineWidth + root.ringGap + 1 : 0
+  readonly property real frameInset: root.outlineColor.a > 0 ? root.outlineWidth + (root.ringColor.a > 0 ? root.ringGap + 1 : 0) : 0
   // A transparent shadow means no shadow, so the face keeps the full height.
   readonly property real shadowPx: root.shadowColor.a > 0 ? root.shadowOffset : 0
   readonly property color fillBottom: root.gradient ? Qt.darker(root.fillColor, 1.25) : "transparent"

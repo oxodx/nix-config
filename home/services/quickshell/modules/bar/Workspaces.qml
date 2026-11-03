@@ -65,6 +65,7 @@ FullwidthMouseArea {
         implicitWidth: active ? 38 : 30
 
         fillWindowWidth: false
+        hoverEnabled: true
 
         required property var modelData
         property int workspaceIndex: modelData.id
@@ -77,20 +78,21 @@ FullwidthMouseArea {
           }
         }
 
-        SkewedPanel {
+        Pill {
           anchors.centerIn: parent
-          height: 30
+          height: 26
           width: parent.width
-          slantLeft: true
-          slantRight: true
-          slant: 6
-          outlineColor: wsItem.active ? Appearance.colors.m3tertiary : "transparent"
-          fillColor: Appearance.interpolateColors(wsItem.animActive, "transparent", Appearance.colors.widgetActive)
+          shadowDy: 3
+          pressed: wsItem.pressed
+          fillColor: wsItem.active ? Appearance.colors.m3primary
+                   : wsItem.containsMouse ? Appearance.colors.widgetActive
+                   : Appearance.colors.widget
+          outlineColor: wsItem.active ? Appearance.colors.m3primary : Appearance.colors.widgetOutlineSeparate
 
           StyledText {
             anchors.centerIn: parent
             text: wsItem.workspaceIndex
-            color: wsItem.active ? "white" : "#b8ffffff"
+            color: wsItem.active ? Appearance.colors.m3onPrimary : Appearance.colors.m3onSurfaceVariant
             font.pointSize: Appearance.font.size.smaller
             font.weight: wsItem.active ? Font.DemiBold : Font.Normal
           }

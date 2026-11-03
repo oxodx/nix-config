@@ -1,8 +1,9 @@
 import QtQuick
+import qs.theme
 
 Item {
   id: root
-  property color backgroundColor: "#20ffffff"
+  property color backgroundColor: Appearance.colors.m3onSurfaceVariant
   property real backgroundOpacity: 1.0
   property alias innerBorderColor: center.border.color
   property alias innerX: center.x
@@ -12,7 +13,7 @@ Item {
 
   Rectangle {
     id: center
-    border.color: "white"
+    border.color: Appearance.colors.m3onSurface
     border.width: 2
     color: "transparent"
   }

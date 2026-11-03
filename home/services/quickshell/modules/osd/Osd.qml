@@ -109,7 +109,7 @@ PanelWindow {
 
           StyledText {
             text: OsdService.muted ? "OFF" : `${Math.round(OsdService.value * 100)}%`
-            color: OsdService.muted ? Appearance.colors.alert : "#f4f6fb"
+            color: OsdService.muted ? Appearance.colors.alert : Appearance.colors.m3onSurface
             font.pointSize: Appearance.font.size.smaller
             font.weight: Font.Bold
           }

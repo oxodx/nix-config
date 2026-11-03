@@ -11,8 +11,8 @@ Item {
   clip: true
 
   property bool compact: false
-  property color currentColor: "white"
-  property color surroundingColor: "#70ffffff"
+  property color currentColor: Appearance.colors.m3onSurface
+  property color surroundingColor: Appearance.colors.m3onSurfaceVariant
   property bool frontActive: true
   property bool immediateRefresh: false
 

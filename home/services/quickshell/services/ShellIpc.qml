@@ -36,4 +36,47 @@ Singleton {
       screenshot();
     }
   }
+
+  // A value from the command line: "true" / "false", a number, or text.
+  function parseSetting(value: string): var {
+    if (value === "true") return true;
+    if (value === "false") return false;
+    const n = Number(value);
+    return value.trim() !== "" && !isNaN(n) ? n : value;
+  }
+
+  IpcHandler {
+    target: "settings"
+
+    // qs ipc call settings set bar.height 44
+    // qs ipc call settings set ui.slant true
+    function set(key: string, value: string): void {
+      if (!(key in SettingsService.defaults))
+        return;
+      const parsed = parseSetting(value);
+      if (typeof parsed === typeof SettingsService.defaults[key])
+        SettingsService.set(key, parsed);
+    }
+
+    // qs ipc call settings toggle ui.slant
+    function toggle(key: string): void {
+      if (typeof SettingsService.defaults[key] === "boolean")
+        SettingsService.toggle(key);
+    }
+  }
+
+  IpcHandler {
+    target: "theme"
+
+    // qs ipc call theme set plum
+    function set(name: string): void {
+      if (ThemePresets.names.indexOf(name) >= 0)
+        SettingsService.set("theme.preset", name);
+    }
+
+    // qs ipc call theme cycle
+    function cycle(): void {
+      SettingsService.set("theme.preset", ThemePresets.nextName(SettingsService.get("theme.preset") ?? "blend"));
+    }
+  }
 }

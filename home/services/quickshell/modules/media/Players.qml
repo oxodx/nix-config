@@ -49,7 +49,7 @@ FullwidthMouseArea {
     id: background
     visible: !root.compactBar
     anchors.fill: parent
-    overlay.color: "#b012141b"
+    overlay.color: Qt.alpha(Appearance.colors.alert, 0.11)
     skewed: root.skewed
 
     function refresh(reverse: bool): void {
@@ -95,7 +95,7 @@ FullwidthMouseArea {
         Layout.fillWidth: true
         Layout.fillHeight: true
         text: root.player ? MprisService.activeTrack?.title ?? "Unknown title" : "Nothing playing"
-        color: "#f8ffffff"
+        color: Appearance.colors.m3onSurface
         font.pointSize: 10
         font.weight: Font.DemiBold
         verticalAlignment: Text.AlignBottom
@@ -106,7 +106,7 @@ FullwidthMouseArea {
         Layout.fillWidth: true
         Layout.fillHeight: true
         text: root.player ? MprisService.activeTrack?.artist ?? root.player.identity : "Open a media player"
-        color: "#98ffffff"
+        color: Appearance.colors.m3onSurfaceVariant
         font.pointSize: 7
         verticalAlignment: Text.AlignTop
         elide: Text.ElideRight
@@ -190,7 +190,7 @@ FullwidthMouseArea {
       Layout.minimumWidth: 0
       compact: true
       currentColor: Appearance.colors.m3tertiary
-      surroundingColor: "#40ffffff"
+      surroundingColor: Appearance.colors.m3onSurfaceVariant
     }
     StyledText {
       Layout.preferredWidth: Math.min(145, root.width * 0.22)

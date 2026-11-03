@@ -82,7 +82,7 @@ Item {
             family: "Noto Sans"
           }
 
-          color: "white"
+          color: Appearance.colors.m3onSurface
           renderType: Text.NativeRendering
 
           text: {
@@ -115,7 +115,7 @@ Item {
             focus: true
             width: parent.width
 
-            color: enabled ? root.state.failed ? "#ffa0a0" : "white" : "#80ffffff"
+            color: enabled ? root.state.failed ? Appearance.colors.alert : Appearance.colors.m3onSurface : Appearance.colors.m3onSurfaceVariant
 
             font.pointSize: 24
             horizontalAlignment: TextInput.AlignHCenter
@@ -155,7 +155,7 @@ Item {
           Text {
             anchors.fill: textBox
             font: textBox.font
-            color: root.state.failed ? "#ffa0a0" : "#80ffffff"
+            color: root.state.failed ? Appearance.colors.alert : Appearance.colors.m3onSurfaceVariant
             horizontalAlignment: TextInput.AlignHCenter
             visible: !textBox.cursorVisible
             text: root.state.failed ? root.state.error : root.state.fprintAvailable ? "Touch sensor or enter password" : "Enter password"

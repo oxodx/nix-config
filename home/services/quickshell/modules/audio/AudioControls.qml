@@ -6,6 +6,7 @@ import Quickshell.Wayland
 import Quickshell.Services.Pipewire
 import qs.modules.bar
 import qs.components
+import qs.theme
 
 BarWidgetInner {
   id: root
@@ -70,7 +71,7 @@ BarWidgetInner {
 
       Rectangle {
         anchors.fill: parent
-        color: "#40000000"
+        color: Qt.alpha(Appearance.colors.m3surface, 0.0)
         radius: 15
 
         MaterialIcon {

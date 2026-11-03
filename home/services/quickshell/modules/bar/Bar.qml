@@ -18,15 +18,15 @@ BarContainment {
   BarSurface {
     id: leftIsland
     anchors.left: parent.left
+    anchors.leftMargin: 6
     anchors.top: parent.top
     height: root.barHeight
-    width: leftSection.implicitWidth + 42
-    cutRight: true
+    width: leftSection.implicitWidth + 24
     RowLayout {
       id: leftSection
       anchors.fill: parent
-      anchors.leftMargin: 10
-      anchors.rightMargin: 32
+      anchors.leftMargin: 12
+      anchors.rightMargin: 12
       spacing: 10
       FullwidthMouseArea {
         id: launcherButton
@@ -48,7 +48,7 @@ BarContainment {
       Workspaces {
         bar: root
         Layout.fillHeight: true
-        visible: root.width >= 1700 && visibleWorkspaces.length > 0
+        visible: root.width >= 1700 && visibleWorkspaces.length > 0 && SettingsService.flag("bar.showWorkspaces")
       }
     }
   }
@@ -60,34 +60,33 @@ BarContainment {
     height: root.barHeight
     // Symmetric bounds keep the centered island clear of both corner panels.
     width: Math.max(0, Math.min(820, root.width - 2 * Math.max(leftIsland.width, rightIsland.width) - 24))
-    visible: width >= 240 && MprisService.activePlayer !== null
-    cutLeft: true
-    cutRight: true
+    visible: width >= 240 && MprisService.activePlayer !== null && SettingsService.flag("bar.showMedia")
     Mpris.Players {
       bar: root
       anchors.fill: parent
       compactBar: true
-      edgeInset: 30
+      edgeInset: 12
     }
   }
 
   BarSurface {
     id: rightIsland
     anchors.right: parent.right
+    anchors.rightMargin: 6
     anchors.top: parent.top
     height: root.barHeight
-    width: rightSection.implicitWidth + 42
-    cutLeft: true
+    width: rightSection.implicitWidth + 24
 
     RowLayout {
       id: rightSection
       anchors.fill: parent
-      anchors.leftMargin: 32
-      anchors.rightMargin: 10
+      anchors.leftMargin: 12
+      anchors.rightMargin: 12
       spacing: 8
 
       SysTray.SysTray {
         bar: root
+        visible: SettingsService.flag("bar.showTray")
         Layout.fillHeight: true
       }
 
@@ -123,6 +122,7 @@ BarContainment {
 
       ClockWidget {
         bar: root
+        visible: SettingsService.flag("bar.showClock")
         Layout.fillHeight: true
       }
     }

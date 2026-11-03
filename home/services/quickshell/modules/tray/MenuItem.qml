@@ -65,7 +65,7 @@ MouseArea {
 
       StyledText {
         text: entry.text
-        color: entry.enabled ? "white" : "#bbbbbb"
+        color: entry.enabled ? Appearance.colors.m3onSurface : Appearance.colors.m3onSurface
       }
 
       Item {

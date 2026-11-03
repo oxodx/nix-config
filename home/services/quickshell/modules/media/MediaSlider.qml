@@ -10,7 +10,7 @@ T.Slider {
   implicitHeight: Math.max(implicitBackgroundHeight + topInset + bottomInset, implicitHandleHeight + topPadding + bottomPadding)
 
   property color barColor: Appearance.colors.sliderFill
-  property color grooveColor: "#30ceffff"
+  property color grooveColor: Appearance.colors.m3onSurfaceVariant
 
   background: SliderGroove {
     x: control.leftPadding

@@ -36,7 +36,7 @@ Item {
 
         Rectangle {
           id: mark
-          color: "#60eeffff"
+          color: Appearance.colors.m3onSurfaceVariant
           width: 1
           height: groove.height
         }
@@ -47,7 +47,7 @@ Item {
           x: delegate.index === 0 ? -4 : delegate.index === root.values.length - 1 ? -this.width + 4 : -(this.width / 2)
 
           text: delegate.modelData
-          color: "#a0eeffff"
+          color: Appearance.colors.m3onSurfaceVariant
         }
       }
     }
@@ -60,7 +60,7 @@ Item {
       height: implicitHeight
       fillWidth: mouseArea.valueOffset
       fillColor: Appearance.colors.sliderFill
-      outlineColor: "#20eeffff"
+      outlineColor: Appearance.colors.m3onSurfaceVariant
       cornerRadius: 5
     }
 
