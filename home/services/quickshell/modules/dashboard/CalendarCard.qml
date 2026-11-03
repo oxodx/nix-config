@@ -10,7 +10,7 @@ SkewedSurface {
   implicitHeight: 290
   slantLeft: true
   slantRight: true
-  slant: 14
+  skew: Appearance.skew
   shadowColor: "transparent"
   fillColor: Appearance.colors.widget
   property date month: new Date(clock.date.getFullYear(), clock.date.getMonth(), 1)
@@ -93,7 +93,7 @@ SkewedSurface {
           Layout.fillHeight: true
           slantLeft: true
           slantRight: true
-          slant: 5
+          skew: Appearance.skew
           shadowColor: "transparent"
           outlineColor: "transparent"
           fillColor: today ? Appearance.colors.m3primaryContainer : "transparent"

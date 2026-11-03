@@ -113,13 +113,19 @@ FullwidthMouseArea {
       }
     }
 
-    StyledRect {
+    Item {
       Layout.minimumWidth: 190
       Layout.preferredWidth: 330
       Layout.fillWidth: true
       Layout.fillHeight: true
-      color: "#16000000"
-      radius: 0
+
+      SkewedPanel {
+        anchors.fill: parent
+        slantLeft: true
+        slantRight: true
+        slant: 6
+        fillColor: Qt.alpha(Appearance.colors.widget, 0.6)
+      }
 
       AnimatedLyrics {
         anchors {
@@ -164,8 +170,8 @@ FullwidthMouseArea {
     anchors.fill: parent
     anchors.leftMargin: root.edgeInset
     anchors.rightMargin: root.edgeInset
-    anchors.topMargin: 1
-    anchors.bottomMargin: 4
+    anchors.topMargin: 0
+    anchors.bottomMargin: 2
     visible: root.compactBar
     spacing: 16
 

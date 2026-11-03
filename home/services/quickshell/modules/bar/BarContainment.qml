@@ -16,8 +16,8 @@ PanelWindow {
     top: true
   }
 
-  property real baseHeight: 40
-  readonly property real barHeight: 40
+  property real baseHeight: 50
+  readonly property real barHeight: 50
   property real topMargin: 0
   implicitHeight: baseHeight
   exclusiveZone: baseHeight

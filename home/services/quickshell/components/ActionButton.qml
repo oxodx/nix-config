@@ -26,7 +26,8 @@ SkewedSurface {
   slant: 6
   fillColor: mouse.pressed ? Qt.alpha(Appearance.colors.m3primary, 0.28) : active ? Appearance.colors.m3primaryContainer : mouse.containsMouse ? Appearance.colors.widgetActive : Appearance.colors.widget
   outlineColor: activeFocus ? Appearance.colors.m3primary : active ? Appearance.colors.m3tertiary : mouse.containsMouse ? Qt.alpha(Appearance.colors.m3primary, 0.45) : Appearance.colors.widgetOutline
-  shadowColor: "transparent"
+  pressed: mouse.pressed
+  hovered: mouse.containsMouse
   opacity: enabled ? 1 : disabledOpacity
 
   Behavior on fillColor {
@@ -44,8 +45,6 @@ SkewedSurface {
   Column {
     anchors.centerIn: parent
     spacing: 2
-    scale: mouse.pressed ? 0.94 : 1
-    Behavior on scale { NumberAnimation { duration: 100; easing.type: Easing.OutCubic } }
 
     MaterialIcon {
       anchors.horizontalCenter: parent.horizontalCenter

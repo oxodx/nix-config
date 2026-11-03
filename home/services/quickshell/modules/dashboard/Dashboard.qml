@@ -45,7 +45,7 @@ Item {
     anchors.fill: parent
     slantLeft: true
     slantRight: true
-    slant: 24
+    skew: Appearance.skew
     fillColor: Appearance.colors.panel
     outlineColor: Appearance.colors.widgetOutlineSeparate
     shadowColor: "#70000000"
@@ -198,7 +198,7 @@ Item {
       Layout.preferredHeight: 58
       slantLeft: true
       slantRight: true
-      slant: 11
+      skew: Appearance.skew
       fillColor: Appearance.colors.widget
       outlineColor: Appearance.colors.widgetOutline
       shadowColor: "transparent"
@@ -254,7 +254,7 @@ Item {
       Layout.preferredHeight: 116
       slantLeft: true
       slantRight: true
-      slant: 14
+      skew: Appearance.skew
       fillColor: "#2411131a"
       outlineColor: Appearance.colors.widgetOutline
       shadowColor: "transparent"
@@ -272,7 +272,7 @@ Item {
         Mpris.TrackArtwork {
           Layout.preferredWidth: 72
           Layout.preferredHeight: 72
-          slant: 10
+          skew: Appearance.skew
           outlineColor: Appearance.colors.m3tertiary
         }
 

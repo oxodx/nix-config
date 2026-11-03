@@ -11,6 +11,7 @@ Item {
   property bool slantLeft: true
   property bool slantRight: true
   property real slant: 18
+  property real skew: 0
   property color outlineColor: "transparent"
 
   Image {
@@ -33,6 +34,7 @@ Item {
     slantLeft: root.slantLeft
     slantRight: root.slantRight
     slant: root.slant
+    skew: root.skew
     fillColor: "white"
     visible: false
     layer.enabled: true
@@ -43,6 +45,7 @@ Item {
     slantLeft: root.slantLeft
     slantRight: root.slantRight
     slant: root.slant
+    skew: root.skew
     outlineColor: root.outlineColor
   }
 }

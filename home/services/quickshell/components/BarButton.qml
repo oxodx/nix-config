@@ -10,7 +10,9 @@ FullwidthMouseArea {
   readonly property Item contentItem: mContentItem
   default property alias contentItemData: mContentItem.data
 
-  property real targetBrightness: root.showPressed ? -25 : root.mouseArea.containsMouse && root.enabled ? 75 : 0
+  // Pill widgets turn this off and show a rounded highlight instead.
+  property bool hoverBrightness: true
+  property real targetBrightness: root.showPressed ? -25 : root.mouseArea.containsMouse && root.enabled && root.hoverBrightness ? 75 : 0
   Behavior on targetBrightness {
     SmoothedAnimation {
       velocity: 600

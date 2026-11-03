@@ -19,79 +19,93 @@ Singleton {
     return Qt.rgba(a.r * xa + b.r * x, a.g * xa + b.g * x, a.b * xa + b.b * x, a.a * xa + b.a * x);
   }
 
+  // 0 draws every skewed shape as a flat rounded rectangle; 1 draws the skewed look.
+  readonly property real slantScale: 1
+
+  // Horizontal cut per pixel of height. Nested skewed panels use this same slope, so their
+  // edges run parallel at any size.
+  readonly property real skew: 0.04
+
   readonly property QtObject colors: QtObject {
-    readonly property color m3background: "#141318"
-    readonly property color m3onBackground: "#E5E1E9"
-    readonly property color m3surface: "#141318"
-    readonly property color m3surfaceDim: "#141318"
-    readonly property color m3surfaceBright: "#3A383E"
-    readonly property color m3surfaceContainerLowest: "#0E0D13"
-    readonly property color m3surfaceContainerLow: "#1C1B20"
-    readonly property color m3surfaceContainer: "#201F25"
-    readonly property color m3surfaceContainerHigh: "#2B292F"
-    readonly property color m3surfaceContainerHighest: "#35343A"
-    readonly property color m3onSurface: "#E5E1E9"
-    readonly property color m3surfaceVariant: "#48454E"
-    readonly property color m3onSurfaceVariant: "#C9C5D0"
-    readonly property color m3inverseSurface: "#E5E1E9"
-    readonly property color m3inverseOnSurface: "#312F36"
-    readonly property color m3outline: "#938F99"
-    readonly property color m3outlineVariant: "#48454E"
+    // shadcn neutrals: zinc surfaces, zinc borders, and near-white text. No gradients.
+    readonly property color m3background: "#09090b"
+    readonly property color m3onBackground: "#fafafa"
+    readonly property color m3surface: "#09090b"
+    readonly property color m3surfaceDim: "#09090b"
+    readonly property color m3surfaceBright: "#3f3f46"
+    readonly property color m3surfaceContainerLowest: "#09090b"
+    readonly property color m3surfaceContainerLow: "#09090b"
+    readonly property color m3surfaceContainer: "#18181b"
+    readonly property color m3surfaceContainerHigh: "#27272a"
+    readonly property color m3surfaceContainerHighest: "#3f3f46"
+    readonly property color m3onSurface: "#fafafa"
+    readonly property color m3surfaceVariant: "#27272a"
+    readonly property color m3onSurfaceVariant: "#a1a1aa"
+    readonly property color m3inverseSurface: "#fafafa"
+    readonly property color m3inverseOnSurface: "#18181b"
+    readonly property color m3outline: "#52525b"
+    readonly property color m3outlineVariant: "#27272a"
     readonly property color m3shadow: "#000000"
     readonly property color m3scrim: "#000000"
-    readonly property color m3surfaceTint: "#C8BFFF"
-    readonly property color m3primary: "#C8BFFF"
-    readonly property color m3onPrimary: "#30285F"
-    readonly property color m3primaryContainer: "#473F77"
-    readonly property color m3onPrimaryContainer: "#E5DEFF"
-    readonly property color m3inversePrimary: "#5F5791"
-    readonly property color m3secondary: "#C9C3DC"
-    readonly property color m3onSecondary: "#312E41"
-    readonly property color m3secondaryContainer: "#484459"
-    readonly property color m3onSecondaryContainer: "#E5DFF9"
-    readonly property color m3tertiary: "#ECB8CD"
-    readonly property color m3onTertiary: "#482536"
-    readonly property color m3tertiaryContainer: "#B38397"
-    readonly property color m3onTertiaryContainer: "#000000"
-    readonly property color m3error: "#EA8DC1"
-    readonly property color m3onError: "#690005"
-    readonly property color m3errorContainer: "#93000A"
-    readonly property color m3onErrorContainer: "#FFDAD6"
-    readonly property color m3primaryFixed: "#E5DEFF"
-    readonly property color m3primaryFixedDim: "#C8BFFF"
-    readonly property color m3onPrimaryFixed: "#1B1149"
-    readonly property color m3onPrimaryFixedVariant: "#473F77"
-    readonly property color m3secondaryFixed: "#E5DFF9"
-    readonly property color m3secondaryFixedDim: "#C9C3DC"
-    readonly property color m3onSecondaryFixed: "#1C192B"
-    readonly property color m3onSecondaryFixedVariant: "#484459"
-    readonly property color m3tertiaryFixed: "#FFD8E7"
-    readonly property color m3tertiaryFixedDim: "#ECB8CD"
-    readonly property color m3onTertiaryFixed: "#301121"
-    readonly property color m3onTertiaryFixedVariant: "#613B4C"
+    readonly property color m3surfaceTint: "#fafafa"
+    readonly property color m3primary: "#fafafa"
+    readonly property color m3onPrimary: "#18181b"
+    readonly property color m3primaryContainer: "#27272a"
+    readonly property color m3onPrimaryContainer: "#fafafa"
+    readonly property color m3inversePrimary: "#18181b"
+    readonly property color m3secondary: "#a1a1aa"
+    readonly property color m3onSecondary: "#18181b"
+    readonly property color m3secondaryContainer: "#27272a"
+    readonly property color m3onSecondaryContainer: "#fafafa"
+    readonly property color m3tertiary: "#a1a1aa"
+    readonly property color m3onTertiary: "#18181b"
+    readonly property color m3tertiaryContainer: "#3f3f46"
+    readonly property color m3onTertiaryContainer: "#fafafa"
+    readonly property color m3error: "#ef4444"
+    readonly property color m3onError: "#fafafa"
+    readonly property color m3errorContainer: "#7f1d1d"
+    readonly property color m3onErrorContainer: "#fecaca"
+    readonly property color m3primaryFixed: "#fafafa"
+    readonly property color m3primaryFixedDim: "#d4d4d8"
+    readonly property color m3onPrimaryFixed: "#18181b"
+    readonly property color m3onPrimaryFixedVariant: "#3f3f46"
+    readonly property color m3secondaryFixed: "#e4e4e7"
+    readonly property color m3secondaryFixedDim: "#d4d4d8"
+    readonly property color m3onSecondaryFixed: "#18181b"
+    readonly property color m3onSecondaryFixedVariant: "#3f3f46"
+    readonly property color m3tertiaryFixed: "#e4e4e7"
+    readonly property color m3tertiaryFixedDim: "#a1a1aa"
+    readonly property color m3onTertiaryFixed: "#18181b"
+    readonly property color m3onTertiaryFixedVariant: "#3f3f46"
 
-    readonly property color bar: "#e611131a"
-    readonly property color barOutline: "#24ffffff"
-    readonly property color widget: "#12ffffff"
-    readonly property color widgetActive: "#38ffffff"
-    readonly property color widgetOutline: "#18ffffff"
-    readonly property color widgetOutlineSeparate: "#12ffffff"
-    readonly property color separator: "#24ffffff"
-    readonly property color panel: "#f2171a22"
-    readonly property color panelTranslucent: "#b8171a22"
-    readonly property color overlayPanel: "#ed171a22"
-    readonly property color alert: "#ff747b"
-    readonly property color alertOutline: "#80ff747b"
-    readonly property color sliderFill: "#80ceffff"
-    readonly property color sliderGroove: "#30ffffff"
-    readonly property color neutralShadow: "#50000000"
-    readonly property color elevatedShadow: "#60000000"
+    readonly property color bar: "#e609090b"
+    readonly property color barOutline: "#27272a"
+    readonly property color widget: "#18181b"
+    readonly property color widgetActive: "#27272a"
+    readonly property color widgetOutline: "#27272a"
+    readonly property color widgetOutlineSeparate: "#27272a"
+    readonly property color separator: "#27272a"
+    readonly property color panel: "#ee09090b"
+    readonly property color panelTranslucent: "#c209090b"
+    readonly property color overlayPanel: "#f209090b"
+    readonly property color alert: "#ef4444"
+    readonly property color alertOutline: "#66ef4444"
+    readonly property color sliderFill: "#fafafa"
+    readonly property color sliderGroove: "#27272a"
+    readonly property color neutralShadow: "#33000000"
+    readonly property color elevatedShadow: "#66000000"
+
+    // The keycap finish, in neutrals: a near-black outline and edge, a zinc ring, and a hard shadow.
+    readonly property color ink: "#09090b"
+    readonly property color cream: "#fafafa"
+    readonly property color cardRing: "#3f3f46"
+    readonly property color inkShadow: "#e609090b"
   }
 
   readonly property QtObject rounding: QtObject {
-    readonly property int small: 12
-    readonly property int normal: 17
-    readonly property int large: 25
+    readonly property int small: 6
+    readonly property int normal: 8
+    readonly property int large: 12
     readonly property int full: 1000
   }
 
@@ -113,7 +127,7 @@ Singleton {
 
   readonly property QtObject font: QtObject {
     readonly property QtObject family: QtObject {
-      readonly property string sans: "IBM Plex Sans"
+      readonly property string sans: "Inter"
       readonly property string mono: "JetBrains Mono NF"
       readonly property string material: "Material Symbols Rounded"
     }

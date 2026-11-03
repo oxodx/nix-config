@@ -24,9 +24,16 @@ BarWidgetInner {
     id: button
     anchors.fill: parent
     fillWindowWidth: true
+    hoverBrightness: false
     acceptedButtons: Qt.LeftButton
     showPressed: root.dashboardOpen
     onPressed: root.dashboardOpen = !root.dashboardOpen
+
+    BarHoverLayer {
+      anchors.fill: parent
+      hovered: button.containsMouse
+      pressed: root.dashboardOpen
+    }
 
     ColumnLayout {
       id: layout
@@ -38,15 +45,14 @@ BarWidgetInner {
         text: Qt.formatDateTime(clock.date, "hh:mm")
         font.pixelSize: 12
         font.weight: Font.DemiBold
-        color: Appearance.colors.m3tertiary
+        color: Appearance.colors.m3onSurface
       }
 
       Text {
-        visible: false
         Layout.alignment: Qt.AlignHCenter
         text: Qt.formatDateTime(clock.date, "ddd, MMM d")
         font.pixelSize: 10
-        color: "#a8ffffff"
+        color: Appearance.colors.m3onSurfaceVariant
       }
     }
   }

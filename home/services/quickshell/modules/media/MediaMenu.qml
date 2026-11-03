@@ -31,7 +31,7 @@ Item {
     anchors.fill: parent
     slantLeft: true
     slantRight: true
-    slant: 24
+    skew: Appearance.skew
     fillColor: "#f21c1b24"
     shadowColor: Appearance.colors.elevatedShadow
     shadowOffset: 5
@@ -107,7 +107,7 @@ Item {
       TrackArtwork {
         Layout.preferredWidth: 154
         Layout.preferredHeight: 154
-        slant: 18
+        skew: Appearance.skew
         outlineColor: Appearance.colors.m3tertiary
       }
 

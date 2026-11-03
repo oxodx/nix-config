@@ -1,4 +1,5 @@
 import qs.services
+import qs.theme
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
@@ -29,7 +30,7 @@ BarWidgetInner {
 
   implicitHeight: width
   visible: displayDevice != null
-  color: isLow ? "#45ff6060" : "transparent"
+  color: isLow ? Qt.alpha(Appearance.colors.alert, 0.27) : "transparent"
 
   BarButton {
     id: button
@@ -38,7 +39,14 @@ BarWidgetInner {
     fillWindowWidth: true
     acceptedButtons: Qt.RightButton
     directScale: true
+    hoverBrightness: false
     showPressed: root.showMenu
+
+    BarHoverLayer {
+      anchors.fill: parent
+      hovered: button.containsMouse
+      pressed: button.showPressed
+    }
 
     onPressed: {
       root.showMenu = !root.showMenu;
@@ -133,7 +141,7 @@ BarWidgetInner {
               }
               Label {
                 text: `${root.statusStr()} -`
-                color: "#d0eeffff"
+                color: Appearance.colors.m3onSurfaceVariant
               }
               Label {
                 text: `${Math.round(root.percentage * 100)}%`
@@ -254,6 +262,6 @@ BarWidgetInner {
 
   component SmallLabel: Label {
     font.pointSize: fm.font.pointSize * 0.8
-    color: "#d0eeffff"
+    color: Appearance.colors.m3onSurfaceVariant
   }
 }

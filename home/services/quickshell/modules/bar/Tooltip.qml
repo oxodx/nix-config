@@ -18,6 +18,12 @@ Scope {
   property bool popupHovered: false
   property bool popupWasHovered: false
 
+  // Tooltips use a fixed cut. Menus use the shared slope, so their edges match the dashboard.
+  // Custom-background popups (the dashboard) draw their own shape, so they get no cut.
+  readonly property bool popupSkewed: !(root.shownItem?.customBackground ?? false)
+  readonly property real popupCut: !root.popupSkewed ? 0
+      : (root.shownItem?.isMenu ? Appearance.skew * (root.shownItem?.implicitHeight ?? 0) : 12) * Appearance.slantScale
+
   function closeActiveMenu() {
     const menu = activeMenu;
     if (!menu)
@@ -145,7 +151,7 @@ Scope {
         adjustment: PopupAdjustment.None
       }
 
-      implicitWidth: Math.max(1, root.shownItem?.implicitWidth ?? 1)
+      implicitWidth: Math.max(1, (root.shownItem?.implicitWidth ?? 1) + 2 * root.popupCut)
       implicitHeight: Math.max(1, root.shownItem?.implicitHeight ?? 1)
 
       mask: Region {
@@ -156,11 +162,13 @@ Scope {
         id: host
         anchors.fill: parent
         padding: 0
-        palette.windowText: "#f4f6fb"
-        palette.text: "#f4f6fb"
-        palette.buttonText: "#f4f6fb"
-        palette.base: "#20232d"
-        palette.window: "#20232d"
+        leftPadding: root.popupCut
+        rightPadding: root.popupCut
+        palette.windowText: Appearance.colors.m3onSurface
+        palette.text: Appearance.colors.m3onSurface
+        palette.buttonText: Appearance.colors.m3onSurface
+        palette.base: Appearance.colors.m3surfaceContainerHigh
+        palette.window: Appearance.colors.m3surfaceContainerHigh
 
         HoverHandler {
           onHoveredChanged: {
@@ -184,13 +192,16 @@ Scope {
         }
 
         background: SkewedSurface {
-          slantLeft: !root.shownItem?.customBackground
-          slantRight: !root.shownItem?.customBackground
+          slantLeft: root.popupSkewed
+          slantRight: root.popupSkewed
           slant: 12
-          fillColor: root.shownItem?.customBackground ? "transparent" : "#f220232d"
-          outlineColor: root.shownItem?.customBackground ? "transparent" : Appearance.colors.widgetOutlineSeparate
-          shadowColor: root.shownItem?.customBackground ? "transparent" : Appearance.colors.neutralShadow
+          skew: root.shownItem?.isMenu ? Appearance.skew : 0
+          fillColor: root.popupSkewed ? Appearance.colors.overlayPanel : "transparent"
+          outlineColor: root.popupSkewed ? Appearance.colors.widgetOutlineSeparate : "transparent"
+          shadowColor: root.popupSkewed ? Appearance.colors.neutralShadow : "transparent"
           shadowOffset: 3
+          gloss: 0
+          ringColor: "transparent"
         }
 
         contentItem: Item {

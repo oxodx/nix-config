@@ -91,6 +91,10 @@ BarContainment {
         Layout.fillHeight: true
       }
 
+      BarDivider {
+        Layout.alignment: Qt.AlignVCenter
+      }
+
       Notifs.NotificationWidget {
         bar: root
         Layout.fillHeight: true
@@ -111,6 +115,10 @@ BarContainment {
         bar: root
         Layout.fillHeight: true
         Layout.preferredWidth: 28
+      }
+
+      BarDivider {
+        Layout.alignment: Qt.AlignVCenter
       }
 
       ClockWidget {

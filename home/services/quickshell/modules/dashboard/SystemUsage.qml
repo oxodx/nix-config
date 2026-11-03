@@ -10,7 +10,7 @@ SkewedSurface {
   implicitHeight: 290
   slantLeft: true
   slantRight: true
-  slant: 14
+  skew: Appearance.skew
   fillColor: Appearance.colors.widget
   shadowColor: "transparent"
 
@@ -66,7 +66,7 @@ SkewedSurface {
           implicitHeight: 8
           slantLeft: true
           slantRight: true
-          slant: 4
+          skew: Appearance.skew
           shadowColor: "transparent"
           fillColor: Appearance.colors.widgetActive
 
@@ -75,7 +75,7 @@ SkewedSurface {
             height: parent.height
             slantLeft: true
             slantRight: true
-            slant: 4
+            skew: Appearance.skew
             shadowColor: "transparent"
             fillColor: Appearance.colors.m3primary
             Behavior on width {

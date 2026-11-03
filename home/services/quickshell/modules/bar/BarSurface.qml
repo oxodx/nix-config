@@ -1,36 +1,32 @@
 import qs.theme
+import qs.components
 import QtQuick
-import QtQuick.Shapes
 
-// Inward-cut lower corners, matching the legacy SKWD bar silhouette.
-Shape {
+// One bar island. It floats inside the bar with a small gap above and below, and has the
+// legacy skewed silhouette with the lower corners cut. Children are placed inside it.
+Item {
   id: root
+
+  default property alias contentData: island.contentData
+
   property bool cutLeft: false
   property bool cutRight: false
   property real slant: 28
-  property color fillColor: Qt.alpha(Appearance.colors.m3surfaceContainerLow, 0.94)
-  preferredRendererType: Shape.CurveRenderer
+  property real inset: 0
+  property color fillColor: Appearance.colors.bar
 
-  ShapePath {
+  SkewedSurface {
+    id: island
+    anchors.fill: parent
+    anchors.topMargin: root.inset
+    anchors.bottomMargin: root.inset
+    slantLeft: root.cutLeft
+    leftAtBottom: true
+    slantRight: root.cutRight
+    slant: root.slant
+    insetContent: false
     fillColor: root.fillColor
-    strokeColor: "transparent"
-    startX: 0
-    startY: 0
-    PathLine {
-      x: root.width
-      y: 0
-    }
-    PathLine {
-      x: root.width - (root.cutRight ? root.slant : 0)
-      y: root.height
-    }
-    PathLine {
-      x: root.cutLeft ? root.slant : 0
-      y: root.height
-    }
-    PathLine {
-      x: 0
-      y: 0
-    }
+    shadowOffset: 3
+    lift: 0
   }
 }

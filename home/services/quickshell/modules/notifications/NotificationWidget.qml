@@ -28,8 +28,15 @@ BarWidgetInner {
     anchors.fill: parent
     baseMargin: 8
     fillWindowWidth: true
+    hoverBrightness: false
     acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
     showPressed: root.controlsOpen || (pressedButtons & ~Qt.RightButton)
+
+    BarHoverLayer {
+      anchors.fill: parent
+      hovered: button.containsMouse
+      pressed: button.showPressed
+    }
 
     MaterialIcon {
       anchors.centerIn: parent
@@ -94,7 +101,7 @@ BarWidgetInner {
           anchors.margins: 5
           radius: width * 0.5
           antialiasing: true
-          color: "#60ffffff"
+          color: Qt.alpha(Appearance.colors.m3onSurface, 0.38)
           opacity: closeArea.containsMouse ? 1 : 0
           Behavior on opacity {
             SmoothedAnimation {

@@ -12,7 +12,7 @@ SkewedSurface {
   implicitHeight: 270
   slantLeft: true
   slantRight: true
-  slant: 14
+  skew: Appearance.skew
   shadowColor: "transparent"
   fillColor: "#2811131a"
   outlineColor: Appearance.colors.widgetOutline
@@ -130,7 +130,7 @@ SkewedSurface {
           anchors.fill: parent
           slantLeft: true
           slantRight: true
-          slant: 8
+          skew: Appearance.skew
           fillColor: line.current ? Appearance.colors.widgetActive : line.containsMouse ? Appearance.colors.widget : "transparent"
           outlineColor: "transparent"
           shadowColor: "transparent"
@@ -143,7 +143,7 @@ SkewedSurface {
         TimedLyricText {
           id: label
           anchors.centerIn: parent
-          width: parent.width - 30
+          width: parent.width - 2 * Appearance.skew * parent.height - 24
           lineText: line.modelData.text || "♪"
           words: line.modelData.words ?? []
           position: root.service.lyricPosition

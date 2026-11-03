@@ -169,7 +169,7 @@ Item {
 
       StyledText {
         Layout.fillWidth: true
-        Layout.fillHeight: true
+        Layout.preferredHeight: root.height * 0.32
         text: parent.parent.previousText
         color: root.surroundingColor
         font.pointSize: root.compact ? 6 : Appearance.font.size.smaller
@@ -195,7 +195,7 @@ Item {
 
       StyledText {
         Layout.fillWidth: true
-        Layout.fillHeight: true
+        Layout.preferredHeight: root.height * 0.32
         text: parent.parent.nextText
         color: root.surroundingColor
         font.pointSize: root.compact ? 6 : Appearance.font.size.smaller
