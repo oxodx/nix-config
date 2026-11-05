@@ -114,12 +114,33 @@ for device in /dev/nvidia0 /dev/nvidiactl /dev/nvidia-modeset /dev/nvidia-uvm /d
   [[ ! -c $device ]] || args+=(--dev-bind "$device" "$device")
 done
 
-# Only expose the selected controller, not every input device (e.g. keyboards).
+# Only expose joystick/gamepad input devices, not every input device (e.g.
+# keyboards and mice). Any controller with a by-id *-joystick link is passed
+# through, along with its hidraw node so SDL/hidapi can see it too.
 if [[ -d /dev/input/by-id ]]; then
+  declare -A seen_devices=()
+  controller_prefixes=()
+  add_controller_device() {
+    device=$(readlink -f -- "$1") || return 0
+    [[ -c $device ]] || return 0
+    [[ -n ${seen_devices[$device]:-} ]] && return 0
+    seen_devices[$device]=1
+    args+=(--dev-bind "$device" "$device")
+  }
+
   while IFS= read -r -d '' link; do
-    device=$(readlink -f -- "$link")
-    [[ ! -c $device ]] || args+=(--dev-bind "$device" "$device")
-  done < <(find /dev/input/by-id -maxdepth 1 -name '*Turtle_Beach*joystick' -print0)
+    add_controller_device "$link"
+    name=${link##*/}
+    if [[ $name =~ ^(.*-if[0-9]+)- ]]; then
+      controller_prefixes+=("${BASH_REMATCH[1]}")
+    fi
+  done < <(find /dev/input/by-id -maxdepth 1 -name '*joystick' -print0)
+
+  for prefix in "${controller_prefixes[@]}"; do
+    for suffix in hidraw event-mouse mouse; do
+      add_controller_device "/dev/input/by-id/${prefix}-${suffix}"
+    done
+  done
 fi
 
 if [[ -e /run/opengl-driver/share/vulkan/icd.d/nvidia_icd.json && -c /dev/nvidia0 ]]; then
