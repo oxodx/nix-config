@@ -18,7 +18,7 @@ Singleton {
     "ui.slant": false,
     "ui.buttonShadow": true,
     "ui.radiusScale": 1,
-    "bar.height": 40,
+    "bar.height": 46,
     "bar.showWorkspaces": true,
     "bar.showMedia": true,
     "bar.showClock": true,

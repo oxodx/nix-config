@@ -14,6 +14,11 @@ Singleton {
   property int serial: 0
   signal requested
 
+  // Quickshell only fills in a node's volume and mute once the node is tracked.
+  PwObjectTracker {
+    objects: [Pipewire.defaultAudioSink, Pipewire.defaultAudioSource]
+  }
+
   function show(type: string, amount: real, isMuted: bool): void {
     kind = type;
     value = Math.max(0, Math.min(1, amount));

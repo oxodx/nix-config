@@ -87,7 +87,10 @@ FullwidthMouseArea {
           fillColor: wsItem.active ? Appearance.colors.m3primary
                    : wsItem.containsMouse ? Appearance.colors.widgetActive
                    : Appearance.colors.widget
-          outlineColor: wsItem.active ? Appearance.colors.m3primary : Appearance.colors.widgetOutlineSeparate
+          outlineColor: Appearance.colors.ink
+          borderWidth: 2
+          ringWidth: 2
+          ringColor: wsItem.active ? Qt.alpha(Appearance.colors.m3onPrimary, 0.4) : Qt.alpha(Appearance.colors.m3onSurface, 0.2)
 
           StyledText {
             anchors.centerIn: parent

@@ -23,10 +23,10 @@ Item {
   property bool gradient: false
   property real gloss: 0
   property color outlineColor: Appearance.colors.widgetOutlineSeparate
-  property real outlineWidth: 1
-  property color ringColor: Appearance.colors.cardRing
+  property real outlineWidth: 2
+  property color ringColor: Qt.alpha(Appearance.colors.m3onSurface, 0.3)
   property real ringGap: 2.5
-  property color shadowColor: Appearance.colors.inkShadow
+  property color shadowColor: Appearance.colors.keycapShadow
   property real shadowOffset: 4
   property bool pressed: false
   property bool hovered: false

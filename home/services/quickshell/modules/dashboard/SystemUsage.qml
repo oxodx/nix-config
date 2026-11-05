@@ -25,66 +25,72 @@ SkewedSurface {
       font.weight: Font.Bold
     }
 
-    Repeater {
-      model: [
-        {
-          label: "Processor",
-          icon: "memory",
-          value: SystemStats.cpu
-        },
-        {
-          label: "Memory",
-          icon: "storage",
-          value: SystemStats.memory
-        }
-      ]
+    ColumnLayout {
+      Layout.fillWidth: true
+      spacing: 10
 
-      ColumnLayout {
-        required property var modelData
+      RowLayout {
         Layout.fillWidth: true
-        spacing: 10
-
-        RowLayout {
-          MaterialIcon {
-            text: modelData.icon
-            color: Appearance.colors.m3primary
-          }
-
-          StyledText {
-            Layout.fillWidth: true
-            text: modelData.label
-          }
-
-          StyledText {
-            text: Math.round(modelData.value * 100) + "%"
-            font.family: Appearance.font.family.mono
-          }
+        MaterialIcon {
+          text: "memory"
+          color: Appearance.colors.m3primary
         }
-
-        SkewedSurface {
+        StyledText {
           Layout.fillWidth: true
-          implicitHeight: 8
-          slantLeft: true
-          slantRight: true
-          skew: Appearance.skew
-          shadowColor: "transparent"
-          fillColor: Appearance.colors.widgetActive
+          text: "Processor"
+        }
+        StyledText {
+          text: Math.round(SystemStats.cpu * 100) + "%"
+          font.family: Appearance.font.family.mono
+        }
+      }
 
-          SkewedSurface {
-            width: Math.max(8, parent.width * modelData.value)
-            height: parent.height
-            slantLeft: true
-            slantRight: true
-            skew: Appearance.skew
-            shadowColor: "transparent"
-            fillColor: Appearance.colors.m3primary
-            Behavior on width {
-              NumberAnimation {
-                duration: 350
-                easing.type: Easing.OutCubic
-              }
-            }
-          }
+      ProgressBar {
+        Layout.fillWidth: true
+        from: 0
+        to: 1
+        value: SystemStats.cpu
+        thickness: 6
+        cornerRadius: 3
+        fillColor: Appearance.colors.m3primary
+        trackColor: Appearance.colors.widgetActive
+        Behavior on value {
+          NumberAnimation { duration: 900; easing.type: Easing.OutCubic }
+        }
+      }
+    }
+
+    ColumnLayout {
+      Layout.fillWidth: true
+      spacing: 10
+
+      RowLayout {
+        Layout.fillWidth: true
+        MaterialIcon {
+          text: "storage"
+          color: Appearance.colors.m3primary
+        }
+        StyledText {
+          Layout.fillWidth: true
+          text: "Memory"
+        }
+        StyledText {
+          text: Math.round(SystemStats.memory * 100) + "%"
+          font.family: Appearance.font.family.mono
+        }
+      }
+
+      ProgressBar {
+        Layout.fillWidth: true
+        from: 0
+        to: 1
+        value: SystemStats.memory
+        thickness: 6
+        cornerRadius: 3
+        fillColor: Appearance.colors.m3primary
+        trackColor: Appearance.colors.widgetActive
+        Behavior on value {
+          NumberAnimation { duration: 900; easing.type: Easing.OutCubic }
         }
       }
     }

@@ -11,7 +11,6 @@ SkewedSurface {
   slantLeft: true
   slantRight: true
   skew: Appearance.skew
-  shadowColor: "transparent"
   fillColor: Appearance.colors.widget
   property date month: new Date(clock.date.getFullYear(), clock.date.getMonth(), 1)
   readonly property int offset: (month.getDay() + 6) % 7
@@ -41,11 +40,18 @@ SkewedSurface {
         onTriggered: root.moveMonth(-1)
       }
 
-      StyledText {
+      Pill {
         Layout.fillWidth: true
-        horizontalAlignment: Text.AlignHCenter
-        text: Qt.formatDateTime(root.month, "MMMM yyyy")
-        font.weight: Font.Bold
+        Layout.preferredHeight: 36
+        cornerRadius: Appearance.rounding.normal
+        fillColor: Appearance.colors.widgetActive
+        shadowDy: 3
+
+        StyledText {
+          anchors.centerIn: parent
+          text: Qt.formatDateTime(root.month, "MMMM yyyy")
+          font.weight: Font.Bold
+        }
 
         MouseArea {
           anchors.fill: parent
@@ -71,7 +77,7 @@ SkewedSurface {
       Layout.fillHeight: true
 
       Repeater {
-        model: ["M", "T", "W", "T", "F", "S", "S"]
+        model: ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
         StyledText {
           required property string modelData
           Layout.fillWidth: true
@@ -84,22 +90,22 @@ SkewedSurface {
 
       Repeater {
         model: 42
-        SkewedSurface {
+        Pill {
           id: cell
           required property int index
           readonly property date day: new Date(root.month.getFullYear(), root.month.getMonth(), index - root.offset + 1)
           readonly property bool today: day.toDateString() === clock.date.toDateString()
           Layout.fillWidth: true
           Layout.fillHeight: true
-          slantLeft: true
-          slantRight: true
-          skew: Appearance.skew
-          shadowColor: "transparent"
-          outlineColor: "transparent"
-          fillColor: today ? Appearance.colors.m3primaryContainer : "transparent"
+          cornerRadius: Appearance.rounding.small
+          fillColor: today ? Appearance.colors.m3primary : "transparent"
+          outlineColor: Appearance.colors.ink
+          borderWidth: today ? 2 : 0
+          shadowDy: today ? 2 : 0
 
           StyledText {
             anchors.centerIn: parent
+            color: cell.today ? Appearance.colors.m3onPrimary : Appearance.colors.m3onSurface
             text: cell.day.getDate()
             opacity: cell.day.getMonth() === root.month.getMonth() ? 1 : 0.3
             font.pointSize: Appearance.font.size.small

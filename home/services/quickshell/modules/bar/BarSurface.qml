@@ -17,6 +17,10 @@ Item {
     anchors.fill: parent
     anchors.topMargin: root.inset
     fillColor: root.fillColor
-    shadowDy: 3
+    outlineColor: Appearance.colors.ink
+    borderWidth: 2
+    ringWidth: 2
+    ringColor: Qt.alpha(Appearance.colors.m3onSurface, 0.3)
+    shadowDy: 4
   }
 }

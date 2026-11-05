@@ -32,7 +32,7 @@ Item {
     slantLeft: true
     slantRight: true
     skew: Appearance.skew
-    fillColor: Qt.alpha(Appearance.colors.alert, 0.14)
+    fillColor: Qt.alpha(Appearance.colors.m3surface, 0.14)
     shadowColor: Appearance.colors.elevatedShadow
     shadowOffset: 5
   }

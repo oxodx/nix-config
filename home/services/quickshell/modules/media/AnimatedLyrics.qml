@@ -3,202 +3,137 @@ pragma ComponentBehavior: Bound
 import qs.services
 import qs.theme
 import QtQuick
-import QtQuick.Layouts
 import qs.components
 
+// Three lyric lines for the bar's media strip: the previous line, the current line (with word
+// highlight), and the next line. Each row has a fixed pixel height, so text cannot spill into the
+// row above or below. A line change scrolls the column up by exactly one row, then snaps back
+// with the rows relabelled, so the lines move up as a block.
 Item {
   id: root
   clip: true
+  z: 1
 
-  property bool compact: false
   property color currentColor: Appearance.colors.m3onSurface
   property color surroundingColor: Appearance.colors.m3onSurfaceVariant
-  property bool frontActive: true
-  property bool immediateRefresh: false
 
-  function scheduleRefresh(immediate: bool): void {
-    immediateRefresh = immediateRefresh || immediate;
-    Qt.callLater(applyRefresh);
-  }
+  readonly property int rowHeight: 14
+  readonly property real restY: (root.height - 3 * root.rowHeight) / 2
 
-  function applyRefresh(): void {
-    const immediate = immediateRefresh;
-    immediateRefresh = false;
-    refresh(immediate);
-  }
+  readonly property var lines: MprisService.syncedLyrics
+  readonly property bool hasLines: lines.length > 0
+  readonly property int live: MprisService.currentLyricIndex
 
-  function currentText(): string {
-    if (MprisService.lyricsLoading)
-      return "Finding lyrics…";
-    const lines = MprisService.syncedLyrics;
-    const index = MprisService.currentLyricIndex;
-    return index >= 0 ? lines[index]?.text || "♪" : MprisService.firstPlainLyric || MprisService.lyricStatus;
-  }
-
-  function populate(layer: Item): void {
-    layer.lyricIndex = MprisService.currentLyricIndex;
-    layer.words = MprisService.syncedLyrics[layer.lyricIndex]?.words ?? [];
-    layer.currentText = currentText();
-    if (currentText() === "Finding lyrics…" || currentText() === "No lyrics available") {
-      layer.previousText = "";
-      layer.nextText = "";
-    } else {
-      const lines = MprisService.syncedLyrics;
-      const index = MprisService.currentLyricIndex;
-      layer.previousText = lines[index - 1]?.text ?? "";
-      layer.nextText = lines[index + 1]?.text ?? "";
+  // Lyric files often repeat a line right after itself (backing vocals). Back-to-back identical
+  // lines are merged into one row, so they do not read as an echo.
+  readonly property var uniq: {
+    const out = [];
+    for (let i = 0; i < lines.length; i++) {
+      if (i === 0 || lines[i].text !== lines[i - 1].text)
+        out.push(lines[i]);
     }
-    layer.synced = MprisService.currentLyricIndex >= 0;
+    return out;
   }
-
-  function refresh(immediate: bool): void {
-    if (transition.running)
-      transition.complete();
-
-    const outgoing = frontActive ? front : back;
-    const incoming = frontActive ? back : front;
-    populate(incoming);
-
-    if (immediate) {
-      outgoing.opacity = 0;
-      outgoing.y = 0;
-      incoming.opacity = 1;
-      incoming.y = 0;
-      frontActive = !frontActive;
-      return;
+  readonly property var uniqIndex: {
+    const map = [];
+    let k = -1;
+    for (let i = 0; i < lines.length; i++) {
+      if (i === 0 || lines[i].text !== lines[i - 1].text)
+        k++;
+      map.push(k);
     }
+    return map;
+  }
+  readonly property int liveUniq: live >= 0 && live < uniqIndex.length ? uniqIndex[live] : -1
 
-    incoming.opacity = 0;
-    incoming.y = height * 0.3;
-    transition.restart();
+  // The row shown in the middle. It lags `liveUniq` during the scroll.
+  property int shown: -1
+  readonly property int cur: shown >= 0 ? shown : 0
+  readonly property bool synced: hasLines && shown >= 0
+  readonly property bool lit: synced && shown === liveUniq
+
+  readonly property string fallbackText: {
+    if (MprisService.lyricsLoading) return "Finding lyrics…";
+    return MprisService.firstPlainLyric || MprisService.lyricStatus;
   }
 
-  Component.onCompleted: {
-    populate(front);
-    front.opacity = 1;
-    back.opacity = 0;
+  function rowText(row: int): string {
+    if (!hasLines)
+      return row === 1 ? fallbackText : "";
+    return uniq[cur - 1 + row]?.text || (row === 1 ? "♪" : "");
   }
+
+  Component.onCompleted: shown = liveUniq
 
   Connections {
     target: MprisService
-    function onCurrentLyricIndexChanged(): void {
-      root.scheduleRefresh(false);
-    }
-    function onFirstPlainLyricChanged(): void {
-      root.scheduleRefresh(false);
-    }
-    function onLyricsLoadingChanged(): void {
-      root.scheduleRefresh(false);
-    }
-    function onLyricsErrorChanged(): void {
-      root.scheduleRefresh(false);
-    }
-    function onLyricStatusChanged(): void {
-      root.scheduleRefresh(false);
-    }
-    function onActivePlayerChanged(): void {
-      root.scheduleRefresh(true);
-    }
     function onSyncedLyricsChanged(): void {
-      root.scheduleRefresh(true);
+      // A new song starts from its first line, with no scroll.
+      scroll.stop();
+      track.y = root.restY;
+      root.shown = root.liveUniq;
     }
-  }
-
-  LyricStack {
-    id: front
-    width: root.width
-    height: root.height
-  }
-
-  LyricStack {
-    id: back
-    width: root.width
-    height: root.height
-  }
-
-  ParallelAnimation {
-    id: transition
-
-    YAnimator {
-      target: root.frontActive ? front : back
-      from: 0
-      to: -root.height * 0.3
-      duration: 520
-      easing.type: Easing.InOutCubic
-    }
-
-    OpacityAnimator {
-      target: root.frontActive ? front : back
-      from: 1
-      to: 0
-      duration: 420
-      easing.type: Easing.InOutCubic
-    }
-
-    YAnimator {
-      target: root.frontActive ? back : front
-      from: root.height * 0.3
-      to: 0
-      duration: 520
-      easing.type: Easing.InOutCubic
-    }
-
-    OpacityAnimator {
-      target: root.frontActive ? back : front
-      from: 0
-      to: 1
-      duration: 460
-      easing.type: Easing.InOutCubic
-    }
-
-    onFinished: root.frontActive = !root.frontActive
-  }
-
-  component LyricStack: Item {
-    id: stack
-    property string previousText: ""
-    property string currentText: ""
-    property string nextText: ""
-    property bool synced: false
-    property int lyricIndex: -1
-    property var words: []
-
-    ColumnLayout {
-      anchors.fill: parent
-      spacing: root.compact ? -2 : 0
-
-      StyledText {
-        Layout.fillWidth: true
-        Layout.preferredHeight: root.height * 0.32
-        text: parent.parent.previousText
-        color: root.surroundingColor
-        font.pointSize: root.compact ? 6 : Appearance.font.size.smaller
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-        elide: Text.ElideRight
+    function onCurrentLyricIndexChanged(): void {
+      if (root.liveUniq === root.shown)
+        return;
+      // One row ahead scrolls. Anything else (a seek, or a skip) jumps.
+      if (root.shown >= 0 && root.liveUniq === root.shown + 1 && !scroll.running) {
+        scroll.restart();
+      } else {
+        scroll.stop();
+        track.y = root.restY;
+        root.shown = root.liveUniq;
       }
+    }
+  }
+
+  SequentialAnimation {
+    id: scroll
+    NumberAnimation {
+      target: track
+      property: "y"
+      to: root.restY - root.rowHeight
+      duration: 320
+      easing.type: Easing.InOutCubic
+    }
+    ScriptAction {
+      script: {
+        root.shown = root.liveUniq;
+        track.y = root.restY;
+      }
+    }
+  }
+
+  Item {
+    id: track
+    x: 0
+    y: root.restY
+    width: root.width
+    height: 4 * root.rowHeight
+
+    Repeater {
+      model: 4
 
       TimedLyricText {
-        Layout.fillWidth: true
-        Layout.fillHeight: true
-        lineText: stack.currentText
-        words: stack.words
-        position: MprisService.lyricPosition
-        highlighting: stack.synced && stack.lyricIndex === MprisService.currentLyricIndex
-        color: parent.parent.synced ? root.currentColor : Appearance.colors.m3onSurfaceVariant
-        font.pointSize: root.compact ? 8 : Appearance.font.size.normal
-        font.weight: parent.parent.synced ? Font.Bold : Font.Normal
-        horizontalAlignment: Text.AlignHCenter
-        verticalAlignment: Text.AlignVCenter
-        elide: Text.ElideRight
-      }
+        id: row
+        required property int index
+        readonly property bool middle: index === 1
 
-      StyledText {
-        Layout.fillWidth: true
-        Layout.preferredHeight: root.height * 0.32
-        text: parent.parent.nextText
-        color: root.surroundingColor
-        font.pointSize: root.compact ? 6 : Appearance.font.size.smaller
+        x: 0
+        y: index * root.rowHeight
+        width: track.width
+        height: root.rowHeight
+        lineText: root.rowText(index)
+        words: middle && root.lit ? (root.uniq[root.shown]?.words ?? []) : []
+        highlighting: middle && root.lit
+        position: MprisService.lyricPosition
+        color: middle && !root.lit && root.synced ? root.currentColor : root.surroundingColor
+        highlightColor: root.currentColor
+        opacity: middle ? 1 : 0.75
+        font.pixelSize: middle ? 12 : 10
+        font.weight: middle && root.synced ? Font.Bold : Font.Normal
+        lineHeightMode: Text.FixedHeight
+        lineHeight: root.rowHeight
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         elide: Text.ElideRight

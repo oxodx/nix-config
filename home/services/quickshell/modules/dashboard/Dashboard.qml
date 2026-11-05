@@ -70,11 +70,8 @@ Item {
         Layout.fillWidth: true
         spacing: -2
 
-        StyledText {
-          text: Qt.formatDateTime(clock.date, "hh:mm:ss")
-          color: Appearance.colors.m3onSurface
-          font.pointSize: Appearance.font.size.extraLarge
-          font.weight: Font.Bold
+        ClockDigits {
+          time: clock.date
         }
 
         StyledText {

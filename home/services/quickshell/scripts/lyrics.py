@@ -79,7 +79,33 @@ def parse_lrc(source, duration=0):
     for wi, word in enumerate(line["words"]):
       next_start = (line["words"][wi + 1]["start"] if wi + 1 < len(line["words"]) else end)
       word["end"] = max(word["start"], min(end, next_start))
+    if not line["words"]:
+      line["words"] = estimate_words(line["text"], line["time"], end)
   return lines
+
+def estimate_words(text, start, end):
+  """Spread a line's time over its words by length, for lyrics that only have line timings.
+
+  The result has the same shape as enhanced words, but is marked "estimated" so it does not count
+  as word-synced lyrics.
+  """
+  tokens = list(re.finditer(r"\S+", text))
+  if not tokens or end <= start:
+    return []
+  weights = [max(1, text_length(token.group())) for token in tokens]
+  total, span, elapsed, words = sum(weights), end - start, 0, []
+  for token, weight in zip(tokens, weights):
+    word_start = start + span * elapsed / total
+    elapsed += weight
+    words.append({
+      "start": word_start,
+      "end": start + span * elapsed / total,
+      "offset": text_length(text[:token.start()]),
+      "length": text_length(token.group()),
+      "word": token.group(),
+      "estimated": True,
+    })
+  return words
 
 def normalize(value):
   return re.sub(r"[^\w]+", "", unicodedata.normalize("NFKC", value).casefold())
@@ -130,7 +156,8 @@ def candidate(track, lrc, plain, duration, source, instrumental=False):
   lines = parse_lrc(lrc or "", duration or track.get("duration", 0))
   return {
     "lines": lines,
-    "enhanced": any(line["words"] for line in lines),
+    # Only real word timings count. Estimated ones just drive the highlight.
+    "enhanced": any(not word.get("estimated") for line in lines for word in line["words"]),
     "plainLyrics": plain or "",
     "duration": duration or track.get("duration", 0),
     "instrumental": instrumental,

@@ -10,10 +10,11 @@ SkewedPanel {
   property bool pressed: false
 
   radius: Appearance.rounding.small
-  fillColor: root.pressed ? Qt.alpha(Appearance.colors.m3primary, 0.24)
-           : root.hovered ? Qt.alpha(Appearance.colors.m3onSurface, 0.12)
+  outlineWidth: 1
+  fillColor: root.pressed ? Qt.alpha(Appearance.colors.m3primary, 0.28)
+           : root.hovered ? Qt.alpha(Appearance.colors.m3primary, 0.14)
            : "transparent"
-  outlineColor: "transparent"
+  outlineColor: root.hovered || root.pressed ? Qt.alpha(Appearance.colors.m3primary, 0.55) : "transparent"
 
   Behavior on fillColor { ColorAnimation { duration: 150; easing.type: Easing.OutCubic } }
 }

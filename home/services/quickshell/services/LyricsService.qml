@@ -13,6 +13,8 @@ Scope {
   property string plainLyrics: ""
   property var syncedLyrics: []
   property bool lyricsLoading: false
+  // True once a lookup for the current song has finished. Only then can "No lyrics found" be shown.
+  property bool lookupFinished: false
   property string lyricsError: ""
   property bool instrumental: false
   property bool enhanced: false
@@ -20,7 +22,11 @@ Scope {
   property real trackDuration: 0
   readonly property real clockPosition: Number(player?.position) || 0
   readonly property real effectivePosition: clockPosition + timingOffset
-  readonly property string statusText: !player ? "Nothing playing" : lyricsLoading ? "Finding lyrics…" : instrumental ? "Instrumental" : syncedLyrics.length ? (enhanced ? "Word-synced lyrics" : "Synced lyrics") : plainLyrics ? "Unsynced lyrics" : lyricsError || "No lyrics available"
+  readonly property bool hasLyrics: syncedLyrics.length > 0 || plainLyrics !== "" || instrumental
+  readonly property string statusText: !player ? "Nothing playing"
+    : hasLyrics ? (instrumental ? "Instrumental" : syncedLyrics.length ? (enhanced ? "Word-synced lyrics" : "Synced lyrics") : "Unsynced lyrics")
+    : lyricsLoading || !lookupFinished ? "Finding lyrics…"
+    : lyricsError || "No lyrics found"
   readonly property int currentLyricIndex: {
     let low = 0;
     let high = syncedLyrics.length;
@@ -53,7 +59,11 @@ Scope {
 
   // MprisService already ticks Quickshell's interpolated position. A second
   // clock plus playerctl corrections can repeatedly rewind stale players.
-  onTrackChanged: lookupDelay.restart()
+  onTrackChanged: {
+    root.clear();
+    root.lyricsLoading = true;
+    lookupDelay.restart();
+  }
 
   function lyricKey(): string {
     if (!track || !player || !track.title || track.title === "Unknown Title") return "";
@@ -75,6 +85,7 @@ Scope {
     enhanced = false;
     source = "";
     trackDuration = 0;
+    lookupFinished = false;
   }
 
   function fetchLyrics(refresh: bool): void {
@@ -84,6 +95,7 @@ Scope {
     if (!key) {
       clear();
       lyricsLoading = false;
+      lookupFinished = true;
       return;
     }
     if (key !== lookup.requestKey) clear();
@@ -128,6 +140,7 @@ Scope {
         return;
       }
       root.lyricsLoading = false;
+      root.lookupFinished = true;
       if (code !== 0) {
         root.lyricsError = "Lyrics lookup failed — retry";
         return;
@@ -142,6 +155,7 @@ Scope {
     onTriggered: {
       lookup.running = false;
       root.lyricsLoading = false;
+      root.lookupFinished = true;
       root.lyricsError = "Lyrics lookup timed out — retry";
     }
   }

@@ -71,6 +71,7 @@ Item {
     Item {
       id: body
       anchors.fill: parent
+      anchors.margins: root.borderWidth + root.ringWidth
     }
   }
 }

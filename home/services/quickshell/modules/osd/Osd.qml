@@ -15,7 +15,15 @@ PanelWindow {
   readonly property var focusedMonitor: Hyprland.focusedMonitor
   readonly property bool focusedScreen: focusedMonitor === null || screen.name === focusedMonitor.name
 
-  visible: showing && focusedScreen
+  property real presence: showing ? 1 : 0
+  Behavior on presence {
+    NumberAnimation {
+      duration: root.showing ? 160 : 240
+      easing.type: Easing.OutCubic
+    }
+  }
+
+  visible: (showing || presence > 0) && focusedScreen
   implicitWidth: 340
   implicitHeight: 72
   color: "transparent"
@@ -46,20 +54,8 @@ PanelWindow {
 
   Item {
     anchors.fill: parent
-    opacity: root.showing ? 1 : 0
-    scale: root.showing ? 1 : 0.94
-
-    Behavior on opacity {
-      NumberAnimation {
-        duration: 140
-      }
-    }
-    Behavior on scale {
-      NumberAnimation {
-        duration: 180
-        easing.type: Easing.OutCubic
-      }
-    }
+    opacity: root.presence
+    scale: 0.94 + 0.06 * root.presence
 
     SkewedSurface {
       anchors.fill: parent
@@ -82,13 +78,23 @@ PanelWindow {
       }
       spacing: 13
 
-      MaterialIcon {
-        Layout.preferredWidth: 28
+      Pill {
+        Layout.preferredWidth: 42
+        Layout.preferredHeight: 42
         Layout.alignment: Qt.AlignVCenter
-        text: OsdService.kind === "brightness" ? "brightness_6" : OsdService.kind === "microphone" ? (OsdService.muted ? "mic_off" : "mic") : (OsdService.muted || OsdService.value === 0 ? "volume_off" : "volume_up")
-        fill: 1
-        font.pointSize: Appearance.font.size.extraLarge
-        color: OsdService.muted ? Appearance.colors.alert : Appearance.colors.m3tertiary
+        cornerRadius: 21
+        fillColor: Qt.alpha(OsdService.muted ? Appearance.colors.alert : Appearance.colors.m3tertiary, 0.18)
+        outlineColor: Appearance.colors.ink
+        borderWidth: 2
+        shadowDy: 0
+
+        MaterialIcon {
+          anchors.centerIn: parent
+          text: OsdService.kind === "brightness" ? "brightness_6" : OsdService.kind === "microphone" ? (OsdService.muted ? "mic_off" : "mic") : (OsdService.muted || OsdService.value === 0 ? "volume_off" : "volume_up")
+          fill: 1
+          font.pointSize: Appearance.font.size.extraLarge
+          color: OsdService.muted ? Appearance.colors.alert : Appearance.colors.m3tertiary
+        }
       }
 
       ColumnLayout {

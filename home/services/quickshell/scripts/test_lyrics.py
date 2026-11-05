@@ -11,6 +11,32 @@ import lyrics
 
 class LyricsTests(unittest.TestCase):
 
+  def test_line_only_lyrics_get_estimated_words(self):
+    line = lyrics.parse_lrc("[00:01]Hello big world", 4)[0]
+    words = line["words"]
+    self.assertEqual([word["word"] for word in words], ["Hello", "big", "world"])
+    self.assertTrue(all(word["estimated"] for word in words))
+    self.assertEqual(words[0]["start"], 1)
+    self.assertAlmostEqual(words[-1]["end"], line["end"])
+    self.assertEqual(words[1]["offset"], 6)
+    # Longer words take longer: "Hello" (5) gets more time than "big" (3).
+    self.assertGreater(words[0]["end"] - words[0]["start"], words[1]["end"] - words[1]["start"])
+
+  def test_estimated_words_do_not_make_lyrics_word_synced(self):
+    track = {"artist": "a", "title": "t"}
+    result = lyrics.candidate(track, "[00:01]Hello big world", "", 4, "test")
+    self.assertFalse(result["enhanced"])
+    enhanced = lyrics.candidate(track, "[00:01]<00:01>Hello <00:02>world", "", 4, "test")
+    self.assertTrue(enhanced["enhanced"])
+
+  def test_estimated_words_keep_unicode_offsets(self):
+    line = lyrics.parse_lrc("[00:01]café 🎵 song", 4)[0]
+    word = line["words"][1]
+    self.assertEqual(word["word"], "🎵")
+    self.assertEqual(word["offset"], 5)
+    self.assertEqual(word["length"], 2)
+
+
   def test_regular_lrc_offsets_repeats_and_gaps(self):
     lines = lyrics.parse_lrc(
       "[offset:+250]\n[00:02.50][00:04]Repeat\n[00:01]First\n[00:03]\n[ar:Metadata]", 8)

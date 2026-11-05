@@ -10,6 +10,7 @@ import qs.modules.bar
 import qs.modules.background
 import qs.modules.notifications as Notifs
 import qs.modules.osd as Osd
+import qs.modules.settings
 
 ShellRoot {
   id: root
@@ -81,6 +82,10 @@ ShellRoot {
       }
 
       Osd.Osd {
+        screen: modelData
+      }
+
+      SettingsWindow {
         screen: modelData
       }
     }

@@ -37,6 +37,8 @@ Singleton {
     }
   }
 
+  property bool settingsOpen: false
+
   // A value from the command line: "true" / "false", a number, or text.
   function parseSetting(value: string): var {
     if (value === "true") return true;
@@ -47,6 +49,12 @@ Singleton {
 
   IpcHandler {
     target: "settings"
+
+    // qs ipc call settings open
+    function open(): void { ShellIpc.settingsOpen = true; }
+
+    // qs ipc call settings close
+    function close(): void { ShellIpc.settingsOpen = false; }
 
     // qs ipc call settings set bar.height 44
     // qs ipc call settings set ui.slant true

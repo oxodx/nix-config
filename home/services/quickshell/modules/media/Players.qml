@@ -49,7 +49,7 @@ FullwidthMouseArea {
     id: background
     visible: !root.compactBar
     anchors.fill: parent
-    overlay.color: Qt.alpha(Appearance.colors.alert, 0.11)
+    overlay.color: Qt.alpha(Appearance.colors.m3surface, 0.25)
     skewed: root.skewed
 
     function refresh(reverse: bool): void {
@@ -133,7 +133,6 @@ FullwidthMouseArea {
           leftMargin: 10
           rightMargin: 10
         }
-        compact: true
       }
     }
 
@@ -171,7 +170,7 @@ FullwidthMouseArea {
     anchors.leftMargin: root.edgeInset
     anchors.rightMargin: root.edgeInset
     anchors.topMargin: 0
-    anchors.bottomMargin: 2
+    anchors.bottomMargin: 4
     visible: root.compactBar
     spacing: 16
 
@@ -184,13 +183,24 @@ FullwidthMouseArea {
       font.weight: Font.Bold
       elide: Text.ElideRight
     }
-    AnimatedLyrics {
+    Item {
       Layout.fillWidth: true
       Layout.fillHeight: true
       Layout.minimumWidth: 0
-      compact: true
-      currentColor: Appearance.colors.m3tertiary
-      surroundingColor: Appearance.colors.m3onSurfaceVariant
+
+      Rectangle {
+        anchors.fill: parent
+        radius: Appearance.rounding.normal
+        color: Qt.alpha(Appearance.colors.m3surfaceContainerHigh, 0.35)
+      }
+
+      AnimatedLyrics {
+        anchors.fill: parent
+        anchors.leftMargin: 14
+        anchors.rightMargin: 14
+        currentColor: Appearance.colors.m3tertiary
+        surroundingColor: Appearance.colors.m3onSurfaceVariant
+      }
     }
     StyledText {
       Layout.preferredWidth: Math.min(145, root.width * 0.22)
