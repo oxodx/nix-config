@@ -19,5 +19,8 @@
     jdk21
     maven
     gradle
+    nodejs
+    go
+    dotnet-sdk
   ];
 }
