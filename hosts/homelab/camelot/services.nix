@@ -8,6 +8,11 @@
     inherit (pkgs.stdenv.hostPlatform) system;
     config.allowUnfree = true;
   };
+
+  ports = {
+    sonarr = 8989;
+    radarr = 7878;
+  };
 in {
   imports = [./docker.nix];
 
@@ -17,16 +22,19 @@ in {
       package = pkgs.sonarr;
       user = "sonarr";
       group = "media";
-      settings.server.port = 8989;
+      settings.server.port = ports.sonarr;
       openFirewall = true;
       dataDir = "/data/.state/media/sonarr";
     };
 
     radarr = {
       enable = true;
+      package = pkgs.radarr;
+      user = "radarr";
+      group = "media";
+      settings.server.port = ports.radarr;
       openFirewall = true;
       dataDir = "/data/.state/media/radarr";
-      group = "media";
     };
 
     jellyfin = {
