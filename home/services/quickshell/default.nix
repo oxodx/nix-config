@@ -5,43 +5,57 @@
   ...
 }: let
   quickshell = inputs.quickshell.packages.${pkgs.stdenv.hostPlatform.system}.default;
-  lyricsPython = pkgs.python3.withPackages (python: [python.syncedlyrics python.requests]);
-  lyricsFetcher = pkgs.writeShellScriptBin "quickshell-lyrics" ''
-    exec ${lyricsPython}/bin/python ${./scripts/lyrics.py} "$@"
-  '';
-  wallpaperFetcher = pkgs.writeShellApplication {
-    name = "quickshell-wallpaper";
-    runtimeInputs = [pkgs.curl];
-    text = ''
-      exec ${pkgs.python3}/bin/python ${./scripts/wallpaper.py} "$@"
-    '';
-  };
 
+  # What the end-4 shell calls at runtime: notifications, Wi-Fi, clipboard history, the
+  # wallpaper-based colour theme, the blue-light filter, screen recording and screenshots.
   dependencies = with pkgs; [
-    lyricsFetcher
-    wallpaperFetcher
-    playerctl
     bash
     coreutils
     gawk
-    lsof
-    ripgrep
     procps
     util-linux
+    ripgrep
+    lsof
     imagemagick
     grim
+    slurp
     curl
+    libnotify
+    networkmanager
+    wl-clipboard
+    cliphist
     brightnessctl
+    ddcutil
+    # Wallpaper switching: the picker (kdialog), JSON parsing (jq), gsettings, video
+    # wallpapers (mpvpaper) and thumbnails (ffmpeg).
+    jq
+    glib
+    kdePackages.kdialog
+    ffmpeg
+    mpvpaper
+    libsecret
+    libqalculate
+    playerctl
+    cava
+    matugen
+    hyprsunset
+    wf-recorder
   ];
 
   QML2_IMPORT_PATH = lib.concatStringsSep ":" [
     "${quickshell}/lib/qt-6/qml"
     "${pkgs.kdePackages.qtdeclarative}/lib/qt-6/qml"
     "${pkgs.kdePackages.kirigami.unwrapped}/lib/qt-6/qml"
+    # Qt5Compat.GraphicalEffects, used by the end-4 shell's effects and shadows.
+    "${pkgs.kdePackages.qt5compat}/lib/qt-6/qml"
+    # org.kde.syntaxhighlighting, used by the code view in the sidebar.
+    "${pkgs.kdePackages.syntax-highlighting}/lib/qt-6/qml"
+    # QtPositioning, used by the weather widget.
+    "${pkgs.kdePackages.qtpositioning}/lib/qt-6/qml"
   ];
 in {
-  environment.systemPackages = [lyricsFetcher wallpaperFetcher];
-  users.users.oxod.packages = [quickshell];
+  # Also on your login PATH, so `which matugen` and the shell's helpers agree.
+  users.users.oxod.packages = [quickshell] ++ dependencies;
 
   environment.sessionVariables = {
     QML2_IMPORT_PATH = QML2_IMPORT_PATH;

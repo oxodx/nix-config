@@ -112,6 +112,6 @@
 
   exec-once = dbus-update-activation-environment --systemd --all
   exec-once = nm-applet --indicator
-  exec-once = swayidle -w timeout 300 'qs ipc call lockscreen lock' before-sleep 'qs ipc call lockscreen lock' lock 'qs ipc call lockscreen lock'
+  exec-once = swayidle -w timeout 300 'qs ipc call lock activate' before-sleep 'qs ipc call lock activate' lock 'qs ipc call lock activate'
   exec-once = sh -c '/run/current-system/sw/libexec/polkit-kde-authentication-agent-1 2>/dev/null || true'
 ''

@@ -22,11 +22,13 @@
       bun
       python3
       uv
+      gdb
       rustc
       cargo
       rustfmt
       clippy
       gcc
+      cmake
       file-roller
       gnome-control-center
       nautilus

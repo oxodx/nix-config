@@ -7,12 +7,12 @@
   bindl = , XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
   bindl = , XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ -l 1.0
   bindl = , XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
-  bindl = , XF86MonBrightnessUp, exec, qs ipc call osd brightnessUp
-  bindl = , XF86MonBrightnessDown, exec, qs ipc call osd brightnessDown
+  bindl = , XF86MonBrightnessUp, exec, qs ipc call brightness increment
+  bindl = , XF86MonBrightnessDown, exec, qs ipc call brightness decrement
 
-  bind = CTRL ALT, L, exec, qs ipc call lockscreen lock
-  bind = $mod, D, exec, qs ipc call launcher toggle
-  bind = $mod SHIFT, W, exec, qs ipc call wallpaper toggle
+  bind = CTRL ALT, L, exec, qs ipc call lock activate
+  bind = $mod, D, exec, qs ipc call search toggle
+  bind = $mod SHIFT, W, exec, qs ipc call wallpaperSelector toggle
   bind = $mod SHIFT, D, exec, ${pkgs.fuzzel}/bin/fuzzel
   bind = $mod, Return, exec, ${pkgs.alacritty}/bin/alacritty
   bind = $mod, X, exec, ${pkgs.hyprpicker}/bin/hyprpicker -a
@@ -117,7 +117,7 @@
   bind = $mod SHIFT, O, movetoworkspace, special:magic
 
   bind = , Print, exec, grim - | wl-copy
-  bind = $mod SHIFT, S, exec, qs ipc call screenshot takeScreenshot
+  bind = $mod SHIFT, S, exec, qs ipc call region screenshot
 
   bindm = $mod, mouse:272, movewindow
   bindm = $mod, mouse:273, resizewindow

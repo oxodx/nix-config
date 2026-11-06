@@ -23,6 +23,7 @@ return {
         java = { "clang_format" },
         bash = { "shfmt" },
         sh = { "shfmt" },
+        cmake = { "cmake_format" },
         javascript = { "prettier" },
         javascriptreact = { "prettier" },
         typescript = { "prettier" },

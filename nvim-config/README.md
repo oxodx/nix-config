@@ -21,6 +21,7 @@ and Windows. Plugins come from lazy.nvim, and language servers come from Mason, 
 - **fd**, for file search (optional, but recommended).
 - **A C compiler and make**, for Treesitter parsers and the fzf extension. On Linux, gcc or clang
   and make. On Windows, Visual Studio Build Tools or zig, and make if you have it.
+- **CMake**, to configure and build CMake projects.
 - **A Nerd Font** in your terminal, so the icons show.
 - **JDK 21**, if you want Java (jdtls). Other languages do not need it.
 
@@ -83,7 +84,10 @@ Press Space and wait to see the rest in the which-key menu.
 
 Servers are installed by Mason and listed in `lua/plugins/lsp.lua`. Add or remove one there, or
 use `:Mason`. Formatters are in `lua/plugins/format.lua`, and Mason installs stylua, shfmt,
-prettier, yapf, and clang-format.
+prettier, yapf, clang-format, and cmake-format (the `cmakelang` package).
+
+CMake files (`CMakeLists.txt` and `*.cmake`) get highlighting from Treesitter, completion and
+diagnostics from neocmakelsp, and formatting from cmake-format.
 
 QML (Quickshell) support uses `qmlls` when it is on your PATH. Set `QML_IMPORT_PATH` to a
 colon-separated list of QML module directories, and `qmlls` gets them with `-I`.

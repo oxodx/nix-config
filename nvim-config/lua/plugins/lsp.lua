@@ -2,8 +2,8 @@
 -- Run :Mason to see or change them. Needs Neovim 0.11+ for vim.lsp.config.
 local servers = {
   "bashls", "clangd", "cssls", "csharp_ls", "dockerls", "gopls", "harper_ls",
-  "html", "jdtls", "lua_ls", "luau_lsp", "markdown_oxide", "phpactor", "pyright",
-  "rust_analyzer", "tailwindcss", "ts_ls", "yamlls", "astro",
+  "html", "jdtls", "lua_ls", "luau_lsp", "markdown_oxide", "neocmake", "phpactor",
+  "pyright", "rust_analyzer", "tailwindcss", "ts_ls", "yamlls", "astro",
 }
 
 return {
@@ -88,7 +88,7 @@ return {
 
       -- Formatters and tools that conform.nvim and the linters call.
       require("mason-tool-installer").setup({
-        ensure_installed = { "stylua", "shfmt", "prettier", "yapf", "clang-format" },
+        ensure_installed = { "stylua", "shfmt", "prettier", "yapf", "clang-format", "cmakelang" },
         run_on_start = true,
       })
 

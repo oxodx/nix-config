@@ -21,6 +21,6 @@
     gradle
     nodejs
     go
-    dotnet-sdk
+    dotnet-sdk_10
   ];
 }
