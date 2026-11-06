@@ -47,7 +47,7 @@ Scope {
             root.prefix(Config.options.search.prefix.clipboard);
         }
         function workspacesToggle(): void {
-            root.search();
+            GlobalStates.overviewOpen = !GlobalStates.overviewOpen;
         }
         function toggleReleaseInterrupt(): void {
             GlobalStates.superReleaseMightTrigger = false;
@@ -128,6 +128,15 @@ Scope {
         name: "sidebarRightClose"
         description: "Close Encore controls"
         onPressed: GlobalStates.sidebarRightOpen = false
+    }
+    GlobalShortcut {
+        name: "overviewWorkspacesToggle"
+        description: "Toggle Encore workspace overview"
+        onPressed: {
+            GlobalStates.searchOpen = false
+            GlobalStates.sidebarRightOpen = false
+            GlobalStates.overviewOpen = !GlobalStates.overviewOpen
+        }
     }
     GlobalShortcut {
         name: "barToggle"

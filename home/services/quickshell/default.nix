@@ -40,6 +40,23 @@
     matugen
     hyprsunset
     wf-recorder
+    tesseract
+    alacritty
+    fuzzel
+    btop
+    hyprpicker
+    pulseaudio
+    xdg-utils
+    xdg-user-dirs
+    wtype
+    ydotool
+    easyeffects
+    kdePackages.plasma-nm
+    kdePackages.bluedevil
+    kdePackages.kde-cli-tools
+    kdePackages.kcmutils
+    pavucontrol
+    (python3.withPackages (ps: with ps; [pillow numpy]))
   ];
 
   QML2_IMPORT_PATH = lib.concatStringsSep ":" [
@@ -54,6 +71,9 @@
     "${pkgs.kdePackages.qtpositioning}/lib/qt-6/qml"
   ];
 in {
+  programs.ydotool.enable = true;
+  users.users.oxod.extraGroups = ["ydotool"];
+
   # Also on your login PATH, so `which matugen` and the shell's helpers agree.
   users.users.oxod.packages = [quickshell] ++ dependencies;
 

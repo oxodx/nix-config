@@ -1,63 +1,43 @@
 pragma Singleton
 pragma ComponentBehavior: Bound
-
 import QtQuick
 import Quickshell
 import Quickshell.Hyprland
-
 import qs.modules.common
-import qs.modules.common.functions
 
-/**
- * Configs Hyprland
- */
+// Nix owns hyprland.conf. Keep shell overrides in the existing JSON settings
+// and reapply native keywords after a compositor reload; no foreign Lua file.
 Singleton {
     id: root
-    
     signal reloaded()
 
-    readonly property string configuratorScriptPath: Quickshell.shellPath("scripts/hyprland/hyprconfigurator.py")
-    readonly property string shellOverridesPath: FileUtils.trimFileProtocol(`${Directories.config}/hypr/hyprland/shellOverrides/main.lua`)
-
+    function apply(entries) {
+        for (const item of entries)
+            Quickshell.execDetached(["hyprctl", "keyword", item.key, String(item.value)])
+    }
+    function reapply() {
+        if (Config.ready) apply(Config.options.hyprlandOverrides)
+    }
     function set(key: string, value: var) {
-        Quickshell.execDetached(["bash", "-c", //
-            `${root.configuratorScriptPath} --file ${root.shellOverridesPath} --set "${key}" "${value}"` //
-        ])
+        const entries = {}; entries[key] = value; setMany(entries)
     }
-    
     function setMany(entries: var) {
-        let args = ""
-        for (let key in entries) {
-            args += `--set "${key}" "${entries[key]}" `
-        }
-        Quickshell.execDetached(["bash", "-c", //
-            `${root.configuratorScriptPath} --file ${root.shellOverridesPath} ${args}` //
-        ])
+        const next = Config.options.hyprlandOverrides.filter(item => !(item.key in entries))
+        for (const key in entries) next.push({key: key, value: entries[key]})
+        Config.options.hyprlandOverrides = next
+        apply(next.filter(item => item.key in entries))
     }
-    
-    function reset(key: string) {
-        Quickshell.execDetached(["bash", "-c", //
-            `${root.configuratorScriptPath} --file ${root.shellOverridesPath} --reset "${key}"` //
-        ])
-    }
-    
+    function reset(key: string) { resetMany([key]) }
     function resetMany(keys: list<string>) {
-        let args = ""
-        for (let i = 0; i < keys.length; i++) {
-            args += `--reset "${keys[i]}" `
-        }
-        Quickshell.execDetached(["bash", "-c", //
-            `${root.configuratorScriptPath} --file ${root.shellOverridesPath} ${args}` //
-        ])
+        Config.options.hyprlandOverrides = Config.options.hyprlandOverrides.filter(item => !keys.includes(item.key))
+        Quickshell.execDetached(["hyprctl", "reload"])
     }
-
+    Component.onCompleted: reapply()
+    Connections { target: Config; function onReadyChanged() { root.reapply() } }
     Connections {
         target: Hyprland
-
         function onRawEvent(event) {
-            if (event.name == "configreloaded") {
-                root.reloaded()
-            }
+            if (event.name === "configreloaded") { root.reapply(); root.reloaded() }
         }
     }
 }

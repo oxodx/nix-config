@@ -15,7 +15,7 @@ Scope {
         Hyprland.dispatch("global quickshell:" + (Config.options.panelFamily === "waffle" ? "sidebarLeftToggle" : "sidebarRightToggle"))
     }
     function overview() {
-        Hyprland.dispatch("global quickshell:" + (Config.options.panelFamily === "encore" ? "searchToggle" : "overviewWorkspacesToggle"))
+        Hyprland.dispatch("global quickshell:overviewWorkspacesToggle")
     }
     function settings() {
         GlobalStates.searchOpen = false
@@ -29,6 +29,7 @@ Scope {
         else MaterialThemeLoader.toggleLightDark()
     }
 
+    GlobalShortcut { name: "shellDetachSidebar"; description: "Detach assistant or open action center"; onPressed: Hyprland.dispatch("global quickshell:" + (Config.options.panelFamily === "waffle" ? "sidebarLeftToggle" : "sidebarLeftToggleDetach")) }
     GlobalShortcut { name: "shellControls"; description: "Open active family's controls"; onPressed: root.controls() }
     GlobalShortcut { name: "shellOverview"; description: "Open overview or Encore launcher"; onPressed: root.overview() }
     GlobalShortcut { name: "shellSettings"; description: "Open shell settings"; onPressed: root.settings() }
@@ -37,6 +38,7 @@ Scope {
 
     IpcHandler {
         target: "shell"
+        function ping(): string { return "ok" }
         function controls(): void { root.controls() }
         function overview(): void { root.overview() }
         function settings(): void { root.settings() }

@@ -14,7 +14,7 @@ Rectangle {
     readonly property bool wide: width >= 1100
     readonly property real cardWidth: Math.min(280, width - 176)
     Image { anchors.fill: parent; anchors.margins: 12; source: (root.video ? Config.options.background.thumbnailPath : root.wallpaper) || Quickshell.shellPath("assets/images/default_wallpaper.png"); fillMode: Image.PreserveAspectCrop; asynchronous: true }
-    Rectangle { anchors.fill: parent; anchors.margins: 12; color: EncoreStyle.dark ? "#72300d4c" : "#49350d50" }
+    Rectangle { anchors.fill: parent; anchors.margins: 12; color: EncoreStyle.dark ? "#18300d4c" : "#10350d50" }
     Rectangle { anchors.fill: parent; anchors.margins: 8; radius: 30; color: "transparent"; border.width: 5; border.color: "#a16dbe" }
     Rectangle { anchors.fill: parent; anchors.margins: 17; radius: 22; color: "transparent"; border.width: 2; border.color: "#b8e4b9ee" }
     // A loose constellation of stickers, kept behind application windows.

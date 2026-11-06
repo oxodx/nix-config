@@ -110,7 +110,7 @@ Singleton {
         }
 
         Behavior on multipliedBrightness {
-            enabled: monitor.animateChanges
+            enabled: monitor.ready && monitor.animateChanges
             NumberAnimation {
                 duration: 200
                 easing.type: Easing.BezierSpline
@@ -118,7 +118,10 @@ Singleton {
             }
         }
         onMultipliedBrightnessChanged: {
-            if (monitor.animationEnabled) syncBrightness();
+            // Reading the current level must never write to the device. In
+            // particular, do not animate from the default zero during startup.
+            if (!monitor.ready) return;
+            if (monitor.animateChanges) syncBrightness();
             else setTimer.restart();
         }
 
@@ -135,8 +138,11 @@ Singleton {
             stdout: SplitParser {
                 onRead: data => {
                     const [, , , current, max] = data.split(" ");
-                    monitor.rawMaxBrightness = parseInt(max);
-                    monitor.brightness = parseInt(current) / monitor.rawMaxBrightness;
+                    const currentValue = Number(current);
+                    const maxValue = Number(max);
+                    if (!Number.isFinite(currentValue) || !Number.isFinite(maxValue) || maxValue <= 0) return;
+                    monitor.rawMaxBrightness = maxValue;
+                    monitor.brightness = Math.max(0, Math.min(1, currentValue / maxValue));
                     monitor.ready = true;
                 }
             }
@@ -155,12 +161,13 @@ Singleton {
         }
 
         function syncBrightness() {
+            if (!monitor.ready) return;
             const brightnessValue = Math.max(monitor.multipliedBrightness, 0);
             if (isDdc) {
-                const rawValueRounded = Math.max(Math.floor(brightnessValue * monitor.rawMaxBrightness), 1);
+                const rawValueRounded = Math.max(Math.round(brightnessValue * monitor.rawMaxBrightness), 1);
                 setProc.exec(["ddcutil", "-b", busNum, "setvcp", "10", rawValueRounded]);
             } else {
-                const valuePercentNumber = Math.floor(brightnessValue * 100);
+                const valuePercentNumber = Math.round(brightnessValue * 100);
                 let valuePercent = `${valuePercentNumber}%`;
                 if (valuePercentNumber == 0) valuePercent = "1"; // Prevent fully black
                 setProc.exec(["brightnessctl", "--class", "backlight", "s", valuePercent, "--quiet"])
