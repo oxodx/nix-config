@@ -15,3 +15,5 @@ Brightness initialization is read-only. Startup animations cannot send a zero le
 Validated with Hyprland 0.55.4 `--verify-config`, NixOS service evaluation, global-target and duplicate-chord checks, and an isolated Wayland runtime run. Brightness writes were mocked during runtime tests.
 
 References: https://github.com/end-4/dots-hyprland/blob/main/dots/.config/hypr/hyprland/keybinds.lua and https://github.com/Blapples/SekaiPop#keybinds.
+
+Follow-up: Encore now has a real overview, `Super+Shift+E` desktop editing, `Ctrl+Shift+Super+T` customization, and actual frame work-area reservations. The final binding check covers 199 non-conflicting chords and verifies every global target in all three families. The old generic `Super+Tab` “or launcher” description is superseded by the real overview.

@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
 import qs.services
 import qs.modules.common
 import qs.modules.common.widgets
@@ -30,6 +31,13 @@ ContentPage {
                     value: "waffle"
                 }
             ]
+        }
+        RippleButton {
+            visible: Config.options.panelFamily === "encore"
+            buttonText: Translation.tr("Customize Encore cards, pictures and theme")
+            implicitHeight: 44
+            Layout.fillWidth: true
+            onClicked: Quickshell.execDetached(["qs", "ipc", "call", "encore", "customize"])
         }
         ConfigSwitch {
             visible: Config.options.panelFamily === "encore"

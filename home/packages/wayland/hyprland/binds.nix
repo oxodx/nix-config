@@ -15,7 +15,7 @@
   bindd = $mod, A, Shell: Launcher, global, quickshell:searchToggle
   bindd = $mod, D, Shell: Launcher, global, quickshell:searchToggle
   bindd = $mod, N, Shell: Quick controls, global, quickshell:shellControls
-  bindd = $mod, Tab, Shell: Overview or launcher, global, quickshell:shellOverview
+  bindd = $mod, Tab, Shell: Workspace overview, global, quickshell:shellOverview
   bindd = $mod, I, Shell: Settings, global, quickshell:shellSettings
   bindd = $mod, slash, Shell: Cheatsheet, global, quickshell:cheatsheetToggle
   bindd = $mod, K, Shell: On-screen keyboard, global, quickshell:oskToggle
@@ -140,6 +140,9 @@
 
   bindm = $mod, mouse:272, movewindow
   bindm = $mod, mouse:273, resizewindow
+
+  bindd = $mod SHIFT, E, Shell: Edit desktop cards, global, quickshell:shellEditDesktop
+  bindd = $mod CTRL SHIFT, T, Shell: Customize cards and theme, global, quickshell:shellCustomize
 
   # Illogical Impulse integrations, adapted to this machine and Encore.
   bindd = $mod, B, Shell: Assistant sidebar, global, quickshell:sidebarLeftToggle

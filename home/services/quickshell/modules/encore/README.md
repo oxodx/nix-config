@@ -73,3 +73,17 @@ Conflicting window shortcuts moved: focus with Super+Alt+H/J/K/L (arrows still w
 Rebuild/switch your Nix configuration to install the generated Hyprland bindings, then reload Hyprland and the updated shell. Merely editing these Nix sources does not install the bindings in the running compositor.
 
 The bottom dock has been removed; the side rails provide launcher, clipboard and controls access.
+
+## Reference widgets and customization
+
+The desktop now has equivalents of the visible SekaiPop reference widgets: weather with hourly temperatures/humidity/wind/UV, calendar, an interactive palette, user card with uptime/shell/desktop/day progress, a keycap clock, to-do list, synced lyric overlay, picture frame and sticky note. The palette samples the wallpaper or playing track's cover art, shuffles accents and supports undo. Lyrics use LRCLIB's line-synced data and gracefully handle offline/instrumental/missing results; this is not SekaiPop's multi-provider word-level lyrics engine. Fetching lyrics sends the playing track's artist/title/album/duration to LRCLIB. Weather uses the city/GPS preference already configured in the shell.
+
+- **Super+Shift+E**: move/resize cards. Drag their title strips, resize from the lower-right handle, or use × to hide a card. Escape or Done leaves edit mode. Edit mode lifts the desktop above apps temporarily.
+- **Ctrl+Shift+Super+T**: customize card visibility, pictures, purple/wallpaper/random accents, wallpaper dimming, rounding, and card tilt. The same screen is available from the control phone's settings button and Settings → Interface.
+- Card positions and sizes persist separately for each monitor. Reset layout restores both positions and visibility. Hiding a card keeps its contents.
+- Each task in **Little victories** has its own × delete button, independently of completion. The card itself can also be hidden through customization.
+- Click the picture frame or avatar to choose a local picture. The sticky note edits directly on the desktop and persists in the shell config.
+
+Rounded corners are a mask over the complete desktop rendering; the corner tape no longer covers the outer curve. Verified all four outer corner pixels are fully transparent. Separate input-transparent layer-shell surfaces reserve top/bottom frame margins, with side margins retained even when the rails are hidden. Tiled and maximized windows respect this area; true fullscreen intentionally uses the whole monitor and floating windows can still be dragged manually.
+
+The strong decorative wallpaper tint was replaced by configurable dimming (5% default). This does not change hardware brightness. The initialization/reload regression test for real brightness control is `python3 home/services/quickshell/tests/check_brightness.py`; it requires Wayland and mocks every brightness/DDC command.

@@ -242,10 +242,10 @@ EncorePopup {
             }
             EncoreButton {
                 symbol: "settings"
-                hint: "Shell settings"
+                hint: "Cards & theme"
                 onClicked: {
                     GlobalStates.sidebarRightOpen = false;
-                    Quickshell.execDetached(["qs", "-p", Quickshell.shellPath("settings.qml")]);
+                    GlobalStates.encoreCustomizeOpen = true;
                 }
             }
             EncoreButton {

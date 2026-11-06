@@ -76,6 +76,9 @@ Singleton {
             temp.temp += "°C";
             temp.tempFeelsLike += "°C";
         }
+        temp.description = data?.current?.weatherDesc?.[0]?.value || "";
+        temp.hourly = data?.forecast?.[0]?.hourly || [];
+        temp.forecast = data?.forecast || [];
         temp.lastRefresh = DateTime.time + " • " + DateTime.date;
         root.data = temp;
     }
@@ -93,7 +96,7 @@ Singleton {
         command += "?format=j1";
         command += " | ";
         // only take the current weather, location, asytronmy data
-        command += "jq '{current: .current_condition[0], location: .nearest_area[0], astronomy: .weather[0].astronomy[0]}'";
+        command += "jq '{current: .current_condition[0], location: .nearest_area[0], astronomy: .weather[0].astronomy[0], forecast: .weather}'";
         fetcher.command[2] = command;
         fetcher.running = true;
     }

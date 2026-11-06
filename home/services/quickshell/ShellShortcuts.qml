@@ -30,8 +30,10 @@ Scope {
     }
 
     GlobalShortcut { name: "shellDetachSidebar"; description: "Detach assistant or open action center"; onPressed: Hyprland.dispatch("global quickshell:" + (Config.options.panelFamily === "waffle" ? "sidebarLeftToggle" : "sidebarLeftToggleDetach")) }
+    GlobalShortcut { name: "shellEditDesktop"; description: "Edit Encore desktop or show overlay"; onPressed: { if (Config.options.panelFamily === "encore") GlobalStates.encoreEditMode = !GlobalStates.encoreEditMode; else GlobalStates.overlayOpen = !GlobalStates.overlayOpen } }
+    GlobalShortcut { name: "shellCustomize"; description: "Customize active shell"; onPressed: { if (Config.options.panelFamily === "encore") GlobalStates.encoreCustomizeOpen = !GlobalStates.encoreCustomizeOpen; else root.settings() } }
     GlobalShortcut { name: "shellControls"; description: "Open active family's controls"; onPressed: root.controls() }
-    GlobalShortcut { name: "shellOverview"; description: "Open overview or Encore launcher"; onPressed: root.overview() }
+    GlobalShortcut { name: "shellOverview"; description: "Open workspace overview"; onPressed: root.overview() }
     GlobalShortcut { name: "shellSettings"; description: "Open shell settings"; onPressed: root.settings() }
     GlobalShortcut { name: "shellTheme"; description: "Toggle active family's light/dark palette"; onPressed: root.theme() }
     GlobalShortcut { name: "shellReload"; description: "Reload shell"; onPressed: Quickshell.reload(true) }

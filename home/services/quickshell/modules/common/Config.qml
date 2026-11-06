@@ -82,6 +82,16 @@ Singleton {
             property string panelFamily: "encore" // "ii", "waffle", "encore"
 
             property JsonObject encore: JsonObject {
+                property int frameRounding: 36
+                property real wallpaperDim: 0.05
+                property bool cardTilt: true
+                property string accentColor: "#bf8de9"
+                property string previousAccent: "#bf8de9"
+                property string paletteMode: "purple"
+                property string imagePath: ""
+                property string profileImagePath: ""
+                property list<string> hiddenWidgets: []
+                property list<var> widgetLayouts: []
                 property bool darkMode: false
                 property string note: "Take up space.\nMake a little noise. ♡"
                 property bool desktopWidgets: true

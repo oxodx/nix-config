@@ -15,6 +15,8 @@ import qs.modules.ii.screenTranslator
 import qs.modules.ii.wallpaperSelector
 
 Scope {
+    PanelLoader { component: EncoreFrameInsets {} }
+    PanelLoader { component: EncoreCustomize {} }
     PanelLoader {
         component: EncoreDesktop {}
     }

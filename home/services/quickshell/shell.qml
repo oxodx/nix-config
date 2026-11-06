@@ -72,6 +72,8 @@ ShellRoot {
             GlobalStates.sidebarLeftOpen = false
             GlobalStates.sidebarRightOpen = false
             GlobalStates.sessionOpen = false
+            GlobalStates.encoreEditMode = false
+            GlobalStates.encoreCustomizeOpen = false
         }
     }
 

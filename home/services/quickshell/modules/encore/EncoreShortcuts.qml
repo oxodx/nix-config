@@ -27,9 +27,19 @@ Scope {
             if (GlobalStates.screenLocked) {
                 GlobalStates.searchOpen = false;
                 GlobalStates.sidebarRightOpen = false;
+                GlobalStates.encoreEditMode = false;
+                GlobalStates.encoreCustomizeOpen = false;
             }
         }
     }
+    IpcHandler {
+        target: "encore"
+        function edit(): void { GlobalStates.encoreEditMode = !GlobalStates.encoreEditMode }
+        function customize(): void { GlobalStates.encoreCustomizeOpen = !GlobalStates.encoreCustomizeOpen }
+        function resetLayout(): void { EncoreDesktopState.resetLayout() }
+    }
+    GlobalShortcut { name: "encoreEditDesktop"; description: "Move and resize Encore cards"; onPressed: { GlobalStates.encoreEditMode = !GlobalStates.encoreEditMode; GlobalStates.searchOpen = false; GlobalStates.sidebarRightOpen = false } }
+    GlobalShortcut { name: "encoreCustomize"; description: "Encore cards and theme"; onPressed: GlobalStates.encoreCustomizeOpen = !GlobalStates.encoreCustomizeOpen }
     IpcHandler {
         target: "search"
         function toggle(): void {
