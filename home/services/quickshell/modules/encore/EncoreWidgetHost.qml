@@ -14,7 +14,7 @@ Item {
     property real tilt: 0
     property bool fits: true
     readonly property real minimumWidth: ["image", "note", "lyrics"].includes(widgetId) ? 160 : 230
-    readonly property real minimumHeight: ({weather:200, calendar:220, palette:170, profile:160, clock:160, todo:180, media:144, lyrics:174, image:130, note:130})[widgetId] || 130
+    readonly property real minimumHeight: ({weather:200, calendar:220, palette:170, profile:160, clock:160, todo:180, media:144, lyrics:220, image:130, note:130})[widgetId] || 130
     default property alias body: content.data
     readonly property var record: EncoreDesktopState.findLayout(screenName, widgetId)
     visible: Config.options.encore.desktopWidgets && !GlobalStates.screenLocked && !EncoreDesktopState.hidden(widgetId) && (fits || record !== null || GlobalStates.encoreEditMode)

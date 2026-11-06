@@ -43,6 +43,10 @@ Item {
         interval: 200; repeat: true; running: root.visible && (root.player?.isPlaying ?? false)
         onTriggered: { root.player.positionChanged(); root.position = root.player.position }
     }
+    Connections {
+        target: root.player
+        function onPositionChanged() { root.position = root.player?.position ?? 0 }
+    }
     Process {
         id: fetcher
         stdout: StdioCollector {
@@ -65,6 +69,8 @@ Item {
     }
     EncoreLyricVisual {
         anchors.fill: parent
+        timedLines: root.lines
+        lineIndex: root.currentLine
         lineText: root.lines[root.currentLine]?.text || root.status || "♫"
         previousText: root.lines[root.currentLine - 1]?.text || ""
         nextText: root.lines[root.currentLine + 1]?.text || ""
