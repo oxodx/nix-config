@@ -44,7 +44,7 @@ Item {
     NumberAnimation {
         id: scroll
         target: view; property: "contentY"
-        duration: 620; easing.type: Easing.OutBack; easing.overshoot: 0.65
+        duration: 360; easing.type: Easing.OutBack; easing.overshoot: 0.45
     }
     SequentialAnimation {
         id: pop

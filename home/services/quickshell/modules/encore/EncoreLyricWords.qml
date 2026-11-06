@@ -10,10 +10,7 @@ Item {
     property real progress: 0
     property real smoothProgress: progress
     readonly property bool animate: Config.options.encore.motion && visible && current && playing
-    Behavior on smoothProgress {
-        enabled: root.current && root.playing && Math.abs(root.progress - root.smoothProgress) < 0.3
-        NumberAnimation { duration: 210; easing.type: Easing.Linear }
-    }
+    // Playback already updates each frame. Tweening toward it adds audible lag.
     FontMetrics { id: metrics; font.family: EncoreStyle.font; font.pixelSize: root.fontSize; font.bold: true }
     readonly property var words: {
         let tokens = text.trim().split(/\s+/).filter(word => word.length)

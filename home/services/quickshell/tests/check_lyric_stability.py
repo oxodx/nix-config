@@ -36,10 +36,11 @@ import Quickshell
 import "modules/encore"
 ShellRoot {
     property var snapshot
+    EncoreLyricWords { id: timingProbe; width:400; height:68; text:"Timing check"; current:true; playing:true }
     QtObject { id: fake; property string trackTitle:"Song"; property string trackArtist:"Artist"; property string trackAlbum:"Album"; property real length:200; property real position:3; property bool isPlaying:true }
     FloatingWindow { visible:true; implicitWidth:400; implicitHeight:240; EncoreLyrics { id: lyrics; width:400; height:240; player:fake } }
     Timer { interval:100; running:true; repeat:true; onTriggered:{ fake.length+=.4; fake.position+=.1 } }
-    Timer { interval:1600; running:true; onTriggered:{ snapshot=lyrics.lines; console.log("LOADED",lyrics.lines.length===2); console.log("ESTIMATED",lyrics.estimated); console.log("ORDERED_TIMES",lyrics.lines.length===2 && lyrics.lines[1].t>lyrics.lines[0].t) } }
+    Timer { interval:1600; running:true; onTriggered:{ timingProbe.progress=.2; console.log("NO_FILL_DELAY",timingProbe.smoothProgress===timingProbe.progress); snapshot=lyrics.lines; console.log("LOADED",lyrics.lines.length===2); console.log("ESTIMATED",lyrics.estimated); console.log("ORDERED_TIMES",lyrics.lines.length===2 && lyrics.lines[1].t>lyrics.lines[0].t) } }
     Timer { interval:2500; running:true; onTriggered:{ console.log("STABLE",snapshot===lyrics.lines); fake.trackTitle="Another song" } }
     Timer { interval:4200; running:true; onTriggered:{ console.log("NEW_TRACK",lyrics.lines.length===2); Qt.quit() } }
 }
@@ -51,7 +52,7 @@ ShellRoot {
             env["ENCORE_LYRIC_MODE"] = mode
             result = subprocess.run(["dbus-run-session", "quickshell", "-p", str(shell)], env=env, text=True, capture_output=True, timeout=15)
             output = result.stdout + result.stderr
-            for marker in ("LOADED true", "STABLE true", "NEW_TRACK true", "ORDERED_TIMES true", "ESTIMATED " + ("true" if mode == "estimated" else "false")):
+            for marker in ("NO_FILL_DELAY true", "LOADED true", "STABLE true", "NEW_TRACK true", "ORDERED_TIMES true", "ESTIMATED " + ("true" if mode == "estimated" else "false")):
                 assert marker in output, output
             assert requests.read_text().splitlines() == ["request", "request"], output
             assert result.returncode == 0, output

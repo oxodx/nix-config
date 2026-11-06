@@ -65,8 +65,8 @@ Item {
     }
     onTrackKeyChanged: debounce.restart()
     Timer { id: debounce; interval: 650; onTriggered: root.fetch() }
-    Timer {
-        interval: 200; repeat: true; running: root.visible && (root.player?.isPlaying ?? false)
+    FrameAnimation {
+        running: root.visible && (root.player?.isPlaying ?? false)
         onTriggered: root.position = root.player.position
     }
     Connections {
