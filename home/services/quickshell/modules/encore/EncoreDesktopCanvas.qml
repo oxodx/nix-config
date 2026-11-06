@@ -67,7 +67,7 @@ Rectangle {
     }
     EncoreWidgetHost {
         widgetId: "lyrics"; screenName: root.screenName
-        initialX: root.width*0.31; initialY: root.height*0.49; initialWidth: root.width*0.38; initialHeight: 125; fits: root.wide
+        initialX: root.width*0.31; initialY: root.height*0.49; initialWidth: root.width*0.38; initialHeight: 174; tilt: -4; fits: root.wide
         EncoreLyrics { anchors.fill: parent }
     }
     EncoreWidgetHost {

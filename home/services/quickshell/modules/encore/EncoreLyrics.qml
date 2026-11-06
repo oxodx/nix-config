@@ -57,15 +57,20 @@ Item {
         }
         onExited: (code, exitStatus) => { if (code !== 0 && root.requestedTrack === root.track) root.status = "Lyrics unavailable offline." }
     }
-    ColumnLayout {
-        anchors.fill: parent; spacing: 8
-        EncoreText { Layout.fillWidth: true; text: root.lines[root.currentLine - 1]?.text || ""; horizontalAlignment: Text.AlignHCenter; font.pixelSize: 14; color: "#dfbce9"; style: Text.Outline; styleColor: "#451f58" }
-        EncoreText {
-            Layout.fillWidth: true; Layout.fillHeight: true
-            text: root.lines[root.currentLine]?.text || root.status || "♫"
-            horizontalAlignment: Text.AlignHCenter; wrapMode: Text.Wrap
-            font.pixelSize: 24; font.bold: true; color: "#fff0fc"; style: Text.Outline; styleColor: "#55246c"
-        }
-        EncoreText { Layout.fillWidth: true; text: root.player?.trackTitle ? root.track : ""; horizontalAlignment: Text.AlignHCenter; font.pixelSize: 10; color: "#ead6fa"; style: Text.Outline; styleColor: "#451f58" }
+    readonly property real lineProgress: {
+        if (currentLine < 0 || !lines[currentLine]) return 0
+        const start = lines[currentLine].t
+        const end = lines[currentLine + 1]?.t ?? player?.length ?? start + 5
+        return Math.max(0, Math.min(1, (position - start) / Math.max(0.1, end - start)))
+    }
+    EncoreLyricVisual {
+        anchors.fill: parent
+        lineText: root.lines[root.currentLine]?.text || root.status || "♫"
+        previousText: root.lines[root.currentLine - 1]?.text || ""
+        nextText: root.lines[root.currentLine + 1]?.text || ""
+        trackText: root.player?.trackTitle ? root.track : ""
+        playing: root.player?.isPlaying ?? false
+        synced: root.currentLine >= 0 && root.lines.length > 0
+        lineProgress: root.lineProgress
     }
 }
