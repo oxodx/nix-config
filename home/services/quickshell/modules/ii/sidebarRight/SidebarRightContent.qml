@@ -20,7 +20,7 @@ import qs.modules.ii.sidebarRight.wifiNetworks
 Item {
     id: root
     property int sidebarWidth: Appearance.sizes.sidebarWidth
-    property int sidebarPadding: Appearance.popStyle ? 16 : 10
+    property int sidebarPadding: 10
     property string settingsQmlPath: Quickshell.shellPath("settings.qml")
     property bool showAudioOutputDialog: false
     property bool showAudioInputDialog: false
@@ -54,56 +54,14 @@ Item {
         implicitHeight: parent.height - Appearance.sizes.hyprlandGapsOut * 2
         implicitWidth: sidebarWidth - Appearance.sizes.hyprlandGapsOut * 2
         color: Appearance.colors.colLayer0
-        border.width: Appearance.popStyle ? 3 : 1
-        border.color: Appearance.popStyle ? Appearance.popCream : Appearance.colors.colLayer0Border
+        border.width: 1
+        border.color: Appearance.colors.colLayer0Border
         radius: Appearance.rounding.screenRounding - Appearance.sizes.hyprlandGapsOut + 1
 
         ColumnLayout {
             anchors.fill: parent
             anchors.margins: sidebarPadding
             spacing: sidebarPadding
-
-            RowLayout {
-                visible: Appearance.popStyle
-                Layout.fillWidth: true
-                Layout.topMargin: 6
-                Layout.bottomMargin: 6
-                ColumnLayout {
-                    spacing: 2
-                    StyledText {
-                        text: "CONTROL ROOM"
-                        font.pixelSize: Appearance.font.pixelSize.small
-                        font.bold: true
-                        font.letterSpacing: 2
-                        color: Appearance.popAccent
-                    }
-                    StyledText {
-                        text: DateTime.time
-                        font.pixelSize: 38
-                        font.bold: true
-                        color: Appearance.colors.colOnLayer0
-                    }
-                    StyledText {
-                        text: DateTime.longDate
-                        color: Appearance.colors.colSubtext
-                    }
-                }
-                Item { Layout.fillWidth: true }
-                Rectangle {
-                    implicitWidth: 48
-                    implicitHeight: 48
-                    radius: 16
-                    color: Appearance.popPink
-                    border.width: 2
-                    border.color: Appearance.popInk
-                    MaterialSymbol {
-                        anchors.centerIn: parent
-                        text: "tune"
-                        iconSize: 26
-                        color: Appearance.popInk
-                    }
-                }
-            }
 
             SystemButtonRow {
                 Layout.fillHeight: false

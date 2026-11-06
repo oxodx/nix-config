@@ -78,7 +78,13 @@ Singleton {
         JsonAdapter {
             id: configOptionsJsonAdapter
 
-            property string panelFamily: "ii" // "ii", "waffle"
+            property string panelFamily: "encore" // "ii", "waffle", "encore"
+
+            property JsonObject encore: JsonObject {
+                property bool darkMode: false
+                property string note: "Take up space.\nMake a little noise. ♡"
+                property bool desktopWidgets: true
+            }
 
             property JsonObject policies: JsonObject {
                 property int ai: 1 // 0: No | 1: Yes | 2: Local
@@ -105,8 +111,6 @@ Singleton {
             }
 
             property JsonObject appearance: JsonObject {
-                // Outlined, tactile chrome inspired by SekaiPop. Disable to restore Material styling.
-                property bool popStyle: true
                 property bool extraBackgroundTint: true
                 property int fakeScreenRounding: 2 // 0: None | 1: Always | 2: When not fullscreen
                 property JsonObject fonts: JsonObject {
@@ -236,7 +240,7 @@ Singleton {
                     }
                 }
                 property bool bottom: false // Instead of top
-                property int cornerStyle: 1 // 0: Hug | 1: Float | 2: Plain rectangle
+                property int cornerStyle: 0 // 0: Hug | 1: Float | 2: Plain rectangle
                 property bool floatStyleShadow: true // Show shadow behind bar when cornerStyle == 1 (Float)
                 property bool borderless: false // true for no grouping of items
                 property string topLeftIcon: "spark" // Options: "distro" or any icon name in ~/.config/quickshell/ii/assets/icons

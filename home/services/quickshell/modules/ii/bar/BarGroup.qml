@@ -11,15 +11,6 @@ Item {
     default property alias items: gridLayout.children
 
     Rectangle {
-        anchors.fill: background
-        anchors.topMargin: Appearance.popStyle ? 3 : 0
-        anchors.bottomMargin: Appearance.popStyle ? -3 : 0
-        radius: background.radius
-        color: Appearance.popInk
-        visible: Appearance.popStyle && !Config.options.bar.borderless
-    }
-
-    Rectangle {
         id: background
         anchors {
             fill: parent
@@ -29,18 +20,7 @@ Item {
             rightMargin: root.vertical ? 4 : 0
         }
         color: Config.options?.bar.borderless ? "transparent" : Appearance.colors.colLayer1
-        radius: Appearance.popStyle ? 12 : Appearance.rounding.small
-        border.width: Appearance.popStyle && !Config.options.bar.borderless ? 2 : 0
-        border.color: Appearance.popCream
-
-        Rectangle {
-            anchors.fill: parent
-            anchors.margins: 4
-            radius: Math.max(0, parent.radius - 4)
-            color: "transparent"
-            border.width: Appearance.popStyle && !Config.options.bar.borderless ? 1 : 0
-            border.color: Qt.rgba(Appearance.popCream.r, Appearance.popCream.g, Appearance.popCream.b, 0.16)
-        }
+        radius: Appearance.rounding.small
     }
 
     GridLayout {

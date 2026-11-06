@@ -76,17 +76,9 @@ Button {
             const {x,y} = event
             startRipple(x, y)
         }
-        onPositionChanged: event => {
-            if (pressed && (event.x < 0 || event.y < 0 || event.x > width || event.y > height))
-                root.down = false;
-        }
         onReleased: (event) => {
             root.down = false
             if (event.button != Qt.LeftButton) return;
-            if (event.x < 0 || event.y < 0 || event.x > width || event.y > height) {
-                rippleFadeAnim.restart();
-                return;
-            }
             if (root.releaseAction) root.releaseAction();
             root.click() // Because the MouseArea already consumed the event
             if (!root.rippleEnabled) return;
@@ -144,12 +136,6 @@ Button {
         radius: root.buttonEffectiveRadius
         implicitHeight: 30
 
-        border.width: Appearance.popStyle && (root.toggled || root.hovered || root.visualFocus) ? 1 : 0
-        border.color: root.visualFocus ? Appearance.popAccent : Appearance.popCream
-        transform: Translate {
-            y: Appearance.popStyle && root.down ? 2 : 0
-            Behavior on y { NumberAnimation { duration: 100; easing.type: Easing.OutCubic } }
-        }
         color: root.buttonColor
         Behavior on color {
             animation: Appearance?.animation.elementMoveFast.colorAnimation.createObject(this)

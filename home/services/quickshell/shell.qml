@@ -21,6 +21,7 @@ ShellRoot {
 
     // Stuff for every panel family
     ReloadPopup {}
+    ShellShortcuts {}
 
     Component.onCompleted: {
         MaterialThemeLoader.reapplyTheme()
@@ -34,7 +35,7 @@ ShellRoot {
 
 
     // Panel families
-    property list<string> families: ["ii", "waffle"]
+    property list<string> families: ["ii", "waffle", "encore"]
     function cyclePanelFamily() {
         const currentIndex = families.indexOf(Config.options.panelFamily)
         const nextIndex = (currentIndex + 1) % families.length
@@ -58,9 +59,29 @@ ShellRoot {
     }
 
 
+    PanelFamilyLoader {
+        identifier: "encore"
+        component: EncoreFamily {}
+    }
+
+    Connections {
+        target: Config.options
+        function onPanelFamilyChanged() {
+            GlobalStates.searchOpen = false
+            GlobalStates.overviewOpen = false
+            GlobalStates.sidebarLeftOpen = false
+            GlobalStates.sidebarRightOpen = false
+            GlobalStates.sessionOpen = false
+        }
+    }
+
     // Shortcuts
     IpcHandler {
         target: "panelFamily"
+
+        function set(family: string): void {
+            if (root.families.includes(family)) Config.options.panelFamily = family
+        }
 
         function cycle(): void {
             root.cyclePanelFamily()

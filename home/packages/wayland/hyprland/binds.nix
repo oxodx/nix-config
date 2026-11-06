@@ -1,19 +1,36 @@
 {pkgs, ...}: ''
-  bindl = , XF86AudioPlay, exec, playerctl play-pause
-  bindl = , XF86AudioStop, exec, playerctl stop
-  bindl = , XF86AudioNext, exec, playerctl next
-  bindl = , XF86AudioPrev, exec, playerctl previous
-  bindl = , XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
-  bindl = , XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
-  bindl = , XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ -l 1.0
-  bindl = , XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
-  bindl = , XF86MonBrightnessUp, exec, qs ipc call brightness increment
-  bindl = , XF86MonBrightnessDown, exec, qs ipc call brightness decrement
+  # Shell keys follow SekaiPop's layout. Native globals target the active family.
+  # Descriptions are consumed by the shell's Super+/ cheatsheet.
+  bindld = , XF86AudioPlay, Media: Play or pause, exec, playerctl play-pause
+  bindld = , XF86AudioStop, Media: Stop, exec, playerctl stop
+  bindld = , XF86AudioNext, Media: Next track, exec, playerctl next
+  bindld = , XF86AudioPrev, Media: Previous track, exec, playerctl previous
+  bindld = , XF86AudioMute, Audio: Mute output, exec, qs ipc call shell mute
+  bindld = , XF86AudioMicMute, Audio: Mute microphone, exec, qs ipc call shell micMute
+  bindeld = , XF86AudioRaiseVolume, Audio: Raise volume, exec, qs ipc call shell volumeUp
+  bindeld = , XF86AudioLowerVolume, Audio: Lower volume, exec, qs ipc call shell volumeDown
+  bindeld = , XF86MonBrightnessUp, Display: Raise brightness, exec, qs ipc call brightness increment
+  bindeld = , XF86MonBrightnessDown, Display: Lower brightness, exec, qs ipc call brightness decrement
 
-  bind = CTRL ALT, L, exec, qs ipc call lock activate
-  bind = $mod, D, exec, qs ipc call search toggle
-  bind = $mod SHIFT, W, exec, qs ipc call wallpaperSelector toggle
-  bind = $mod SHIFT, D, exec, ${pkgs.fuzzel}/bin/fuzzel
+  bindd = $mod, A, Shell: Launcher, global, quickshell:searchToggle
+  bindd = $mod, D, Shell: Launcher, global, quickshell:searchToggle
+  bindd = $mod, N, Shell: Quick controls, global, quickshell:shellControls
+  bindd = $mod, Tab, Shell: Overview or launcher, global, quickshell:shellOverview
+  bindd = $mod, I, Shell: Settings, global, quickshell:shellSettings
+  bindd = $mod, slash, Shell: Cheatsheet, global, quickshell:cheatsheetToggle
+  bindd = $mod, K, Shell: On-screen keyboard, global, quickshell:oskToggle
+  bindd = $mod, V, Shell: Clipboard history, global, quickshell:overviewClipboardToggle
+  bindd = $mod, period, Shell: Emoji picker, global, quickshell:overviewEmojiToggle
+  bindd = $mod, L, Session: Lock, global, quickshell:lock
+  bindd = CTRL ALT, L, Session: Lock, global, quickshell:lock
+  bindd = $mod, Escape, Session: Power menu, global, quickshell:sessionToggle
+  bindd = $mod CTRL, T, Wallpaper: Choose wallpaper, global, quickshell:wallpaperSelectorToggle
+  bindd = $mod CTRL ALT, T, Wallpaper: Random wallpaper, global, quickshell:wallpaperSelectorRandom
+  bindd = $mod SHIFT, W, Wallpaper: Choose wallpaper, global, quickshell:wallpaperSelectorToggle
+  bindd = $mod CTRL SHIFT, D, Shell: Toggle light or dark, global, quickshell:shellTheme
+  bindd = $mod CTRL, R, Shell: Reload, global, quickshell:shellReload
+  bindd = $mod CTRL SHIFT, P, Shell: Cycle family, global, quickshell:panelFamilyCycle
+  bindd = $mod SHIFT, D, Apps: Fallback launcher, exec, ${pkgs.fuzzel}/bin/fuzzel
   bind = $mod, Return, exec, ${pkgs.alacritty}/bin/alacritty
   bind = $mod, X, exec, ${pkgs.hyprpicker}/bin/hyprpicker -a
 
@@ -21,10 +38,10 @@
   bind = $mod, down, movefocus, d
   bind = $mod, up, movefocus, u
   bind = $mod, right, movefocus, r
-  bind = $mod, H, movefocus, l
-  bind = $mod, J, movefocus, d
-  bind = $mod, K, movefocus, u
-  bind = $mod, L, movefocus, r
+  bindd = $mod ALT, H, Windows: Focus l, movefocus, l
+  bindd = $mod ALT, J, Windows: Focus d, movefocus, d
+  bindd = $mod ALT, K, Windows: Focus u, movefocus, u
+  bindd = $mod ALT, L, Windows: Focus r, movefocus, r
 
   bind = $mod CTRL, left, movewindow, l
   bind = $mod CTRL, down, movewindow, d
@@ -51,7 +68,6 @@
 
   bind = $mod, Prior, workspace, e-1
   bind = $mod, Next, workspace, e+1
-  bind = $mod, I, workspace, e-1
   bind = $mod, U, workspace, e+1
   bind = $mod CTRL, Prior, movetoworkspace, e-1
   bind = $mod CTRL, Next, movetoworkspace, e+1
@@ -100,12 +116,11 @@
   bind = $mod, bracketleft, moveoutofgroup,
   bind = $mod, bracketright, moveintogroup,
   bind = $mod, comma, moveintogroup,
-  bind = $mod, period, moveoutofgroup,
   bind = $mod, R, layoutmsg, togglesplit
-  bind = $mod SHIFT, R, layoutmsg, swapsplit
+  bindd = $mod CTRL SHIFT, R, Windows: Swap split, layoutmsg, swapsplit
   bind = $mod, F, fullscreen, 1
   bind = $mod SHIFT, F, fullscreen, 0
-  bind = $mod, V, togglefloating,
+  bindd = $mod SHIFT, V, Windows: Toggle floating, togglefloating,
   bind = $mod, W, togglegroup,
   bind = $mod, minus, resizeactive, -40 0
   bind = $mod, equal, resizeactive, 40 0
@@ -117,7 +132,11 @@
   bind = $mod SHIFT, O, movetoworkspace, special:magic
 
   bind = , Print, exec, grim - | wl-copy
-  bind = $mod SHIFT, S, exec, qs ipc call region screenshot
+  bindd = $mod SHIFT, S, Capture: Screen snip, global, quickshell:regionScreenshot
+  bindd = $mod SHIFT, X, Capture: OCR to clipboard, global, quickshell:regionOcr
+  bindd = $mod SHIFT, A, Capture: Search image with Lens, global, quickshell:regionSearch
+  bindd = $mod SHIFT, R, Capture: Record region, global, quickshell:regionRecord
+  bindd = $mod CTRL SHIFT, S, Capture: Record region with sound, global, quickshell:regionRecordWithSound
 
   bindm = $mod, mouse:272, movewindow
   bindm = $mod, mouse:273, resizewindow

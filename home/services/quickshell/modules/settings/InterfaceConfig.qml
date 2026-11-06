@@ -8,17 +8,44 @@ ContentPage {
     forceWidth: true
 
     ContentSection {
-        icon: "palette"
-        title: Translation.tr("Shell style")
+        icon: "dashboard_customize"
+        title: Translation.tr("Shell family")
+        ConfigSelectionArray {
+            currentValue: Config.options.panelFamily
+            onSelected: newValue => Config.options.panelFamily = newValue
+            options: [
+                {
+                    displayName: "Encore",
+                    icon: "star",
+                    value: "encore"
+                },
+                {
+                    displayName: "Illogical Impulse",
+                    icon: "space_dashboard",
+                    value: "ii"
+                },
+                {
+                    displayName: "Waffle",
+                    icon: "grid_view",
+                    value: "waffle"
+                }
+            ]
+        }
+        ConfigSwitch {
+            visible: Config.options.panelFamily === "encore"
+            buttonIcon: "dark_mode"
+            text: Translation.tr("Encore dark palette")
+            checked: Config.options.encore.darkMode
+            onCheckedChanged: Config.options.encore.darkMode = checked
+        }
+
 
         ConfigSwitch {
-            buttonIcon: "auto_awesome"
-            text: Translation.tr("Pop style")
-            checked: Config.options.appearance.popStyle
-            onCheckedChanged: Config.options.appearance.popStyle = checked
-            StyledToolTip {
-                text: Translation.tr("Cream outlines, hard shadows, pastel accents and tactile buttons. Wallpaper colors remain enabled.")
-            }
+            visible: Config.options.panelFamily === "encore"
+            buttonIcon: "widgets"
+            text: Translation.tr("Encore desktop cards")
+            checked: Config.options.encore.desktopWidgets
+            onCheckedChanged: Config.options.encore.desktopWidgets = checked
         }
     }
 

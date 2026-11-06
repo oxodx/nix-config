@@ -14,12 +14,11 @@ Item {
     RowLayout {
         id: rowLayout
         anchors.centerIn: parent
-        spacing: Appearance.popStyle ? 8 : 4
+        spacing: 4
 
         StyledText {
             font.pixelSize: Appearance.font.pixelSize.large
-            font.bold: Appearance.popStyle
-            color: Appearance.popStyle ? Appearance.popAccent : Appearance.colors.colOnLayer1
+            color: Appearance.colors.colOnLayer1
             text: DateTime.time
         }
 
