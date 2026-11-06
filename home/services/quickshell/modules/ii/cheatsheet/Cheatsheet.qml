@@ -1,3 +1,4 @@
+import qs.modules.encore
 import qs.services
 import qs.modules.common
 import qs.modules.common.widgets
@@ -13,6 +14,11 @@ import Quickshell.Hyprland
 
 Scope { // Scope
     id: root
+    property bool opened: false
+    EncoreCheatsheet {
+        opened: root.opened && Config.options.panelFamily === "encore"
+        onDismissed: root.opened = false
+    }
     property var tabButtonList: [
         {
             "icon": "keyboard",
@@ -26,7 +32,7 @@ Scope { // Scope
 
     Loader {
         id: cheatsheetLoader
-        active: false
+        active: root.opened && Config.options.panelFamily !== "encore"
 
         sourceComponent: PanelWindow { // Window
             id: cheatsheetRoot
@@ -40,7 +46,7 @@ Scope { // Scope
             }
 
             function hide() {
-                cheatsheetLoader.active = false;
+                root.opened = false;
             }
             exclusiveZone: 0
             implicitWidth: cheatsheetBackground.width + Appearance.sizes.elevationMargin * 2
@@ -183,15 +189,15 @@ Scope { // Scope
         target: "cheatsheet"
 
         function toggle(): void {
-            cheatsheetLoader.active = !cheatsheetLoader.active;
+            root.opened = !root.opened;
         }
 
         function close(): void {
-            cheatsheetLoader.active = false;
+            root.opened = false;
         }
 
         function open(): void {
-            cheatsheetLoader.active = true;
+            root.opened = true;
         }
     }
 
@@ -200,7 +206,7 @@ Scope { // Scope
         description: "Toggles cheatsheet on press"
 
         onPressed: {
-            cheatsheetLoader.active = !cheatsheetLoader.active;
+            root.opened = !root.opened;
         }
     }
 
@@ -209,7 +215,7 @@ Scope { // Scope
         description: "Opens cheatsheet on press"
 
         onPressed: {
-            cheatsheetLoader.active = true;
+            root.opened = true;
         }
     }
 
@@ -218,7 +224,7 @@ Scope { // Scope
         description: "Closes cheatsheet on press"
 
         onPressed: {
-            cheatsheetLoader.active = false;
+            root.opened = false;
         }
     }
 }

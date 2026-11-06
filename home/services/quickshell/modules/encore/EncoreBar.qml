@@ -25,29 +25,43 @@ Variants {
             WlrLayershell.namespace: "quickshell:encore:bar"
             Component.onCompleted: GlobalFocusGrab.addPersistent(left)
             Component.onDestruction: GlobalFocusGrab.removePersistent(left)
-            EncoreCard {
+            EncoreRailCard {
                 anchors.fill: parent; anchors.margins: 10; anchors.topMargin: 34; anchors.bottomMargin: 28
-                fill: "#291039"; radius: 23
+
                 ColumnLayout {
                     anchors.fill: parent; anchors.margins: 7; spacing: 9
-                    EncoreButton { symbol: "star"; implicitWidth: 32; implicitHeight: 32; padding: 3; fill: EncoreStyle.lavender; hint: "Encore launcher"; onClicked: { GlobalStates.searchOpen = !GlobalStates.searchOpen; GlobalStates.sidebarRightOpen = false } }
+                    EncoreRailButton { symbol: "star"; implicitWidth: 32; implicitHeight: 32; padding: 3; fill: EncoreStyle.lavender; selected: GlobalStates.searchOpen; hint: "Encore launcher"; onClicked: { GlobalStates.searchOpen = !GlobalStates.searchOpen; GlobalStates.sidebarRightOpen = false } }
                     EncorePrideStripe { Layout.fillWidth: true; implicitHeight: 5; Layout.topMargin: 4; Layout.bottomMargin: 8 }
                     Repeater {
                         model: rails.workspaceCount
-                        EncoreButton {
+                        EncoreRailButton {
                             required property int index
                             readonly property int workspaceId: Math.floor(((rails.monitor?.activeWorkspace?.id ?? 1) - 1) / rails.workspaceCount) * rails.workspaceCount + index + 1
                             implicitWidth: 30; implicitHeight: 30; padding: 2
                             text: String(workspaceId).padStart(2, "0")
                             selected: rails.monitor?.activeWorkspace?.id === workspaceId
-                            fill: "#512b6d"; foreground: selected ? EncoreStyle.ink : "#edddfa"
+                            occupied: (Hyprland.workspaces.values.find(w => w.id === workspaceId)?.toplevels?.values.length ?? 0) > 0
                             hint: "Workspace " + workspaceId
                             onClicked: Hyprland.dispatch("workspace " + workspaceId)
                         }
                     }
+                    EncoreText { Layout.alignment: Qt.AlignHCenter; text: "♡"; font.pixelSize: 19; color: EncoreStyle.pink; rotation: -12 }
                     Item { Layout.fillHeight: true }
-                    EncoreText { Layout.fillWidth: true; text: DateTime.time.replace(":", "\n"); horizontalAlignment: Text.AlignHCenter; font.pixelSize: 14; font.bold: true; color: "#edddfa" }
-                    EncoreButton { symbol: Network.materialSymbol; implicitWidth: 30; implicitHeight: 30; padding: 2; hint: "Quick controls"; fill: EncoreStyle.lavender; onClicked: GlobalStates.sidebarRightOpen = !GlobalStates.sidebarRightOpen }
+                    EncoreRailRecord { Layout.alignment: Qt.AlignHCenter }
+                    ColumnLayout {
+                        Layout.alignment: Qt.AlignHCenter; spacing: 3
+                        Repeater {
+                            model: DateTime.time.split(":")
+                            Rectangle {
+                                required property string modelData
+                                implicitWidth: 30; implicitHeight: 22; radius: 7
+                                color: index === 0 ? EncoreStyle.lavender : EncoreStyle.pink
+                                required property int index
+                                EncoreText { anchors.centerIn: parent; text: parent.modelData; font.pixelSize: 13; font.bold: true; color: EncoreStyle.ink }
+                            }
+                        }
+                    }
+                    EncoreRailButton { symbol: Network.materialSymbol; implicitWidth: 30; implicitHeight: 30; padding: 2; hint: "Quick controls"; fill: EncoreStyle.lavender; onClicked: GlobalStates.sidebarRightOpen = !GlobalStates.sidebarRightOpen }
                     EncoreText { visible: Battery.available; Layout.fillWidth: true; text: Math.round(Battery.percentage * 100) + "%"; horizontalAlignment: Text.AlignHCenter; color: "#edddfa"; font.pixelSize: 10 }
                 }
                 WheelHandler { onWheel: event => Hyprland.dispatch(event.angleDelta.y < 0 ? "workspace r+1" : "workspace r-1") }
@@ -62,20 +76,20 @@ Variants {
             WlrLayershell.namespace: "quickshell:encore:tools"
             Component.onCompleted: GlobalFocusGrab.addPersistent(right)
             Component.onDestruction: GlobalFocusGrab.removePersistent(right)
-            EncoreCard {
+            EncoreRailCard {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: 46; height: Math.min(actions.implicitHeight + 24, parent.height - 80)
-                fill: "#291039"; radius: 23
+
                 ColumnLayout {
                     id: actions
-                    anchors.centerIn: parent; spacing: 12
-                    EncoreButton { symbol: "search"; implicitWidth: 30; implicitHeight: 30; padding: 2; hint: "Search"; onClicked: { GlobalStates.searchOpen = !GlobalStates.searchOpen; GlobalStates.sidebarRightOpen = false } }
-                    EncoreButton { symbol: "tune"; implicitWidth: 30; implicitHeight: 30; padding: 2; fill: EncoreStyle.lavender; hint: "Control room"; onClicked: { GlobalStates.sidebarRightOpen = !GlobalStates.sidebarRightOpen; GlobalStates.searchOpen = false } }
-                    EncoreButton { symbol: "content_paste"; implicitWidth: 30; implicitHeight: 30; padding: 2; hint: "Clipboard"; onClicked: { Cliphist.refresh(); GlobalStates.searchOpen = true; LauncherSearch.query = Config.options.search.prefix.clipboard } }
-                    EncoreButton { symbol: Notifications.silent ? "notifications_off" : "notifications"; implicitWidth: 30; implicitHeight: 30; padding: 2; fill: EncoreStyle.pink; hint: "Notifications"; onClicked: GlobalStates.sidebarRightOpen = !GlobalStates.sidebarRightOpen }
-                    EncoreButton { symbol: "settings"; implicitWidth: 30; implicitHeight: 30; padding: 2; hint: "Settings"; onClicked: Quickshell.execDetached(["qs", "-p", Quickshell.shellPath("settings.qml")]) }
-                    EncoreButton { symbol: "lock"; implicitWidth: 30; implicitHeight: 30; padding: 2; hint: "Lock"; onClicked: Quickshell.execDetached(["loginctl", "lock-session"]) }
+                    anchors.centerIn: parent; spacing: Math.max(4, Math.min(12, (right.height - 300) / 8))
+                    EncoreRailButton { symbol: "search"; implicitWidth: 30; implicitHeight: 30; padding: 2; selected: GlobalStates.searchOpen; hint: "Search"; onClicked: { GlobalStates.searchOpen = !GlobalStates.searchOpen; GlobalStates.sidebarRightOpen = false } }
+                    EncoreRailButton { symbol: "tune"; implicitWidth: 30; implicitHeight: 30; padding: 2; fill: EncoreStyle.lavender; selected: GlobalStates.sidebarRightOpen; hint: "Control room"; onClicked: { GlobalStates.sidebarRightOpen = !GlobalStates.sidebarRightOpen; GlobalStates.searchOpen = false } }
+                    EncoreRailButton { symbol: "content_paste"; implicitWidth: 30; implicitHeight: 30; padding: 2; hint: "Clipboard"; onClicked: { Cliphist.refresh(); GlobalStates.searchOpen = true; LauncherSearch.query = Config.options.search.prefix.clipboard } }
+                    EncoreRailButton { symbol: Notifications.silent ? "notifications_off" : "notifications"; implicitWidth: 30; implicitHeight: 30; padding: 2; fill: EncoreStyle.pink; badge: Notifications.unread; hint: "Notifications"; onClicked: GlobalStates.sidebarRightOpen = !GlobalStates.sidebarRightOpen }
+                    EncoreRailButton { symbol: "settings"; implicitWidth: 30; implicitHeight: 30; padding: 2; hint: "Settings"; onClicked: Quickshell.execDetached(["qs", "-p", Quickshell.shellPath("settings.qml")]) }
+                    EncoreRailButton { symbol: "lock"; implicitWidth: 30; implicitHeight: 30; padding: 2; hint: "Lock"; onClicked: Quickshell.execDetached(["loginctl", "lock-session"]) }
                 }
             }
         }

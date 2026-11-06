@@ -57,6 +57,15 @@ Singleton {
         }
     }
 
+    function moveItem(from, to) {
+        if (!Number.isInteger(from) || !Number.isInteger(to) || from < 0 || to < 0 || from >= list.length || to >= list.length || from === to) return
+        const reordered = list.slice()
+        const item = reordered.splice(from, 1)[0]
+        reordered.splice(to, 0, item)
+        root.list = reordered
+        todoFileView.setText(JSON.stringify(root.list))
+    }
+
     function refresh() {
         todoFileView.reload()
     }

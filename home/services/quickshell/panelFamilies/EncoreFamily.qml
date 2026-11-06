@@ -4,7 +4,6 @@ import qs.modules.encore
 
 // System surfaces remain shared; every everyday desktop surface belongs to Encore.
 import qs.modules.ii.overlay
-import qs.modules.ii.mediaControls
 import qs.modules.ii.sidebarLeft
 import qs.modules.ii.polkit
 import qs.modules.ii.regionSelector
@@ -44,7 +43,7 @@ Scope {
         component: EncoreLock {}
     }
     PanelLoader { component: Overlay {} }
-    PanelLoader { component: MediaControls {} }
+    PanelLoader { component: EncoreMediaPopup {} }
     PanelLoader { component: SidebarLeft {} }
     PanelLoader {
         component: Polkit {}

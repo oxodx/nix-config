@@ -16,12 +16,17 @@ Singleton {
     readonly property bool useUSCS: Config.options.bar.weather.useUSCS
     property bool gpsActive: Config.options.bar.weather.enableGPS
 
-    onUseUSCSChanged: {
-        root.getData();
+    onUseUSCSChanged: refreshDebounce.restart()
+    onCityChanged: refreshDebounce.restart()
+    onGpsActiveChanged: {
+        if (gpsActive) positionSource.start()
+        else positionSource.stop()
+        refreshDebounce.restart()
     }
-    onCityChanged: {
-        root.getData();
-    }
+    readonly property bool loading: fetcher.running
+    property string error: ""
+    property bool refreshQueued: false
+    Timer { id: refreshDebounce; interval: 350; onTriggered: root.getData() }
 
     property var location: ({
         valid: false,
@@ -54,7 +59,7 @@ Singleton {
         temp.sunset = data?.astronomy?.sunset || "0.0";
         temp.windDir = data?.current?.winddir16Point || "N";
         temp.wCode = data?.current?.weatherCode || "113";
-        temp.city = data?.location?.areaName[0]?.value || "City";
+        temp.city = !root.gpsActive && root.city.trim() ? root.city.trim() : data?.location?.areaName?.[0]?.value || "City";
         temp.temp = "";
         temp.tempFeelsLike = "";
         if (root.useUSCS) {
@@ -84,47 +89,33 @@ Singleton {
     }
 
     function getData() {
-        let command = "curl -s wttr.in";
-
-        if (root.gpsActive && root.location.valid) {
-            command += `/${root.location.lat},${root.location.long}`;
-        } else {
-            command += `/${formatCityName(root.city)}`;
-        }
-
-        // format as json
-        command += "?format=j1";
-        command += " | ";
-        // only take the current weather, location, asytronmy data
-        command += "jq '{current: .current_condition[0], location: .nearest_area[0], astronomy: .weather[0].astronomy[0], forecast: .weather}'";
-        fetcher.command[2] = command;
-        fetcher.running = true;
+        if (fetcher.running) { refreshQueued = true; return }
+        error = ""
+        const query = gpsActive && location.valid ? location.lat + "," + location.lon : city.trim()
+        fetcher.command = ["curl", "--fail", "--silent", "--show-error", "--connect-timeout", "6", "--max-time", "18", "--retry", "1", "--retry-delay", "1", "https://wttr.in/" + encodeURIComponent(query) + "?format=j1"]
+        fetcher.running = true
     }
 
-    function formatCityName(cityName) {
-        return cityName.trim().split(/\s+/).join('+');
-    }
-
-    Component.onCompleted: {
-        if (!root.gpsActive) return;
-        console.info("[WeatherService] Starting the GPS service.");
-        positionSource.start();
-    }
+    Component.onCompleted: { if (gpsActive) positionSource.start() }
 
     Process {
         id: fetcher
-        command: ["bash", "-c", ""]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (text.length === 0)
-                    return;
-                try {
-                    const parsedData = JSON.parse(text);
-                    root.refineData(parsedData);
-                    // console.info(`[ data: ${JSON.stringify(parsedData)}`);
-                } catch (e) {
-                    console.error(`[WeatherService] ${e.message}`);
-                }
+        stdout: StdioCollector { id: weatherOutput }
+        stderr: StdioCollector {}
+        onExited: (code, exitStatus) => {
+            if (root.refreshQueued) {
+                root.refreshQueued = false
+                refreshDebounce.restart()
+                return
+            }
+            try {
+                if (code !== 0) throw new Error("network")
+                const raw = JSON.parse(weatherOutput.text)
+                if (!raw.current_condition?.length || !raw.nearest_area?.length) throw new Error("forecast")
+                root.refineData({current: raw.current_condition[0], location: raw.nearest_area[0], astronomy: raw.weather?.[0]?.astronomy?.[0], forecast: raw.weather || []})
+                root.error = ""
+            } catch (error) {
+                root.error = "Forecast couldn't load. Check your city or try again."
             }
         }
     }
@@ -138,7 +129,7 @@ Singleton {
             // if it fails getting the location, use the last valid location
             if (position.latitudeValid && position.longitudeValid) {
                 root.location.lat = position.coordinate.latitude;
-                root.location.long = position.coordinate.longitude;
+                root.location.lon = position.coordinate.longitude;
                 root.location.valid = true;
                 // console.info(`📍 Location: ${position.coordinate.latitude}, ${position.coordinate.longitude}`);
                 root.getData();
@@ -161,10 +152,10 @@ Singleton {
     }
 
     Timer {
-        running: !root.gpsActive
+        running: true
         repeat: true
-        interval: root.fetchInterval
-        triggeredOnStart: !root.gpsActive
+        interval: Math.max(60000, root.fetchInterval)
+        triggeredOnStart: true
         onTriggered: root.getData()
     }
 }

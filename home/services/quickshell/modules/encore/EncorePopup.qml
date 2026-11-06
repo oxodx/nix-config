@@ -8,6 +8,8 @@ PanelWindow {
     id: root
     property bool opened: false
     property bool rightAligned: false
+    property bool leftAligned: false
+    property bool bottomAligned: false
     property int cardWidth: 420
     property int cardHeight: 680
     property real reveal: opened ? 1 : 0
@@ -48,8 +50,8 @@ PanelWindow {
         id: phone
         width: Math.min(root.cardWidth, root.width - 32)
         height: Math.min(root.cardHeight, root.height - 100)
-        x: root.rightAligned ? root.width - width - 20 : (root.width - width) / 2
-        y: (root.height - height) / 2 + (1 - root.reveal) * 64
+        x: root.leftAligned ? Math.max(16, Math.min(76, root.width - width - 16)) : root.rightAligned ? root.width - width - 20 : (root.width - width) / 2
+        y: (root.bottomAligned ? Math.max(20,root.height-height-42) : (root.height - height) / 2) + (1 - root.reveal) * 64
         scale: 0.96 + 0.04 * root.reveal
         opacity: root.reveal
         radius: 32

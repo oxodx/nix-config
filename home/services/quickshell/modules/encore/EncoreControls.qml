@@ -20,24 +20,25 @@ EncorePopup {
         anchors.fill: parent
         spacing: 12
         RowLayout {
+            Layout.maximumHeight: implicitHeight
             Layout.fillWidth: true
             ColumnLayout {
                 Layout.fillWidth: true
                 spacing: 1
                 EncoreText {
-                    text: "THE LITTLE THINGS"
+                    text: "YOUR LITTLE UNIVERSE"
                     font.pixelSize: 10
                     font.bold: true
                     font.letterSpacing: 2
                     color: EncoreStyle.muted
                 }
                 EncoreText {
-                    text: DateTime.time
-                    font.pixelSize: 40
+                    text: "Control room."
+                    font.pixelSize: 30
                     font.bold: true
                 }
                 EncoreText {
-                    text: DateTime.longDate
+                    text: DateTime.time + "  ·  " + DateTime.longDate
                     color: EncoreStyle.muted
                     font.pixelSize: 12
                 }
@@ -52,7 +53,7 @@ EncorePopup {
                 onClicked: GlobalStates.sidebarRightOpen = false
             }
         }
-        EncoreTray { Layout.fillWidth: true }
+        EncoreTray { Layout.fillWidth: true; Layout.maximumHeight: implicitHeight; visible: implicitHeight > 0 }
         Flickable {
             id: scroll
             Layout.fillHeight: true
@@ -70,41 +71,46 @@ EncorePopup {
                     columns: 2
                     columnSpacing: 10
                     rowSpacing: 10
-                    EncoreButton {
+                    EncoreControlTile {
                         Layout.fillWidth: true
-                        implicitHeight: 56
+                        implicitHeight: 92
                         symbol: "wifi"
-                        text: Network.wifiEnabled ? "Wi-Fi on" : "Wi-Fi off"
+                        text: "Wi-Fi"
+                        detail: Network.wifiEnabled ? Network.networkName || "Ready to connect" : "Switched off"
                         selected: Network.wifiEnabled
                         onClicked: Network.toggleWifi()
                         hint: Network.networkName || "Toggle Wi-Fi"
                     }
-                    EncoreButton {
+                    EncoreControlTile {
                         Layout.fillWidth: true
-                        implicitHeight: 56
+                        implicitHeight: 92
                         symbol: "bluetooth"
                         text: "Bluetooth"
+                        detail: Bluetooth.defaultAdapter?.enabled ? "Ready for your devices" : "Switched off"
                         selected: Bluetooth.defaultAdapter?.enabled ?? false
                         enabled: Bluetooth.defaultAdapter !== null
                         onClicked: Bluetooth.defaultAdapter.enabled = !Bluetooth.defaultAdapter.enabled
                     }
-                    EncoreButton {
+                    EncoreControlTile {
                         Layout.fillWidth: true
-                        implicitHeight: 56
+                        implicitHeight: 92
                         symbol: Notifications.silent ? "notifications_off" : "notifications"
                         text: "Quiet mode"
+                        detail: Notifications.silent ? "A little peace & quiet" : "Let the little pings in"
                         selected: Notifications.silent
                         onClicked: Notifications.silent = !Notifications.silent
                     }
-                    EncoreButton {
+                    EncoreControlTile {
                         Layout.fillWidth: true
-                        implicitHeight: 56
+                        implicitHeight: 92
                         symbol: "coffee"
                         text: "Stay awake"
+                        detail: Idle.inhibit ? "Keeping your space awake" : "Rest when you do"
                         selected: Idle.inhibit
                         onClicked: Idle.toggleInhibit()
                     }
                 }
+                EncoreText { text: "SET THE MOOD"; font.pixelSize: 10; font.bold: true; font.letterSpacing: 2; color: EncoreStyle.muted; Layout.topMargin: 6 }
                 EncoreCard {
                     Layout.fillWidth: true
                     implicitHeight: 130
@@ -193,7 +199,7 @@ EncorePopup {
                 RowLayout {
                     Layout.fillWidth: true
                     EncoreText {
-                        text: "IN YOUR INBOX"
+                        text: "LITTLE PINGS  ·  " + Notifications.list.length
                         font.pixelSize: 10
                         font.bold: true
                         font.letterSpacing: 2
@@ -224,6 +230,7 @@ EncorePopup {
             }
         }
         RowLayout {
+            Layout.maximumHeight: implicitHeight
             Layout.fillWidth: true
             EncoreButton {
                 symbol: EncoreStyle.dark ? "light_mode" : "dark_mode"

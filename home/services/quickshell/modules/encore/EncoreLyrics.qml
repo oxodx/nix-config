@@ -1,15 +1,22 @@
 import QtQuick
 import QtQuick.Layouts
+import Quickshell
+import QtQuick.Controls
 import Quickshell.Io
 import qs.services
 
 Item {
     id: root
-    readonly property var player: MprisController.activePlayer
+    property var player: MprisController.activePlayer
     readonly property string track: (player?.trackArtist || "") + " / " + (player?.trackTitle || "")
+    readonly property string trackKey: JSON.stringify([player?.trackArtist || "", player?.trackTitle || ""])
     property var lines: []
+    property string plainLyrics: ""
+    property bool estimated: false
+    readonly property bool loading: fetcher.running
     property string status: "Play a song for lyrics."
     property string requestedTrack: ""
+    property string completedTrack: ""
     property real position: player?.position ?? 0
     readonly property int currentLine: {
         let current = -1
@@ -27,39 +34,63 @@ Item {
         }
         return parsed.sort((a,b) => a.t-b.t)
     }
-    function fetch() {
-        lines = []
-        if (!player?.trackTitle) { status = "Play a song for lyrics."; return }
-        requestedTrack = track
+    function estimatePlainLyrics() {
+        if (!plainLyrics.length || lines.length || !(player?.length > 15)) return
+        const verses = plainLyrics.split("\n").map(line => line.trim()).filter(line => line.length && !/^\[[^\]]+\]$/.test(line))
+        if (!verses.length) return
+        const weights = verses.map(line => Math.max(2, line.split(/\s+/).length))
+        const total = weights.reduce((sum, weight) => sum + weight, 0)
+        const lead = Math.min(10, player.length * 0.04)
+        const span = Math.max(1, player.length - lead - Math.min(6, player.length * 0.03))
+        let elapsed = 0
+        const timed = verses.map((text,index) => {
+            const line = {t: lead + span * elapsed / total, text: text}
+            elapsed += weights[index]
+            return line
+        })
+        estimated = true
+        lines = timed
+    }
+    function fetch(force = false) {
+        if (fetcher.running) return
+        if (!force && completedTrack === trackKey && requestedTrack === trackKey) return
+        if (!player?.trackTitle) { estimated = false; lines = []; plainLyrics = ""; completedTrack = ""; requestedTrack = ""; status = "Play a song for lyrics."; return }
+        if (requestedTrack !== trackKey) { estimated = false; lines = []; plainLyrics = ""; plainScroll.contentY = 0 }
+        requestedTrack = trackKey
         status = "Looking for lyrics…"
-        fetcher.running = false
-        const url = "https://lrclib.net/api/get?artist_name=" + encodeURIComponent(player.trackArtist || "") + "&track_name=" + encodeURIComponent(player.trackTitle) + "&album_name=" + encodeURIComponent(player.trackAlbum || "") + "&duration=" + Math.round(player.length || 0)
-        fetcher.command = ["curl", "--fail", "--silent", "--show-error", "--max-time", "12", "--user-agent", "EncoreQuickshell/1.0", url]
+        const command = ["python3", Quickshell.shellPath("scripts/lyrics/fetch.py"), "--title", player.trackTitle, "--artist", player.trackArtist || "", "--album", player.trackAlbum || "", "--duration", String(player.length || 0)]
+        if (force) command.push("--force")
+        fetcher.command = command
         fetcher.running = true
     }
-    onTrackChanged: { fetcher.running = false; requestedTrack = ""; lines = []; debounce.restart() }
-    Timer { id: debounce; interval: 500; onTriggered: root.fetch() }
+    onTrackKeyChanged: debounce.restart()
+    Timer { id: debounce; interval: 650; onTriggered: root.fetch() }
     Timer {
         interval: 200; repeat: true; running: root.visible && (root.player?.isPlaying ?? false)
-        onTriggered: { root.player.positionChanged(); root.position = root.player.position }
+        onTriggered: root.position = root.player.position
     }
     Connections {
         target: root.player
         function onPositionChanged() { root.position = root.player?.position ?? 0 }
+        function onLengthChanged() { root.estimatePlainLyrics() }
     }
     Process {
         id: fetcher
-        stdout: StdioCollector {
-            onStreamFinished: {
-                if (root.requestedTrack !== root.track) return
-                try {
-                    const data = JSON.parse(text)
-                    root.lines = root.parseLrc(data.syncedLyrics || "")
-                    root.status = data.instrumental ? "Instrumental ♡" : root.lines.length ? "" : "No synced lyrics for this track."
-                } catch (error) { root.status = "Lyrics unavailable. Your music still sounds good." }
-            }
+        stdout: StdioCollector { id: response }
+        stderr: StdioCollector {}
+        onExited: (code, exitStatus) => {
+            if (root.requestedTrack !== root.trackKey) { debounce.restart(); return }
+            root.completedTrack = root.requestedTrack
+            try {
+                if (code !== 0) throw new Error("lookup")
+                const data = JSON.parse(response.text)
+                root.estimated = false
+                root.lines = root.parseLrc(data.syncedLyrics || "")
+                root.plainLyrics = root.lines.length ? "" : data.plainLyrics || ""
+                root.estimatePlainLyrics()
+                root.status = data.status === "instrumental" ? "Instrumental ♡" : data.status === "offline" ? "Can't reach lyrics right now. Tap retry." : root.lines.length || root.plainLyrics ? "" : "No lyrics found for this track yet."
+            } catch (error) { root.status = "Couldn't load lyrics. Tap retry." }
         }
-        onExited: (code, exitStatus) => { if (code !== 0 && root.requestedTrack === root.track) root.status = "Lyrics unavailable offline." }
     }
     readonly property real lineProgress: {
         if (currentLine < 0 || !lines[currentLine]) return 0
@@ -68,6 +99,7 @@ Item {
         return Math.max(0, Math.min(1, (position - start) / Math.max(0.1, end - start)))
     }
     EncoreLyricVisual {
+        visible: root.lines.length > 0 || !root.plainLyrics.length
         anchors.fill: parent
         timedLines: root.lines
         lineIndex: root.currentLine
@@ -76,7 +108,34 @@ Item {
         nextText: root.lines[root.currentLine + 1]?.text || ""
         trackText: root.player?.trackTitle ? root.track : ""
         playing: root.player?.isPlaying ?? false
+        estimated: root.estimated
         synced: root.currentLine >= 0 && root.lines.length > 0
         lineProgress: root.lineProgress
+    }
+    ColumnLayout {
+        anchors.fill: parent; spacing: 8
+        visible: root.plainLyrics.length > 0 && !root.lines.length
+        EncoreText { text: "♡  LYRICS / UNSYNCED"; color: EncoreStyle.pink; font.pixelSize: 10; font.letterSpacing: 2; Layout.alignment: Qt.AlignHCenter }
+        Flickable {
+            id: plainScroll
+            Layout.fillWidth: true; Layout.fillHeight: true
+            clip: true; contentHeight: plainText.implicitHeight
+            boundsBehavior: Flickable.StopAtBounds
+            ScrollBar.vertical: ScrollBar {}
+            EncoreText {
+                id: plainText; width: plainScroll.width - 14
+                text: root.plainLyrics; wrapMode: Text.Wrap; horizontalAlignment: Text.AlignHCenter
+                font.pixelSize: 21; font.bold: true; color: "#f0e1fc"
+                style: Text.Outline; styleColor: "#451f58"
+            }
+        }
+        EncoreText { text: root.track; font.pixelSize: 10; color: EncoreStyle.muted; Layout.fillWidth: true; horizontalAlignment: Text.AlignHCenter }
+    }
+    EncoreButton {
+        anchors.right: parent.right; anchors.top: parent.top
+        symbol: "refresh"; implicitWidth: 26; implicitHeight: 26; padding: 2
+        visible: !root.lines.length && !root.plainLyrics.length && !!root.player?.trackTitle
+        enabled: !root.loading; hint: "Retry lyrics lookup"
+        onClicked: root.fetch(true)
     }
 }

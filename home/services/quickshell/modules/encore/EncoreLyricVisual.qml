@@ -1,4 +1,5 @@
 import QtQuick
+import qs.modules.common
 
 Item {
     id: root
@@ -10,6 +11,7 @@ Item {
     property int lineIndex: -1
     property bool playing: false
     property bool synced: false
+    property bool estimated: false
     property real lineProgress: 0
     property real linePop: 1
     property real floatOffset: 0
@@ -31,7 +33,7 @@ Item {
             scroll.to = destination
             scroll.restart()
         }
-        if (synced) {
+        if (synced && Config.options.encore.motion) {
             pop.restart()
             twirl.restart()
         }
@@ -51,7 +53,7 @@ Item {
     }
     NumberAnimation { id: twirl; target: root; property: "starTurn"; from: -35; to: 0; duration: 650; easing.type: Easing.OutBack }
     SequentialAnimation on floatOffset {
-        running: root.playing && root.visible; loops: Animation.Infinite
+        running: root.playing && root.visible && Config.options.encore.motion; loops: Animation.Infinite
         NumberAnimation { from: -1.5; to: 1.5; duration: 1600; easing.type: Easing.InOutSine }
         NumberAnimation { from: 1.5; to: -1.5; duration: 1600; easing.type: Easing.InOutSine }
     }
@@ -60,7 +62,7 @@ Item {
     EncoreText {
         anchors.horizontalCenter: parent.horizontalCenter
         y: -7
-        text: "✧  " + (root.synced ? "NOW SINGING" : "SIDE B / LITTLE LOVE SONGS") + "  ♡"
+        text: "✧  " + (root.estimated ? "ESTIMATED TIMING" : root.synced ? "NOW SINGING" : "SIDE B / LITTLE LOVE SONGS") + "  ♡"
         font.pixelSize: 9; font.bold: true; font.letterSpacing: 2
         color: "#e4b2fa"; style: Text.Outline; styleColor: "#371143"
     }
@@ -88,28 +90,14 @@ Item {
             z: current ? 2 : 0
             Behavior on scale { enabled: !row.current; NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
             Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
-            EncoreText {
-                x: 2; y: 4; width: parent.width; height: parent.height
-                text: row.modelData.text; horizontalAlignment: Text.AlignHCenter; wrapMode: Text.Wrap; maximumLineCount: 2
-                font.pixelSize: root.lyricSize; font.bold: true
-                color: "#491b61"; style: Text.Outline; styleColor: "#250b35"
-            }
-            EncoreText {
+            EncoreLyricWords {
                 anchors.fill: parent
-                text: row.modelData.text; horizontalAlignment: Text.AlignHCenter; wrapMode: Text.Wrap; maximumLineCount: 2
-                font.pixelSize: root.lyricSize; font.bold: true
-                color: row.current ? "#fff0fc" : "#ddb4eb"; style: Text.Outline; styleColor: "#703d91"
-            }
-            Item {
-                height: parent.height
-                width: row.current && root.synced ? Math.max(0, Math.min(1, root.lineProgress)) * parent.width : 0
-                clip: true
-                EncoreText {
-                    width: row.width; height: row.height
-                    text: row.modelData.text; horizontalAlignment: Text.AlignHCenter; wrapMode: Text.Wrap; maximumLineCount: 2
-                    font.pixelSize: root.lyricSize; font.bold: true
-                    color: "#f4b0de"; style: Text.Outline; styleColor: "#703d91"
-                }
+                anchors.leftMargin: 24; anchors.rightMargin: 24
+                text: row.modelData.text
+                fontSize: root.lyricSize
+                current: row.current
+                playing: root.playing
+                progress: row.current && root.synced ? root.lineProgress : 0
             }
         }
     }
@@ -127,7 +115,7 @@ Item {
             text: "✦"; color: EncoreStyle.pink; font.pixelSize: 16
             rotation: root.starTurn
             SequentialAnimation on scale {
-                running: root.playing && root.visible; loops: Animation.Infinite
+                running: root.playing && root.visible && Config.options.encore.motion; loops: Animation.Infinite
                 NumberAnimation { from: 0.85; to: 1.2; duration: 650; easing.type: Easing.InOutSine }
                 NumberAnimation { from: 1.2; to: 0.85; duration: 650; easing.type: Easing.InOutSine }
             }
