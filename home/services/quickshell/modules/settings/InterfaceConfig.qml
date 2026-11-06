@@ -8,6 +8,21 @@ ContentPage {
     forceWidth: true
 
     ContentSection {
+        icon: "palette"
+        title: Translation.tr("Shell style")
+
+        ConfigSwitch {
+            buttonIcon: "auto_awesome"
+            text: Translation.tr("Pop style")
+            checked: Config.options.appearance.popStyle
+            onCheckedChanged: Config.options.appearance.popStyle = checked
+            StyledToolTip {
+                text: Translation.tr("Cream outlines, hard shadows, pastel accents and tactile buttons. Wallpaper colors remain enabled.")
+            }
+        }
+    }
+
+    ContentSection {
         icon: "keyboard"
         title: Translation.tr("Cheat sheet")
 

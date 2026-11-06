@@ -6,9 +6,9 @@ RectangularShadow {
     required property var target
     anchors.fill: target
     radius: target.radius
-    blur: 0.9 * Appearance.sizes.elevationMargin
-    offset: Qt.vector2d(0.0, 1.0)
+    blur: Appearance.popStyle ? 0 : 0.9 * Appearance.sizes.elevationMargin
+    offset: Qt.vector2d(0.0, Appearance.popStyle ? 5.0 : 1.0)
     spread: 1
-    color: Appearance.colors.colShadow
+    color: Appearance.popStyle ? Appearance.popInk : Appearance.colors.colShadow
     cached: true
 }

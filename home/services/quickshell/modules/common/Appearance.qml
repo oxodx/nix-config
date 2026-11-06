@@ -15,6 +15,12 @@ Singleton {
     property QtObject sizes
     property string syntaxHighlightingTheme
 
+    readonly property bool popStyle: Config.options.appearance.popStyle
+    readonly property color popInk: m3colors.darkmode ? "#10131f" : "#303347"
+    readonly property color popCream: m3colors.darkmode ? "#e9dfcf" : "#fff8ea"
+    readonly property color popAccent: m3colors.darkmode ? "#81d8ce" : "#246c68"
+    readonly property color popPink: m3colors.darkmode ? "#efacc8" : "#993c67"
+
     // Transparency. The quadratic functions were derived from analysis of hand-picked transparency values.
     ColorQuantizer {
         id: wallColorQuant
@@ -385,7 +391,7 @@ Singleton {
     }
 
     sizes: QtObject {
-        property real baseBarHeight: 40
+        property real baseBarHeight: root.popStyle ? 48 : 40
         property real barHeight: Config.options.bar.cornerStyle === 1 ? 
             (baseBarHeight + root.sizes.hyprlandGapsOut * 2) : baseBarHeight
         property real barCenterSideModuleWidth: Config.options?.bar.verbose ? 360 : 140
