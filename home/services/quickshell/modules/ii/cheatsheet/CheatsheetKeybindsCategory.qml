@@ -119,7 +119,7 @@ Column {
         const key = bind.key;
         if (key.includes("mouse") || key.includes("page")) return false;
         // Contains non-1 number
-        if (/\d/.test(key) && !key.includes("1")) return true;
+        if (/^[0-9]$/.test(key) && key !== "1") return true;
         // Contains non-left direction
         if (/^(right|up|down)\b/i.test(key)) return true;
         return false;
@@ -127,13 +127,13 @@ Column {
 
     function containsFirstRepetitive(bind) {
         const key = bind.key;
-        return key.includes("1") || /left/i.test(key);
+        return key === "1" || /^left$/i.test(key);
     }
 
     function transformKey(key) {
         const replaced = root.keySubstitutions[key] || key;
-        const denumbered = replaced.replace("1", "<Number>");
-        const dedirectioned = denumbered.replace("Left", "<Direction>");
+        const denumbered = key === "1" ? "<Number>" : replaced;
+        const dedirectioned = /^left$/i.test(key) ? "<Direction>" : denumbered;
         return dedirectioned;
     }
 
@@ -142,13 +142,14 @@ Column {
         const regex = new RegExp("\\s*" + categoryName + "\\s*:\\s*");
         const decategorized = description.replace(regex, "");
         if (!containsFirstRepetitive(bind)) return decategorized;
-        const denumbered = decategorized.replace("1", "<Number>");
+        const denumbered = bind.key === "1" ? decategorized.replace(/\b1\b/, "<Number>") : decategorized;
         const dedirectioned = denumbered.replace(/ \b(left|right|up|down)\b/i, " <Direction>");
         return dedirectioned;
     }
 
     Column {
-        spacing: 4
+        width: root.width
+        spacing: 8
         Repeater {
             id: repeater
             model: {
@@ -165,58 +166,47 @@ Column {
         }
     }
 
-    component BindLine: Row {
+    component BindLine: Item {
         id: bindLine
         required property var keyData
         property string categoryName: ""
+        width: root.width
+        implicitHeight: Math.max(keyFlow.implicitHeight, commentText.implicitHeight)
 
-        Row {
-            spacing: 16
-            Row {
-                id: modRow
-                Component.onCompleted: root.maxBindWidth = Math.max(root.maxBindWidth, implicitWidth)
-                width: root.maxBindWidth
-                spacing: 4
-                Repeater {
-                    model: {
-                        const modList = root.modMaskToStringList(bindLine.keyData.modmask).map(mod => root.keySubstitutions[mod] || mod)
-                        if (modList.length == 0) return []
-                        if (Config.options.cheatsheet.splitButtons) return modList;
-                        return [modList.join(" ")]
-                    }
-                    delegate: KeyboardKey {
-                        required property var modelData
-                        key: root.transformKey(modelData)
+        Flow {
+            id: keyFlow
+            width: Math.min(350, bindLine.width * 0.55)
+            spacing: 4
+            Repeater {
+                model: {
+                    const mods = root.modMaskToStringList(bindLine.keyData.modmask).map(mod => root.keySubstitutions[mod] || mod)
+                    const parts = Config.options.cheatsheet.splitButtons ? mods : (mods.length ? [mods.join(" ")] : [])
+                    if (!root.keyBlacklist.includes(bindLine.keyData.key)) parts.push(root.transformKey(bindLine.keyData.key))
+                    return parts
+                }
+                delegate: Item {
+                    required property var modelData
+                    readonly property real fitScale: Math.min(1, keyFlow.width / keycap.implicitWidth)
+                    width: keycap.implicitWidth * fitScale
+                    height: keycap.implicitHeight * fitScale
+                    KeyboardKey {
+                        id: keycap
+                        key: parent.modelData
                         pixelSize: Config.options.cheatsheet.fontSize.key
+                        scale: parent.fitScale
+                        transformOrigin: Item.TopLeft
                     }
                 }
-                StyledText {
-                    id: keybindPlus
-                    anchors.verticalCenter: parent.verticalCenter
-                    visible: !keyBlacklist.includes(bindLine.keyData.key) && bindLine.keyData.modmask > 0
-                    text: "+"
-                }
-                KeyboardKey {
-                    id: keybindKey
-                    anchors.verticalCenter: parent.verticalCenter
-                    visible: !keyBlacklist.includes(bindLine.keyData.key)
-                    key: root.transformKey(bindLine.keyData.key)
-                    pixelSize: Config.options.cheatsheet.fontSize.key
-                    color: Appearance.colors.colOnLayer0
-                }
             }
-            Item {
-                anchors.verticalCenter: parent.verticalCenter
-                implicitWidth: commentText.implicitWidth + root.columnSpacing
-                implicitHeight: commentText.implicitHeight
-                StyledText {
-                    id: commentText
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: parent.left
-                    font.pixelSize: Config.options.cheatsheet.fontSize.comment || Appearance.font.pixelSize.smaller
-                    text: root.transformDescription(bindLine.keyData, bindLine.categoryName)
-                }
-            }
+        }
+        StyledText {
+            id: commentText
+            anchors.left: keyFlow.right
+            anchors.leftMargin: 16
+            anchors.right: parent.right
+            font.pixelSize: Config.options.cheatsheet.fontSize.comment || Appearance.font.pixelSize.smaller
+            text: root.transformDescription(bindLine.keyData, bindLine.categoryName)
+            wrapMode: Text.Wrap
         }
     }
 }

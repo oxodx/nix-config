@@ -26,7 +26,18 @@ Rectangle {
     Rectangle { anchors.fill: parent; anchors.margins: 17; radius: Math.max(0, root.radius - 17); color: "transparent"; border.width: 2; border.color: "#b8e4b9ee" }
     Repeater {
         model: [[0.32,0.12,"✦",-18],[0.63,0.19,"♡",12],[0.45,0.81,"✧",8],[0.74,0.72,"✦",-13],[0.27,0.64,"♡",14]]
-        EncoreText { required property var modelData; x: root.width*modelData[0]; y: root.height*modelData[1]; text: modelData[2]; rotation: modelData[3]; font.pixelSize: 35; color: "#b8db9ceb"; visible: Config.options.encore.desktopWidgets; style: Text.Outline; styleColor: "#63376c" }
+        EncoreText {
+            id: sticker
+            required property int index
+            property real drift: 0
+            transform: Translate { y: sticker.drift }
+            SequentialAnimation on drift {
+                running: Config.options.encore.motion && sticker.visible && !GlobalStates.screenLocked && !GlobalStates.encoreEditMode
+                loops: Animation.Infinite
+                NumberAnimation { from: -4; to: 4; duration: 2200 + sticker.index * 270; easing.type: Easing.InOutSine }
+                NumberAnimation { from: 4; to: -4; duration: 2200 + sticker.index * 270; easing.type: Easing.InOutSine }
+            }
+            required property var modelData; x: root.width*modelData[0]; y: root.height*modelData[1]; text: modelData[2]; rotation: modelData[3] + drift * 0.6; font.pixelSize: 35; color: "#b8db9ceb"; visible: Config.options.encore.desktopWidgets; style: Text.Outline; styleColor: "#63376c" }
     }
     EncoreWidgetHost {
         widgetId: "weather"; screenName: root.screenName

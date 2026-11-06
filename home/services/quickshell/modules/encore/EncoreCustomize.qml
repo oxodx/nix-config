@@ -41,6 +41,7 @@ EncorePopup {
                 EncoreText { text: "FRAME ROUNDING"; font.bold: true; font.pixelSize: 10; font.letterSpacing: 2 }
                 EncoreSlider { Layout.fillWidth: true; from: 12; to: 60; stepSize: 1; value: Config.options.encore.frameRounding; onMoved: Config.options.encore.frameRounding = Math.round(value); Accessible.name: "Frame rounding" }
                 EncoreButton { text: "Crooked cards"; symbol: "rotate_right"; selected: Config.options.encore.cardTilt; Layout.fillWidth: true; onClicked: Config.options.encore.cardTilt = !Config.options.encore.cardTilt }
+                EncoreButton { text: "Gentle desktop motion"; symbol: "auto_awesome"; selected: Config.options.encore.motion; Layout.fillWidth: true; onClicked: Config.options.encore.motion = !Config.options.encore.motion }
                 EncoreButton { text: "Light / dark cards"; symbol: "contrast"; Layout.fillWidth: true; onClicked: Config.options.encore.darkMode = !Config.options.encore.darkMode }
                 EncoreText { text: "PICTURES & ACCENTS"; font.bold: true; font.pixelSize: 10; font.letterSpacing: 2; Layout.topMargin: 10 }
                 EncoreButton { text: "Choose desktop picture"; symbol: "image"; Layout.fillWidth: true; onClicked: EncoreDesktopState.chooseImage() }

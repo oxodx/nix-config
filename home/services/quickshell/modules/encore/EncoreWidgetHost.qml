@@ -35,7 +35,17 @@ Item {
     onInitialYChanged: restore()
     Component.onCompleted: restore()
     Connections { target: root.parent; function onWidthChanged() { root.restore() } function onHeightChanged() { root.restore() } }
-    Item { id: content; anchors.fill: parent }
+    HoverHandler { id: hover }
+    Item {
+        id: content; anchors.fill: parent
+        property bool lifted: hover.hovered && Config.options.encore.motion && !GlobalStates.encoreEditMode && root.visible
+        transform: Translate {
+            y: content.lifted ? -4 : 0
+            Behavior on y { NumberAnimation { duration: 220; easing.type: Easing.OutBack; easing.overshoot: 0.6 } }
+        }
+        scale: lifted ? 1.012 : 1
+        Behavior on scale { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
+    }
     Rectangle {
         anchors.fill: parent; anchors.margins: -3
         visible: GlobalStates.encoreEditMode

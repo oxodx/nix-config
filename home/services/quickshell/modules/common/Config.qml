@@ -85,6 +85,7 @@ Singleton {
                 property int frameRounding: 36
                 property real wallpaperDim: 0.05
                 property bool cardTilt: true
+                property bool motion: true
                 property string accentColor: "#bf8de9"
                 property string previousAccent: "#bf8de9"
                 property string paletteMode: "purple"

@@ -79,8 +79,8 @@ Scope { // Scope
                 border.color: Appearance.colors.colLayer0Border
                 radius: Appearance.rounding.windowRounding
                 property real padding: 20
-                implicitWidth: cheatsheetColumnLayout.implicitWidth + padding * 2
-                implicitHeight: cheatsheetColumnLayout.implicitHeight + padding * 2
+                width: Math.min(cheatsheetRoot.width - 32, cheatsheetColumnLayout.implicitWidth + padding * 2)
+                height: Math.min(cheatsheetRoot.height - 32, cheatsheetColumnLayout.implicitHeight + padding * 2)
 
                 Keys.onPressed: event => { // Esc to close
                     if (event.key === Qt.Key_Escape) {
@@ -130,7 +130,8 @@ Scope { // Scope
 
                 ColumnLayout { // Real content
                     id: cheatsheetColumnLayout
-                    anchors.centerIn: parent
+                    anchors.fill: parent
+                    anchors.margins: cheatsheetBackground.padding
                     spacing: 10
 
                     Toolbar {

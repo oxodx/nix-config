@@ -19,18 +19,20 @@ Item {
         clip: true
         anchors.fill: parent
         anchors.margins: Appearance.rounding.small
-        contentHeight: height
-        contentWidth: flow.implicitWidth
-        Flow {
-            id: flow
-            height: flickable.height
-            flow: Flow.TopToBottom
-            spacing: 10
+        contentHeight: categories.implicitHeight
+        contentWidth: width
+        flickableDirection: Flickable.VerticalFlick
+        boundsBehavior: Flickable.StopAtBounds
+        Column {
+            id: categories
+            width: flickable.width - 12
+            spacing: 24
             Repeater {
                 model: [...HyprlandKeybinds.keybindCategories, ""]
                 delegate: CheatsheetKeybindsCategory {
                     required property var modelData
                     categoryName: modelData
+                    width: categories.width
                 }
             }
         }
@@ -38,7 +40,7 @@ Item {
 
     ScrollEdgeFade {
         target: flickable
-        vertical: false
+        vertical: true
         color: Appearance.colors.colLayer0Base
     }
 }
