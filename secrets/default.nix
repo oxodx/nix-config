@@ -60,6 +60,22 @@ in {
         mode = "0600";
       })
     (lib.filterAttrs (_: identity: builtins.elem hostName identity.clients) identities)
+    // lib.optionalAttrs (builtins.elem hostName ["laptop" "oxod-laptop" "tv"]) {
+      eden-prod-keys = {
+        file = ./eden-prod-keys.age;
+        path = "${config.users.users.${username}.home}/.config/eden/keys/prod.keys";
+        owner = username;
+        group = "users";
+        mode = "0600";
+      };
+      eden-title-keys = {
+        file = ./eden-title-keys.age;
+        path = "${config.users.users.${username}.home}/.config/eden/keys/title.keys";
+        owner = username;
+        group = "users";
+        mode = "0600";
+      };
+    }
     // lib.optionalAttrs (hostName == "oxod-laptop") {
       magister-android-keystore = {
         file = ./magister-android-keystore.age;

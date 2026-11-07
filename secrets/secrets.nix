@@ -3,6 +3,8 @@ let
   laptop = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIo1s8UrKSfAzjfwjeD5/qMcKsUi3d/6v7TR9/Q+5Q00";
   tv = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMcTsm7YWyCQgsxP5yQ0vH7IwjR5dtiKpw4BHPN5jysF";
 in {
+  "eden-prod-keys.age".publicKeys = [oxod laptop tv];
+  "eden-title-keys.age".publicKeys = [oxod laptop tv];
   "git.age".publicKeys = [oxod laptop tv];
   "camelot.age".publicKeys = [oxod laptop];
   "excalibur.age".publicKeys = [oxod laptop];

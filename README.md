@@ -130,6 +130,10 @@ agenix -r -i ~/.ssh/git
 Keep a recovery copy of the admin identity and each machine's SSH host identity.
 The host identity is needed to decrypt secrets during activation.
 
+Eden's Switch keys are encrypted in `secrets/eden-{prod,title}-keys.age` for
+the laptop and TV. Agenix installs them with mode `0600` in
+`~/.config/eden/keys`, the launcher's default key directory.
+
 ---
 
 ## Packages

@@ -12,7 +12,7 @@ fi
 target=${1:-${EDEN_GAME:-}}
 roms=${EDEN_ROM_DIR:-$HOME/Games/roms/switch}
 game=""
-keys=${2:-${EDEN_KEYS_DIR:-$HOME/Downloads/switch-key-check}}
+keys=${2:-${EDEN_KEYS_DIR:-$HOME/.config/eden/keys}}
 host_data=${XDG_DATA_HOME:-$HOME/.local/share}
 base=${EDEN_SANDBOX_DIR:-$host_data/eden-sandbox}
 runtime=${XDG_RUNTIME_DIR:?XDG_RUNTIME_DIR is not set}
