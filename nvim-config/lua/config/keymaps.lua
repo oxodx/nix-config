@@ -40,6 +40,9 @@ map("n", "<S-h>", "<cmd>BufferLineCyclePrev<cr>", "Previous buffer")
 map("n", "<S-l>", "<cmd>BufferLineCycleNext<cr>", "Next buffer")
 
 -- Windows
+map({ "n", "t" }, "<C-`>", function() require("config.terminal").toggle() end, "Toggle terminal")
+map("n", "<leader>tt", function() require("config.terminal").toggle() end, "Toggle terminal")
+map("t", "<Esc><Esc>", "<C-\\><C-n>", "Leave terminal input")
 map("n", "<C-h>", "<C-w>h", "Window left")
 map("n", "<C-j>", "<C-w>j", "Window down")
 map("n", "<C-k>", "<C-w>k", "Window up")

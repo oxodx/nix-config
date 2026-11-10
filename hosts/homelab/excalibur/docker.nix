@@ -125,8 +125,10 @@ in {
       "d /data 0755 root root -"
       "d /srv 0755 root root -"
       "d /srv/pelican/plugins 0755 root root -"
+      "d /tmp/pelican 0755 root root -"
       "d /srv/portainer 0755 root root -"
       "d /var/lib/excalibur 0700 root root -"
+      "L+ /etc/pelican - - - - /srv/pelican-wings/config"
       "L+ /var/lib/pelican - - - - /srv/pelican-wings/server-data"
     ];
     services = {

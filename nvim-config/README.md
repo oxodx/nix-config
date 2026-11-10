@@ -73,6 +73,8 @@ lazy.nvim installs the plugins on the first start. Run `:Mason` to see the langu
 | `<leader>bd` | Delete buffer |
 | `<S-h>` / `<S-l>` | Previous / next buffer |
 | `<C-h/j/k/l>` | Move between windows |
+| `<C-\`>` / `<leader>tt` | Toggle bottom terminal (shell keeps running while hidden) |
+| `<Esc><Esc>` (terminal) | Leave terminal input to navigate windows |
 | `<leader>q` | Quit (asks before closing unsaved buffers) |
 | `gd` `gr` `gD` `gI` `gT` `K` `<C-k>` | Language server: definition, references, declaration, implementation, type, hover, signature |
 | `[d` / `]d` | Previous / next diagnostic |

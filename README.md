@@ -22,13 +22,56 @@ Pinned flake inputs, shared module profiles, and agenix-managed SSH identities.
 ```bash
 sudo nixos-rebuild switch --flake .#oxod-laptop
 sudo nixos-rebuild --target-host trouble@192.168.1.237 --sudo switch --flake .#tv
-sudo nixos-rebuild --target-host oxod@192.168.1.185 --sudo switch --flake .#homelab-camelot
-sudo nixos-rebuild --target-host oxod@192.168.1.206 --sudo switch --flake .#homelab-excalibur
-sudo nixos-rebuild --target-host oxod@192.168.1.41 --sudo switch --flake .#homelab-gawain
+nixos-rebuild --target-host camelot --sudo switch --flake .#homelab-camelot
+nixos-rebuild --target-host excalibur --sudo switch --flake .#homelab-excalibur
+nixos-rebuild --target-host gawain --sudo switch --flake .#homelab-gawain
 ```
 
-Camelot's SSH address above is distinct from its legacy media service address
+The homelab commands deliberately use the SSH aliases from
+`home/services/terminal/software/ssh.nix`. The aliases select the matching
+agenix-managed identity; using a raw IP bypasses that host-specific
+`IdentityFile`. Remote activation uses `--sudo`, but the local command itself
+must not be run with `sudo` or it will use root's SSH configuration.
+
+Camelot's SSH address is distinct from its legacy media service address
 (`192.168.1.47`). Preserve that distinction when editing network configuration.
+
+### New homelab installation over SSH
+
+First activate `.#oxod-laptop`. It decrypts the client identities into
+`~/.ssh/homelab-{camelot,excalibur,gawain}` and installs the matching SSH
+aliases. A newly imported NixOS container needs its public key bootstrapped
+once before it can be managed remotely. From the corresponding Proxmox node's
+root shell, substitute the container ID, host name and public-key file:
+
+```bash
+# Run on the laptop to display the public key. Public keys are not secrets.
+cat ~/.ssh/homelab-excalibur.pub
+
+# Run on the Proxmox node. Replace CTID and PUBLIC_KEY.
+pct exec CTID -- /run/current-system/sw/bin/install -d -m 700 -o oxod -g users /home/oxod/.ssh
+pct exec CTID -- sh -c 'echo "PUBLIC_KEY" >> /home/oxod/.ssh/authorized_keys'
+pct exec CTID -- /run/current-system/sw/bin/chown oxod:users /home/oxod/.ssh/authorized_keys
+pct exec CTID -- /run/current-system/sw/bin/chmod 600 /home/oxod/.ssh/authorized_keys
+```
+
+Confirm the new server's SSH host-key fingerprint through the Proxmox console,
+connect once to record it, then verify non-interactive key authentication:
+
+```bash
+ssh excalibur
+ssh -o BatchMode=yes excalibur true
+```
+
+Deploy from the repository as the normal laptop user:
+
+```bash
+nixos-rebuild --target-host excalibur --sudo switch --flake .#homelab-excalibur
+```
+
+Use the equivalent `camelot`/`homelab-camelot` or
+`gawain`/`homelab-gawain` pair for the other containers. After the first
+successful activation, NixOS manages `oxod`'s authorized key declaratively.
 
 ---
 

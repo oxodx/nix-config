@@ -24,6 +24,13 @@ return {
       end
 
       -- Per-server settings.
+      vim.lsp.config("clangd", {
+        cmd = {
+          "clangd",
+          "--query-driver=/etc/profiles/per-user/oxod/bin/c++",
+        },
+      })
+
       vim.lsp.config("lua_ls", {
         settings = { Lua = { telemetry = { enable = false } } },
       })

@@ -5,3 +5,19 @@
 /result-*
 /nvim.log
 /nix-config.zip
+
+# Local credentials and generated artifacts
+/.aws/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+id_rsa
+id_ed25519
+__pycache__/
+*.py[cod]
+*.log
+*.tmp
+*.bak
+.DS_Store
