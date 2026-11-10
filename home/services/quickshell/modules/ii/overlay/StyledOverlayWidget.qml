@@ -104,6 +104,13 @@ AbstractOverlayWidget {
         reportPinnedState();
         reportClickableState();
     }
+    Component.onDestruction: {
+        // The overlay input mask stores this widget's content item. Remove both
+        // registrations before the delegate disappears so a reload or closing
+        // a widget cannot leave a stale region intercepting pointer events.
+        OverlayContext.pin(identifier, false);
+        OverlayContext.registerClickableWidget(contentItem, false);
+    }
 
     Connections {
         target: OverlayContext
