@@ -85,7 +85,9 @@ in {
   services.gitea-actions-runner.instances.gawain = {
     enable = true;
     name = "gawain";
-    url = "http://127.0.0.1:3001";
+    # Job containers cannot use the host's loopback URL. Register with the
+    # public tunnel URL so actions/checkout receives a reachable server URL.
+    url = "https://git.oxod.nl";
     tokenFile = "/run/forgejo-runner-token/token.env";
     labels = [
       "ubuntu-latest:docker://node:20-bookworm"
