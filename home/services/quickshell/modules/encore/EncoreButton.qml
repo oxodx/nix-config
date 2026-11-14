@@ -15,15 +15,23 @@ Button {
     implicitHeight: 42
     padding: 10
     opacity: enabled ? 1 : 0.45
+    scale: hovered && !down ? 1.025 : 1
     Accessible.name: text || hint || symbol
     ToolTip.visible: hovered && hint.length > 0
     ToolTip.text: hint
     ToolTip.delay: 500
 
+    Behavior on scale {
+        NumberAnimation { duration: 140; easing.type: Easing.OutCubic }
+    }
+
     background: EncoreCard {
         radius: 13
         depth: root.down ? 0 : 3
-        fill: root.selected ? EncoreStyle.lavender : (root.hovered ? Qt.darker(root.fill, 1.06) : root.fill)
+        fill: root.selected ? EncoreStyle.lavender
+                            : (root.hovered ? (EncoreStyle.dark ? Qt.lighter(root.fill, 1.16)
+                                                                  : Qt.darker(root.fill, 1.045))
+                                            : root.fill)
         border.color: root.visualFocus ? EncoreStyle.pink : (root.fill.hslLightness > 0.55 ? EncoreStyle.ink :
                                                                                              EncoreStyle.outline)
         y: root.down ? 3 : 0
@@ -33,6 +41,8 @@ Button {
                 easing.type: Easing.OutCubic
             }
         }
+        Behavior on fill { ColorAnimation { duration: 140 } }
+        Behavior on border.color { ColorAnimation { duration: 140 } }
     }
     contentItem: RowLayout {
         spacing: 7

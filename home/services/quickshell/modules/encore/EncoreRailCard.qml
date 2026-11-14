@@ -1,12 +1,20 @@
 import QtQuick
 
 EncoreCard {
-    fill: "#291039"
-    radius: 23
-    border.color: "#b98be0"
-    depth: 4
+    fill: EncoreStyle.dark ? "#24122f" : "#321642"
+    radius: 24
+    border.color: EncoreStyle.dark ? "#aa83ca" : "#c39ae5"
+    depth: 5
     Rectangle {
-        x: 5; y: 20; width: 2; height: parent.height - 40; radius: 1
-        color: "#b47bdb"; opacity: 0.25
+        x: 6; y: 22; width: 2; height: parent.height - 44; radius: 1
+        color: EncoreStyle.lavender; opacity: 0.22
+    }
+    Column {
+        anchors { right: parent.right; rightMargin: 5; verticalCenter: parent.verticalCenter }
+        spacing: 6
+        Repeater {
+            model: 3
+            Rectangle { width: 2; height: 2; radius: 1; color: EncoreStyle.pink; opacity: 0.3 }
+        }
     }
 }

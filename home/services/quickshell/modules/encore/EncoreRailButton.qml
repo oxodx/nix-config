@@ -6,10 +6,10 @@ EncoreButton {
     property int badge: 0
     property bool occupied: false
     implicitWidth: 30; implicitHeight: 30; padding: 2
-    fill: "#422052"
+    fill: EncoreStyle.dark ? "#432653" : "#492459"
     foreground: selected ? EncoreStyle.ink : "#edddfa"
-    scale: Config.options.encore.motion && hovered ? 1.10 : 1
-    rotation: Config.options.encore.motion && hovered ? -5 : 0
+    scale: Config.options.encore.motion && hovered ? 1.08 : 1
+    rotation: Config.options.encore.motion && hovered ? -3 : 0
     Behavior on scale { NumberAnimation { duration: 180; easing.type: Easing.OutBack; easing.overshoot: 0.8 } }
     Behavior on rotation { NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
     Rectangle {

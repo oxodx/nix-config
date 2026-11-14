@@ -19,17 +19,17 @@ Variants {
             screen: rails.modelData
             visible: GlobalStates.barOpen && !GlobalStates.screenLocked
             anchors { top: true; bottom: true; left: true }
-            implicitWidth: 66
-            exclusiveZone: 66
+            implicitWidth: 70
+            exclusiveZone: 70
             color: "transparent"
             WlrLayershell.namespace: "quickshell:encore:bar"
             Component.onCompleted: GlobalFocusGrab.addPersistent(left)
             Component.onDestruction: GlobalFocusGrab.removePersistent(left)
             EncoreRailCard {
-                anchors.fill: parent; anchors.margins: 10; anchors.topMargin: 34; anchors.bottomMargin: 28
+                anchors.fill: parent; anchors.margins: 11; anchors.topMargin: 30; anchors.bottomMargin: 24
 
                 ColumnLayout {
-                    anchors.fill: parent; anchors.margins: 7; spacing: 9
+                    anchors.fill: parent; anchors.margins: 8; spacing: 9
                     EncoreRailButton { symbol: "star"; implicitWidth: 32; implicitHeight: 32; padding: 3; fill: EncoreStyle.lavender; selected: GlobalStates.searchOpen; hint: "Encore launcher"; onClicked: { GlobalStates.searchOpen = !GlobalStates.searchOpen; GlobalStates.sidebarRightOpen = false } }
                     EncorePrideStripe { Layout.fillWidth: true; implicitHeight: 5; Layout.topMargin: 4; Layout.bottomMargin: 8 }
                     Repeater {
@@ -72,14 +72,14 @@ Variants {
             screen: rails.modelData
             visible: GlobalStates.barOpen && !GlobalStates.screenLocked
             anchors { top: true; bottom: true; right: true }
-            implicitWidth: 66; exclusiveZone: 66; color: "transparent"
+            implicitWidth: 70; exclusiveZone: 70; color: "transparent"
             WlrLayershell.namespace: "quickshell:encore:tools"
             Component.onCompleted: GlobalFocusGrab.addPersistent(right)
             Component.onDestruction: GlobalFocusGrab.removePersistent(right)
             EncoreRailCard {
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
-                width: 46; height: Math.min(actions.implicitHeight + 24, parent.height - 80)
+                width: 48; height: Math.min(actions.implicitHeight + 26, parent.height - 80)
 
                 ColumnLayout {
                     id: actions
