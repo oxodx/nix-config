@@ -46,6 +46,7 @@
     keystore.path = "${config.users.users.${username}.home}/.config/magister-secrets/android-release.keystore";
     githubActions.path = "${config.users.users.${username}.home}/.config/magister-secrets/github-actions.env";
   };
+  secrets.cloudflareTunnelToken = "/run/agenix/cloudflare-tunnel-token";
 in {
   # Consumers accept {secrets, ...} and use secrets.ssh.<name>.path.
   _module.args = {inherit secrets;};

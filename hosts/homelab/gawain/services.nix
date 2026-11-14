@@ -3,7 +3,10 @@
   camelotIp = "192.168.1.47";
   excaliburIp = "192.168.1.206";
 in {
-  imports = [./docker.nix];
+  imports = [
+    ./docker.nix
+    ./forgejo.nix
+  ];
 
   services = {
     adguardhome = {
@@ -23,6 +26,31 @@ in {
       dataDir = "/srv/caddy";
       openFirewall = true;
       extraConfig = ''
+        # Dedicated loopback-only ingress for the Cloudflare homelab tunnel.
+        # Every public hostname must be explicitly allow-listed here.
+        :8082 {
+          bind 127.0.0.1
+          encode zstd gzip
+
+          @forgejo host git.oxod.nl
+          handle @forgejo {
+            request_body {
+              max_size 1GB
+            }
+            header {
+              Strict-Transport-Security "max-age=31536000; includeSubDomains"
+              X-Content-Type-Options "nosniff"
+              X-Frame-Options "SAMEORIGIN"
+              Referrer-Policy "strict-origin-when-cross-origin"
+            }
+            reverse_proxy 127.0.0.1:3001
+          }
+
+          handle {
+            respond "Unknown public homelab service" 404
+          }
+        }
+
         ${domain} {
           tls internal
           root * ${config.services.dashy.finalDrv}
@@ -184,6 +212,11 @@ in {
                 title = "Beszel";
                 icon = "sh-beszel-light";
                 url = "https://beszel.${domain}/";
+              }
+              {
+                title = "Forgejo";
+                icon = "sh-forgejo-light";
+                url = "https://git.oxod.nl/";
               }
             ];
           }

@@ -114,6 +114,57 @@ interfaces. Keep application settings and their supporting assets together.
 | `homelab-excalibur` | server | Pelican and container management |
 | `homelab-gawain` | server | DNS, reverse proxy and dashboard |
 
+### Forgejo
+
+Gawain serves Forgejo at `https://git.oxod.nl` with PostgreSQL, Git LFS and a
+Docker-backed Actions runner. Forgejo only listens on loopback. A single
+remotely managed homelab Cloudflare Tunnel connects to Caddy's loopback-only
+port `8082`; Caddy allow-lists each public hostname and routes it to its local
+service. The router needs no inbound port forwarding, and the origin address is
+not exposed in public DNS.
+
+Create a remotely managed tunnel in Cloudflare Zero Trust, copy its connector
+token, then store the token with agenix (the file must contain only the token):
+
+```bash
+cd secrets
+agenix -e cloudflare-tunnel-token.age -i ~/.ssh/id_ed25519
+git add cloudflare-tunnel-token.age
+```
+
+In the tunnel's **Published application routes**, add `*.oxod.nl` with service
+type `HTTP` and URL `127.0.0.1:8082`. The wildcard makes this the shared homelab
+tunnel, while Caddy's port-8082 allow-list decides which hostnames actually
+exist. Cloudflare preserves the requested hostname for Caddy to match. Do not
+add an A/AAAA record for `git.oxod.nl`, add it to home DNS, or forward ports
+80/443. Additional public services only need an explicit Caddy route; unmatched
+hostnames receive a 404 response.
+
+The `oxod.home` namespace remains house-DNS-only. AdGuard resolves those names
+on the LAN, Caddy serves them with its internal CA on the normal HTTP/HTTPS
+listeners, and none of them are included in the tunnel ingress allow-list.
+
+Registration is deliberately disabled. After the first deployment, create the
+administrator locally so its password never enters this repository or the Nix
+store:
+
+```bash
+ssh gawain
+sudo -u forgejo forgejo --config /var/lib/forgejo/custom/conf/app.ini \
+  admin user create --admin --username oxod --email me@oxod.nl --random-password
+```
+
+Save the one-time password in a password manager, sign in, and change it. HTTPS
+clones and pushes then use `https://git.oxod.nl/OWNER/REPOSITORY.git`; use a
+Forgejo access token as the Git password and store it in an OS credential
+helper. The Actions registration token is generated into `/run` during boot,
+and Forgejo's signing/session secrets and runner identity remain in root- or
+service-only state directories. They are never evaluated by Nix or committed.
+
+Only enable Actions for trusted repositories and workflows: Docker-backed CI
+jobs effectively have control of the runner node. Back up `/var/lib/forgejo`,
+the PostgreSQL database, and `/var/lib/gitea-runner` together.
+
 Hardware details and `system.stateVersion` belong to the host. Do not change
 `stateVersion` as part of a routine input update.
 
