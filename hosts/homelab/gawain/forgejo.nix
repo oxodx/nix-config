@@ -97,6 +97,14 @@ in {
       capacity = 1;
       timeout = "1h";
     };
+    # Runner-created Docker networks otherwise inherit Docker's embedded DNS,
+    # which intermittently fails to resolve the public Forgejo hostname. Pin
+    # resolvers for every job container so checkout can always reach the tunnel.
+    settings.container.options = "--dns=1.1.1.1 --dns=9.9.9.9";
+    # Auto-detection advertises the cache on Gawain's LAN address, which is not
+    # reachable from isolated Docker job networks through the host firewall.
+    # Disable the remote Actions cache rather than weakening container isolation.
+    settings.cache.enabled = false;
   };
 
   # CI jobs are untrusted code. Keep Actions restricted to repositories whose
