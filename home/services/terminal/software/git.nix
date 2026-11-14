@@ -6,9 +6,10 @@
   configFile = "git/config";
   ignoreFile = "git/ignore";
   toINI = (pkgs.formats.ini {}).generate;
+  gitWithLibsecret = pkgs.git.override {withLibsecret = true;};
 in {
   users.users.oxod.packages = with pkgs; [
-    git
+    gitWithLibsecret
     delta
     gnupg
     git-lfs
@@ -33,6 +34,12 @@ in {
     };
     commit = {
       gpgSign = "false";
+    };
+    credential = {
+      helper = "libsecret";
+    };
+    "credential \"https://git.oxod.nl\"" = {
+      username = "oxod";
     };
     core = {
       editor = "nvim";
