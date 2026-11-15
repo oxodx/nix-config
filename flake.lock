@@ -97,6 +97,29 @@
         "type": "github"
       }
     },
+    "nekolauncher": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "systems": [
+          "systems"
+        ]
+      },
+      "locked": {
+        "lastModified": 1794755298,
+        "narHash": "sha256-x6dOUKX2J2yDB7Z4JiqtyP1+Is9iDIBeOKFq2TbZ/6E=",
+        "ref": "refs/heads/main",
+        "rev": "bd9e17f8c8b34dd91ec2e5c475b9b9aef2aea818",
+        "revCount": 13,
+        "type": "git",
+        "url": "https://git.oxod.nl/oxod/NekoLauncher.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "https://git.oxod.nl/oxod/NekoLauncher.git"
+      }
+    },
     "nix-index-database": {
       "inputs": {
         "nixpkgs": [
@@ -189,11 +212,12 @@
       "inputs": {
         "agenix": "agenix",
         "llm-agents": "llm-agents",
+        "nekolauncher": "nekolauncher",
         "nix-index-database": "nix-index-database",
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "quickshell": "quickshell",
-        "systems": "systems_3"
+        "systems": "systems_2"
       }
     },
     "systems": {
@@ -211,7 +235,7 @@
         "type": "github"
       }
     },
-    "systems_3": {
+    "systems_2": {
       "locked": {
         "lastModified": 1791244623,
         "narHash": "sha256-uuanbkFk8a313Zfrxdcz8Us/yQtaxNnKJtX8v0ZPpd8=",

@@ -97,6 +97,7 @@
       usbutils
       bash
       obsidian
+      inputs.nekolauncher.packages.${pkgs.stdenv.hostPlatform.system}.default
     ]
     ++ (with inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}; [
       chatgpt
