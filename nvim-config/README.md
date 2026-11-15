@@ -94,14 +94,22 @@ diagnostics from neocmakelsp, and formatting from cmake-format.
 QML (Quickshell) support uses `qmlls` when it is on your PATH. Set `QML_IMPORT_PATH` to a
 colon-separated list of QML module directories, and `qmlls` gets them with `-I`.
 
-## What was left out from the Nix version
+## Nix support
 
-- **nixd and the Nix formatter (alejandra)**: they were tied to the NixOS flake. Add them back on
-  NixOS if you still want them.
-- **nvim-lint for Nix (deadnix, statix)**: same reason.
-- **Paths to your flake**: the nixd settings pointed at `/home/oxod/dev/nix-config`. They are gone.
-- **The Nix-generated plugin lock**: plugin versions now come from lazy.nvim. Pin them with
-  `lazy-lock.json` if you want reproducible installs.
+Nix files get Treesitter highlighting, nixd completion, hover documentation, definitions,
+rename and code actions, Alejandra formatting (`<leader>cf`), and statix/deadnix diagnostics
+when opening or saving a file and after leaving insert mode.
+
+The NixOS Neovim module installs `nixd`, `alejandra`, `statix`, and `deadnix`. For standalone
+installs, put those tools on PATH; nixd and lint checks are enabled only when available.
+Other languages continue to use Mason.
+
+For flake projects, nixd uses the project's `nixpkgs` input. In this repository it also loads
+NixOS options for the current hostname. Set `NVIM_NIX_HOST=tv` before launching Neovim to
+complete options for the TV (or set it to another host defined by the flake). Flakes must
+be evaluable for package and option completion to work.
+
+Plugin versions come from lazy.nvim. Pin them with `lazy-lock.json` for reproducible installs.
 
 ## Troubleshooting
 

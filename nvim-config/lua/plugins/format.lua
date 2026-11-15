@@ -19,6 +19,7 @@ return {
       },
       formatters_by_ft = {
         lua = { "stylua" },
+        nix = { "alejandra" },
         python = { "yapf" },
         java = { "clang_format" },
         bash = { "shfmt" },

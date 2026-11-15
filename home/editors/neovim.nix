@@ -12,6 +12,10 @@
     gnumake
     gcc
     stylua
+    nixd
+    alejandra
+    statix
+    deadnix
     shfmt
     prettier
     clang-tools

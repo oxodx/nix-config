@@ -99,6 +99,38 @@ return {
         run_on_start = true,
       })
 
+      -- Nix tools come from NixOS rather than Mason's downloaded binaries.
+      if vim.fn.executable("nixd") == 1 then
+        vim.lsp.config("nixd", {
+          settings = { nixd = { formatting = { command = { "alejandra" } } } },
+          before_init = function(_, config)
+            local root = config.root_dir
+            if not root or vim.fn.filereadable(root .. "/flake.nix") == 0 then
+              return
+            end
+            local flake = "(builtins.getFlake " .. vim.json.encode(root) .. ")"
+            local settings = config.settings.nixd
+            settings.nixpkgs = { expr = "import " .. flake .. ".inputs.nixpkgs { }" }
+            -- Override the host when editing a configuration for another machine.
+            local host = vim.env.NVIM_NIX_HOST
+            local host_expr
+            if host then
+              host_expr = flake .. ".nixosConfigurations." .. vim.json.encode(host)
+            else
+              host_expr = "(let hosts = " .. flake .. ".nixosConfigurations; in hosts.${builtins.head "
+                .. "(builtins.filter (name: hosts.${name}.config.networking.hostName == "
+                .. vim.json.encode(vim.uv.os_gethostname()) .. ") (builtins.attrNames hosts))})"
+            end
+            if vim.fn.isdirectory(root .. "/hosts") == 1 then
+              settings.options = {
+                nixos = { expr = host_expr .. ".options" },
+              }
+            end
+          end,
+        })
+        vim.lsp.enable("nixd")
+      end
+
       -- QML / Quickshell. Mason does not ship qmlls, so it is only enabled when it is installed.
       -- Set QML_IMPORT_PATH (colon separated) to point it at your QML modules.
       if vim.fn.executable("qmlls") == 1 then

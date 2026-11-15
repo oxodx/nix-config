@@ -23,9 +23,14 @@ in {
   networking.hostName = "tv";
 
   services = {
+    greetd.enable = lib.mkForce false;
     xserver.enable = true;
     desktopManager.plasma6.enable = true;
     displayManager = {
+      autoLogin = {
+        enable = true;
+        user = "trouble";
+      };
       defaultSession = "plasma-bigscreen-wayland";
       sessionPackages = [pkgs-unstable.kdePackages.plasma-bigscreen];
       sddm = {
@@ -33,12 +38,6 @@ in {
         theme = "breeze";
         wayland.enable = true;
         enableHidpi = true;
-        settings = {
-          AutoLogin = {
-            Session = "plasma.desktop";
-            User = "trouble";
-          };
-        };
       };
     };
   };
