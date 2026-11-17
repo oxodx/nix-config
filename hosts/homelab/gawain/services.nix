@@ -58,7 +58,7 @@ in {
               Referrer-Policy "strict-origin-when-cross-origin"
             }
             rewrite * /fdroid{uri}
-            reverse_proxy 127.0.0.1:3003 {
+            reverse_proxy 127.0.0.1:3005 {
               header_up Host pages.oxod.nl
               header_up X-Forwarded-Proto https
             }
