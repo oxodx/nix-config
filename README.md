@@ -114,7 +114,7 @@ interfaces. Keep application settings and their supporting assets together.
 | `homelab-excalibur` | server | Pelican and container management |
 | `homelab-gawain` | server | DNS, reverse proxy and dashboard |
 
-### Forgejo
+### Forgejo and Pages
 
 Gawain serves Forgejo at `https://git.oxod.nl` with PostgreSQL, Git LFS and a
 Docker-backed Actions runner. Forgejo only listens on loopback. A single
@@ -140,6 +140,45 @@ add an A/AAAA record for `git.oxod.nl`, add it to home DNS, or forward ports
 80/443. Additional public services only need an explicit Caddy route; unmatched
 hostnames receive a 404 response.
 
+Gawain also runs [git-pages](https://codeberg.org/git-pages/git-pages), the
+server behind Codeberg Pages. Static sites are public at
+`https://pages.oxod.nl/REPOSITORY/`; the special `oxod/pages` repository is
+served at `https://pages.oxod.nl/`. Like Forgejo, Pages is only reachable
+through the tunnel and Caddy allow-list.
+
+To publish already-built static files from Forgejo Actions, enable Actions for
+the repository and add `.forgejo/workflows/pages.yml` (replace the repository
+name and build command/output directory):
+
+```yaml
+name: Deploy Pages
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build
+        run: npm ci && npm run build
+      - uses: https://codeberg.org/git-pages/action@v2
+        with:
+          site: https://pages.oxod.nl/REPOSITORY/
+          server: pages.oxod.nl
+          token: ${{ forge.token }}
+          source: dist/
+```
+
+No deployment secret is required: Forgejo supplies a short-lived workflow
+token, and git-pages verifies that it has push access to the matching
+repository. For a plain HTML repository, create a `pages` branch and add a
+**git-pages webhook** with `https://pages.oxod.nl/REPOSITORY/` as the target and
+`pages` as the branch filter. Use `https://pages.oxod.nl/` for the `oxod/pages`
+repository's webhook.
+
 The `oxod.home` namespace remains house-DNS-only. AdGuard resolves those names
 on the LAN, Caddy serves them with its internal CA on the normal HTTP/HTTPS
 listeners, and none of them are included in the tunnel ingress allow-list.
@@ -163,7 +202,8 @@ service-only state directories. They are never evaluated by Nix or committed.
 
 Only enable Actions for trusted repositories and workflows: Docker-backed CI
 jobs effectively have control of the runner node. Back up `/var/lib/forgejo`,
-the PostgreSQL database, and `/var/lib/gitea-runner` together.
+the PostgreSQL database, `/var/lib/gitea-runner`, and `/var/lib/git-pages`
+together.
 
 Hardware details and `system.stateVersion` belong to the host. Do not change
 `stateVersion` as part of a routine input update.

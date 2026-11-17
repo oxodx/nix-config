@@ -6,6 +6,7 @@ in {
   imports = [
     ./docker.nix
     ./forgejo.nix
+    ./pages.nix
   ];
 
   services = {
@@ -44,6 +45,23 @@ in {
               Referrer-Policy "strict-origin-when-cross-origin"
             }
             reverse_proxy 127.0.0.1:3001
+          }
+
+          @pages host pages.oxod.nl
+          handle @pages {
+            request_body {
+              max_size 512MB
+            }
+            header {
+              Strict-Transport-Security "max-age=31536000; includeSubDomains"
+              X-Content-Type-Options "nosniff"
+              Referrer-Policy "strict-origin-when-cross-origin"
+            }
+            reverse_proxy 127.0.0.1:3003 {
+              # The tunnel reaches this ingress over loopback HTTP, while the
+              # public Pages origin is always HTTPS.
+              header_up X-Forwarded-Proto https
+            }
           }
 
           handle {
