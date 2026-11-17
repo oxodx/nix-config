@@ -173,7 +173,7 @@ jobs:
         with:
           site: https://pages.oxod.nl/REPOSITORY/
           server: pages.oxod.nl
-          token: ${{ forge.token }}
+          token: ${{ github.token }}
           source: dist/
 ```
 
