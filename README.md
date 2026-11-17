@@ -146,6 +146,11 @@ server behind Codeberg Pages. Static sites are public at
 served at `https://pages.oxod.nl/`. Like Forgejo, Pages is only reachable
 through the tunnel and Caddy allow-list.
 
+The short project URL defaults to the `oxod` owner. Other Forgejo users publish
+at `https://pages.oxod.nl/USER/REPOSITORY/`. An owner-aware local router treats
+the first path component as an owner only when it matches an existing Forgejo
+user, so nested assets under `oxod` project sites keep working normally.
+
 To publish already-built static files from Forgejo Actions, enable Actions for
 the repository and add `.forgejo/workflows/pages.yml` (replace the repository
 name and build command/output directory):

@@ -29,6 +29,14 @@
     };
   };
 
+  pagesRouter = pkgs.buildGoModule {
+    pname = "pages-router";
+    version = "1.0.0";
+    src = ./pages-router;
+    vendorHash = null;
+    meta.mainProgram = "pages-router";
+  };
+
   configFile = (pkgs.formats.toml {}).generate "git-pages.toml" {
     log-format = "text";
 
@@ -45,7 +53,7 @@
     wildcard = [
       {
         domain = "oxod.nl";
-        clone-url = "https://git.oxod.nl/oxod/<project>.git";
+        clone-url = "https://git.oxod.nl/<user>/<project>.git";
         index-repo = "pages";
         index-repo-branch = "pages";
         authorization = "forgejo";
@@ -64,7 +72,7 @@
 
     limits = {
       max-site-size = "512M";
-      allowed-repository-url-prefixes = ["https://git.oxod.nl/oxod/"];
+      allowed-repository-url-prefixes = ["https://git.oxod.nl/"];
       allowed-custom-headers = [
         "X-Clacks-Overhead"
         "Content-Security-Policy"
@@ -95,6 +103,44 @@ in {
       Restart = "on-failure";
       RestartSec = "5s";
       UMask = "0027";
+
+      CapabilityBoundingSet = "";
+      LockPersonality = true;
+      MemoryDenyWriteExecute = true;
+      NoNewPrivileges = true;
+      PrivateDevices = true;
+      PrivateTmp = true;
+      ProtectClock = true;
+      ProtectControlGroups = true;
+      ProtectHome = true;
+      ProtectHostname = true;
+      ProtectKernelLogs = true;
+      ProtectKernelModules = true;
+      ProtectKernelTunables = true;
+      ProtectProc = "invisible";
+      ProtectSystem = "strict";
+      RestrictAddressFamilies = ["AF_INET" "AF_INET6" "AF_UNIX"];
+      RestrictNamespaces = true;
+      RestrictRealtime = true;
+      RestrictSUIDSGID = true;
+      SystemCallArchitectures = "native";
+      SystemCallFilter = ["@system-service" "~@privileged" "~@resources"];
+    };
+  };
+
+  systemd.services.pages-router = {
+    description = "Forgejo Pages owner-aware URL router";
+    wantedBy = ["multi-user.target"];
+    after = ["network-online.target" "forgejo.service" "git-pages.service"];
+    requires = ["git-pages.service"];
+    wants = ["network-online.target"];
+
+    serviceConfig = {
+      Type = "simple";
+      DynamicUser = true;
+      ExecStart = lib.getExe pagesRouter;
+      Restart = "on-failure";
+      RestartSec = "5s";
 
       CapabilityBoundingSet = "";
       LockPersonality = true;
