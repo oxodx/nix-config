@@ -54,8 +54,8 @@
       {
         domain = "oxod.nl";
         clone-url = "https://git.oxod.nl/<user>/<project>.git";
-        index-repo = "pages";
-        index-repo-branch = "pages";
+        index-repo = "oxod.nl";
+        index-repo-branch = "main";
         authorization = "forgejo";
       }
     ];

@@ -142,18 +142,18 @@ hostnames receive a 404 response.
 
 Gawain also runs [git-pages](https://codeberg.org/git-pages/git-pages), the
 server behind Codeberg Pages. Static sites are public at
-`https://pages.oxod.nl/REPOSITORY/`; the special `oxod/pages` repository is
-served at `https://pages.oxod.nl/`. Like Forgejo, Pages is only reachable
-through the tunnel and Caddy allow-list.
+`https://pages.oxod.nl/REPOSITORY/`; the `oxod/oxod.nl` portfolio is built and
+published by Forgejo Actions at `https://pages.oxod.nl/`. Like Forgejo, Pages
+is only reachable through the tunnel and Caddy allow-list.
 
 The short project URL defaults to the `oxod` owner. Other Forgejo users publish
 at `https://pages.oxod.nl/USER/REPOSITORY/`. An owner-aware local router treats
 the first path component as an owner only when it matches an existing Forgejo
 user, so nested assets under `oxod` project sites keep working normally.
 
-To publish already-built static files from Forgejo Actions, enable Actions for
-the repository and add `.forgejo/workflows/pages.yml` (replace the repository
-name and build command/output directory):
+To publish static files, enable Actions for the repository and add
+`.forgejo/workflows/pages.yml` (replace the repository name and build
+command/output directory):
 
 ```yaml
 name: Deploy Pages
@@ -179,10 +179,9 @@ jobs:
 
 No deployment secret is required: Forgejo supplies a short-lived workflow
 token, and git-pages verifies that it has push access to the matching
-repository. For a plain HTML repository, create a `pages` branch and add a
-**git-pages webhook** with `https://pages.oxod.nl/REPOSITORY/` as the target and
-`pages` as the branch filter. Use `https://pages.oxod.nl/` for the `oxod/pages`
-repository's webhook.
+repository. The `oxod/oxod.nl` workflow uses `https://pages.oxod.nl/` for
+`site`; repositories owned by other users use
+`https://pages.oxod.nl/USER/REPOSITORY/`.
 
 The `oxod.home` namespace remains house-DNS-only. AdGuard resolves those names
 on the LAN, Caddy serves them with its internal CA on the normal HTTP/HTTPS
