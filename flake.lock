@@ -107,11 +107,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1794755298,
-        "narHash": "sha256-x6dOUKX2J2yDB7Z4JiqtyP1+Is9iDIBeOKFq2TbZ/6E=",
+        "lastModified": 1794755898,
+        "narHash": "sha256-ahAyf0Imahecxym/GJwohM61noyyO/iYRI7bjHBUBoU=",
         "ref": "refs/heads/main",
-        "rev": "bd9e17f8c8b34dd91ec2e5c475b9b9aef2aea818",
-        "revCount": 13,
+        "rev": "800abe09ec29a0c84a4e77cb41338e81bb358b11",
+        "revCount": 14,
         "type": "git",
         "url": "https://git.oxod.nl/oxod/NekoLauncher.git"
       },

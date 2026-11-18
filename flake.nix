@@ -13,11 +13,9 @@
     quickshell.url = "git+https://git.outfoxxed.me/outfoxxed/quickshell";
     quickshell.inputs.nixpkgs.follows = "nixpkgs";
     llm-agents.url = "github:numtide/llm-agents.nix";
-    nekolauncher = {
-      url = "git+https://git.oxod.nl/oxod/NekoLauncher.git";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.systems.follows = "systems";
-    };
+    nekolauncher.url = "git+https://git.oxod.nl/oxod/NekoLauncher.git";
+    nekolauncher.inputs.nixpkgs.follows = "nixpkgs";
+    nekolauncher.inputs.systems.follows = "systems";
   };
 
   outputs = {
