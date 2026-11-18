@@ -82,6 +82,11 @@ in {
     requires = ["forgejo-runner-token.service"];
   };
 
+  # Forgejo 15 uses the Forgejo Runner 13 protocol generation. The NixOS
+  # module defaults to the legacy Gitea runner, so select Forgejo's runner
+  # explicitly while retaining the module's service and state management.
+  services.gitea-actions-runner.package = pkgs.forgejo-runner;
+
   services.gitea-actions-runner.instances.gawain = {
     enable = true;
     name = "gawain";
