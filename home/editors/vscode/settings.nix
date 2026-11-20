@@ -7,6 +7,9 @@
   "git.confirmSync" = false;
   "material-code.primaryColor" = "";
   "dotnetAcquisitionExtension.sharedExistingDotnetPath" = dotnet;
+  "csharp.format.enable" = true;
+  "omnisharp.enableEditorConfigSupport" = true;
+  "omnisharp.useEditorFormattingSettings" = false;
   "[csharp]" = {
     "editor.defaultFormatter" = "ms-dotnettools.csharp";
     "editor.formatOnPaste" = true;
