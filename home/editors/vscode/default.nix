@@ -1,8 +1,12 @@
 {pkgs, ...}: let
+  dotnetSdk = pkgs.dotnetCorePackages.combinePackages [
+    pkgs.dotnet-sdk_8
+    pkgs.dotnet-sdk_10
+  ];
   tools = with pkgs; [
     nil
     alejandra
-    dotnet-sdk_8
+    dotnetSdk
     nodejs
     python3
     python3Packages.yapf
@@ -33,7 +37,7 @@ in {
   users.users.oxod.packages = [vscodeWithTools];
 
   xdg.configFile."Code/User/settings.json" = {
-    text = builtins.toJSON (import ./settings.nix);
+    text = builtins.toJSON (import ./settings.nix {dotnet = pkgs.lib.getExe dotnetSdk;});
   };
 
   # Roslyn searches parent directories for EditorConfig. Keeping this in the

@@ -1,4 +1,4 @@
-{
+{dotnet}: {
   "workbench.sideBar.location" = "right";
   "workbench.startupEditor" = "none";
   "editor.tabSize" = 2;
@@ -7,6 +7,7 @@
   "git.confirmSync" = false;
   "material-code.primaryColor" = "";
   "dotnet.server.useOmnisharp" = false;
+  "dotnetAcquisitionExtension.sharedExistingDotnetPath" = dotnet;
   "omnisharp.enableEditorConfigSupport" = true;
   "omnisharp.organizeImportsOnFormat" = true;
   "[csharp]" = {
