@@ -48,7 +48,7 @@
     };
   };
 
-  mkLinkScript = baseDir: name: file: let
+  mkLinkScript = baseDir: user: name: file: let
     target =
       if file.text != null
       then pkgs.writeText name file.text
@@ -70,6 +70,7 @@
         cp "${target}" "${fullPath}"
         chmod +w "${fullPath}"
       fi
+      chown "${user}:users" "${fullPath}"
     ''
     else ''
       mkdir -p "${parentDir}"
@@ -160,11 +161,11 @@ in {
         lib.flatten (
           lib.mapAttrsToList (
             user: userCfg:
-              (lib.mapAttrsToList (mkLinkScript cfg.configHome) userCfg.configFiles)
-              ++ (lib.mapAttrsToList (mkLinkScript cfg.cacheHome) userCfg.cacheFiles)
-              ++ (lib.mapAttrsToList (mkLinkScript cfg.dataHome) userCfg.dataFiles)
-              ++ (lib.mapAttrsToList (mkLinkScript cfg.stateHome) userCfg.stateFiles)
-              ++ (lib.mapAttrsToList (mkLinkScript config.home.homeDirectory) userCfg.homeFiles)
+              (lib.mapAttrsToList (mkLinkScript cfg.configHome user) userCfg.configFiles)
+              ++ (lib.mapAttrsToList (mkLinkScript cfg.cacheHome user) userCfg.cacheFiles)
+              ++ (lib.mapAttrsToList (mkLinkScript cfg.dataHome user) userCfg.dataFiles)
+              ++ (lib.mapAttrsToList (mkLinkScript cfg.stateHome user) userCfg.stateFiles)
+              ++ (lib.mapAttrsToList (mkLinkScript config.home.homeDirectory user) userCfg.homeFiles)
           )
           config.users.users
         )
