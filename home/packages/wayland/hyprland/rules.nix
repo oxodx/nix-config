@@ -41,16 +41,6 @@
     maximize = true
   }
 
-  # Unity 6.3 can leave its XWayland launch screen open after the editor loads.
-  # Match only the splash's exact initial title; editor windows include the version.
-  windowrule {
-    name = unity-splash-hidden
-    match:class = ^(Unity-.*)$
-    match:title = ^(Unity)$
-    workspace = special:unity-splash silent
-    no_initial_focus = true
-  }
-
   windowrule {
     name = picture-in-picture
     match:title = ^Picture-in-Picture$

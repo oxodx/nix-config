@@ -1,7 +1,48 @@
-{pkgs, ...}: let
+{
+  lib,
+  pkgs,
+  ...
+}: let
   settings = import ./settings.nix;
   binds = import ./binds.nix {inherit pkgs;};
   rules = import ./rules.nix;
+
+  unitySplashWatcher = pkgs.writeShellApplication {
+    name = "unity-splash-watcher";
+    runtimeInputs = with pkgs; [hyprland jq socat];
+    text = ''
+      hide_stale_splash() {
+        while IFS= read -r address; do
+          hyprctl dispatch movetoworkspacesilent \
+            "special:unity-splash,address:$address"
+        done < <(
+          hyprctl clients -j | jq -r '
+            [.[] | select(.class | startswith("Unity-"))] as $unity
+            | if any($unity[]; .title != "Unity")
+              then $unity[] | select(.title == "Unity") | .address
+              else empty
+              end
+          '
+        )
+      }
+
+      while true; do
+        socket="$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock"
+
+        if [[ -S "$socket" ]]; then
+          hide_stale_splash
+
+          while IFS= read -r event; do
+            case "$event" in
+              openwindow\>\>*|windowtitlev2\>\>*) hide_stale_splash ;;
+            esac
+          done < <(socat -u "UNIX-CONNECT:$socket" -)
+        fi
+
+        sleep 1
+      done
+    '';
+  };
 
   hyprlandConfig = ''
     $mod = SUPER
@@ -45,6 +86,17 @@ in {
       swayidle
       wl-clipboard
     ];
+  };
+
+  systemd.user.services.unity-splash-watcher = {
+    description = "Hide Unity's launch screen after the editor opens";
+    wantedBy = ["graphical-session.target"];
+    after = ["graphical-session.target"];
+    serviceConfig = {
+      ExecStart = lib.getExe unitySplashWatcher;
+      Restart = "on-failure";
+      RestartSec = 1;
+    };
   };
 
   xdg.configFile = {
