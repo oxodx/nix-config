@@ -5,5 +5,5 @@
 }: {
   imports = mylib.scanPaths ./.;
 
-  users.users.oxod.packages = with pkgs; [jetbrains.idea-oss];
+  users.users.oxod.packages = with pkgs; [intellij-idea];
 }
