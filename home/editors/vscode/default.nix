@@ -17,6 +17,7 @@
     vscodeExtensions = with pkgs.vscode-extensions; [
       ms-dotnettools.csharp
       ms-dotnettools.csdevkit
+      ms-dotnettools.vscode-dotnet-runtime
       visualstudiotoolsforunity.vstuc
     ];
   };
