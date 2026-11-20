@@ -38,6 +38,9 @@ in {
 
   xdg.configFile."Code/User/settings.json" = {
     text = builtins.toJSON (import ./settings.nix {dotnet = pkgs.lib.getExe dotnetSdk;});
+    # Microsoft C# writes migration state here while activating. A read-only
+    # Nix store symlink prevents Roslyn (and therefore formatting) from loading.
+    mutable = true;
   };
 
   # Roslyn searches parent directories for EditorConfig. Keeping this in the
