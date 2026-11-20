@@ -6,10 +6,7 @@
   "git.autofetch" = true;
   "git.confirmSync" = false;
   "material-code.primaryColor" = "";
-  "dotnet.server.useOmnisharp" = false;
   "dotnetAcquisitionExtension.sharedExistingDotnetPath" = dotnet;
-  "omnisharp.enableEditorConfigSupport" = true;
-  "omnisharp.organizeImportsOnFormat" = true;
   "[csharp]" = {
     "editor.defaultFormatter" = "ms-dotnettools.csharp";
     "editor.formatOnPaste" = true;

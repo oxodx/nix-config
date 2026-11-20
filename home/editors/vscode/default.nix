@@ -41,6 +41,7 @@ in {
     # Microsoft C# writes migration state here while activating. A read-only
     # Nix store symlink prevents Roslyn (and therefore formatting) from loading.
     mutable = true;
+    force = true;
   };
 
   # Roslyn searches parent directories for EditorConfig. Keeping this in the

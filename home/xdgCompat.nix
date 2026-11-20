@@ -21,6 +21,11 @@
         default = false;
         description = "If true, copy the file instead of symlinking, allowing the application to modify it";
       };
+      force = lib.mkOption {
+        type = lib.types.bool;
+        default = false;
+        description = "Replace an existing mutable file during activation";
+      };
     };
   };
   userOpts = _: {
@@ -59,7 +64,11 @@
     if file.mutable
     then ''
       mkdir -p "${parentDir}"
-      if [ -L "${fullPath}" ]; then
+      if [ "${lib.boolToString file.force}" = true ]; then
+        rm -f "${fullPath}"
+        cp "${target}" "${fullPath}"
+        chmod +w "${fullPath}"
+      elif [ -L "${fullPath}" ]; then
         # Replace symlink with a copy
         rm -f "${fullPath}"
         cp "${target}" "${fullPath}"
