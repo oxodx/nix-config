@@ -49,7 +49,7 @@ in {
   home.file.".editorconfig".text = ''
     [*.cs]
     indent_style = space
-    indent_size = 4
+    indent_size = 2
     csharp_new_line_before_open_brace = none
     csharp_new_line_before_else = false
     csharp_new_line_before_catch = false

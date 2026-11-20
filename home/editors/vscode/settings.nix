@@ -12,7 +12,7 @@
     "editor.formatOnPaste" = true;
     "editor.formatOnSave" = true;
     "editor.formatOnType" = true;
-    "editor.tabSize" = 4;
+    "editor.tabSize" = 2;
   };
   "files.exclude" = {
     "**/.git" = true;
