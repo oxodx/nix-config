@@ -102,10 +102,15 @@ in {
       capacity = 1;
       timeout = "1h";
     };
-    # Auto-detection advertises the cache on Gawain's LAN address, which is not
-    # reachable from isolated Docker job networks through the host firewall.
-    # Disable the remote Actions cache rather than weakening container isolation.
-    settings.cache.enabled = false;
+    # Keep the cache proxy reachable only through Docker's host gateway. The
+    # firewall rule below admits the proxy port solely from Docker bridges.
+    settings.cache = {
+      enabled = true;
+      dir = "/var/lib/gitea-runner/gawain/cache";
+      proxy_port = 4000;
+      actions_cache_url_override = "http://host.containers.internal:4000";
+    };
+    settings.container.options = "--add-host=host.containers.internal:host-gateway";
   };
 
   # CI jobs are untrusted code. Keep Actions restricted to repositories whose
@@ -115,6 +120,16 @@ in {
     # Configure DNS at the daemon level. Passing --dns to every runner-created
     # container conflicts with the network mode used by container actions.
     daemon.settings.dns = ["1.1.1.1" "9.9.9.9"];
+  };
+
+  networking.firewall = {
+    extraCommands = ''
+      iptables -C nixos-fw -i br+ -p tcp --dport 4000 -j ACCEPT 2>/dev/null \
+        || iptables -I nixos-fw 1 -i br+ -p tcp --dport 4000 -j ACCEPT
+    '';
+    extraStopCommands = ''
+      iptables -D nixos-fw -i br+ -p tcp --dport 4000 -j ACCEPT 2>/dev/null || true
+    '';
   };
 
   # One remotely managed tunnel carries public homelab traffic to Caddy's
