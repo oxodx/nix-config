@@ -8,7 +8,10 @@ in {
     docker = {
       enable = true;
       enableOnBoot = true;
-      autoPrune.enable = true;
+      autoPrune = {
+        enable = true;
+        flags = ["--filter" "label!=pelican.wings.network=true"];
+      };
       logDriver = "journald";
     };
     oci-containers = {
@@ -146,6 +149,30 @@ in {
             || ${docker} network create --driver bridge pelican
         '';
       };
+      pelican-wings-network = {
+        description = "Pelican Wings game-server Docker network";
+        wantedBy = ["multi-user.target"];
+        requires = ["docker.service"];
+        after = ["docker.service"];
+        serviceConfig = {
+          Type = "oneshot";
+          RemainAfterExit = true;
+        };
+        script = ''
+          ${docker} network inspect pelican_nw >/dev/null 2>&1 \
+            || ${docker} network create \
+              --driver bridge \
+              --ipv6 \
+              --subnet 172.20.0.0/16 \
+              --gateway 172.20.0.1 \
+              --subnet fd16:a8e1:4e4f::/64 \
+              --gateway fd16:a8e1:4e4f::1 \
+              --opt com.docker.network.bridge.enable_icc=true \
+              --opt com.docker.network.driver.mtu=1500 \
+              --label pelican.wings.network=true \
+              pelican_nw
+        '';
+      };
       docker-pelican-database = {
         requires = ["pelican-network.service"];
         after = ["pelican-network.service"];
@@ -159,8 +186,8 @@ in {
         after = ["pelican-network.service"];
       };
       docker-pelican-wings = {
-        requires = ["pelican-network.service"];
-        after = ["pelican-network.service"];
+        requires = ["pelican-network.service" "pelican-wings-network.service"];
+        after = ["pelican-network.service" "pelican-wings-network.service"];
       };
     };
   };
