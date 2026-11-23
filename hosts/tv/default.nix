@@ -53,5 +53,8 @@ in {
 
   programs.ssh.askPassword = lib.mkForce "${pkgs.seahorse}/libexec/seahorse/ssh-askpass";
 
+  # The TV is deployed over the LAN before it is available through Tailscale.
+  services.openssh.openFirewall = lib.mkForce true;
+
   system.stateVersion = "26.05";
 }
