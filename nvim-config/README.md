@@ -69,6 +69,7 @@ lazy.nvim installs the plugins on the first start. Run `:Mason` to see the langu
 | `<leader>co` | Organize imports |
 | `<leader>cr` | Rename |
 | `<leader>ca` | Code action |
+| `Alt+Enter` (normal or insert) | Quick fix / add missing import (choose if ambiguous) |
 | `<leader>/` | Toggle comment (normal and visual) |
 | `<leader>bd` | Delete buffer |
 | `<S-h>` / `<S-l>` | Previous / next buffer |
@@ -93,6 +94,28 @@ diagnostics from neocmakelsp, and formatting from cmake-format.
 
 QML (Quickshell) support uses `qmlls` when it is on your PATH. Set `QML_IMPORT_PATH` to a
 colon-separated list of QML module directories, and `qmlls` gets them with `-I`.
+
+## Automatic imports and headers
+
+Select a language-server completion with Tab / Shift-Tab and accept it with Enter. The
+completion inserts its import, `use`, or `#include` automatically when the server supplies
+one. This works across languages that support import edits; Java, C/C++, Python,
+JavaScript/TypeScript and Rust have explicit settings here. Go's gopls also supports this
+natively. Buffer words and snippets do not carry import edits.
+
+If you already typed or pasted a name, put the cursor on it and press **Alt+Enter** for
+missing-import quick fixes, or **Space ca** for all code actions. A single quick fix is
+applied immediately; multiple fixes open a picker. **Space co** asks the server to organize
+imports (which can add missing imports in Java). Support varies by language server;
+there is no universal way to infer every import just from typing a name.
+
+Open files inside their project so the server can discover dependencies: Maven/Gradle for
+Java, Cargo for Rust, and the appropriate Python environment or JS/TS project. For C/C++,
+provide `compile_commands.json` (with CMake: `cmake -S . -B build -DCMAKE_EXPORT_COMPILE_COMMANDS=ON`);
+clangd searches `build/` too. Headers and dependencies must be installed and indexed.
+Restart Neovim after changing this config. On NixOS, rebuild your configuration first:
+Home Manager installs this directory into the Nix store, so repository edits need a rebuild
+before they appear in `~/.config/nvim`.
 
 ## Nix support
 

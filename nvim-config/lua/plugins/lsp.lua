@@ -27,6 +27,9 @@ return {
       vim.lsp.config("clangd", {
         cmd = {
           "clangd",
+          "--background-index",
+          "--all-scopes-completion",
+          "--header-insertion=iwyu",
           "--query-driver=/etc/profiles/per-user/oxod/bin/c++",
         },
       })
@@ -43,6 +46,9 @@ return {
         settings = {
           java = {
             completion = {
+              enabled = true,
+              -- Send import edits with the suggestion rather than deferring them.
+              lazyResolveTextEdit = { enabled = false },
               favoriteStaticMembers = {
                 "org.junit.jupiter.api.Assertions.*",
                 "org.mockito.Mockito.*",
@@ -57,6 +63,22 @@ return {
             referencesCodeLens = { enabled = true },
             signatureHelp = { enabled = true },
           },
+        },
+      })
+
+      vim.lsp.config("ts_ls", {
+        init_options = {
+          preferences = {
+            includeCompletionsForModuleExports = true,
+            includeCompletionsForImportStatements = true,
+            includePackageJsonAutoImports = "on",
+          },
+        },
+      })
+
+      vim.lsp.config("rust_analyzer", {
+        settings = {
+          ["rust-analyzer"] = { completion = { autoimport = { enable = true } } },
         },
       })
 
@@ -76,6 +98,9 @@ return {
 
       -- Python: use the project's .venv when there is one.
       vim.lsp.config("pyright", {
+        settings = {
+          python = { analysis = { autoImportCompletions = true } },
+        },
         before_init = function(_, config)
           local venv_python = config.root_dir and (config.root_dir .. "/.venv/bin/python")
           if venv_python and vim.fn.executable(venv_python) == 1 then

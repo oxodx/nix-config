@@ -66,6 +66,10 @@ vim.api.nvim_create_autocmd("LspAttach", {
     map("gT", vim.lsp.buf.type_definition, "Type Definition")
     map("<leader>cr", vim.lsp.buf.rename, "Rename")
     map("<leader>ca", vim.lsp.buf.code_action, "Code action")
+    -- Apply a sole fix immediately; offer a choice when imports are ambiguous.
+    vim.keymap.set({ "n", "i" }, "<M-CR>", function()
+      vim.lsp.buf.code_action({ context = { only = { "quickfix" } }, apply = true })
+    end, { buffer = ev.buf, silent = true, desc = "Quick fix / add missing import" })
     map("K", vim.lsp.buf.hover, "Hover documentation")
     map("<C-k>", vim.lsp.buf.signature_help, "Signature help")
 

@@ -33,6 +33,8 @@ return {
       appearance = { nerd_font_variant = "mono" },
       snippets = { preset = "luasnip" },
       completion = {
+        -- Import/header edits may arrive in completionItem/resolve, especially in Java.
+        accept = { resolve_timeout_ms = 2000 },
         documentation = {
           auto_show = true,
           window = { border = "rounded" },
