@@ -6,6 +6,8 @@ import qs.modules.common.widgets
 EncoreButton {
     id: root
     property string detail: ""
+    property bool expandable: false
+    property bool expanded: false
     implicitHeight: 92
     padding: 12
     scale: Config.options.encore.motion && hovered ? 1.025 : 1
@@ -16,6 +18,12 @@ EncoreButton {
             Layout.fillWidth: true
             MaterialSymbol { text: root.symbol; iconSize: 22; color: root.foreground }
             Item { Layout.fillWidth: true }
+            MaterialSymbol {
+                visible: root.expandable
+                text: root.expanded ? "expand_less" : "expand_more"
+                iconSize: 20
+                color: root.foreground
+            }
             Rectangle { width: 6; height: 6; radius: 3; color: root.selected ? EncoreStyle.ink : EncoreStyle.muted; opacity: root.selected ? 1 : 0.4 }
         }
         EncoreText { text: root.text; Layout.fillWidth: true; font.bold: true; font.pixelSize: 13; color: root.foreground }

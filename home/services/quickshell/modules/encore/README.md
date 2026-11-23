@@ -36,6 +36,8 @@ These options are available in Settings. The moon button in the phone changes En
 
 Encore uses a purple/lilac palette with pink accents and small inclusive Pride ribbons. This is confined to Encore.
 
+In the control room, click the Wi-Fi or Bluetooth tile to expand its network/device list. Each list has separate power and scan controls. Wi-Fi supports connecting, disconnecting and password entry; Bluetooth supports pairing, connecting, disconnecting and forgetting devices. **More settings** opens the configured system settings tool, including Bluetooth pairing-code prompts. Collapsing Bluetooth or closing controls stops discovery started by that panel. Both lists can stay expanded together. Run `python3 home/services/quickshell/modules/encore/tests/check_connections.py` for isolated checks with fake radios and devices.
+
 Encore has an opaque lock background with the configured wallpaper (or bundled wallpaper if unset), a purple fallback while loading, and its own clock. Its taped keycap clock and purple password card match the desktop. It reuses the shared password/fingerprint authentication context and session-lock protocol; it does not switch workspaces to manufacture a background. Video wallpapers use their thumbnail.
 
 Existing services supply data and device control. Authentication, session actions, screenshot/region selection, cheatsheet, on-screen keyboard, translation and wallpaper selection reuse the existing system surfaces. Encore does not load either family's bar, dock, overview or sidebars.

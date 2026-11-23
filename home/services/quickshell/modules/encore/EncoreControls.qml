@@ -15,6 +15,14 @@ EncorePopup {
     cardHeight: 800
     onDismissed: GlobalStates.sidebarRightOpen = false
     readonly property var brightnessMonitor: Brightness.getMonitorForScreen(screen)
+    property bool wifiExpanded: false
+    property bool bluetoothExpanded: false
+    onOpenedChanged: {
+        if (!opened) {
+            wifiExpanded = false;
+            bluetoothExpanded = false;
+        }
+    }
 
     ColumnLayout {
         anchors.fill: parent
@@ -78,8 +86,10 @@ EncorePopup {
                         text: "Wi-Fi"
                         detail: Network.wifiEnabled ? Network.networkName || "Ready to connect" : "Switched off"
                         selected: Network.wifiEnabled
-                        onClicked: Network.toggleWifi()
-                        hint: Network.networkName || "Toggle Wi-Fi"
+                        expandable: true
+                        expanded: root.wifiExpanded
+                        onClicked: root.wifiExpanded = !root.wifiExpanded
+                        hint: "Show Wi-Fi networks"
                     }
                     EncoreControlTile {
                         Layout.fillWidth: true
@@ -88,8 +98,10 @@ EncorePopup {
                         text: "Bluetooth"
                         detail: Bluetooth.defaultAdapter?.enabled ? "Ready for your devices" : "Switched off"
                         selected: Bluetooth.defaultAdapter?.enabled ?? false
-                        enabled: Bluetooth.defaultAdapter !== null
-                        onClicked: Bluetooth.defaultAdapter.enabled = !Bluetooth.defaultAdapter.enabled
+                        expandable: true
+                        expanded: root.bluetoothExpanded
+                        onClicked: root.bluetoothExpanded = !root.bluetoothExpanded
+                        hint: "Show Bluetooth devices"
                     }
                     EncoreControlTile {
                         Layout.fillWidth: true
@@ -109,6 +121,18 @@ EncorePopup {
                         selected: Idle.inhibit
                         onClicked: Idle.toggleInhibit()
                     }
+                }
+                Loader {
+                    Layout.fillWidth: true
+                    active: root.opened && root.wifiExpanded
+                    visible: active
+                    sourceComponent: EncoreConnections { bluetooth: false }
+                }
+                Loader {
+                    Layout.fillWidth: true
+                    active: root.opened && root.bluetoothExpanded
+                    visible: active
+                    sourceComponent: EncoreConnections { bluetooth: true }
                 }
                 EncoreText { text: "SET THE MOOD"; font.pixelSize: 10; font.bold: true; font.letterSpacing: 2; color: EncoreStyle.muted; Layout.topMargin: 6 }
                 EncoreCard {
